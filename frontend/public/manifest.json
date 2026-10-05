@@ -1,0 +1,19 @@
+{
+  "name": "MedRef RDC",
+  "short_name": "MedRef RDC",
+  "description": "Bibliothèque médicale de référence adaptée à la RDC, par le Dr Ben Mingalu.",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f7f8",
+  "theme_color": "#12323d",
+  "categories": ["medical", "education", "health"],
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

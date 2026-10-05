@@ -1,0 +1,503 @@
+import { useRef } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useServices } from '../context/services.jsx';
+import { useAsync } from '../hooks/useAsync.js';
+import { AsyncView } from '../components/Status.jsx';
+import { Breadcrumb } from '../components/Breadcrumb.jsx';
+import { RichText } from '../components/RichText.jsx';
+import { ProduitList } from '../components/Pharmaco.jsx';
+import {
+  CATEGORIES_EXAMEN,
+  FREQUENCES,
+  LIGNES,
+  NIVEAUX_SOURCE,
+  ONGLETS,
+  TYPES_EXAMEN,
+} from '../../core/labels.js';
+
+/** Sommaire d'ancres en tête d'onglet (utile sur mobile pour les fiches longues). */
+function Sommaire({ items }) {
+  const visibles = items.filter((i) => i.show);
+  if (visibles.length < 2) return null;
+  return (
+    <nav className="sommaire" aria-label="Sommaire de l’onglet">
+      {visibles.map((i) => (
+        <a key={i.id} href={`#${i.id}`}>
+          {i.label}
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+function Rubrique({ id, title, children }) {
+  return (
+    <section className="rubrique" aria-labelledby={id}>
+      <h3 id={id} className="rubrique-title">
+        {title}
+      </h3>
+      {children}
+    </section>
+  );
+}
+
+// ------------------------------------------------------------------ Diagnostic
+
+function ExamenItem({ examen }) {
+  return (
+    <li className="examen">
+      <div className="examen-head">
+        <Link to={`/examens/${examen.slug}`} className="examen-name">
+          {examen.nom}
+        </Link>
+      </div>
+      {examen.interpretation && <p className="examen-interp">{examen.interpretation}</p>}
+      {examen.valeurs_normales && (
+        <details className="examen-normes">
+          <summary>Valeurs normales</summary>
+          <RichText text={examen.valeurs_normales} headingLevel={5} />
+        </details>
+      )}
+    </li>
+  );
+}
+
+/** Examens d'un type, regroupés par catégorie (1re intention, confirmation…). */
+function BilanParCategorie({ examens }) {
+  return Object.entries(CATEGORIES_EXAMEN)
+    .map(([key, label]) => [key, label, examens.filter((e) => e.categorie === key)])
+    .filter(([, , items]) => items.length)
+    .map(([key, label, items]) => (
+      <div key={key} className="bilan-groupe">
+        <h4 className="bilan-categorie">
+          <span className={`tag cat-${key}`}>{label}</span>
+        </h4>
+        <ul className="examen-list">
+          {items.map((e) => (
+            <ExamenItem key={`${e.id}-${e.categorie}`} examen={e} />
+          ))}
+        </ul>
+      </div>
+    ));
+}
+
+function DiagnosticPanel({ content }) {
+  const { clinique, examens, scores, differentiels } = content;
+  const parType = Object.keys(TYPES_EXAMEN).map((type) => [type, examens.filter((e) => e.type === type)]);
+  return (
+    <>
+      <Sommaire
+        items={[
+          { id: 'diag-clinique', label: 'Clinique', show: Boolean(clinique) },
+          ...parType.map(([type, items]) => ({
+            id: `diag-${type}`,
+            label: TYPES_EXAMEN[type],
+            show: items.length > 0,
+          })),
+          { id: 'diag-scores', label: 'Scores', show: scores.length > 0 },
+          { id: 'diag-differentiels', label: 'Différentiels', show: differentiels.length > 0 },
+        ]}
+      />
+      {clinique && (
+        <Rubrique id="diag-clinique" title="Diagnostic clinique">
+          <RichText text={clinique} headingLevel={4} />
+        </Rubrique>
+      )}
+      {parType
+        .filter(([, items]) => items.length)
+        .map(([type, items]) => (
+          <Rubrique key={type} id={`diag-${type}`} title={`Bilan — ${TYPES_EXAMEN[type].toLowerCase()}`}>
+            <BilanParCategorie examens={items} />
+          </Rubrique>
+        ))}
+      {scores.length > 0 && (
+        <Rubrique id="diag-scores" title="Scores cliniques et paracliniques">
+          <ul className="score-list">
+            {scores.map((s) => (
+              <li key={s.id}>
+                <Link to={`/scores/${s.slug}`} className="score-name">
+                  {s.nom}
+                </Link>
+                {s.code && <span className="tag ligne-premiere">Calcul en ligne</span>}
+                {s.description && <p className="muted">{s.description}</p>}
+                {s.interpretation && <p className="score-interp">{s.interpretation}</p>}
+              </li>
+            ))}
+          </ul>
+        </Rubrique>
+      )}
+      {differentiels.length > 0 && (
+        <Rubrique id="diag-differentiels" title="Diagnostics différentiels">
+          <ul className="diff-list">
+            {differentiels.map((d) => (
+              <li key={d.id}>
+                {d.fiche ? (
+                  <Link to={`/pathologies/${d.fiche.slug}`} className="diff-name">
+                    {d.nom}
+                  </Link>
+                ) : (
+                  <span className="diff-name">{d.nom}</span>
+                )}
+                {d.fiche && <span className="tag">Fiche disponible</span>}
+                {d.elements_distinctifs && <p>{d.elements_distinctifs}</p>}
+              </li>
+            ))}
+          </ul>
+        </Rubrique>
+      )}
+    </>
+  );
+}
+
+// ------------------------------------------------------------------ Thérapeutique
+
+function MoleculeBlock({ molecule }) {
+  const seuls = molecule.produits.filter((p) => !p.association);
+  const assoc = molecule.produits.filter((p) => p.association);
+  return (
+    <li className="molecule">
+      <div className="molecule-head">
+        <Link to={`/molecules/${molecule.slug}`} className="molecule-name">
+          {molecule.dci}
+        </Link>
+        <span className={`tag ligne-${molecule.ligne}`}>{LIGNES[molecule.ligne]}</span>
+        {molecule.classe && <span className="muted molecule-classe">{molecule.classe}</span>}
+      </div>
+      {molecule.contexte && <p className="molecule-contexte">{molecule.contexte}</p>}
+      {molecule.produits.length > 0 && (
+        <details className="molecule-produits">
+          <summary>
+            Produits par opérateur (
+            {[
+              seuls.length > 0 && `${seuls.length} seul${seuls.length > 1 ? 's' : ''}`,
+              assoc.length > 0 && `${assoc.length} en association`,
+            ]
+              .filter(Boolean)
+              .join(', ')}
+            )
+          </summary>
+          <ProduitList produits={molecule.produits} />
+        </details>
+      )}
+    </li>
+  );
+}
+
+function TherapeutiquePanel({ content }) {
+  const { principes, notes, molecules, complications } = content;
+  return (
+    <>
+      <Sommaire
+        items={[
+          { id: 'ttt-principes', label: 'Principes', show: principes.length > 0 },
+          { id: 'ttt-molecules', label: 'Médicaments', show: molecules.length > 0 },
+          { id: 'ttt-complications', label: 'Complications', show: complications.length > 0 },
+        ]}
+      />
+      {principes.length > 0 && (
+        <Rubrique id="ttt-principes" title="Principes de prise en charge">
+          <ol className="principes-sommaire">
+            {principes.map((pr) => (
+              <li key={pr.id}>
+                <a href={`#principe-${pr.ordre}`}>{pr.titre}</a>
+                {pr.objectif && <span className="muted"> — {pr.objectif}</span>}
+              </li>
+            ))}
+          </ol>
+          {principes.map((pr) => (
+            <article key={pr.id} className="principe" id={`principe-${pr.ordre}`}>
+              <h4>
+                <span className="principe-num">{pr.ordre}</span> {pr.titre}
+              </h4>
+              {pr.objectif && <p className="principe-objectif">Objectif : {pr.objectif}</p>}
+              <RichText text={pr.details} headingLevel={5} />
+            </article>
+          ))}
+        </Rubrique>
+      )}
+      {notes && (
+        <Rubrique id="ttt-notes" title="Notes complémentaires">
+          <RichText text={notes} headingLevel={4} />
+        </Rubrique>
+      )}
+      {molecules.length > 0 && (
+        <Rubrique id="ttt-molecules" title="Médicaments : molécules et produits">
+          <p className="muted">
+            Chaque molécule ouvre sa fiche pharmacologique ; chaque produit, la fiche de son opérateur.
+          </p>
+          <ul className="molecule-list">
+            {molecules.map((m) => (
+              <MoleculeBlock key={m.id} molecule={m} />
+            ))}
+          </ul>
+        </Rubrique>
+      )}
+      {complications.length > 0 && (
+        <Rubrique id="ttt-complications" title="Traitement des complications">
+          {complications.map((c) => (
+            <article key={c.id} className="complication">
+              <h4>
+                {c.nom}
+                {c.fiche && (
+                  <Link to={`/pathologies/${c.fiche.slug}`} className="complication-fiche">
+                    Voir la fiche
+                  </Link>
+                )}
+              </h4>
+              {c.description && <p className="muted">{c.description}</p>}
+              <RichText text={c.traitement} headingLevel={5} />
+            </article>
+          ))}
+        </Rubrique>
+      )}
+      {!principes.length && !molecules.length && !complications.length && !notes && (
+        <p className="muted">Contenu à rédiger.</p>
+      )}
+    </>
+  );
+}
+
+// ------------------------------------------------------------------ Évolution
+
+function EvolutionPanel({ content }) {
+  const { texte, complications } = content;
+  return (
+    <>
+      {texte && (
+        <Rubrique id="evo-texte" title="Évolution et pronostic">
+          <RichText text={texte} headingLevel={4} />
+        </Rubrique>
+      )}
+      {complications.length > 0 && (
+        <Rubrique id="evo-surveillance" title="Surveillance des complications">
+          {complications.map((c) => (
+            <article key={c.id} className="complication">
+              <h4>
+                {c.nom}
+                {c.fiche && (
+                  <Link to={`/pathologies/${c.fiche.slug}`} className="complication-fiche">
+                    Voir la fiche
+                  </Link>
+                )}
+              </h4>
+              <div className="surveillance-grid">
+                <div>
+                  <h5 className="surveillance-label">Clinique</h5>
+                  <RichText text={c.surveillance_clinique} headingLevel={6} />
+                </div>
+                <div>
+                  <h5 className="surveillance-label">Paraclinique</h5>
+                  <RichText text={c.surveillance_paraclinique} headingLevel={6} />
+                </div>
+              </div>
+            </article>
+          ))}
+        </Rubrique>
+      )}
+      {!texte && !complications.length && <p className="muted">Contenu à rédiger.</p>}
+    </>
+  );
+}
+
+// ------------------------------------------------------------------ Onglets
+
+function TabContent({ active, content }) {
+  switch (active) {
+    case 'definition':
+      return (
+        <>
+          <RichText text={content.definition} />
+          {content.physiopathologie && (
+            <>
+              <h3>Physiopathologie</h3>
+              <RichText text={content.physiopathologie} headingLevel={4} />
+            </>
+          )}
+        </>
+      );
+    case 'diagnostic':
+      return <DiagnosticPanel content={content} />;
+    case 'therapeutique':
+      return <TherapeutiquePanel content={content} />;
+    case 'evolution':
+      return <EvolutionPanel content={content} />;
+    default:
+      return <RichText text={content} />;
+  }
+}
+
+function Tabs({ fiche }) {
+  const [params, setParams] = useSearchParams();
+  const active = ONGLETS.some((o) => o.key === params.get('onglet')) ? params.get('onglet') : 'definition';
+  const refs = useRef({});
+
+  const select = (key, focus = false) => {
+    setParams(
+      (p) => {
+        const next = new URLSearchParams(p);
+        next.set('onglet', key);
+        return next;
+      },
+      { replace: true },
+    );
+    if (focus) refs.current[key]?.focus();
+  };
+
+  const onKeyDown = (e, index) => {
+    const delta = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (delta) {
+      e.preventDefault();
+      select(ONGLETS[(index + delta + ONGLETS.length) % ONGLETS.length].key, true);
+    } else if (e.key === 'Home' || e.key === 'End') {
+      e.preventDefault();
+      select(ONGLETS[e.key === 'Home' ? 0 : ONGLETS.length - 1].key, true);
+    }
+  };
+
+  return (
+    <div className="tabs">
+      <div role="tablist" aria-label="Sections de la fiche" className="tablist">
+        {ONGLETS.map((o, i) => (
+          <button
+            key={o.key}
+            ref={(el) => {
+              refs.current[o.key] = el;
+            }}
+            role="tab"
+            type="button"
+            id={`tab-${o.key}`}
+            aria-selected={active === o.key}
+            aria-controls={`panel-${o.key}`}
+            tabIndex={active === o.key ? 0 : -1}
+            onClick={() => select(o.key)}
+            onKeyDown={(e) => onKeyDown(e, i)}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+      <div
+        role="tabpanel"
+        id={`panel-${active}`}
+        aria-labelledby={`tab-${active}`}
+        className="tabpanel"
+        tabIndex={0}
+      >
+        <TabContent active={active} content={fiche.onglets[active]} />
+      </div>
+    </div>
+  );
+}
+
+function Related({ title, children, count }) {
+  if (!count) return null;
+  return (
+    <section className="related" aria-label={title}>
+      <h2>{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+export function PathologiePage() {
+  const { slug } = useParams();
+  const { api } = useServices();
+  const state = useAsync(() => api.pathologie(slug), [api, slug]);
+
+  return (
+    <AsyncView state={state}>
+      {(f) => (
+        <article className="fiche">
+          <Breadcrumb
+            items={[
+              { label: f.departement.nom, to: `/departements/${f.departement.slug}` },
+              { label: f.specialite.nom, to: `/specialites/${f.specialite.slug}` },
+              { label: f.nom },
+            ]}
+          />
+          <header className="page-header">
+            <h1>{f.nom}</h1>
+            {f.resume && <p className="lead">{f.resume}</p>}
+          </header>
+
+          {f.urgences.length > 0 && (
+            <aside className="urgence-strip" aria-label="Urgences associées">
+              <span className="urgence-strip-title">Urgence associée</span>
+              <ul>
+                {f.urgences.map((u) => (
+                  <li key={u.id}>
+                    <Link to={`/urgences/${u.slug}`}>{u.nom}</Link>
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          )}
+
+          <div className="fiche-layout">
+            <Tabs fiche={f} />
+
+            <div className="fiche-side">
+              <Related title="Symptômes" count={f.symptomes.length}>
+                <ul className="chips">
+                  {f.symptomes.map((s) => (
+                    <li key={s.id}>
+                      <Link to={`/symptomes/${s.slug}`} className={`chip freq-${s.frequence}`}>
+                        {s.nom}
+                        <span className="chip-meta">{FREQUENCES[s.frequence]}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </Related>
+
+              <Related title="Médicaments" count={f.molecules.length}>
+                <ul className="side-list">
+                  {f.molecules.map((m) => (
+                    <li key={m.id}>
+                      <Link to={`/molecules/${m.slug}`}>
+                        <strong>{m.dci}</strong>
+                      </Link>
+                      <span className={`tag ligne-${m.ligne}`}>{LIGNES[m.ligne]}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link to={`/prescriptions?pathologie=${f.slug}`} className="btn btn-secondary btn-small">
+                  Rédiger une prescription
+                </Link>
+              </Related>
+
+              <Related title="Calculatrices et scores" count={f.scores.length}>
+                <ul className="side-list">
+                  {f.scores.map((s) => (
+                    <li key={s.id}>
+                      <Link to={`/scores/${s.slug}`}>{s.nom}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </Related>
+
+              <Related title="Sources" count={f.sources.length}>
+                <ul className="side-list sources-mini">
+                  {f.sources.map((s) => (
+                    <li key={s.id}>
+                      <span className={`niveau niveau-${s.niveau}`} title={NIVEAUX_SOURCE[s.niveau]}>
+                        N{s.niveau}
+                      </span>
+                      {s.url ? (
+                        <a href={s.url} target="_blank" rel="noreferrer">
+                          {s.titre}
+                        </a>
+                      ) : (
+                        <span>{s.titre}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </Related>
+            </div>
+          </div>
+        </article>
+      )}
+    </AsyncView>
+  );
+}

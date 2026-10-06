@@ -2,7 +2,18 @@ import { useId, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RichText } from './RichText.jsx';
 import { FICHE_PHARMACO, POPULATIONS, SECURITES } from '../../core/labels.js';
-import { alertesPoids, alertesPosologie, calculerDose, parsePoids } from '../../core/posologie.js';
+import {
+  alertesPoids,
+  alertesPosologie,
+  calculerDose,
+  parsePoids,
+  POIDS_MAX,
+  POIDS_MIN,
+} from '../../core/posologie.js';
+import { NumberField } from './NumberField.jsx';
+
+/** Poids typique proposé en exemple selon la population. */
+const POIDS_EXEMPLE = { nouveau_ne: 3.2, enfant: 12.5, adulte: 60, grossesse: 65 };
 
 function Alertes({ alertes }) {
   if (!alertes.length) return null;
@@ -77,22 +88,19 @@ export function Posologies({ posologies }) {
         ))}
       </div>
       {ponderale && (
-        <div className="field field-inline posologie-poids">
-          <label htmlFor={inputId}>Poids du patient</label>
-          <input
+        <div className="posologie-poids">
+          <NumberField
             id={inputId}
-            type="text"
-            inputMode="decimal"
-            placeholder="kg"
+            name="poids"
+            label="Poids du patient"
+            unit="kg"
+            min={POIDS_MIN}
+            max={POIDS_MAX}
+            exemple={POIDS_EXEMPLE[courant]}
             value={poids}
-            onChange={(e) => setPoids(e.target.value)}
-            aria-describedby={`${inputId}-hint`}
+            onChange={setPoids}
+            hint="Calcul par prise, plafonné à la dose maximale"
           />
-          <span id={`${inputId}-hint`} className="hint">
-            {poids && !poidsValide
-              ? 'Poids entre 0,3 et 300 kg'
-              : 'Calcul par prise, plafonné à la dose maximale'}
-          </span>
         </div>
       )}
       {ponderale && <Alertes alertes={alertesPoids(courant, poidsValide)} />}

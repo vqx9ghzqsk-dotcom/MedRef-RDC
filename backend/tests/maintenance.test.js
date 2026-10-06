@@ -97,3 +97,46 @@ describe('sauvegarde automatique', () => {
     delete process.env.BACKUP_DIR;
   });
 });
+
+describe('contenu sémiologique', () => {
+  const data = require('../db/seed-data');
+  const { verifier } = require('../db/semiologie');
+  const { signesAlerte } = require('../src/services/formes');
+
+  it('couvre toutes les fiches et toutes leurs urgences, avec des références valides', () => {
+    expect(() => verifier(data)).not.toThrow();
+    for (const p of data.pathologies) {
+      expect(data.semiologie[p.slug]?.formes.length).toBeGreaterThan(0);
+      for (const u of p.urgences || []) expect(data.semiologie[p.slug].urgences?.[u]).toBeTruthy();
+    }
+    const examens = new Set(data.examens.map((e) => e.slug));
+    const symptomes = new Set(data.symptomes.map(([nom]) => nom));
+    for (const fiche of Object.values(data.semiologie)) {
+      for (const f of fiche.formes)
+        for (const [slug] of f.examens || []) expect(examens.has(slug)).toBe(true);
+    }
+    for (const s of data.syndromes)
+      for (const nom of s.symptomes || []) expect(symptomes.has(nom)).toBe(true);
+  });
+
+  it('refuse une forme de type inconnu, un syndrome inexistant ou une fiche sans forme commune', () => {
+    const base = { syndromes: [{ slug: 'syndrome-x' }], glossaire: [] };
+    expect(() =>
+      verifier({ ...base, semiologie: { a: { formes: [{ nom: 'F', type: 'bizarre' }] } } }),
+    ).toThrow(/type bizarre/);
+    expect(() =>
+      verifier({ ...base, semiologie: { a: { formes: [{ nom: 'F', type: 'commune', syndromes: ['y'] }] } } }),
+    ).toThrow(/syndrome y/);
+    expect(() =>
+      verifier({ ...base, semiologie: { a: { formes: [{ nom: 'F', type: 'gravite' }] } } }),
+    ).toThrow(/pas de forme commune/);
+  });
+
+  it('signes d’alerte : ceux de la fiche, sinon les premiers signes de gravité de l’urgence', () => {
+    expect(signesAlerte('Coma, convulsions', '- autre')).toBe('Coma, convulsions');
+    expect(signesAlerte(null, '- **Coma**\n- Convulsions\n- Choc\n- Ictère')).toBe(
+      'Coma ; Convulsions ; Choc',
+    );
+    expect(signesAlerte(null, null)).toBeNull();
+  });
+});

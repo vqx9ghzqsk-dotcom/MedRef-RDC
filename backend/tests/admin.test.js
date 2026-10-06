@@ -59,7 +59,9 @@ const mockRefs = (role = 'admin') =>
   db.query
     .mockResolvedValueOnce([{ id: 7, nom: 'Dr Test', role }])
     .mockResolvedValueOnce([{ id: 1, slug: 'tdr-paludisme' }])
-    .mockResolvedValueOnce([{ id: 9, slug: 'insuffisance-renale-aigue', nom: 'Insuffisance rénale aiguë' }]);
+    .mockResolvedValueOnce([{ id: 9, slug: 'insuffisance-renale-aigue', nom: 'Insuffisance rénale aiguë' }])
+    .mockResolvedValueOnce([{ id: 5, slug: 'syndrome-meninge' }])
+    .mockResolvedValueOnce([{ id: 2, slug: 'paludisme-grave-urgence' }]);
 
 beforeEach(() => {
   db.query.mockReset();

@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,7 +14,14 @@ const fiche = {
   slug: 'paludisme-grave',
   resume: 'Urgence vitale.',
   onglets: {
-    definition: { definition: 'Accès palustre **grave**.', physiopathologie: '- Séquestration' },
+    definition: {
+      definition: 'Accès palustre **grave**.',
+      physiopathologie: '- Séquestration',
+      formes: [
+        { id: 20, nom: 'Forme commune de l’adulte', type: 'commune', description: null },
+        { id: 21, nom: 'Neuropaludisme', type: 'gravite', description: 'Coma persistant.' },
+      ],
+    },
     diagnostic: {
       clinique: '## Critères de gravité\n- Coma',
       examens: [
@@ -48,8 +56,39 @@ const fiche = {
         },
         { id: 2, nom: 'Fièvre typhoïde', elements_distinctifs: 'Hémocultures', fiche: null },
       ],
+      formes: [
+        {
+          id: 20,
+          nom: 'Forme commune de l’adulte',
+          type: 'commune',
+          terrain: '- Zone d’endémie',
+          signes_fonctionnels: '- Céphalées intenses',
+          signes_generaux: null,
+          signes_physiques: '- **Raideur de nuque** absente, signe de Kernig négatif',
+          paraclinique: null,
+          syndromes: [{ slug: 'syndrome-infectieux', nom: 'Syndrome infectieux' }],
+          examens: [
+            { slug: 'goutte-epaisse', nom: 'Goutte épaisse', type: 'biologie', interpretation: 'Positive' },
+          ],
+        },
+        {
+          id: 21,
+          nom: 'Neuropaludisme',
+          type: 'gravite',
+          terrain: null,
+          signes_fonctionnels: null,
+          signes_generaux: null,
+          signes_physiques: '- Coma calme',
+          paraclinique: null,
+          syndromes: [],
+          examens: [],
+        },
+      ],
     },
-    etiologies: 'P. falciparum',
+    etiologies: {
+      texte: 'P. falciparum',
+      formes: [{ id: 21, nom: 'Neuropaludisme', type: 'gravite', etiologies: '- Séquestration cérébrale' }],
+    },
     therapeutique: {
       principes: [
         {
@@ -124,7 +163,15 @@ const fiche = {
   validation: { statut: 'a_valider', valide_le: null, valide_par: null },
   departement: { id: 1, nom: 'Médecine interne', slug: 'medecine-interne' },
   specialite: { id: 2, nom: 'Infectiologie', slug: 'mi-infectiologie' },
-  urgences: [{ id: 1, nom: 'Paludisme grave', slug: 'paludisme-grave-urgence', categorie: 'medicale' }],
+  urgences: [
+    {
+      id: 1,
+      nom: 'Paludisme grave',
+      slug: 'paludisme-grave-urgence',
+      categorie: 'medicale',
+      signes_alerte: 'Troubles de la conscience, convulsions répétées',
+    },
+  ],
   symptomes: [{ id: 1, nom: 'Fièvre', slug: 'fievre', frequence: 'tres_frequent' }],
   molecules: [{ id: 3, dci: 'Artésunate', slug: 'artesunate', ligne: 'premiere' }],
   scores: [{ id: 4, nom: 'Score de Glasgow', slug: 'glasgow', code: 'glasgow' }],
@@ -160,26 +207,29 @@ function renderApp(path, apiOverrides = {}, user = null) {
     repo: { list: vi.fn(async () => []) },
     onSessionExpired: () => () => {},
   };
+  // Mode strict, comme dans main.jsx : chaque rendu est doublé et révèle les effets de bord
   render(
-    <ServicesProvider services={services}>
-      <AuthProvider>
-        <MemoryRouter initialEntries={[path]}>
-          <AppRoutes />
-        </MemoryRouter>
-      </AuthProvider>
-    </ServicesProvider>,
+    <StrictMode>
+      <ServicesProvider services={services}>
+        <AuthProvider>
+          <MemoryRouter initialEntries={[path]}>
+            <AppRoutes />
+          </MemoryRouter>
+        </AuthProvider>
+      </ServicesProvider>
+    </StrictMode>,
   );
   return api;
 }
 
 describe('Accueil', () => {
-  it('affiche l’identité, la recherche, les 6 accès rapides et les départements', async () => {
+  it('affiche l’identité, la recherche, les 7 accès rapides et les départements', async () => {
     renderApp('/');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('MedRef RDC');
     expect(screen.getByText('par le Dr Ben Mingalu')).toBeInTheDocument();
     expect(screen.getAllByRole('search').length).toBeGreaterThan(0);
     const acces = screen.getByRole('region', { name: 'Accès rapides' });
-    expect(within(acces).getAllByRole('link')).toHaveLength(6);
+    expect(within(acces).getAllByRole('link')).toHaveLength(7);
     expect(await screen.findByRole('link', { name: /Pédiatrie/ })).toHaveAttribute(
       'href',
       '/departements/pediatrie',
@@ -207,12 +257,75 @@ describe('Fiche pathologie', () => {
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText('grave').tagName).toBe('STRONG');
 
-    const urgences = screen.getByRole('complementary', { name: 'Urgences associées' });
+    // Bandeau : les signes d'alerte, puis l'urgence entre parenthèses
+    const urgences = screen.getByRole('complementary', { name: /Urgences associées/ });
+    expect(urgences).toHaveTextContent('Troubles de la conscience, convulsions répétées (Paludisme grave)');
     expect(within(urgences).getByRole('link')).toHaveAttribute('href', '/urgences/paludisme-grave-urgence');
     expect(screen.getByRole('link', { name: /Fièvre/ })).toHaveAttribute('href', '/symptomes/fievre');
     expect(screen.getByRole('link', { name: /Artésunate/ })).toHaveAttribute('href', '/molecules/artesunate');
     expect(screen.getByRole('link', { name: 'Score de Glasgow' })).toHaveAttribute('href', '/scores/glasgow');
     expect(screen.getByText('WHO guidelines for malaria')).toBeInTheDocument();
+  });
+
+  it('liste les formes cliniques et affiche la sémiologie systématisée de chaque forme', async () => {
+    const glossaire = vi.fn(async () => [
+      {
+        terme: 'Signe de Kernig',
+        slug: 'signe-de-kernig',
+        variantes: ['Kernig'],
+        definition: 'Impossibilité d’étendre la jambe, cuisse fléchie.',
+        syndrome: { slug: 'syndrome-meninge', nom: 'Syndrome méningé' },
+      },
+      { terme: 'Raideur de nuque', slug: 'raideur-de-nuque', variantes: [], definition: 'Signe méningé.' },
+    ]);
+    const user = userEvent.setup();
+    renderApp('/pathologies/paludisme-grave', { glossaire });
+    const formes = await screen.findByRole('heading', { name: 'Formes cliniques' });
+    expect(formes.parentElement).toHaveTextContent('Neuropaludisme');
+    expect(formes.parentElement).toHaveTextContent('Forme grave');
+
+    await user.click(screen.getByRole('tab', { name: 'Diagnostic' }));
+    expect(screen.getByRole('heading', { name: 'Sémiologie par forme clinique' })).toBeInTheDocument();
+    // Première forme ouverte, rubriques dans l'ordre de l'examen clinique
+    const commune = screen.getByText('Forme commune de l’adulte').closest('details');
+    expect(commune).toHaveAttribute('open');
+    expect(
+      within(commune)
+        .getAllByRole('heading')
+        .map((h) => h.textContent),
+    ).toEqual([
+      'Terrain et circonstances de découverte',
+      'Signes fonctionnels',
+      'Signes physiques',
+      'Regroupement syndromique',
+      'Examens de confirmation',
+    ]);
+    expect(within(commune).getByRole('link', { name: 'Syndrome infectieux' })).toHaveAttribute(
+      'href',
+      '/syndromes/syndrome-infectieux',
+    );
+    expect(within(commune).getByRole('link', { name: 'Goutte épaisse' })).toHaveAttribute(
+      'href',
+      '/examens/goutte-epaisse',
+    );
+    expect(screen.getByText('Neuropaludisme').closest('details')).not.toHaveAttribute('open');
+
+    // Termes du glossaire : définition au toucher, avec lien vers le syndrome
+    const kernig = await within(commune).findByRole('button', { name: 'signe de Kernig' });
+    await user.click(kernig);
+    const bulle = screen.getByRole('tooltip');
+    expect(bulle).toHaveTextContent('Impossibilité d’étendre la jambe');
+    expect(within(bulle).getByRole('link', { name: 'Syndrome méningé' })).toHaveAttribute(
+      'href',
+      '/syndromes/syndrome-meninge',
+    );
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('tooltip')).toBeNull();
+    expect(within(commune).getByRole('button', { name: 'Raideur de nuque' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: 'Étiologies' }));
+    expect(screen.getByRole('heading', { name: 'Étiologies selon la forme clinique' })).toBeInTheDocument();
+    expect(screen.getByText('Séquestration cérébrale')).toBeInTheDocument();
   });
 
   it('change d’onglet au clic et au clavier', async () => {
@@ -552,10 +665,10 @@ describe('Administration', () => {
       { adminMedicament, adminSaveMedicament },
       { id: 1, nom: 'Admin', email: 'a@x.cd', role: 'medecin' },
     );
-    await user.type(await screen.findByLabelText('Prix indicatif (FC)'), '-3');
+    await user.type(await screen.findByLabelText('Prix indicatif'), '-3');
     await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
     expect(await screen.findByText('Nombre entre 0 et 10000000000 attendu')).toBeInTheDocument();
-    expect(screen.getByLabelText('Prix indicatif (FC)')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByLabelText('Prix indicatif')).toHaveAttribute('aria-invalid', 'true');
   });
 });
 

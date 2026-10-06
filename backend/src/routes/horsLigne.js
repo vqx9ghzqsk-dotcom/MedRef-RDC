@@ -25,6 +25,7 @@ router.get(
       examens,
       molecules,
       medicaments,
+      syndromes,
     ] = await Promise.all([
       db.query('SELECT slug FROM departements ORDER BY ordre'),
       db.query('SELECT slug FROM specialites ORDER BY nom'),
@@ -35,6 +36,7 @@ router.get(
       db.query('SELECT slug FROM examens ORDER BY nom'),
       db.query('SELECT slug FROM molecules ORDER BY dci'),
       db.query('SELECT id FROM medicaments ORDER BY nom_commercial'),
+      db.query('SELECT slug FROM syndromes ORDER BY nom'),
     ]);
     const enc = encodeURIComponent;
     const urls = [
@@ -47,6 +49,8 @@ router.get(
       '/api/medicaments',
       '/api/medicaments/filtres',
       '/api/sources',
+      '/api/glossaire',
+      '/api/syndromes',
       ...departements.map((r) => `/api/departements/${enc(r.slug)}`),
       ...specialites.map((r) => `/api/specialites/${enc(r.slug)}`),
       ...pathologies.map((r) => `/api/pathologies/${enc(r.slug)}`),
@@ -56,6 +60,7 @@ router.get(
       ...examens.map((r) => `/api/examens/${enc(r.slug)}`),
       ...molecules.map((r) => `/api/molecules/${enc(r.slug)}`),
       ...medicaments.map((r) => `/api/medicaments/${r.id}`),
+      ...syndromes.map((r) => `/api/syndromes/${enc(r.slug)}`),
     ];
     res.json({ data: { genere_le: new Date().toISOString(), urls } });
   }),

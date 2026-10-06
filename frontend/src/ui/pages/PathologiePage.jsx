@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView } from '../components/Status.jsx';
@@ -14,7 +14,9 @@ import {
   NIVEAUX_SOINS,
   NIVEAUX_SOURCE,
   ONGLETS,
+  RUBRIQUES_SEMIOLOGIE,
   TYPES_EXAMEN,
+  TYPES_FORME,
 } from '../../core/labels.js';
 
 /** Sommaire d'ancres en tête d'onglet (utile sur mobile pour les fiches longues). */
@@ -40,6 +42,86 @@ function Rubrique({ id, title, children }) {
       </h3>
       {children}
     </section>
+  );
+}
+
+// ------------------------------------------------------------------ Formes cliniques
+
+const ancreForme = (f) => `forme-${f.id}`;
+
+function TypeForme({ type }) {
+  return <span className={`tag forme-${type}`}>{TYPES_FORME[type] || type}</span>;
+}
+
+/** Onglet Définition : liste des formes cliniques, chacune renvoyant à sa sémiologie. */
+function FormesCliniques({ formes }) {
+  if (!formes?.length) return null;
+  return (
+    <section className="formes-liste" aria-labelledby="def-formes">
+      <h3 id="def-formes">Formes cliniques</h3>
+      <ul>
+        {formes.map((f) => (
+          <li key={f.id}>
+            <div className="forme-ligne">
+              <Link to={`?onglet=diagnostic#${ancreForme(f)}`} className="forme-nom">
+                {f.nom}
+              </Link>
+              <TypeForme type={f.type} />
+            </div>
+            {f.description && <RichText text={f.description} glossaire vide={null} />}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** Sémiologie systématisée d'une forme : rubriques dans l'ordre de l'examen, syndromes, examens. */
+function SemiologieForme({ forme, ouverte }) {
+  return (
+    <details className="forme" id={ancreForme(forme)} open={ouverte}>
+      <summary>
+        <span className="forme-nom">{forme.nom}</span>
+        <TypeForme type={forme.type} />
+      </summary>
+      <div className="forme-corps">
+        {RUBRIQUES_SEMIOLOGIE.filter(([k]) => forme[k]).map(([k, label]) => (
+          <div key={k} className={`semio semio-${k}`}>
+            <h5 className="semio-titre">{label}</h5>
+            <RichText text={forme[k]} headingLevel={6} glossaire vide={null} />
+          </div>
+        ))}
+        {forme.syndromes.length > 0 && (
+          <div className="semio semio-syndromes">
+            <h5 className="semio-titre">Regroupement syndromique</h5>
+            <ul className="chips">
+              {forme.syndromes.map((sy) => (
+                <li key={sy.slug}>
+                  <Link to={`/syndromes/${sy.slug}`} className="chip chip-syndrome">
+                    {sy.nom}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {forme.examens.length > 0 && (
+          <div className="semio semio-examens">
+            <h5 className="semio-titre">Examens de confirmation</h5>
+            <ul className="examen-list">
+              {forme.examens.map((e) => (
+                <li key={e.slug} className="examen">
+                  <Link to={`/examens/${e.slug}`} className="examen-name">
+                    {e.nom}
+                  </Link>
+                  {e.interpretation && <p className="examen-interp">{e.interpretation}</p>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </details>
   );
 }
 
@@ -84,13 +166,20 @@ function BilanParCategorie({ examens }) {
 }
 
 function DiagnosticPanel({ content }) {
-  const { clinique, examens, scores, differentiels } = content;
+  const { clinique, examens, scores, differentiels, formes = [] } = content;
+  // Ouvre la forme ciblée par l'ancre (lien depuis l'onglet Définition), sinon la première
+  const cible = useLocation().hash.slice(1);
+  useEffect(() => {
+    if (cible.startsWith('forme-')) document.getElementById(cible)?.scrollIntoView?.({ block: 'start' });
+  }, [cible]);
+  const ouverte = (f, i) => (cible.startsWith('forme-') ? cible === ancreForme(f) : i === 0);
   const parType = Object.keys(TYPES_EXAMEN).map((type) => [type, examens.filter((e) => e.type === type)]);
   return (
     <>
       <Sommaire
         items={[
-          { id: 'diag-clinique', label: 'Clinique', show: Boolean(clinique) },
+          { id: 'diag-semiologie', label: 'Sémiologie', show: formes.length > 0 },
+          { id: 'diag-clinique', label: 'Synthèse', show: Boolean(clinique) },
           ...parType.map(([type, items]) => ({
             id: `diag-${type}`,
             label: TYPES_EXAMEN[type],
@@ -100,9 +189,23 @@ function DiagnosticPanel({ content }) {
           { id: 'diag-differentiels', label: 'Différentiels', show: differentiels.length > 0 },
         ]}
       />
+      {formes.length > 0 && (
+        <Rubrique id="diag-semiologie" title="Sémiologie par forme clinique">
+          <p className="hint">
+            Pour chaque forme : terrain, signes fonctionnels, généraux et physiques, regroupement syndromique
+            et examens de confirmation. Touchez un terme souligné pour voir sa définition.
+          </p>
+          {formes.map((f, i) => (
+            <SemiologieForme key={f.id} forme={f} ouverte={ouverte(f, i)} />
+          ))}
+        </Rubrique>
+      )}
       {clinique && (
-        <Rubrique id="diag-clinique" title="Diagnostic clinique">
-          <RichText text={clinique} headingLevel={4} />
+        <Rubrique
+          id="diag-clinique"
+          title={formes.length ? 'Synthèse et critères diagnostiques' : 'Diagnostic clinique'}
+        >
+          <RichText text={clinique} headingLevel={4} glossaire />
         </Rubrique>
       )}
       {parType
@@ -390,12 +493,49 @@ function EvolutionPanel({ content }) {
 
 // ------------------------------------------------------------------ Onglets
 
+/** Étiologies générales, puis étiologies propres à chaque forme clinique. */
+function EtiologiesPanel({ content }) {
+  // Compatibilité : anciennes réponses (cache hors ligne) où l'onglet était un simple texte
+  const { texte, formes = [] } = typeof content === 'string' ? { texte: content } : content || {};
+  return (
+    <>
+      <Sommaire
+        items={[
+          { id: 'etio-generales', label: 'Vue d’ensemble', show: Boolean(texte) },
+          { id: 'etio-formes', label: 'Selon la forme', show: formes.length > 0 },
+        ]}
+      />
+      {(texte || !formes.length) && (
+        <Rubrique id="etio-generales" title="Étiologies et facteurs favorisants">
+          <RichText text={texte} headingLevel={4} glossaire />
+        </Rubrique>
+      )}
+      {formes.length > 0 && (
+        <Rubrique id="etio-formes" title="Étiologies selon la forme clinique">
+          <ul className="etio-formes">
+            {formes.map((f) => (
+              <li key={f.id}>
+                <div className="forme-ligne">
+                  <span className="forme-nom">{f.nom}</span>
+                  <TypeForme type={f.type} />
+                </div>
+                <RichText text={f.etiologies} headingLevel={5} glossaire vide={null} />
+              </li>
+            ))}
+          </ul>
+        </Rubrique>
+      )}
+    </>
+  );
+}
+
 function TabContent({ active, content }) {
   switch (active) {
     case 'definition':
       return (
         <>
           <RichText text={content.definition} />
+          <FormesCliniques formes={content.formes} />
           {content.physiopathologie && (
             <>
               <h3>Physiopathologie</h3>
@@ -404,6 +544,8 @@ function TabContent({ active, content }) {
           )}
         </>
       );
+    case 'etiologies':
+      return <EtiologiesPanel content={content} />;
     case 'diagnostic':
       return <DiagnosticPanel content={content} />;
     case 'therapeutique':
@@ -513,12 +655,15 @@ export function PathologiePage() {
           </header>
 
           {f.urgences.length > 0 && (
-            <aside className="urgence-strip" aria-label="Urgences associées">
-              <span className="urgence-strip-title">Urgence associée</span>
+            <aside className="urgence-strip" aria-label="Urgences associées : signes d’alerte">
+              <span className="urgence-strip-title">
+                {f.urgences.length > 1 ? 'Urgences associées' : 'Urgence associée'}
+              </span>
               <ul>
                 {f.urgences.map((u) => (
                   <li key={u.id}>
-                    <Link to={`/urgences/${u.slug}`}>{u.nom}</Link>
+                    <span className="urgence-signes">{u.signes_alerte || 'Signes de gravité'}</span> (
+                    <Link to={`/urgences/${u.slug}`}>{u.nom}</Link>)
                   </li>
                 ))}
               </ul>

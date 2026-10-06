@@ -55,32 +55,39 @@ router.get(
           WHERE m.nom_commercial LIKE ? OR m.dci LIKE ? ORDER BY m.dci LIMIT ${LIMIT}`;
     const medicamentsParams = boolean ? [boolean, like, like, boolean, like, like] : [like, like];
 
-    const [pathologies, medicaments, molecules, examens, urgences, symptomes, scores] = await Promise.all([
-      db.query(pathologiesSql, pathologiesParams),
-      db.query(medicamentsSql, medicamentsParams),
-      db.query(
-        `SELECT mo.id, mo.dci, mo.slug, c.nom AS classe FROM molecules mo
+    const [pathologies, medicaments, molecules, examens, urgences, symptomes, scores, syndromes, glossaire] =
+      await Promise.all([
+        db.query(pathologiesSql, pathologiesParams),
+        db.query(medicamentsSql, medicamentsParams),
+        db.query(
+          `SELECT mo.id, mo.dci, mo.slug, c.nom AS classe FROM molecules mo
            LEFT JOIN classes_pharmacologiques c ON c.id = mo.classe_id
           WHERE mo.dci LIKE ? ORDER BY mo.dci LIMIT ${LIMIT}`,
-        [like],
-      ),
-      db.query(
-        `SELECT id, nom, slug, type FROM examens WHERE nom LIKE ? OR description LIKE ?
+          [like],
+        ),
+        db.query(
+          `SELECT id, nom, slug, type FROM examens WHERE nom LIKE ? OR description LIKE ?
           ORDER BY nom LIMIT ${LIMIT}`,
-        [like, like],
-      ),
-      db.query(
-        `SELECT id, nom, slug, categorie FROM urgences WHERE nom LIKE ? OR description LIKE ?
+          [like, like],
+        ),
+        db.query(
+          `SELECT id, nom, slug, categorie FROM urgences WHERE nom LIKE ? OR description LIKE ?
           ORDER BY nom LIMIT ${LIMIT}`,
-        [like, like],
-      ),
-      db.query(`SELECT id, nom, slug FROM symptomes WHERE nom LIKE ? ORDER BY nom LIMIT ${LIMIT}`, [like]),
-      db.query(
-        `SELECT id, nom, slug, type FROM scores WHERE nom LIKE ? OR description LIKE ?
+          [like, like],
+        ),
+        db.query(`SELECT id, nom, slug FROM symptomes WHERE nom LIKE ? ORDER BY nom LIMIT ${LIMIT}`, [like]),
+        db.query(
+          `SELECT id, nom, slug, type FROM scores WHERE nom LIKE ? OR description LIKE ?
           ORDER BY nom LIMIT ${LIMIT}`,
-        [like, like],
-      ),
-    ]);
+          [like, like],
+        ),
+        db.query(`SELECT id, nom, slug FROM syndromes WHERE nom LIKE ? ORDER BY nom LIMIT ${LIMIT}`, [like]),
+        db.query(
+          `SELECT id, terme, slug, definition FROM glossaire WHERE terme LIKE ? OR variantes LIKE ?
+          ORDER BY terme LIMIT ${LIMIT}`,
+          [like, like],
+        ),
+      ]);
 
     const strip = (rows) => rows.map(({ score: _score, ...rest }) => rest);
     const data = {
@@ -91,6 +98,8 @@ router.get(
       urgences,
       symptomes,
       scores,
+      syndromes,
+      glossaire,
     };
     const total = Object.values(data).reduce((n, list) => n + list.length, 0);
     res.json({ query: q, total, data });

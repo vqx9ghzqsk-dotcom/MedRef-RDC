@@ -16,6 +16,7 @@
     "db:reset": "node scripts/migrate.js --reset --seed",
     "db:backup": "node scripts/backup.js",
     "db:restore": "node scripts/backup.js --restaurer",
+    "db:enrichir": "node scripts/enrichir.js",
     "test": "jest --runInBand",
     "test:integration": "jest --runInBand --testPathPattern integration",
     "lint": "eslint src tests scripts",

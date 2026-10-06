@@ -60,8 +60,21 @@ function AuthForm({ mode }) {
           : 'Connectez-vous pour synchroniser vos prescriptions.'}
       </p>
       <form onSubmit={submit} noValidate>
-        {isRegister && field('nom', 'Nom complet', { autoComplete: 'name' })}
-        {field('email', 'Adresse e-mail', { type: 'email', autoComplete: 'email', inputMode: 'email' })}
+        {isRegister &&
+          field('nom', 'Nom complet', {
+            autoComplete: 'name',
+            placeholder: 'ex. Dr Prénom Nom',
+            maxLength: 120,
+          })}
+        {field('email', 'Adresse e-mail', {
+          type: 'email',
+          autoComplete: 'email',
+          inputMode: 'email',
+          placeholder: 'nom@exemple.cd',
+          maxLength: 190,
+          autoCapitalize: 'none',
+          spellCheck: false,
+        })}
         {field('password', 'Mot de passe', {
           type: 'password',
           autoComplete: isRegister ? 'new-password' : 'current-password',

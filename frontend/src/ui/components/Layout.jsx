@@ -4,6 +4,7 @@ import { useAuth } from '../context/auth.jsx';
 import { useOnline } from '../hooks/useOnline.js';
 import { isEditor } from './AdminForm.jsx';
 import { ErrorBoundary } from './ErrorBoundary.jsx';
+import { GlossaireProvider } from '../context/glossaire.jsx';
 
 export const QUICK_ACCESS = [
   { to: '/urgences', label: 'Urgences', hint: 'Conduite ABCDE, signes de gravité', tone: 'urgence' },
@@ -11,6 +12,7 @@ export const QUICK_ACCESS = [
   { to: '/scores', label: 'Calculatrices', hint: 'Scores et calculs de doses' },
   { to: '/medicaments', label: 'Médicaments', hint: 'DCI, produits disponibles en RDC' },
   { to: '/examens', label: 'Examens', hint: 'Valeurs normales et interprétation' },
+  { to: '/glossaire', label: 'Sémiologie', hint: 'Glossaire des signes et syndromes' },
   { to: '/sources', label: 'Sources', hint: 'OMS, programmes nationaux, références' },
 ];
 
@@ -79,9 +81,11 @@ export function Layout() {
       </header>
 
       <main id="contenu" className="content" tabIndex={-1}>
-        <ErrorBoundary>
-          <Outlet />
-        </ErrorBoundary>
+        <GlossaireProvider>
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
+        </GlossaireProvider>
       </main>
 
       <footer className="footer">

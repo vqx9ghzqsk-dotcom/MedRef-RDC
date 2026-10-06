@@ -16,7 +16,6 @@ export function MedicamentsPage() {
   const filtresState = useAsync(() => api.medicamentFiltres(), [api]);
   const listState = useAsync(
     () => api.medicaments(filtres),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [api, filtres.operateur, filtres.classe, filtres.molecule],
   );
 

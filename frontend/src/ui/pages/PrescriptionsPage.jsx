@@ -4,6 +4,7 @@ import { useServices } from '../context/services.jsx';
 import { usePrescriptions } from '../hooks/usePrescriptions.js';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { Empty, Loading } from '../components/Status.jsx';
+import { nettoyerTexte, SUGGESTIONS } from '../../core/saisie.js';
 
 const emptyLine = () => ({ dci: '', posologie: '', duree: '' });
 
@@ -17,6 +18,20 @@ function PrescriptionForm({ onCreate }) {
   const [source, setSource] = useState(null);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [dcis, setDcis] = useState([]);
+
+  // DCI proposées à la saisie (liste des molécules ; disponible hors ligne si déjà consultée)
+  useEffect(() => {
+    if (typeof api.molecules !== 'function') return undefined;
+    let actif = true;
+    api
+      .molecules()
+      .then((liste) => actif && setDcis(liste.map((m) => m.dci)))
+      .catch(() => {});
+    return () => {
+      actif = false;
+    };
+  }, [api]);
 
   // Pré-remplissage depuis une fiche pathologie (molécules de 1re intention).
   useEffect(() => {
@@ -48,12 +63,12 @@ function PrescriptionForm({ onCreate }) {
     }
     setError(null);
     await onCreate({
-      patient_label: label,
+      patient_label: nettoyerTexte(label, 190),
       contenu: {
         lignes: filled.map((l) => ({
-          dci: l.dci.trim(),
-          posologie: l.posologie.trim(),
-          duree: l.duree.trim(),
+          dci: nettoyerTexte(l.dci, 190),
+          posologie: nettoyerTexte(l.posologie, 400),
+          duree: nettoyerTexte(l.duree, 160),
         })),
         notes: notes.trim(),
         pathologie: source,
@@ -78,7 +93,14 @@ function PrescriptionForm({ onCreate }) {
       )}
       <div className="field">
         <label htmlFor="rx-label">Patient (initiales, âge, poids…)</label>
-        <input id="rx-label" value={label} maxLength={190} onChange={(e) => setLabel(e.target.value)} />
+        <input
+          id="rx-label"
+          value={label}
+          maxLength={190}
+          onChange={(e) => setLabel(e.target.value)}
+          placeholder="ex. M. K., 34 ans, 62 kg"
+          autoComplete="off"
+        />
         <p className="hint">
           Évitez le nom complet : ces données restent sur l’appareil jusqu’à la synchronisation.
         </p>
@@ -89,7 +111,15 @@ function PrescriptionForm({ onCreate }) {
           <div className="rx-line" key={i}>
             <div className="field">
               <label htmlFor={`rx-dci-${i}`}>Molécule (DCI)</label>
-              <input id={`rx-dci-${i}`} value={l.dci} onChange={(e) => setLine(i, 'dci', e.target.value)} />
+              <input
+                id={`rx-dci-${i}`}
+                value={l.dci}
+                onChange={(e) => setLine(i, 'dci', e.target.value)}
+                list="rx-dci-liste"
+                placeholder="ex. Amoxicilline"
+                maxLength={190}
+                autoComplete="off"
+              />
             </div>
             <div className="field">
               <label htmlFor={`rx-pos-${i}`}>Posologie</label>
@@ -97,6 +127,9 @@ function PrescriptionForm({ onCreate }) {
                 id={`rx-pos-${i}`}
                 value={l.posologie}
                 onChange={(e) => setLine(i, 'posologie', e.target.value)}
+                placeholder="ex. 1 comprimé de 500 mg 3 fois par jour"
+                maxLength={400}
+                autoComplete="off"
               />
             </div>
             <div className="field">
@@ -105,6 +138,10 @@ function PrescriptionForm({ onCreate }) {
                 id={`rx-duree-${i}`}
                 value={l.duree}
                 onChange={(e) => setLine(i, 'duree', e.target.value)}
+                list="rx-duree-liste"
+                placeholder="ex. 7 jours"
+                maxLength={160}
+                autoComplete="off"
               />
             </div>
             {lignes.length > 1 && (
@@ -129,8 +166,25 @@ function PrescriptionForm({ onCreate }) {
       </fieldset>
       <div className="field">
         <label htmlFor="rx-notes">Consignes</label>
-        <textarea id="rx-notes" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <textarea
+          id="rx-notes"
+          rows={3}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="ex. Prendre pendant les repas. Revenir si la fièvre persiste après 48 h."
+          maxLength={2000}
+        />
       </div>
+      <datalist id="rx-dci-liste">
+        {dcis.map((d) => (
+          <option key={d} value={d} />
+        ))}
+      </datalist>
+      <datalist id="rx-duree-liste">
+        {SUGGESTIONS.duree.map((d) => (
+          <option key={d} value={d} />
+        ))}
+      </datalist>
       {error && (
         <p className="form-error" role="alert">
           {error}

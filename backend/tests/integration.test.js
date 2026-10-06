@@ -216,6 +216,117 @@ describeDb('Intégration MySQL', () => {
     });
   });
 
+  it('formes cliniques, sémiologie, syndromes, glossaire et signes d’alerte', async () => {
+    const data = require('../db/seed-data');
+    // Toutes les fiches ont une sémiologie par forme
+    for (const p of data.pathologies) {
+      const f = (await request(app).get(`/api/pathologies/${p.slug}`)).body.data;
+      expect(f.onglets.diagnostic.formes.length).toBeGreaterThan(0);
+      expect(f.urgences.every((u) => u.signes_alerte)).toBe(true);
+    }
+    const { onglets, urgences } = (await request(app).get('/api/pathologies/meningite-bacterienne')).body
+      .data;
+    expect(onglets.definition.formes.map((f) => f.type)).toContain('gravite');
+    const commune = onglets.diagnostic.formes[0];
+    expect(commune.signes_physiques).toMatch(/signe de Kernig/);
+    expect(commune.syndromes.map((s) => s.slug)).toContain('syndrome-meninge');
+    expect(commune.examens[0].slug).toBe('lcr');
+    expect(onglets.etiologies.formes.length).toBe(onglets.diagnostic.formes.length);
+    expect(urgences.find((u) => u.slug === 'choc-septique').signes_alerte).toMatch(/Purpura/);
+
+    const syndrome = (await request(app).get('/api/syndromes/syndrome-meninge')).body.data;
+    expect(syndrome.symptomes.map((s) => s.nom)).toContain('Raideur de nuque');
+    expect(syndrome.pathologies.map((p) => p.slug)).toContain('meningite-bacterienne');
+    expect(syndrome.termes.map((t) => t.terme)).toContain('Signe de Kernig');
+    const glossaire = (await request(app).get('/api/glossaire')).body.data;
+    expect(glossaire.find((t) => t.terme === 'Signe de Kernig')).toMatchObject({
+      variantes: ['Kernig'],
+      syndrome: { slug: 'syndrome-meninge' },
+    });
+    const recherche = (await request(app).get('/api/recherche?q=kernig')).body.data;
+    expect(recherche.glossaire.map((t) => t.terme)).toContain('Signe de Kernig');
+
+    // Enrichissement d'une base en service : rien n'est ajouté deux fois
+    const { connect } = require('../db/connexion');
+    const { chargerSemiologie } = require('../db/semiologie');
+    const conn = await connect();
+    const compte = await chargerSemiologie(conn, data);
+    await conn.end();
+    expect(compte).toMatchObject({ syndromes: 0, glossaire: 0, formes: 0, signes_alerte: 0 });
+    expect(compte.fiches_conservees).toBe(data.pathologies.length);
+  });
+
+  it('administration des formes, des signes d’alerte, du glossaire et des syndromes', async () => {
+    const r = await request(app)
+      .post('/api/auth/register')
+      .send({ email: `semio-${Date.now()}@medref.cd`, password: 'Quinine-2026', nom: 'Dr Sémiologie' });
+    await db.query("UPDATE users SET role = 'admin' WHERE id = ?", [r.body.user.id]);
+    const headers = { Authorization: `Bearer ${r.body.token}` };
+    const resume = (await request(app).get('/api/admin/resume').set(headers)).body.data;
+    const { id } = resume.pathologies.find((p) => p.slug === 'cholera');
+
+    const fiche = (await request(app).get(`/api/admin/pathologies/${id}`).set(headers)).body.data;
+    expect(fiche.options.syndromes.length).toBeGreaterThan(30);
+    const { options: _o, historique: _h, ...payload } = fiche;
+    payload.formes[0].signes_physiques += '\n- Crampes des mollets';
+    payload.formes.push({
+      nom: 'Forme de l’enfant',
+      type: 'terrain',
+      syndromes: ['syndrome-meninge-inconnu'],
+    });
+    payload.urgences[0].signes_alerte = 'Selles « eau de riz », léthargie';
+    const refus = await request(app).put(`/api/admin/pathologies/${id}`).set(headers).send(payload);
+    expect(refus.status).toBe(400);
+    expect(refus.body.details['formes[3].syndromes[0]']).toBe('Syndrome inconnu');
+
+    payload.formes[3].syndromes = ['syndrome-de-deshydratation-extracellulaire'];
+    payload.formes[3].examens = [{ examen_slug: 'ionogramme', interpretation: 'Hypokaliémie' }];
+    expect((await request(app).put(`/api/admin/pathologies/${id}`).set(headers).send(payload)).status).toBe(
+      200,
+    );
+    const publique = (await request(app).get('/api/pathologies/cholera')).body.data;
+    expect(publique.onglets.diagnostic.formes).toHaveLength(4);
+    expect(publique.onglets.diagnostic.formes[3].examens[0].slug).toBe('ionogramme');
+    expect(publique.urgences[0].signes_alerte).toBe('Selles « eau de riz », léthargie');
+    const hist = (await request(app).get(`/api/admin/pathologies/${id}`).set(headers)).body.data.historique;
+    expect(hist[0].resume).toMatch(/formes cliniques/);
+
+    // Glossaire : création, modification, doublon refusé
+    const cree = await request(app).post('/api/admin/glossaire').set(headers).send({
+      terme: 'Signe de Murphy',
+      definition: 'Arrêt de l’inspiration à la palpation de la vésicule.',
+    });
+    expect(cree.status).toBe(201);
+    const maj = await request(app)
+      .put(`/api/admin/glossaire/${cree.body.id}`)
+      .set(headers)
+      .send({ terme: 'Signe de Murphy', definition: 'Inspiration bloquée.', variantes: ['Murphy'] });
+    expect(maj.status).toBe(200);
+    const doublon = await request(app)
+      .post('/api/admin/glossaire')
+      .set(headers)
+      .send({ terme: 'Signe de Murphy', definition: 'x' });
+    expect(doublon.status).toBe(409);
+    expect(
+      (await request(app).get('/api/glossaire')).body.data.find((t) => t.terme === 'Signe de Murphy')
+        .variantes,
+    ).toEqual(['Murphy']);
+
+    // Syndrome : le slug reste stable quand le nom change
+    const semio = (await request(app).get('/api/admin/semiologie').set(headers)).body.data;
+    const meninge = semio.syndromes.find((s) => s.slug === 'syndrome-meninge');
+    const avantSyndrome = (await request(app).get(`/api/admin/syndromes/${meninge.id}`).set(headers)).body
+      .data;
+    const majSyndrome = await request(app)
+      .put(`/api/admin/syndromes/${meninge.id}`)
+      .set(headers)
+      .send({ ...avantSyndrome, nom: 'Syndrome méningé (irritation méningée)', symptomes: ['Céphalées'] });
+    expect(majSyndrome.status).toBe(200);
+    const page = (await request(app).get('/api/syndromes/syndrome-meninge')).body.data;
+    expect(page.nom).toBe('Syndrome méningé (irritation méningée)');
+    expect(page.symptomes.map((s) => s.nom)).toEqual(['Céphalées']);
+  });
+
   describe('migrations et sauvegardes', () => {
     const { connect } = require('../db/connexion');
     const { migrate, status } = require('../db/migrations');

@@ -12,12 +12,14 @@ const round = (n) => {
   return Math.round(n * 100) / 100;
 };
 
+import { normaliserNombre } from './saisie.js';
+
 export const POIDS_MIN = 0.3;
 export const POIDS_MAX = 300;
 
 export function parsePoids(raw) {
-  if (raw === undefined || raw === null || raw === '') return null;
-  const n = typeof raw === 'number' ? raw : Number(String(raw).replace(',', '.'));
+  const n = normaliserNombre(raw);
+  if (n === null) return null;
   if (!Number.isFinite(n) || n < POIDS_MIN || n > POIDS_MAX) return null;
   return n;
 }

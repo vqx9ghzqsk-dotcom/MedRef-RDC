@@ -16,12 +16,15 @@ import {
   AdminMedicamentPage,
   AdminMoleculePage,
   AdminPathologiePage,
+  AdminSyndromePage,
+  AdminTermePage,
 } from './ui/pages/AdminPages.jsx';
 import { RecherchePage } from './ui/pages/RecherchePage.jsx';
 import { PrescriptionsPage } from './ui/pages/PrescriptionsPage.jsx';
 import { NotFoundPage } from './ui/pages/NotFoundPage.jsx';
 import { HorsLignePage } from './ui/pages/HorsLignePage.jsx';
 import { ComptePage } from './ui/pages/ComptePage.jsx';
+import { GlossairePage, SyndromePage, SyndromesPage } from './ui/pages/SemiologiePages.jsx';
 
 export function AppRoutes() {
   return (
@@ -46,6 +49,9 @@ export function AppRoutes() {
         <Route path="examens" element={<ExamensPage />} />
         <Route path="examens/:slug" element={<ExamenPage />} />
         <Route path="sources" element={<SourcesPage />} />
+        <Route path="glossaire" element={<GlossairePage />} />
+        <Route path="syndromes" element={<SyndromesPage />} />
+        <Route path="syndromes/:slug" element={<SyndromePage />} />
         <Route path="recherche" element={<RecherchePage />} />
         <Route path="prescriptions" element={<PrescriptionsPage />} />
         <Route path="hors-ligne" element={<HorsLignePage />} />
@@ -54,6 +60,8 @@ export function AppRoutes() {
         <Route path="admin/pathologies/:id" element={<AdminPathologiePage />} />
         <Route path="admin/molecules/:id" element={<AdminMoleculePage />} />
         <Route path="admin/medicaments/:id" element={<AdminMedicamentPage />} />
+        <Route path="admin/glossaire/:id" element={<AdminTermePage />} />
+        <Route path="admin/syndromes/:id" element={<AdminSyndromePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

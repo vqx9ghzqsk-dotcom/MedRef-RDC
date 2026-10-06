@@ -120,18 +120,19 @@ npm run dev                   # http://localhost:5173 — /api est relayé vers 
 
 Sous Windows (PowerShell), remplacez `cp` par `Copy-Item`.
 
-| Script               | Backend                                 | Frontend                    |
-| -------------------- | --------------------------------------- | --------------------------- |
-| `npm run dev`        | API avec rechargement (nodemon)         | serveur Vite                |
-| `npm test`           | Jest + Supertest                        | Vitest                      |
-| `npm run lint`       | ESLint                                  | ESLint (+ React, hooks)     |
-| `npm run format`     | Prettier                                | Prettier                    |
-| `npm run build`      | —                                       | build de production (dist/) |
-| `npm run db:migrate` | applique les migrations en attente      | —                           |
-| `npm run db:status`  | migrations appliquées / en attente      | —                           |
-| `npm run db:backup`  | sauvegarde de la base (`-- --liste`)    | —                           |
-| `npm run db:restore` | restaure une sauvegarde                 | —                           |
-| `npm run db:reset`   | DESTRUCTIF : schéma + données initiales | —                           |
+| Script                | Backend                                                  | Frontend                    |
+| --------------------- | -------------------------------------------------------- | --------------------------- |
+| `npm run dev`         | API avec rechargement (nodemon)                          | serveur Vite                |
+| `npm test`            | Jest + Supertest                                         | Vitest                      |
+| `npm run lint`        | ESLint                                                   | ESLint (+ React, hooks)     |
+| `npm run format`      | Prettier                                                 | Prettier                    |
+| `npm run build`       | —                                                        | build de production (dist/) |
+| `npm run db:migrate`  | applique les migrations en attente                       | —                           |
+| `npm run db:status`   | migrations appliquées / en attente                       | —                           |
+| `npm run db:backup`   | sauvegarde de la base (`-- --liste`)                     | —                           |
+| `npm run db:restore`  | restaure une sauvegarde                                  | —                           |
+| `npm run db:enrichir` | ajoute le nouveau contenu de seed-data sans rien écraser | —                           |
+| `npm run db:reset`    | DESTRUCTIF : schéma + données initiales                  | —                           |
 
 ---
 
@@ -418,6 +419,18 @@ référence (spécialité, molécule, examen, source, fiche…) n'existe pas.
 
 Les niveaux de soins sont dans `seed-data/niveaux.js`, les grades dans `seed-data/grades.js` (seuls les grades vérifiés
 dans la source sont renseignés) et les posologies structurées dans `seed-data/posologies.js`.
+
+**Formes cliniques et sémiologie.** `seed-data/semiologie/` décrit, pour chaque fiche, ses formes cliniques (commune,
+grave, selon le terrain, topographique, évolutive, paraclinique, étiologique). Chaque forme a sa sémiologie
+systématisée (terrain, signes fonctionnels, généraux, physiques, paraclinique), ses syndromes, ses examens de
+confirmation et ses étiologies ; `urgences` donne les signes d'alerte du bandeau « Urgence associée ». Les syndromes
+sont dans `seed-data/syndromes.js`, le glossaire sémiologique dans `seed-data/glossaire.js` (terme, définition,
+variantes, syndrome lié). Dans les fiches, la première occurrence de chaque terme du glossaire est soulignée et sa
+définition s'affiche au survol ou au toucher.
+
+Sur une base en service, `npm run db:enrichir` ajoute ce contenu sans rien écraser : une fiche qui a déjà des formes
+(saisies ou corrigées dans /admin) est conservée telle quelle, de même que les termes, syndromes et signes d'alerte
+déjà présents. Une sauvegarde est faite avant.
 
 Au quotidien, corrigez le contenu depuis **/admin** : `npm run db:reset` recharge les fichiers et **efface** les
 modifications faites dans l'administration (d'où la confirmation exigée et la sauvegarde préalable).

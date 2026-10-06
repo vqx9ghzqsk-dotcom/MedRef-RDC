@@ -8,6 +8,8 @@
  * ou lève une CalculatorError si une valeur est manquante ou hors bornes.
  */
 
+import { normaliserNombre } from '../saisie.js';
+
 export class CalculatorError extends Error {}
 
 const round = (n, d = 1) => Math.round(n * 10 ** d) / 10 ** d;
@@ -19,7 +21,7 @@ function num(values, field) {
     if (field.optional) return null;
     throw new CalculatorError(`Renseignez « ${field.label} »`);
   }
-  const n = typeof raw === 'number' ? raw : Number(String(raw).replace(',', '.'));
+  const n = normaliserNombre(raw);
   if (!Number.isFinite(n)) throw new CalculatorError(`« ${field.label} » doit être un nombre`);
   if (field.min !== undefined && n < field.min) {
     throw new CalculatorError(`« ${field.label} » doit être ≥ ${field.min}`);

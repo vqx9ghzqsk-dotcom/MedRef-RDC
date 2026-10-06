@@ -36,10 +36,12 @@ describe('GET /api/recherche', () => {
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([{ id: 1, nom: 'Paludisme grave', slug: 'paludisme-grave-urgence' }])
       .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ id: 3, nom: 'Syndrome anémique', slug: 'syndrome-anemique' }])
       .mockResolvedValueOnce([]);
     const res = await request(app).get('/api/recherche?q=paludisme');
     expect(res.status).toBe(200);
-    expect(res.body.total).toBe(4);
+    expect(res.body.total).toBe(5);
     expect(Object.keys(res.body.data)).toEqual([
       'pathologies',
       'medicaments',
@@ -48,6 +50,8 @@ describe('GET /api/recherche', () => {
       'urgences',
       'symptomes',
       'scores',
+      'syndromes',
+      'glossaire',
     ]);
     expect(res.body.data.pathologies[0].score).toBeUndefined();
     expect(db.query.mock.calls[0][0]).toMatch(/MATCH\(p\.nom, p\.definition\)/);
@@ -55,7 +59,7 @@ describe('GET /api/recherche', () => {
   });
 
   it('se replie sur LIKE pour les termes courts', async () => {
-    for (let i = 0; i < 7; i += 1) db.query.mockResolvedValueOnce([]);
+    for (let i = 0; i < 9; i += 1) db.query.mockResolvedValueOnce([]);
     const res = await request(app).get('/api/recherche?q=IV');
     expect(res.status).toBe(200);
     expect(db.query.mock.calls[0][0]).not.toMatch(/MATCH/);

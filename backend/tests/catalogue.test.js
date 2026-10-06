@@ -79,7 +79,16 @@ describe('Catalogue', () => {
           valide_par_nom: 'Dr Mingalu',
         },
       ])
-      .mockResolvedValueOnce([{ id: 1, nom: 'Paludisme grave', slug: 'pg', categorie: 'medicale' }])
+      .mockResolvedValueOnce([
+        {
+          id: 1,
+          nom: 'Paludisme grave',
+          slug: 'pg',
+          categorie: 'medicale',
+          signes_gravite: '- **Coma**\n- Convulsions',
+          signes_alerte: null,
+        },
+      ])
       .mockResolvedValueOnce([{ id: 1, nom: 'Fièvre', slug: 'fievre', frequence: 'tres_frequent' }])
       .mockResolvedValueOnce([
         { id: 1, dci: 'Artésunate', slug: 'artesunate', ligne: 'premiere', contexte: 'IV/IM' },
@@ -151,6 +160,25 @@ describe('Catalogue', () => {
           prise_en_charge: 'Artésunate rectal',
           criteres_transfert: 'Tout cas grave',
         },
+      ])
+      // Formes cliniques, puis leurs syndromes et leurs examens
+      .mockResolvedValueOnce([
+        {
+          id: 7,
+          nom: 'Neuropaludisme',
+          type: 'gravite',
+          description: 'Coma',
+          terrain: 'Enfant',
+          signes_fonctionnels: 'Céphalées',
+          signes_generaux: 'Fièvre',
+          signes_physiques: 'Coma calme',
+          paraclinique: 'GE positive',
+          etiologies: 'P. falciparum',
+        },
+      ])
+      .mockResolvedValueOnce([{ forme_id: 7, slug: 'syndrome-convulsif', nom: 'Crise convulsive' }])
+      .mockResolvedValueOnce([
+        { forme_id: 7, slug: 'lcr', nom: 'LCR', type: 'biologie', interpretation: 'Normal' },
       ]);
     const res = await request(app).get('/api/pathologies/paludisme-grave');
     expect(res.status).toBe(200);
@@ -179,7 +207,25 @@ describe('Catalogue', () => {
       grade_source: 'OMS',
     });
     expect(db.query.mock.calls[0][0]).toMatch(/LEFT JOIN users v ON v\.id = p\.valide_par/);
-    expect(fiche.onglets.definition).toEqual({ definition: 'def', physiopathologie: 'physio' });
+    expect(fiche.onglets.definition).toEqual({
+      definition: 'def',
+      physiopathologie: 'physio',
+      formes: [{ id: 7, nom: 'Neuropaludisme', type: 'gravite', description: 'Coma' }],
+    });
+    // Sémiologie par forme, avec syndromes et examens de confirmation
+    expect(fiche.onglets.diagnostic.formes[0]).toMatchObject({
+      nom: 'Neuropaludisme',
+      signes_physiques: 'Coma calme',
+      syndromes: [{ slug: 'syndrome-convulsif', nom: 'Crise convulsive' }],
+      examens: [{ slug: 'lcr', interpretation: 'Normal' }],
+    });
+    expect(fiche.onglets.diagnostic.formes[0]).not.toHaveProperty('etiologies');
+    expect(fiche.onglets.etiologies.formes).toEqual([
+      { id: 7, nom: 'Neuropaludisme', type: 'gravite', etiologies: 'P. falciparum' },
+    ]);
+    // Sans signes propres au lien : premiers signes de gravité de l'urgence
+    expect(fiche.urgences[0].signes_alerte).toBe('Coma ; Convulsions');
+    expect(fiche.urgences[0]).not.toHaveProperty('signes_gravite');
     expect(fiche.departement.slug).toBe('medecine-interne');
     expect(fiche.urgences).toHaveLength(1);
     expect(fiche.symptomes[0].frequence).toBe('tres_frequent');

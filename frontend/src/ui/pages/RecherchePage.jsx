@@ -48,6 +48,14 @@ const GROUPS = [
     to: (r) => `/scores/${r.slug}`,
     label: (r) => r.nom,
   },
+  { key: 'syndromes', title: 'Syndromes', to: (r) => `/syndromes/${r.slug}`, label: (r) => r.nom },
+  {
+    key: 'glossaire',
+    title: 'Glossaire sémiologique',
+    to: (r) => `/glossaire#${r.slug}`,
+    label: (r) => r.terme,
+    sub: (r) => r.definition,
+  },
 ];
 
 export function RecherchePage() {

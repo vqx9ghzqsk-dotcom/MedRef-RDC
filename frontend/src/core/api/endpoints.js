@@ -35,6 +35,9 @@ export function createMedRefApi(client) {
     examen: (slug) => data(client.get(`/api/examens/${enc(slug)}`)),
     sources: (filtres) => data(client.get('/api/sources', filtres)),
     recherche: (q) => client.get('/api/recherche', { q }),
+    glossaire: () => data(client.get('/api/glossaire')),
+    syndromes: () => data(client.get('/api/syndromes')),
+    syndrome: (slug) => data(client.get(`/api/syndromes/${enc(slug)}`)),
     horsLigne: () => data(client.get('/api/hors-ligne')),
     signalerErreur: (payload) => client.post('/api/journal/erreur', payload),
 
@@ -47,6 +50,17 @@ export function createMedRefApi(client) {
     adminMedicament: (id) => data(client.get(`/api/admin/medicaments/${enc(id)}`)),
     adminSaveMedicament: (id, payload) => client.put(`/api/admin/medicaments/${enc(id)}`, payload),
     adminVersion: (id) => data(client.get(`/api/admin/modifications/${enc(id)}`)),
+    adminSemiologie: () => data(client.get('/api/admin/semiologie')),
+    adminTerme: (id) => data(client.get(`/api/admin/glossaire/${enc(id)}`)),
+    adminSaveTerme: (id, payload) =>
+      id
+        ? client.put(`/api/admin/glossaire/${enc(id)}`, payload)
+        : client.post('/api/admin/glossaire', payload),
+    adminSyndrome: (id) => data(client.get(`/api/admin/syndromes/${enc(id)}`)),
+    adminSaveSyndrome: (id, payload) =>
+      id
+        ? client.put(`/api/admin/syndromes/${enc(id)}`, payload)
+        : client.post('/api/admin/syndromes', payload),
 
     // Prescriptions
     prescriptions: () => data(client.get('/api/prescriptions')),

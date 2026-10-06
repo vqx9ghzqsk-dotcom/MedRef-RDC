@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getCalculator, runCalculator } from '../../core/calculators/index.js';
+import { NumberField } from './NumberField.jsx';
 
 /** Formulaire généré à partir de la définition de la calculatrice (core). */
 export function CalculatorForm({ code }) {
@@ -59,19 +60,20 @@ export function CalculatorForm({ code }) {
           );
         }
         return (
-          <div className="field" key={f.name}>
-            <label htmlFor={id}>
-              {f.label}
-              {f.unit && <span className="muted"> ({f.unit})</span>}
-            </label>
-            <input
-              id={id}
-              type="text"
-              inputMode="decimal"
-              value={values[f.name] ?? ''}
-              onChange={(e) => set(f.name, e.target.value)}
-            />
-          </div>
+          <NumberField
+            key={f.name}
+            id={id}
+            name={f.name}
+            label={f.label}
+            unit={f.unit}
+            min={f.min}
+            max={f.max}
+            exemple={f.exemple}
+            optional={f.optional}
+            required={!f.optional}
+            value={values[f.name] ?? ''}
+            onChange={(v) => set(f.name, v)}
+          />
         );
       })}
       <div className="calc-actions">

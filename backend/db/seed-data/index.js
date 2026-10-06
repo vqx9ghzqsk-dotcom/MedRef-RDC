@@ -21,6 +21,9 @@ const { sources } = require('./sources');
 const niveaux = require('./niveaux');
 const grades = require('./grades');
 const posologies = require('./posologies');
+const syndromes = require('./syndromes');
+const glossaire = require('./glossaire');
+const semiologie = require('./semiologie');
 
 const pathologies = [
   ...require('./pathologies/infectiologie'),
@@ -46,4 +49,7 @@ module.exports = {
   niveaux,
   grades,
   posologies,
+  syndromes,
+  glossaire,
+  semiologie,
 };

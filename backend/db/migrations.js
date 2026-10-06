@@ -77,7 +77,13 @@ async function record(conn, version, nom, sum) {
 /** Recrée entièrement le schéma de départ (DESTRUCTIF) puis le marque comme appliqué. */
 async function createBaseline(conn) {
   const sql = fs.readFileSync(SCHEMA_FILE, 'utf8');
-  await conn.query('DROP TABLE IF EXISTS schema_migrations');
+  // Toutes les tables, y compris celles créées par des migrations : la base repart vide
+  const [tables] = await conn.query(
+    "SELECT TABLE_NAME AS name FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_TYPE = 'BASE TABLE'",
+  );
+  await conn.query('SET FOREIGN_KEY_CHECKS = 0');
+  for (const { name } of tables) await conn.query(`DROP TABLE IF EXISTS \`${name.replace(/`/g, '``')}\``);
+  await conn.query('SET FOREIGN_KEY_CHECKS = 1');
   await conn.query(sql);
   await ensureTable(conn);
   await record(conn, BASELINE, 'schema_initial', checksum(sql));

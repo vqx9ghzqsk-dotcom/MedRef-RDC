@@ -135,3 +135,23 @@ export function groupByInitial(items, key = 'nom') {
   }
   return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b, 'fr'));
 }
+
+/** Types de formes cliniques (sémiologie systématisée). */
+export const TYPES_FORME = {
+  commune: 'Forme commune',
+  gravite: 'Forme grave',
+  terrain: 'Forme selon le terrain',
+  topographique: 'Forme topographique',
+  evolutive: 'Forme évolutive',
+  paraclinique: 'Forme paraclinique',
+  etiologique: 'Forme étiologique',
+};
+
+/** Rubriques de la sémiologie, dans l'ordre de l'examen clinique. */
+export const RUBRIQUES_SEMIOLOGIE = [
+  ['terrain', 'Terrain et circonstances de découverte'],
+  ['signes_fonctionnels', 'Signes fonctionnels'],
+  ['signes_generaux', 'Signes généraux'],
+  ['signes_physiques', 'Signes physiques'],
+  ['paraclinique', 'Signes paracliniques évocateurs'],
+];

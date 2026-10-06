@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
@@ -15,6 +15,8 @@ import {
   formatDateTime,
   useUnsavedWarning,
 } from '../components/AdminForm.jsx';
+import { NumberField } from '../components/NumberField.jsx';
+import { SUGGESTIONS } from '../../core/saisie.js';
 import {
   CATEGORIES_EXAMEN,
   FICHE_PHARMACO,
@@ -22,8 +24,10 @@ import {
   NIVEAUX_SOINS,
   POPULATIONS,
   SECURITES,
+  RUBRIQUES_SEMIOLOGIE,
   STATUTS_FICHE,
   TYPES_EXAMEN,
+  TYPES_FORME,
   formatPrixCdf,
 } from '../../core/labels.js';
 
@@ -59,6 +63,7 @@ const ONGLETS_ADMIN = [
   ['fiches', 'Fiches pathologie'],
   ['molecules', 'Molécules et posologies'],
   ['produits', 'Produits'],
+  ['semiologie', 'Glossaire et syndromes'],
   ['historique', 'Historique'],
 ];
 
@@ -128,7 +133,13 @@ function AdminHome() {
                 <form className="filter-bar" onSubmit={(e) => e.preventDefault()} aria-label="Filtres">
                   <div className="field">
                     <label htmlFor="admin-q">Rechercher</label>
-                    <input id="admin-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} />
+                    <input
+                      id="admin-q"
+                      type="search"
+                      value={q}
+                      onChange={(e) => setQ(e.target.value)}
+                      placeholder="ex. paludisme, Kernig"
+                    />
                   </div>
                   {onglet === 'fiches' && (
                     <div className="field">
@@ -257,6 +268,8 @@ function AdminHome() {
                 </div>
               )}
 
+              {onglet === 'semiologie' && <SemiologieAdmin filtre={filtre} />}
+
               {onglet === 'historique' &&
                 (d.modifications.length ? (
                   <ul className="historique card">
@@ -284,6 +297,149 @@ function AdminHome() {
 }
 
 // ================================================================== Fiche pathologie
+
+const AIDE_PUCES = 'Une ligne par signe, commençant par « - ». **gras** pour l’essentiel.';
+
+/** Syndromes d'une forme : puces retirables + liste déroulante pour en ajouter. */
+function SyndromesForme({ valeur, options, onChange, erreur }) {
+  const restants = options.filter((o) => !valeur.includes(o.slug));
+  return (
+    <div className="field">
+      <span className="field-label">Regroupement syndromique</span>
+      {valeur.length > 0 && (
+        <ul className="chips">
+          {valeur.map((slug) => (
+            <li key={slug}>
+              <span className="chip chip-syndrome chip-retirable">
+                {options.find((o) => o.slug === slug)?.nom || slug}
+                <button
+                  type="button"
+                  className="btn-link"
+                  aria-label={`Retirer ${options.find((o) => o.slug === slug)?.nom || slug}`}
+                  onClick={() => onChange(valeur.filter((x) => x !== slug))}
+                >
+                  ×
+                </button>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <SelectField
+        label="Ajouter un syndrome"
+        value={null}
+        onChange={(slug) => slug && onChange([...valeur, slug])}
+        options={restants.map((o) => [o.slug, o.nom])}
+        emptyLabel="— Choisir un syndrome —"
+        error={erreur}
+      />
+    </div>
+  );
+}
+
+function FormeEditor({ forme, update, i, err, options, examensOptions }) {
+  const examens = forme.examens || [];
+  const setExamen = (j, patch) =>
+    update({ examens: examens.map((e, k) => (k === j ? { ...e, ...patch } : e)) });
+  return (
+    <>
+      <div className="form-grid">
+        <TextField
+          label="Nom de la forme"
+          value={forme.nom}
+          onChange={(nom) => update({ nom })}
+          error={err(`formes[${i}].nom`)}
+          placeholder="ex. Neuropaludisme, forme de l’enfant"
+          required
+        />
+        <SelectField
+          label="Type de forme"
+          value={forme.type}
+          onChange={(type) => update({ type })}
+          options={entries(TYPES_FORME)}
+          error={err(`formes[${i}].type`)}
+          required
+        />
+      </div>
+      <TextArea
+        label="Description (onglet Définition)"
+        rows={2}
+        value={forme.description}
+        onChange={(description) => update({ description })}
+        error={err(`formes[${i}].description`)}
+        placeholder="ex. Coma persistant plus de 30 min après une convulsion, sans autre cause."
+      />
+      {RUBRIQUES_SEMIOLOGIE.map(([k, label]) => (
+        <TextArea
+          key={k}
+          label={label}
+          rows={3}
+          value={forme[k]}
+          onChange={(v) => update({ [k]: v })}
+          error={err(`formes[${i}].${k}`)}
+          placeholder={
+            k === 'signes_physiques'
+              ? '- **Inspection** : …\n- **Palpation** : …\n- **Auscultation** : …'
+              : '- …'
+          }
+          hint={AIDE_PUCES}
+        />
+      ))}
+      <TextArea
+        label="Étiologies de cette forme (onglet Étiologies)"
+        rows={3}
+        value={forme.etiologies}
+        onChange={(etiologies) => update({ etiologies })}
+        error={err(`formes[${i}].etiologies`)}
+        placeholder="- *Plasmodium falciparum*"
+        hint={AIDE_PUCES}
+      />
+      <SyndromesForme
+        valeur={forme.syndromes || []}
+        options={options.syndromes || []}
+        onChange={(syndromes) => update({ syndromes })}
+        erreur={(forme.syndromes || []).map((_, j) => err(`formes[${i}].syndromes[${j}]`)).find(Boolean)}
+      />
+      <fieldset className="sous-liste">
+        <legend>Examens de confirmation</legend>
+        {examens.map((e, j) => (
+          <div key={j} className="sous-liste-item">
+            <SelectField
+              label={`Examen ${j + 1}`}
+              value={e.examen_slug}
+              onChange={(examen_slug) => setExamen(j, { examen_slug })}
+              options={examensOptions}
+              emptyLabel="— Choisir —"
+              error={err(`formes[${i}].examens[${j}].examen_slug`)}
+              required
+            />
+            <TextField
+              label="Ce qu’il montre dans cette forme"
+              value={e.interpretation}
+              onChange={(interpretation) => setExamen(j, { interpretation })}
+              placeholder="ex. LCR normal : élimine une méningite"
+            />
+            <button
+              type="button"
+              className="btn btn-danger btn-small"
+              onClick={() => update({ examens: examens.filter((_, k) => k !== j) })}
+              aria-label={`Retirer l’examen ${j + 1}`}
+            >
+              Retirer
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          className="btn btn-secondary btn-small"
+          onClick={() => update({ examens: [...examens, { examen_slug: null, interpretation: '' }] })}
+        >
+          + Ajouter un examen
+        </button>
+      </fieldset>
+    </>
+  );
+}
 
 const TEXTES_FICHE = [
   ['definition', 'Définition', 4],
@@ -433,6 +589,60 @@ function PathologieEditor({ id, initial, onSaved }) {
           />
         ))}
       </section>
+
+      <section className="card">
+        <h2>Formes cliniques et sémiologie</h2>
+        <p className="hint">
+          Commencez par la forme commune. Chaque forme a sa sémiologie systématisée, ses syndromes, ses
+          examens de confirmation et ses étiologies.
+        </p>
+        <ListEditor
+          title="Formes cliniques"
+          items={form.formes || []}
+          onChange={(formes) => set({ formes })}
+          newItem={() => ({
+            nom: '',
+            type: (form.formes || []).length ? 'gravite' : 'commune',
+            syndromes: [],
+            examens: [],
+          })}
+          itemLabel={(fo) => fo.nom && `${fo.nom} — ${TYPES_FORME[fo.type] || ''}`}
+          addLabel="Ajouter une forme"
+          renderItem={(fo, update, i) => (
+            <FormeEditor
+              forme={fo}
+              update={update}
+              i={i}
+              err={err}
+              options={options}
+              examensOptions={examensOptions}
+            />
+          )}
+        />
+      </section>
+
+      {(form.urgences || []).length > 0 && (
+        <section className="card">
+          <h2>Urgences associées : signes d’alerte</h2>
+          <p className="hint">
+            Affichés en tête de la fiche sous la forme « signes (urgence) ». Courts et concrets : ce qui doit
+            faire agir.
+          </p>
+          {form.urgences.map((u, i) => (
+            <TextField
+              key={u.urgence_slug}
+              label={u.nom}
+              value={u.signes_alerte}
+              onChange={(signes_alerte) =>
+                set({ urgences: form.urgences.map((x, j) => (j === i ? { ...x, signes_alerte } : x)) })
+              }
+              error={err(`urgences[${i}].signes_alerte`)}
+              placeholder="ex. Convulsions, troubles de la conscience, détresse respiratoire"
+              maxLength={500}
+            />
+          ))}
+        </section>
+      )}
 
       <section className="card">
         <h2>Diagnostic : bilan paraclinique</h2>
@@ -782,12 +992,17 @@ function MoleculeEditor({ id, initial, onSaved }) {
                   value={p.indication}
                   onChange={(indication) => update({ indication })}
                   error={err(`posologies[${i}].indication`)}
+                  placeholder="ex. Paludisme grave"
+                  maxLength={190}
                 />
                 <TextField
                   label="Voie"
                   value={p.voie}
                   onChange={(voie) => update({ voie })}
                   error={err(`posologies[${i}].voie`)}
+                  suggestions={SUGGESTIONS.voie}
+                  placeholder="ex. IV"
+                  maxLength={60}
                 />
               </div>
               <TextField
@@ -795,28 +1010,40 @@ function MoleculeEditor({ id, initial, onSaved }) {
                 value={p.dose_texte}
                 onChange={(dose_texte) => update({ dose_texte })}
                 error={err(`posologies[${i}].dose_texte`)}
+                placeholder="ex. 2,4 mg/kg à H0, H12, H24 puis toutes les 24 h"
+                maxLength={400}
                 required
               />
               <div className="form-grid form-grid-3">
-                <TextField
+                <NumberField
                   label="Dose par kg et par prise"
-                  inputMode="decimal"
+                  name="dose_par_kg"
+                  unit={p.unite ? `${p.unite}/kg` : undefined}
+                  min={0}
+                  max={100000}
                   value={p.dose_par_kg ?? ''}
                   onChange={(v) => update({ dose_par_kg: v === '' ? null : v })}
                   error={err(`posologies[${i}].dose_par_kg`)}
+                  hint="Laisser vide si la dose n’est pas calculée au poids"
                 />
-                <TextField
+                <NumberField
                   label="Dose maximale par prise"
-                  inputMode="decimal"
+                  name="dose_max"
+                  unit={p.unite || undefined}
+                  min={0}
+                  max={1000000}
                   value={p.dose_max ?? ''}
                   onChange={(v) => update({ dose_max: v === '' ? null : v })}
                   error={err(`posologies[${i}].dose_max`)}
+                  hint="Plafond du calcul au poids"
                 />
                 <TextField
                   label="Unité"
                   value={p.unite}
                   onChange={(unite) => update({ unite })}
-                  hint="mg, UI, mL, g, µg, kcal"
+                  suggestions={SUGGESTIONS.unite}
+                  placeholder="mg"
+                  maxLength={20}
                   error={err(`posologies[${i}].unite`)}
                 />
               </div>
@@ -826,12 +1053,18 @@ function MoleculeEditor({ id, initial, onSaved }) {
                   value={p.frequence}
                   onChange={(frequence) => update({ frequence })}
                   error={err(`posologies[${i}].frequence`)}
+                  suggestions={SUGGESTIONS.frequence}
+                  placeholder="ex. Toutes les 8 h"
+                  maxLength={160}
                 />
                 <TextField
                   label="Durée"
                   value={p.duree}
                   onChange={(duree) => update({ duree })}
                   error={err(`posologies[${i}].duree`)}
+                  suggestions={SUGGESTIONS.duree}
+                  placeholder="ex. 7 jours"
+                  maxLength={160}
                 />
                 <SelectField
                   label="Sécurité"
@@ -948,16 +1181,22 @@ function MedicamentEditor({ id, initial, onSaved }) {
           <label htmlFor="rdc">Disponible dans le circuit national (LNME, FEDECAME, programmes)</label>
         </div>
         <div className="form-grid">
-          <TextField
-            label="Prix indicatif (FC)"
-            inputMode="decimal"
+          <NumberField
+            label="Prix indicatif"
+            name="prix_indicatif_cdf"
+            unit="FC"
+            min={0}
+            max={10000000000}
             value={form.prix_indicatif_cdf ?? ''}
             onChange={(v) => set({ prix_indicatif_cdf: v === '' ? null : v })}
             error={err('prix_indicatif_cdf')}
+            hint="Prix public constaté en francs congolais ; laisser vide si inconnu"
           />
           <TextField
             label="Photo (adresse https)"
             value={form.photo_url}
+            placeholder="https://…"
+            inputMode="url"
             onChange={(photo_url) => set({ photo_url })}
             error={err('photo_url')}
           />
@@ -991,6 +1230,325 @@ function MedicamentEditor({ id, initial, onSaved }) {
         )}
       </section>
 
+      <Historique
+        items={historique}
+        charger={api.adminVersion}
+        onRestaurer={(etat) => {
+          setForm((f) => ({ ...f, ...etat }));
+          setDirty(true);
+        }}
+      />
+      <SaveBar saving={save.saving} dirty={dirty} message={save.message} error={save.error} onSave={onSave} />
+    </article>
+  );
+}
+
+// ================================================================== Glossaire et syndromes
+
+/** Onglet du tableau de bord : termes du glossaire et syndromes, chargés à la demande. */
+function SemiologieAdmin({ filtre }) {
+  const { api } = useServices();
+  const state = useAsync(() => api.adminSemiologie(), [api]);
+  return (
+    <AsyncView state={state}>
+      {(d) => (
+        <div className="admin-semiologie">
+          <section>
+            <div className="section-title">
+              <h2>Syndromes ({d.syndromes.length})</h2>
+              <Link to="/admin/syndromes/nouveau" className="btn btn-secondary btn-small">
+                + Nouveau syndrome
+              </Link>
+            </div>
+            <div className="table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Syndrome</th>
+                    <th scope="col">Formes liées</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {d.syndromes
+                    .filter((sy) => filtre(sy.nom))
+                    .map((sy) => (
+                      <tr key={sy.id}>
+                        <td>
+                          <Link to={`/admin/syndromes/${sy.id}`}>{sy.nom}</Link>
+                        </td>
+                        <td>{sy.nb_formes}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <section>
+            <div className="section-title">
+              <h2>Glossaire ({d.glossaire.length} termes)</h2>
+              <Link to="/admin/glossaire/nouveau" className="btn btn-secondary btn-small">
+                + Nouveau terme
+              </Link>
+            </div>
+            <div className="table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Terme</th>
+                    <th scope="col">Syndrome</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {d.glossaire
+                    .filter((t) => filtre(`${t.terme} ${t.syndrome || ''}`))
+                    .map((t) => (
+                      <tr key={t.id}>
+                        <td>
+                          <Link to={`/admin/glossaire/${t.id}`}>{t.terme}</Link>
+                        </td>
+                        <td className="muted">{t.syndrome || '—'}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      )}
+    </AsyncView>
+  );
+}
+
+/** Liste de texte libre saisie à raison d'un élément par ligne. */
+const versLignes = (liste) => (liste || []).join('\n');
+const depuisLignes = (texte) =>
+  String(texte || '')
+    .split('\n')
+    .map((x) => x.trim())
+    .filter(Boolean);
+
+export function AdminTermePage() {
+  return (
+    <EditorGuard>
+      <Reloadable
+        load={async (api, id) => {
+          if (id !== 'nouveau') return api.adminTerme(id);
+          const { syndromes } = await api.adminSemiologie();
+          return {
+            id: null,
+            terme: '',
+            definition: '',
+            variantes: [],
+            syndrome: null,
+            options: { syndromes: syndromes.map(({ slug, nom }) => ({ slug, nom })) },
+            historique: [],
+          };
+        }}
+        Editor={TermeEditor}
+      />
+    </EditorGuard>
+  );
+}
+
+function TermeEditor({ initial, onSaved }) {
+  const { api } = useServices();
+  const navigate = useNavigate();
+  const { options, historique, id, ...depart } = initial;
+  const [form, setForm] = useState({ ...depart, variantesTexte: versLignes(depart.variantes) });
+  const [dirty, setDirty] = useState(false);
+  const [save, run] = useSave((payload) => api.adminSaveTerme(id, payload));
+  useUnsavedWarning(dirty);
+  const set = (patch) => {
+    setForm((f) => ({ ...f, ...patch }));
+    setDirty(true);
+  };
+
+  const onSave = async () => {
+    const res = await run({
+      terme: form.terme,
+      definition: form.definition,
+      variantes: depuisLignes(form.variantesTexte),
+      syndrome: form.syndrome,
+    });
+    if (!res) return;
+    setDirty(false);
+    if (!id) navigate(`/admin/glossaire/${res.id}`, { replace: true });
+    else if (!res.inchange) onSaved();
+  };
+
+  return (
+    <article className="admin-editor">
+      <Breadcrumb
+        items={[{ label: 'Administration', to: '/admin' }, { label: form.terme || 'Nouveau terme' }]}
+      />
+      <header className="page-header">
+        <h1>{id ? initial.terme : 'Nouveau terme du glossaire'}</h1>
+        {id && (
+          <p className="lead">
+            <Link to={`/glossaire#${initial.slug || ''}`}>Voir dans le glossaire</Link>
+          </p>
+        )}
+      </header>
+      <section className="card">
+        <TextField
+          label="Terme"
+          value={form.terme}
+          onChange={(terme) => set({ terme })}
+          error={save.errors.terme}
+          placeholder="ex. Signe de Murphy"
+          maxLength={190}
+          required
+        />
+        <TextArea
+          label="Définition"
+          rows={3}
+          markdown={false}
+          value={form.definition}
+          onChange={(definition) => set({ definition })}
+          error={save.errors.definition}
+          placeholder="Une ou deux phrases : ce que l’on observe et ce que cela évoque."
+          maxLength={2000}
+        />
+        <TextArea
+          label="Autres formes reconnues dans le texte"
+          rows={3}
+          markdown={false}
+          value={form.variantesTexte}
+          onChange={(variantesTexte) => set({ variantesTexte })}
+          error={save.errors.variantes}
+          placeholder={'Une par ligne, ex. :\nMurphy\nsigne de Murphy positif'}
+          hint="Pluriel, synonyme, abréviation. Une abréviation en MAJUSCULES n’est reconnue qu’en majuscules."
+        />
+        <SelectField
+          label="Syndrome associé"
+          value={form.syndrome}
+          onChange={(syndrome) => set({ syndrome })}
+          options={options.syndromes.map((sy) => [sy.slug, sy.nom])}
+          emptyLabel="— Aucun —"
+          error={save.errors.syndrome}
+        />
+      </section>
+      <Historique
+        items={historique}
+        charger={api.adminVersion}
+        onRestaurer={(etat) => {
+          setForm((f) => ({ ...f, ...etat, variantesTexte: versLignes(etat.variantes) }));
+          setDirty(true);
+        }}
+      />
+      <SaveBar saving={save.saving} dirty={dirty} message={save.message} error={save.error} onSave={onSave} />
+    </article>
+  );
+}
+
+export function AdminSyndromePage() {
+  return (
+    <EditorGuard>
+      <Reloadable
+        load={async (api, id) => {
+          if (id !== 'nouveau') return api.adminSyndrome(id);
+          const symptomes = await api.symptomes();
+          return {
+            id: null,
+            nom: '',
+            definition: '',
+            elements: '',
+            symptomes: [],
+            options: { symptomes: symptomes.map((sy) => sy.nom) },
+            historique: [],
+          };
+        }}
+        Editor={SyndromeEditor}
+      />
+    </EditorGuard>
+  );
+}
+
+function SyndromeEditor({ initial, onSaved }) {
+  const { api } = useServices();
+  const navigate = useNavigate();
+  const { options, historique, id, slug, ...depart } = initial;
+  const [form, setForm] = useState(depart);
+  const [dirty, setDirty] = useState(false);
+  const [save, run] = useSave((payload) => api.adminSaveSyndrome(id, payload));
+  useUnsavedWarning(dirty);
+  const set = (patch) => {
+    setForm((f) => ({ ...f, ...patch }));
+    setDirty(true);
+  };
+  const basculer = (nom) =>
+    set({
+      symptomes: form.symptomes.includes(nom)
+        ? form.symptomes.filter((x) => x !== nom)
+        : [...form.symptomes, nom],
+    });
+
+  const onSave = async () => {
+    const res = await run(form);
+    if (!res) return;
+    setDirty(false);
+    if (!id) navigate(`/admin/syndromes/${res.id}`, { replace: true });
+    else if (!res.inchange) onSaved();
+  };
+
+  return (
+    <article className="admin-editor">
+      <Breadcrumb
+        items={[{ label: 'Administration', to: '/admin' }, { label: form.nom || 'Nouveau syndrome' }]}
+      />
+      <header className="page-header">
+        <h1>{id ? initial.nom : 'Nouveau syndrome'}</h1>
+        {slug && (
+          <p className="lead">
+            <Link to={`/syndromes/${slug}`}>Voir la page publique</Link>
+          </p>
+        )}
+      </header>
+      <section className="card">
+        <TextField
+          label="Nom"
+          value={form.nom}
+          onChange={(nom) => set({ nom })}
+          error={save.errors.nom}
+          placeholder="ex. Syndrome méningé"
+          maxLength={190}
+          required
+        />
+        <TextArea
+          label="Définition"
+          rows={2}
+          markdown={false}
+          value={form.definition}
+          onChange={(definition) => set({ definition })}
+          error={save.errors.definition}
+          placeholder="Ce que le syndrome traduit, en une phrase."
+          maxLength={2000}
+        />
+        <TextArea
+          label="Éléments sémiologiques"
+          rows={6}
+          value={form.elements}
+          onChange={(elements) => set({ elements })}
+          error={save.errors.elements}
+          placeholder={'- **Signes fonctionnels** : …\n- **Signes physiques** : …'}
+          hint="Une ligne par élément, commençant par « - »."
+        />
+        <fieldset className="field">
+          <legend>Symptômes qui composent ce syndrome</legend>
+          <div className="checks">
+            {options.symptomes.map((nom) => (
+              <label key={nom} className="field-check">
+                <input
+                  type="checkbox"
+                  checked={form.symptomes.includes(nom)}
+                  onChange={() => basculer(nom)}
+                />{' '}
+                {nom}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </section>
       <Historique
         items={historique}
         charger={api.adminVersion}

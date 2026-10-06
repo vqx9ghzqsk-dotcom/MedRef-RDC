@@ -21,6 +21,8 @@ const db = require('../db');
 const config = require('../config');
 const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middleware/auth');
 const { asyncHandler, HttpError, notFound, toInt } = require('../utils/http');
+const { chargerFormes } = require('../services/formes');
+const { slugify } = require('../utils/slugify');
 
 const router = express.Router();
 
@@ -40,6 +42,24 @@ const CATEGORIES = [
 const POPULATIONS = ['adulte', 'enfant', 'nouveau_ne', 'grossesse'];
 const SECURITES = ['autorise', 'prudence', 'contre_indique'];
 const LONG = 20000;
+const TYPES_FORME = [
+  'commune',
+  'gravite',
+  'terrain',
+  'topographique',
+  'evolutive',
+  'paraclinique',
+  'etiologique',
+];
+const FORME_TEXTES = [
+  'description',
+  'terrain',
+  'signes_fonctionnels',
+  'signes_generaux',
+  'signes_physiques',
+  'paraclinique',
+  'etiologies',
+];
 const FICHE_PHARMACO = [
   'mecanisme',
   'pharmacocinetique',
@@ -74,6 +94,16 @@ router.use('/admin', requireAuth, requireEditor);
 
 // ---------------------------------------------------------------- Validation des entrées
 
+/** Nombre saisi en français : « 12 500 », « 2,4 », « 70 kg » (comme l’interface). */
+function lireNombre(value) {
+  const s = String(value)
+    .trim()
+    .replace(/^([-+]?[\d\s.,]+)\s*[^\d\s.,-][^\d]*$/u, '$1')
+    .replace(/\s/g, '')
+    .replace(',', '.');
+  return /^[-+]?(\d+\.?\d*|\.\d+)$/.test(s) ? Number(s) : NaN;
+}
+
 /** Collecte les erreurs champ par champ, puis lève une 400 unique. */
 function createValidator() {
   const errors = {};
@@ -102,7 +132,7 @@ function createValidator() {
     },
     number(value, field, { min = 0, max = 1e7 } = {}) {
       if (value === undefined || value === null || value === '') return null;
-      const n = typeof value === 'number' ? value : Number(String(value).replace(',', '.'));
+      const n = typeof value === 'number' ? value : lireNombre(value);
       if (!Number.isFinite(n) || n < min || n > max) {
         errors[field] = `Nombre entre ${min} et ${max} attendu`;
         return null;
@@ -192,6 +222,8 @@ const LIBELLES_RUBRIQUES = {
   niveaux: 'niveaux de soins',
   examens: 'examens',
   differentiels: 'différentiels',
+  formes: 'formes cliniques',
+  urgences: 'signes d’alerte des urgences',
   posologies: 'posologies',
 };
 
@@ -247,12 +279,14 @@ router.get(
       ),
       db.query(
         `SELECT m.id, m.entite, m.entite_id, m.action, m.resume, m.created_at, u.nom AS auteur,
-                COALESCE(p.nom, mo.dci, me.nom_commercial) AS libelle
+                COALESCE(p.nom, mo.dci, me.nom_commercial, gl.terme, sy.nom) AS libelle
            FROM modifications m
            LEFT JOIN users u ON u.id = m.user_id
            LEFT JOIN pathologies p ON m.entite = 'pathologie' AND p.id = m.entite_id
            LEFT JOIN molecules mo ON m.entite = 'molecule' AND mo.id = m.entite_id
            LEFT JOIN medicaments me ON m.entite = 'medicament' AND me.id = m.entite_id
+           LEFT JOIN glossaire gl ON m.entite = 'glossaire' AND gl.id = m.entite_id
+           LEFT JOIN syndromes sy ON m.entite = 'syndrome' AND sy.id = m.entite_id
           ORDER BY m.created_at DESC, m.id DESC LIMIT 30`,
       ),
     ]);
@@ -327,6 +361,17 @@ async function etatPathologie(q, id) {
     ),
     examens,
     differentiels,
+    formes: (await chargerFormes(q, id)).map(({ id: _id, syndromes, examens: ex, ...f }) => ({
+      ...f,
+      syndromes: syndromes.map((sy) => sy.slug),
+      examens: ex.map((e) => ({ examen_slug: e.slug, interpretation: e.interpretation })),
+    })),
+    urgences: await q(
+      `SELECT u.slug AS urgence_slug, u.nom, pu.signes_alerte
+         FROM pathologie_urgences pu JOIN urgences u ON u.id = pu.urgence_id
+        WHERE pu.pathologie_id = ? ORDER BY u.nom`,
+      [id],
+    ),
   };
 }
 
@@ -343,20 +388,21 @@ router.get(
       [id],
     );
     if (!meta) throw notFound('Pathologie');
-    const [etat, optExamens, optPathologies, hist] = await Promise.all([
+    const [etat, optExamens, optPathologies, hist, optSyndromes] = await Promise.all([
       etatPathologie(viaPool, id),
       db.query(
         "SELECT slug, nom, type FROM examens ORDER BY FIELD(type, 'biologie', 'imagerie', 'exploration'), nom",
       ),
       db.query('SELECT slug, nom FROM pathologies WHERE id <> ? ORDER BY nom', [id]),
       historique('pathologie', id),
+      db.query('SELECT slug, nom FROM syndromes ORDER BY nom'),
     ]);
     res.json({
       data: {
         ...meta,
         a_revoir: Boolean(Number(meta.a_revoir)),
         ...etat,
-        options: { examens: optExamens, pathologies: optPathologies },
+        options: { examens: optExamens, pathologies: optPathologies, syndromes: optSyndromes },
         historique: hist,
       },
     });
@@ -437,6 +483,46 @@ function parsePathologie(body, refs) {
     };
   });
 
+  const nomsFormes = new Set();
+  out.formes = v.list(body.formes, 'formes', 15)?.map((fo, i) => {
+    const champ = (k) => `formes[${i}].${k}`;
+    const forme = {
+      nom: v.text(fo.nom, 190, champ('nom'), { required: true }),
+      type: v.oneOf(fo.type, TYPES_FORME, champ('type'), { required: true }),
+    };
+    if (forme.nom && nomsFormes.has(forme.nom.toLowerCase()))
+      v.errors[champ('nom')] = 'Deux formes portent ce nom';
+    nomsFormes.add((forme.nom || '').toLowerCase());
+    for (const k of FORME_TEXTES) forme[k] = v.text(fo[k], LONG, champ(k));
+    const syndromes = Array.isArray(fo.syndromes) ? [...new Set(fo.syndromes)] : [];
+    forme.syndrome_ids = syndromes.map((slug, j) => {
+      const sy = refs.syndromes.get(slug);
+      if (!sy) v.errors[`formes[${i}].syndromes[${j}]`] = 'Syndrome inconnu';
+      return sy ? sy.id : null;
+    });
+    const vusEx = new Set();
+    forme.examens = (Array.isArray(fo.examens) ? fo.examens : []).slice(0, 30).map((e, j) => {
+      const examen = refs.examens.get(e && e.examen_slug);
+      if (!examen) v.errors[`formes[${i}].examens[${j}].examen_slug`] = 'Examen inconnu';
+      else if (vusEx.has(examen.id)) v.errors[`formes[${i}].examens[${j}].examen_slug`] = 'Examen en double';
+      if (examen) vusEx.add(examen.id);
+      return {
+        examen_id: examen ? examen.id : null,
+        interpretation: v.text(e && e.interpretation, LONG, `formes[${i}].examens[${j}].interpretation`),
+      };
+    });
+    return forme;
+  });
+
+  out.urgences = v.list(body.urgences, 'urgences', 20)?.map((u, i) => {
+    const lien = refs.urgences.get(u.urgence_slug);
+    if (!lien) v.errors[`urgences[${i}].urgence_slug`] = 'Urgence non liée à cette fiche';
+    return {
+      urgence_id: lien ? lien.id : null,
+      signes_alerte: v.text(u.signes_alerte, 500, `urgences[${i}].signes_alerte`),
+    };
+  });
+
   v.check();
   return out;
 }
@@ -472,13 +558,21 @@ router.put(
   asyncHandler(async (req, res) => {
     const id = toInt(req.params.id);
     if (!id) throw notFound('Pathologie');
-    const [examens, pathologies] = await Promise.all([
+    const [examens, pathologies, syndromes, urgences] = await Promise.all([
       db.query('SELECT id, slug FROM examens'),
       db.query('SELECT id, slug, nom FROM pathologies WHERE id <> ?', [id]),
+      db.query('SELECT id, slug FROM syndromes'),
+      db.query(
+        `SELECT u.id, u.slug FROM pathologie_urgences pu JOIN urgences u ON u.id = pu.urgence_id
+          WHERE pu.pathologie_id = ?`,
+        [id],
+      ),
     ]);
     const refs = {
       examens: new Map(examens.map((e) => [e.slug, e])),
       pathologies: new Map(pathologies.map((p) => [p.slug, p])),
+      syndromes: new Map(syndromes.map((sy) => [sy.slug, sy])),
+      urgences: new Map(urgences.map((u) => [u.slug, u])),
     };
     const data = parsePathologie(req.body || {}, refs);
     const valide = data.statut === 'valide';
@@ -572,6 +666,35 @@ router.put(
                 [id, d.differentiel_id, d.nom, d.elements_distinctifs, i + 1],
               );
             }
+          }
+          if (data.formes) {
+            // Les syndromes et examens des formes sont supprimés en cascade
+            await conn.execute('DELETE FROM pathologie_formes WHERE pathologie_id = ?', [id]);
+            for (const [i, fo] of data.formes.entries()) {
+              const [r] = await conn.execute(
+                `INSERT INTO pathologie_formes (pathologie_id, ordre, nom, type, ${FORME_TEXTES.join(', ')})
+                 VALUES (?, ?, ?, ?, ${FORME_TEXTES.map(() => '?').join(', ')})`,
+                [id, i + 1, fo.nom, fo.type, ...FORME_TEXTES.map((k) => fo[k])],
+              );
+              for (const [j, syndromeId] of fo.syndrome_ids.entries()) {
+                await conn.execute(
+                  'INSERT INTO forme_syndromes (forme_id, syndrome_id, ordre) VALUES (?, ?, ?)',
+                  [r.insertId, syndromeId, j + 1],
+                );
+              }
+              for (const [j, e] of fo.examens.entries()) {
+                await conn.execute(
+                  'INSERT INTO forme_examens (forme_id, examen_id, interpretation, ordre) VALUES (?, ?, ?, ?)',
+                  [r.insertId, e.examen_id, e.interpretation, j + 1],
+                );
+              }
+            }
+          }
+          for (const u of data.urgences || []) {
+            await conn.execute(
+              'UPDATE pathologie_urgences SET signes_alerte = ? WHERE pathologie_id = ? AND urgence_id = ?',
+              [u.signes_alerte, id, u.urgence_id],
+            );
           }
 
           const apres = await etatPathologie(q, id);
@@ -808,6 +931,237 @@ router.put(
     res.json({ ok: true, inchange: resultat.inchange });
   }),
 );
+
+// ---------------------------------------------------------------- Glossaire et syndromes
+
+router.get(
+  '/admin/semiologie',
+  asyncHandler(async (_req, res) => {
+    const [glossaire, syndromes] = await Promise.all([
+      db.query(
+        `SELECT g.id, g.terme, g.slug, s.nom AS syndrome
+           FROM glossaire g LEFT JOIN syndromes s ON s.id = g.syndrome_id ORDER BY g.terme`,
+      ),
+      db.query(
+        `SELECT s.id, s.nom, s.slug,
+                (SELECT COUNT(*) FROM forme_syndromes fs WHERE fs.syndrome_id = s.id) AS nb_formes
+           FROM syndromes s ORDER BY s.nom`,
+      ),
+    ]);
+    res.json({
+      data: { glossaire, syndromes: syndromes.map((s) => ({ ...s, nb_formes: Number(s.nb_formes) })) },
+    });
+  }),
+);
+
+async function etatTerme(q, id) {
+  const [g] = await q(
+    `SELECT g.terme, g.variantes, g.definition, s.slug AS syndrome
+       FROM glossaire g LEFT JOIN syndromes s ON s.id = g.syndrome_id WHERE g.id = ?`,
+    [id],
+  );
+  return g ? { ...g, variantes: g.variantes ? g.variantes.split('|') : [] } : null;
+}
+
+async function etatSyndrome(q, id) {
+  const [s] = await q('SELECT nom, definition, elements FROM syndromes WHERE id = ?', [id]);
+  if (!s) return null;
+  const symptomes = await q(
+    `SELECT sy.nom FROM syndrome_symptomes ss JOIN symptomes sy ON sy.id = ss.symptome_id
+      WHERE ss.syndrome_id = ? ORDER BY sy.nom`,
+    [id],
+  );
+  return { ...s, symptomes: symptomes.map((x) => x.nom) };
+}
+
+async function optionsSemiologie() {
+  const [syndromes, symptomes] = await Promise.all([
+    db.query('SELECT slug, nom FROM syndromes ORDER BY nom'),
+    db.query('SELECT nom FROM symptomes ORDER BY nom'),
+  ]);
+  return { syndromes, symptomes: symptomes.map((s) => s.nom) };
+}
+
+function parseTerme(body, syndromes) {
+  const v = createValidator();
+  const variantes = Array.isArray(body.variantes) ? body.variantes : [];
+  const out = {
+    terme: v.text(body.terme, 190, 'terme', { required: true }),
+    definition: v.text(body.definition, 2000, 'definition', { required: true }),
+    variantes: [...new Set(variantes.map((x) => (typeof x === 'string' ? x.trim() : '')).filter(Boolean))],
+    syndrome_id: null,
+  };
+  if (out.variantes.some((x) => x.length > 120 || x.includes('|'))) {
+    v.errors.variantes = '120 caractères maximum par variante, sans « | »';
+  }
+  if (out.variantes.join('|').length > 500)
+    v.errors.variantes = 'Trop de variantes (500 caractères au total)';
+  if (body.syndrome) {
+    const s = syndromes.get(body.syndrome);
+    if (!s) v.errors.syndrome = 'Syndrome inconnu';
+    else out.syndrome_id = s.id;
+  }
+  v.check();
+  return out;
+}
+
+function parseSyndrome(body, symptomes) {
+  const v = createValidator();
+  const out = {
+    nom: v.text(body.nom, 190, 'nom', { required: true }),
+    definition: v.text(body.definition, 2000, 'definition', { required: true }),
+    elements: v.text(body.elements, LONG, 'elements'),
+    symptome_ids: [],
+  };
+  const liste = Array.isArray(body.symptomes) ? [...new Set(body.symptomes)] : [];
+  liste.forEach((nom, i) => {
+    const s = symptomes.get(nom);
+    if (!s) v.errors[`symptomes[${i}]`] = 'Symptôme inconnu';
+    else out.symptome_ids.push(s.id);
+  });
+  v.check();
+  return out;
+}
+
+/** Enregistre un terme ou un syndrome (création si id = null) et trace la modification. */
+function enregistrerSemiologie(req, { entite, id, charger, ecrire }) {
+  return withDuplicateCheck(
+    () =>
+      db.transaction(async (conn) => {
+        const q = viaConn(conn);
+        const avant = id ? await charger(q, id) : null;
+        if (id && !avant) throw notFound(entite === 'glossaire' ? 'Terme' : 'Syndrome');
+        const cible = await ecrire(conn, id);
+        const apres = await charger(q, cible);
+        const rubriques = rubriquesModifiees(avant, apres);
+        if (avant && !rubriques.length) return { id: cible, inchange: true };
+        await logModification(conn, {
+          userId: req.editor.id,
+          entite,
+          entiteId: cible,
+          action: 'modification',
+          resume: (avant ? `Modifié : ${listeRubriques(rubriques)}` : 'Créé').slice(0, 300),
+          avant,
+          apres,
+        });
+        return { id: cible, inchange: false };
+      }),
+    entite === 'glossaire' ? 'Ce terme existe déjà' : 'Ce syndrome existe déjà',
+  );
+}
+
+router.get(
+  '/admin/glossaire/:id',
+  asyncHandler(async (req, res) => {
+    const id = toInt(req.params.id);
+    const etat = id && (await etatTerme(viaPool, id));
+    if (!etat) throw notFound('Terme');
+    const [[meta], options, hist] = await Promise.all([
+      db.query('SELECT slug FROM glossaire WHERE id = ?', [id]),
+      optionsSemiologie(),
+      historique('glossaire', id),
+    ]);
+    res.json({ data: { id, slug: meta.slug, ...etat, options, historique: hist } });
+  }),
+);
+
+function sauverTerme(creation) {
+  return asyncHandler(async (req, res) => {
+    const id = creation ? null : toInt(req.params.id);
+    if (!creation && !id) throw notFound('Terme');
+    const syndromes = new Map((await db.query('SELECT id, slug FROM syndromes')).map((s) => [s.slug, s]));
+    const t = parseTerme(req.body || {}, syndromes);
+    const r = await enregistrerSemiologie(req, {
+      entite: 'glossaire',
+      id,
+      charger: etatTerme,
+      ecrire: async (conn, cible) => {
+        const valeurs = [
+          t.terme,
+          slugify(t.terme),
+          t.variantes.join('|') || null,
+          t.definition,
+          t.syndrome_id,
+        ];
+        if (cible) {
+          await conn.execute(
+            'UPDATE glossaire SET terme = ?, slug = ?, variantes = ?, definition = ?, syndrome_id = ? WHERE id = ?',
+            [...valeurs, cible],
+          );
+          return cible;
+        }
+        const [ins] = await conn.execute(
+          'INSERT INTO glossaire (terme, slug, variantes, definition, syndrome_id) VALUES (?, ?, ?, ?, ?)',
+          valeurs,
+        );
+        return ins.insertId;
+      },
+    });
+    res.status(creation ? 201 : 200).json({ ok: true, ...r });
+  });
+}
+
+router.post('/admin/glossaire', sauverTerme(true));
+router.put('/admin/glossaire/:id', sauverTerme(false));
+
+router.get(
+  '/admin/syndromes/:id',
+  asyncHandler(async (req, res) => {
+    const id = toInt(req.params.id);
+    const etat = id && (await etatSyndrome(viaPool, id));
+    if (!etat) throw notFound('Syndrome');
+    const [[meta], options, hist] = await Promise.all([
+      db.query('SELECT slug FROM syndromes WHERE id = ?', [id]),
+      optionsSemiologie(),
+      historique('syndrome', id),
+    ]);
+    res.json({ data: { id, slug: meta.slug, ...etat, options, historique: hist } });
+  }),
+);
+
+function sauverSyndrome(creation) {
+  return asyncHandler(async (req, res) => {
+    const id = creation ? null : toInt(req.params.id);
+    if (!creation && !id) throw notFound('Syndrome');
+    const symptomes = new Map((await db.query('SELECT id, nom FROM symptomes')).map((s) => [s.nom, s]));
+    const s = parseSyndrome(req.body || {}, symptomes);
+    const r = await enregistrerSemiologie(req, {
+      entite: 'syndrome',
+      id,
+      charger: etatSyndrome,
+      ecrire: async (conn, cible) => {
+        let sid = cible;
+        if (cible) {
+          // Le slug reste stable : les liens vers le syndrome ne cassent pas
+          await conn.execute('UPDATE syndromes SET nom = ?, definition = ?, elements = ? WHERE id = ?', [
+            s.nom,
+            s.definition,
+            s.elements,
+            cible,
+          ]);
+        } else {
+          const [ins] = await conn.execute(
+            'INSERT INTO syndromes (nom, slug, definition, elements) VALUES (?, ?, ?, ?)',
+            [s.nom, slugify(s.nom), s.definition, s.elements],
+          );
+          sid = ins.insertId;
+        }
+        await conn.execute('DELETE FROM syndrome_symptomes WHERE syndrome_id = ?', [sid]);
+        for (const symptomeId of s.symptome_ids) {
+          await conn.execute('INSERT INTO syndrome_symptomes (syndrome_id, symptome_id) VALUES (?, ?)', [
+            sid,
+            symptomeId,
+          ]);
+        }
+        return sid;
+      },
+    });
+    res.status(creation ? 201 : 200).json({ ok: true, ...r });
+  });
+}
+
+router.post('/admin/syndromes', sauverSyndrome(true));
+router.put('/admin/syndromes/:id', sauverSyndrome(false));
 
 module.exports = router;
 module.exports.parsePathologie = parsePathologie;

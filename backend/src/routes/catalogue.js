@@ -8,6 +8,8 @@ const express = require('express');
 const db = require('../db');
 const { asyncHandler, notFound } = require('../utils/http');
 
+const { chargerFormes, signesAlerte } = require('../services/formes');
+
 const router = express.Router();
 
 const FREQ_ORDER = "FIELD(ps.frequence, 'tres_frequent', 'frequent', 'occasionnel', 'rare')";
@@ -126,9 +128,10 @@ router.get(
       principes,
       complications,
       niveaux,
+      formes,
     ] = await Promise.all([
       db.query(
-        `SELECT u.id, u.nom, u.slug, u.categorie
+        `SELECT u.id, u.nom, u.slug, u.categorie, u.signes_gravite, pu.signes_alerte
            FROM pathologie_urgences pu JOIN urgences u ON u.id = pu.urgence_id
           WHERE pu.pathologie_id = ? ORDER BY u.nom`,
         [p.id],
@@ -200,6 +203,7 @@ router.get(
           WHERE pathologie_id = ? ORDER BY FIELD(niveau, ${NIVEAU_ORDER})`,
         [p.id],
       ),
+      chargerFormes((sql, params) => db.query(sql, params), p.id),
     ]);
 
     const molecules = withProduits(moleculeRows, produits);
@@ -220,9 +224,15 @@ router.get(
           a_revoir: Boolean(Number(p.a_revoir)),
         },
         onglets: {
-          definition: { definition: p.definition, physiopathologie: p.physiopathologie },
+          definition: {
+            definition: p.definition,
+            physiopathologie: p.physiopathologie,
+            formes: formes.map(({ id, nom, type, description }) => ({ id, nom, type, description })),
+          },
           diagnostic: {
             clinique: p.diagnostic,
+            // Sémiologie systématisée par forme clinique
+            formes: formes.map(({ etiologies: _e, description: _d, ...f }) => f),
             examens,
             scores,
             differentiels: differentiels.map(({ fiche_slug: slug, ...d }) => ({
@@ -230,7 +240,12 @@ router.get(
               fiche: slug ? { slug } : null,
             })),
           },
-          etiologies: p.etiologies,
+          etiologies: {
+            texte: p.etiologies,
+            formes: formes
+              .filter((f) => f.etiologies)
+              .map(({ id, nom, type, etiologies }) => ({ id, nom, type, etiologies })),
+          },
           therapeutique: {
             principes,
             notes: p.therapeutique,
@@ -257,7 +272,10 @@ router.get(
         },
         specialite: { id: p.specialite_id, nom: p.specialite_nom, slug: p.specialite_slug },
         departement: { id: p.departement_id, nom: p.departement_nom, slug: p.departement_slug },
-        urgences,
+        urgences: urgences.map(({ signes_gravite: gravite, signes_alerte: propres, ...u }) => ({
+          ...u,
+          signes_alerte: signesAlerte(propres, gravite),
+        })),
         symptomes,
         molecules: moleculeRows,
         scores,

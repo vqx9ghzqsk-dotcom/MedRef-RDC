@@ -37,7 +37,7 @@ function FieldError({ id, error }) {
   );
 }
 
-export function TextField({ label, value, onChange, error, hint, required, ...rest }) {
+export function TextField({ label, value, onChange, error, hint, required, suggestions, ...rest }) {
   const id = useId();
   return (
     <div className="field">
@@ -53,8 +53,16 @@ export function TextField({ label, value, onChange, error, hint, required, ...re
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={error ? `${id}-err` : hint ? `${id}-hint` : undefined}
         required={required}
+        list={suggestions ? `${id}-liste` : undefined}
         {...rest}
       />
+      {suggestions && (
+        <datalist id={`${id}-liste`}>
+          {suggestions.map((s) => (
+            <option key={s} value={s} />
+          ))}
+        </datalist>
+      )}
       {hint && !error && (
         <span id={`${id}-hint`} className="hint">
           {hint}
@@ -66,7 +74,17 @@ export function TextField({ label, value, onChange, error, hint, required, ...re
 }
 
 /** Zone de texte en markdown léger, avec aperçu du rendu. */
-export function TextArea({ label, value, onChange, error, rows = 4, markdown = true, hint }) {
+export function TextArea({
+  label,
+  value,
+  onChange,
+  error,
+  rows = 4,
+  markdown = true,
+  hint,
+  placeholder,
+  maxLength,
+}) {
   const id = useId();
   const [apercu, setApercu] = useState(false);
   return (
@@ -86,7 +104,7 @@ export function TextArea({ label, value, onChange, error, rows = 4, markdown = t
       </div>
       {apercu ? (
         <div className="apercu">
-          <RichText text={value} headingLevel={4} />
+          <RichText text={value} headingLevel={4} glossaire />
         </div>
       ) : (
         <textarea
@@ -95,10 +113,16 @@ export function TextArea({ label, value, onChange, error, rows = 4, markdown = t
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={error ? 'true' : undefined}
-          aria-describedby={error ? `${id}-err` : undefined}
+          aria-describedby={error ? `${id}-err` : hint ? `${id}-hint` : undefined}
+          placeholder={placeholder}
+          maxLength={maxLength}
         />
       )}
-      {hint && !error && <span className="hint">{hint}</span>}
+      {hint && !error && (
+        <span id={`${id}-hint`} className="hint">
+          {hint}
+        </span>
+      )}
       <FieldError id={`${id}-err`} error={error} />
     </div>
   );

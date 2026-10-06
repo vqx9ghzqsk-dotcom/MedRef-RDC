@@ -63,7 +63,8 @@ describe('Consultation hors ligne', () => {
       .mockResolvedValueOnce([{ slug: 'glasgow' }])
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([{ slug: 'artesunate' }])
-      .mockResolvedValueOnce([{ id: 4 }]);
+      .mockResolvedValueOnce([{ id: 4 }])
+      .mockResolvedValueOnce([{ slug: 'syndrome-meninge' }]);
     const res = await request(createApp()).get('/api/hors-ligne');
     expect(res.status).toBe(200);
     expect(res.body.data.urls).toEqual(
@@ -73,6 +74,8 @@ describe('Consultation hors ligne', () => {
         '/api/scores/glasgow',
         '/api/molecules/artesunate',
         '/api/medicaments/4',
+        '/api/glossaire',
+        '/api/syndromes/syndrome-meninge',
       ]),
     );
     expect(res.body.data.urls.some((u) => /admin|prescriptions|auth/.test(u))).toBe(false);

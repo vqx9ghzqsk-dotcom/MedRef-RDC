@@ -1,6 +1,101 @@
+import { useId, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RichText } from './RichText.jsx';
-import { FICHE_PHARMACO } from '../../core/labels.js';
+import { FICHE_PHARMACO, POPULATIONS, SECURITES } from '../../core/labels.js';
+import { calculerDose, parsePoids } from '../../core/posologie.js';
+
+function PosologieLigne({ posologie: p, poids }) {
+  const dose = calculerDose(p, poids);
+  return (
+    <li className="posologie">
+      <div className="posologie-head">
+        {p.indication && <span className="posologie-indication">{p.indication}</span>}
+        {p.securite && <span className={`tag securite-${p.securite}`}>{SECURITES[p.securite]}</span>}
+      </div>
+      <p className="posologie-dose">
+        <strong>{p.dose_texte}</strong>
+        {p.voie && <span className="muted"> · {p.voie}</span>}
+      </p>
+      {(p.frequence || p.duree) && (
+        <p className="posologie-rythme">{[p.frequence, p.duree].filter(Boolean).join(' · ')}</p>
+      )}
+      {dose && (
+        <p className="posologie-calcul" role="status">
+          Pour {String(poids).replace('.', ',')} kg : <strong>{dose.affichage}</strong>
+          {dose.plafonnee && (
+            <span className="tag tag-warn">
+              {' '}
+              plafonné (calcul brut {dose.brute} {dose.unite})
+            </span>
+          )}
+        </p>
+      )}
+      {p.remarque && <p className="muted posologie-remarque">{p.remarque}</p>}
+    </li>
+  );
+}
+
+/**
+ * Posologies par population (adulte, enfant, nouveau-né, grossesse) avec calcul
+ * automatique selon le poids pour les doses exprimées par kg.
+ */
+export function Posologies({ posologies }) {
+  const populations = Object.keys(POPULATIONS).filter((pop) => posologies.some((p) => p.population === pop));
+  const [active, setActive] = useState(populations.includes('enfant') ? 'enfant' : populations[0]);
+  const [poids, setPoids] = useState('');
+  const inputId = useId();
+  if (!posologies.length) return null;
+  const courant = populations.includes(active) ? active : populations[0];
+  const liste = posologies.filter((p) => p.population === courant);
+  const ponderale = liste.some((p) => p.dose_par_kg);
+  const poidsValide = parsePoids(poids);
+
+  return (
+    <div className="posologies">
+      <div className="segmented" role="group" aria-label="Population">
+        {populations.map((pop) => (
+          <button
+            key={pop}
+            type="button"
+            aria-pressed={courant === pop}
+            className="segmented-btn"
+            onClick={() => setActive(pop)}
+          >
+            {POPULATIONS[pop]}
+          </button>
+        ))}
+      </div>
+      {ponderale && (
+        <div className="field field-inline posologie-poids">
+          <label htmlFor={inputId}>Poids du patient</label>
+          <input
+            id={inputId}
+            type="text"
+            inputMode="decimal"
+            placeholder="kg"
+            value={poids}
+            onChange={(e) => setPoids(e.target.value)}
+            aria-describedby={`${inputId}-hint`}
+          />
+          <span id={`${inputId}-hint`} className="hint">
+            {poids && !poidsValide
+              ? 'Poids entre 0,3 et 300 kg'
+              : 'Calcul par prise, plafonné à la dose maximale'}
+          </span>
+        </div>
+      )}
+      <ul className="posologie-list">
+        {liste.map((p) => (
+          <PosologieLigne key={p.id ?? `${p.population}-${p.dose_texte}`} posologie={p} poids={poidsValide} />
+        ))}
+      </ul>
+      <p className="muted posologie-avert">
+        Aide au calcul : vérifier la notice du produit, le protocole national et la fonction rénale ou
+        hépatique.
+      </p>
+    </div>
+  );
+}
 
 /** Produits commerciaux (par opérateur), seuls ou en association. */
 export function ProduitList({ produits }) {

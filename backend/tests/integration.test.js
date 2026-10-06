@@ -121,4 +121,73 @@ describeDb('Intégration MySQL', () => {
     const list = await request(app).get('/api/prescriptions').set(auth);
     expect(list.body.data).toHaveLength(0);
   });
+
+  it('administration : refus d’un compte ordinaire, édition, validation et historique', async () => {
+    const inscrire = async (prefix) => {
+      const r = await request(app)
+        .post('/api/auth/register')
+        .send({ email: `${prefix}-${Date.now()}@medref.cd`, password: 'motdepasse123', nom: `Dr ${prefix}` });
+      return { id: r.body.user.id, headers: { Authorization: `Bearer ${r.body.token}` } };
+    };
+    const simple = await inscrire('lecteur');
+    expect((await request(app).get('/api/admin/resume').set(simple.headers)).status).toBe(403);
+
+    // Promotion en base : le jeton existant suffit car le rôle est relu à chaque requête
+    const editeur = await inscrire('validateur');
+    await db.query("UPDATE users SET role = 'medecin' WHERE id = ?", [editeur.id]);
+
+    const resume = await request(app).get('/api/admin/resume').set(editeur.headers);
+    expect(resume.status).toBe(200);
+    const { id } = resume.body.data.pathologies.find((p) => p.slug === 'paludisme-grave');
+
+    const avant = (await request(app).get(`/api/admin/pathologies/${id}`).set(editeur.headers)).body.data;
+    expect(avant.niveaux).toHaveLength(3);
+    const {
+      options: _o,
+      historique: _h,
+      id: _i,
+      slug: _s,
+      valide_le: _v,
+      valide_par: _p,
+      updated_at: _u,
+      ...payload
+    } = avant;
+    payload.resume = 'Résumé relu et validé.';
+    payload.statut = 'valide';
+    payload.principes[0].grade_detail = 'déclaration de bonne pratique';
+    const save = await request(app).put(`/api/admin/pathologies/${id}`).set(editeur.headers).send(payload);
+    expect(save.status).toBe(200);
+
+    const publique = (await request(app).get('/api/pathologies/paludisme-grave')).body.data;
+    expect(publique.resume).toBe('Résumé relu et validé.');
+    expect(publique.validation).toMatchObject({ statut: 'valide', valide_par: 'Dr validateur' });
+    expect(publique.onglets.therapeutique.principes[0].grade_detail).toBe('déclaration de bonne pratique');
+    // Les collections non modifiées sont conservées à l'identique
+    expect(publique.onglets.diagnostic.examens).toHaveLength(avant.examens.length);
+    expect(publique.onglets.niveaux).toHaveLength(3);
+
+    const apres = (await request(app).get(`/api/admin/pathologies/${id}`).set(editeur.headers)).body.data;
+    expect(apres.historique[0]).toMatchObject({ action: 'validation', auteur: 'Dr validateur' });
+
+    const mol = resume.body.data.molecules.find((m) => m.slug === 'paracetamol');
+    const fichePara = (await request(app).get(`/api/admin/molecules/${mol.id}`).set(editeur.headers)).body
+      .data;
+    const majMol = await request(app)
+      .put(`/api/admin/molecules/${mol.id}`)
+      .set(editeur.headers)
+      .send({
+        ...Object.fromEntries(
+          Object.entries(fichePara).filter(([k]) => !['id', 'dci', 'slug', 'historique'].includes(k)),
+        ),
+        posologies: [
+          ...fichePara.posologies,
+          { population: 'nouveau_ne', dose_texte: '10 mg/kg', dose_par_kg: 10 },
+        ],
+      });
+    expect(majMol.status).toBe(200);
+    const publiqueMol = (await request(app).get('/api/molecules/paracetamol')).body.data;
+    expect(publiqueMol.posologies.find((p) => p.population === 'nouveau_ne')).toMatchObject({
+      dose_par_kg: 10,
+    });
+  });
 });

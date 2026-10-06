@@ -12,6 +12,17 @@ const { asyncHandler, notFound, toInt } = require('../utils/http');
 const router = express.Router();
 
 const LIGNE_RANK = { premiere: 1, deuxieme: 2, alternative: 3, adjuvant: 4 };
+const POSOLOGIE_COLS = `pos.id, pos.molecule_id, pos.population, pos.indication, pos.voie, pos.dose_texte,
+  pos.dose_par_kg, pos.dose_max, pos.unite, pos.frequence, pos.duree, pos.securite, pos.remarque`;
+const POSOLOGIE_ORDER = "FIELD(pos.population, 'adulte', 'enfant', 'nouveau_ne', 'grossesse'), pos.ordre";
+
+/** DECIMAL arrive en chaîne depuis mysql2 : on renvoie des nombres (ou null). */
+const toPosologie = ({ molecule_id: _m, dose_par_kg: kg, dose_max: max, ...p }) => ({
+  ...p,
+  dose_par_kg: kg === null ? null : Number(kg),
+  dose_max: max === null ? null : Number(max),
+});
+
 const FICHE_COLS = `mo.mecanisme, mo.pharmacocinetique, mo.indications, mo.posologie, mo.contre_indications,
   mo.effets_indesirables, mo.interactions, mo.grossesse_allaitement, mo.surveillance`;
 
@@ -94,7 +105,7 @@ router.get(
       [id],
     );
     if (!m) throw notFound('Médicament');
-    const [composition, pathologies, autres_produits] = await Promise.all([
+    const [composition, pathologies, autres_produits, posologies] = await Promise.all([
       db.query(
         `SELECT mo.id, mo.dci, mo.slug, mm.dosage, c.nom AS classe, ${FICHE_COLS}
            FROM medicament_molecules mm
@@ -118,13 +129,23 @@ router.get(
           WHERE m.dci = ? AND m.id <> ? ORDER BY m.nom_commercial`,
         [m.dci, id],
       ),
+      db.query(
+        `SELECT ${POSOLOGIE_COLS}
+           FROM molecule_posologies pos
+           JOIN medicament_molecules mm ON mm.molecule_id = pos.molecule_id
+          WHERE mm.medicament_id = ? ORDER BY ${POSOLOGIE_ORDER}`,
+        [id],
+      ),
     ]);
     res.json({
       data: {
         ...m,
         disponible_rdc: Boolean(m.disponible_rdc),
         association: composition.length > 1,
-        composition,
+        composition: composition.map((c) => ({
+          ...c,
+          posologies: (posologies || []).filter((pos) => pos.molecule_id === c.id).map(toPosologie),
+        })),
         pathologies: dedupePathologies(pathologies),
         autres_produits,
       },
@@ -159,7 +180,7 @@ router.get(
       [req.params.slug],
     );
     if (!mo) throw notFound('Molécule');
-    const [produits, pathologies] = await Promise.all([
+    const [produits, pathologies, posologies] = await Promise.all([
       db.query(
         `SELECT m.id, m.nom_commercial, m.dci AS composition, m.forme, m.dosage, m.disponible_rdc,
                 mm.dosage AS dosage_molecule, o.nom AS operateur, o.pays AS operateur_pays,
@@ -177,10 +198,15 @@ router.get(
           WHERE mp.molecule_id = ? ORDER BY p.nom`,
         [mo.id],
       ),
+      db.query(
+        `SELECT ${POSOLOGIE_COLS} FROM molecule_posologies pos WHERE pos.molecule_id = ? ORDER BY ${POSOLOGIE_ORDER}`,
+        [mo.id],
+      ),
     ]);
     res.json({
       data: {
         ...mo,
+        posologies: (posologies || []).map(toPosologie),
         produits: produits.map(({ nb_molecules: nb, disponible_rdc: rdc, ...p }) => ({
           ...p,
           disponible_rdc: Boolean(rdc),

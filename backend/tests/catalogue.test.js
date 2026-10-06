@@ -74,6 +74,9 @@ describe('Catalogue', () => {
           departement_id: 1,
           departement_nom: 'Médecine interne',
           departement_slug: 'medecine-interne',
+          statut: 'valide',
+          valide_le: '2026-10-01 10:00:00',
+          valide_par_nom: 'Dr Mingalu',
         },
       ])
       .mockResolvedValueOnce([{ id: 1, nom: 'Paludisme grave', slug: 'pg', categorie: 'medicale' }])
@@ -118,7 +121,16 @@ describe('Catalogue', () => {
         { id: 2, nom: 'Fièvre typhoïde', elements_distinctifs: 'Hémocultures', fiche_slug: null },
       ])
       .mockResolvedValueOnce([
-        { id: 1, ordre: 1, titre: 'Artésunate sans délai', objectif: 'o', details: 'd' },
+        {
+          id: 1,
+          ordre: 1,
+          titre: 'Artésunate sans délai',
+          objectif: 'o',
+          details: 'd',
+          grade_force: 'forte',
+          grade_detail: 'certitude des preuves élevée',
+          grade_source: 'OMS',
+        },
       ])
       .mockResolvedValueOnce([
         {
@@ -132,6 +144,13 @@ describe('Catalogue', () => {
           fiche_slug: 'insuffisance-renale-aigue',
           fiche_nom: 'Insuffisance rénale aiguë',
         },
+      ])
+      .mockResolvedValueOnce([
+        {
+          niveau: 'centre_sante',
+          prise_en_charge: 'Artésunate rectal',
+          criteres_transfert: 'Tout cas grave',
+        },
       ]);
     const res = await request(app).get('/api/pathologies/paludisme-grave');
     expect(res.status).toBe(200);
@@ -141,8 +160,23 @@ describe('Catalogue', () => {
       'diagnostic',
       'etiologies',
       'therapeutique',
+      'niveaux',
       'evolution',
     ]);
+    expect(fiche.validation).toEqual({
+      statut: 'valide',
+      valide_le: '2026-10-01 10:00:00',
+      valide_par: 'Dr Mingalu',
+    });
+    expect(fiche.onglets.niveaux[0]).toMatchObject({
+      niveau: 'centre_sante',
+      criteres_transfert: 'Tout cas grave',
+    });
+    expect(fiche.onglets.therapeutique.principes[0]).toMatchObject({
+      grade_force: 'forte',
+      grade_source: 'OMS',
+    });
+    expect(db.query.mock.calls[0][0]).toMatch(/LEFT JOIN users v ON v\.id = p\.valide_par/);
     expect(fiche.onglets.definition).toEqual({ definition: 'def', physiopathologie: 'physio' });
     expect(fiche.departement.slug).toBe('medecine-interne');
     expect(fiche.urgences).toHaveLength(1);
@@ -298,12 +332,26 @@ describe('Médicaments et sources', () => {
         { id: 10, nom_commercial: 'Artesun', nb_molecules: 1, disponible_rdc: 1 },
         { id: 11, nom_commercial: 'ASAQ', nb_molecules: 2, disponible_rdc: 0 },
       ])
-      .mockResolvedValueOnce([{ id: 1, nom: 'Paludisme grave', slug: 'paludisme-grave', ligne: 'premiere' }]);
+      .mockResolvedValueOnce([{ id: 1, nom: 'Paludisme grave', slug: 'paludisme-grave', ligne: 'premiere' }])
+      // DECIMAL renvoyés en chaîne par mysql2 : convertis en nombres
+      .mockResolvedValueOnce([
+        {
+          id: 5,
+          molecule_id: 1,
+          population: 'enfant',
+          dose_texte: '3 mg/kg',
+          dose_par_kg: '3.000',
+          dose_max: null,
+        },
+      ]);
     const res = await request(app).get('/api/molecules/artesunate');
     expect(res.status).toBe(200);
     expect(res.body.data.produits.map((p) => p.association)).toEqual([false, true]);
     expect(res.body.data.produits[0]).not.toHaveProperty('nb_molecules');
     expect(res.body.data.pathologies).toHaveLength(1);
+    expect(res.body.data.posologies).toEqual([
+      { id: 5, population: 'enfant', dose_texte: '3 mg/kg', dose_par_kg: 3, dose_max: null },
+    ]);
   });
 
   it('404 pour une molécule inconnue', async () => {

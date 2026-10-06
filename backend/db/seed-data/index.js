@@ -18,6 +18,9 @@
 const { departements, urgences, symptomes, scores, examens } = require('./referentiels');
 const { operateurs, classes, molecules, medicaments } = require('./medicaments');
 const { sources } = require('./sources');
+const niveaux = require('./niveaux');
+const grades = require('./grades');
+const posologies = require('./posologies');
 
 const pathologies = [
   ...require('./pathologies/infectiologie'),
@@ -40,4 +43,7 @@ module.exports = {
   medicaments,
   sources,
   pathologies,
+  niveaux,
+  grades,
+  posologies,
 };

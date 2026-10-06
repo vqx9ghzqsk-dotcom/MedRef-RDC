@@ -5,6 +5,8 @@ const { slugify } = require('../src/utils/slugify');
 
 /** Référence à une fiche par son slug (sinon : libellé libre). */
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+/** Clés courtes des fichiers de données → valeurs de l'ENUM pathologie_niveaux.niveau */
+const NIVEAUX = { cs: 'centre_sante', hgr: 'hopital_general', tert: 'hopital_tertiaire' };
 
 /**
  * Insère les données d'amorçage via une connexion mysql2 (requêtes paramétrées).
@@ -145,6 +147,34 @@ async function seed(conn) {
     );
   }
 
+  let nbPosologies = 0;
+  for (const [slug, lignes] of Object.entries(data.posologies)) {
+    const moleculeId = need(ids.molecules, slug, 'molécule', 'posologies');
+    for (const [i, l] of lignes.entries()) {
+      await run(
+        `INSERT INTO molecule_posologies (molecule_id, population, indication, voie, dose_texte, dose_par_kg,
+           dose_max, unite, frequence, duree, securite, remarque, ordre)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          moleculeId,
+          l.population,
+          l.indication,
+          l.voie,
+          l.dose_texte,
+          l.dose_par_kg,
+          l.dose_max,
+          l.unite,
+          l.frequence,
+          l.duree,
+          l.securite,
+          l.remarque,
+          i + 1,
+        ],
+      );
+      nbPosologies += 1;
+    }
+  }
+
   for (const p of data.medicaments) {
     const composition = p.composition.map(([slug, dosage]) => {
       need(ids.molecules, slug, 'molécule', p.nom);
@@ -234,7 +264,11 @@ async function seed(conn) {
     return null;
   };
 
+  for (const slug of [...Object.keys(data.niveaux), ...Object.keys(data.grades)]) {
+    need(ids.pathologies, slug, 'fiche', 'niveaux de soins / grades');
+  }
   let nbExamens = 0;
+  let nbGrades = 0;
   // 2e passage : liaisons et contenu structuré
   for (const p of data.pathologies) {
     const pid = ids.pathologies.get(p.slug);
@@ -286,11 +320,33 @@ async function seed(conn) {
         [pid, linked, nom, orNull(distinctifs), i + 1],
       );
     }
+    const grades = data.grades[p.slug] || {};
+    for (const ordre of Object.keys(grades)) {
+      if (!p.principes?.[Number(ordre) - 1]) {
+        throw new Error(`Seed : principe n° ${ordre} introuvable pour le grade de « ${p.slug} »`);
+      }
+    }
     for (const [i, [titre, objectif, details]] of (p.principes || []).entries()) {
+      const [force, detail, source] = grades[i + 1] || [];
       await run(
-        'INSERT INTO pathologie_principes (pathologie_id, ordre, titre, objectif, details) VALUES (?, ?, ?, ?, ?)',
-        [pid, i + 1, titre, orNull(objectif), orNull(details)],
+        `INSERT INTO pathologie_principes (pathologie_id, ordre, titre, objectif, details, grade_force,
+           grade_detail, grade_source)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [pid, i + 1, titre, orNull(objectif), orNull(details), orNull(force), orNull(detail), orNull(source)],
       );
+      if (force || detail) nbGrades += 1;
+    }
+    const niveaux = data.niveaux[p.slug];
+    if (niveaux) {
+      for (const [cle, niveau] of Object.entries(NIVEAUX)) {
+        const [priseEnCharge, transfert] = niveaux[cle] || [];
+        if (!priseEnCharge && !transfert) continue;
+        await run(
+          `INSERT INTO pathologie_niveaux (pathologie_id, niveau, prise_en_charge, criteres_transfert)
+           VALUES (?, ?, ?, ?)`,
+          [pid, niveau, orNull(priseEnCharge), orNull(transfert)],
+        );
+      }
     }
     for (const [i, c] of (p.complications || []).entries()) {
       await run(
@@ -318,6 +374,9 @@ async function seed(conn) {
     medicaments: data.medicaments.length,
     examens: data.examens.length,
     examens_lies: nbExamens,
+    posologies: nbPosologies,
+    grades: nbGrades,
+    niveaux_de_soins: Object.keys(data.niveaux).length,
     urgences: data.urgences.length,
     symptomes: data.symptomes.length,
     scores: data.scores.length,

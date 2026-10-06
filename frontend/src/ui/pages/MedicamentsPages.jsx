@@ -4,7 +4,7 @@ import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { RichText } from '../components/RichText.jsx';
-import { FichePharmaco } from '../components/Pharmaco.jsx';
+import { FichePharmaco, Posologies } from '../components/Pharmaco.jsx';
 import { LIGNES, formatPrixCdf } from '../../core/labels.js';
 
 const FILTER_KEYS = ['operateur', 'classe', 'molecule'];
@@ -257,6 +257,12 @@ export function MedicamentPage() {
                     <Link to={`/molecules/${c.slug}`}>{c.dci}</Link>
                     {c.dosage && <span className="muted"> — {c.dosage}</span>}
                   </h3>
+                  {c.posologies?.length > 0 && (
+                    <section className="pharmaco-posologies" aria-label={`Posologies : ${c.dci}`}>
+                      <h4 className="pharmaco-label">Posologies par population</h4>
+                      <Posologies posologies={c.posologies} />
+                    </section>
+                  )}
                   <FichePharmaco molecule={c} headingLevel={4} />
                 </article>
               ))}

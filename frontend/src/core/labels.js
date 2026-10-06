@@ -33,6 +33,7 @@ export const ONGLETS = [
   { key: 'diagnostic', label: 'Diagnostic' },
   { key: 'etiologies', label: 'Étiologies' },
   { key: 'therapeutique', label: 'Thérapeutique' },
+  { key: 'niveaux', label: 'Niveaux de soins' },
   { key: 'evolution', label: 'Évolution' },
 ];
 
@@ -72,6 +73,48 @@ export const FICHE_PHARMACO = [
   ['grossesse_allaitement', 'Grossesse et allaitement'],
   ['surveillance', 'Surveillance'],
 ];
+
+/** Pyramide sanitaire de la RDC. */
+export const NIVEAUX_SOINS = {
+  centre_sante: {
+    label: 'Centre de santé',
+    sub: 'Soins primaires : infirmier titulaire, TDR, médicaments essentiels',
+  },
+  hopital_general: {
+    label: 'Hôpital général de référence',
+    sub: 'Zone de santé : médecin, laboratoire, imagerie de base, bloc, transfusion',
+  },
+  hopital_tertiaire: {
+    label: 'Hôpital provincial / universitaire',
+    sub: 'Spécialistes, réanimation, scanner, dialyse',
+  },
+};
+
+export const GRADES = {
+  forte: 'Recommandation forte',
+  conditionnelle: 'Recommandation conditionnelle',
+  bonne_pratique: 'Bonne pratique',
+  consensus: 'Consensus d’experts',
+};
+
+export const STATUTS_FICHE = {
+  brouillon: 'Brouillon',
+  a_valider: 'À valider',
+  valide: 'Validée',
+};
+
+export const POPULATIONS = {
+  adulte: 'Adulte',
+  enfant: 'Enfant',
+  nouveau_ne: 'Nouveau-né',
+  grossesse: 'Grossesse',
+};
+
+export const SECURITES = {
+  autorise: 'Autorisé',
+  prudence: 'Prudence',
+  contre_indique: 'Contre-indiqué',
+};
 
 export const formatPrixCdf = (prix) =>
   prix === null || prix === undefined || prix === ''

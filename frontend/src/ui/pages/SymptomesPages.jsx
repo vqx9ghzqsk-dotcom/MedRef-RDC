@@ -6,7 +6,11 @@ import { AsyncView, Empty } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { FREQUENCES, groupByInitial } from '../../core/labels.js';
 
-const normalize = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const normalize = (s) =>
+  s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
 
 export function SymptomesPage() {
   const { api } = useServices();

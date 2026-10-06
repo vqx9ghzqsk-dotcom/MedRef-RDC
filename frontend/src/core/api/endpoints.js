@@ -35,6 +35,15 @@ export function createMedRefApi(client) {
     sources: (filtres) => data(client.get('/api/sources', filtres)),
     recherche: (q) => client.get('/api/recherche', { q }),
 
+    // Administration (rôles admin et medecin)
+    adminResume: () => data(client.get('/api/admin/resume')),
+    adminPathologie: (id) => data(client.get(`/api/admin/pathologies/${enc(id)}`)),
+    adminSavePathologie: (id, payload) => client.put(`/api/admin/pathologies/${enc(id)}`, payload),
+    adminMolecule: (id) => data(client.get(`/api/admin/molecules/${enc(id)}`)),
+    adminSaveMolecule: (id, payload) => client.put(`/api/admin/molecules/${enc(id)}`, payload),
+    adminMedicament: (id) => data(client.get(`/api/admin/medicaments/${enc(id)}`)),
+    adminSaveMedicament: (id, payload) => client.put(`/api/admin/medicaments/${enc(id)}`, payload),
+
     // Prescriptions
     prescriptions: () => data(client.get('/api/prescriptions')),
     syncPrescriptions: (prescriptions) => client.post('/api/prescriptions/sync', { prescriptions }),

@@ -58,6 +58,9 @@ const fiche = {
           titre: 'Traitement parentéral',
           objectif: 'Réduire la parasitémie',
           details: '- Artésunate IV',
+          grade_force: 'forte',
+          grade_detail: 'certitude des preuves élevée',
+          grade_source: 'OMS',
         },
       ],
       notes: null,
@@ -97,6 +100,14 @@ const fiche = {
         },
       ],
     },
+    niveaux: [
+      {
+        niveau: 'centre_sante',
+        prise_en_charge: '- Artésunate rectal avant transfert',
+        criteres_transfert: '- Tout paludisme grave',
+      },
+      { niveau: 'hopital_tertiaire', prise_en_charge: '- Réanimation, dialyse', criteres_transfert: null },
+    ],
     evolution: {
       texte: 'Favorable si traité tôt',
       complications: [
@@ -110,6 +121,7 @@ const fiche = {
       ],
     },
   },
+  validation: { statut: 'a_valider', valide_le: null, valide_par: null },
   departement: { id: 1, nom: 'Médecine interne', slug: 'medecine-interne' },
   specialite: { id: 2, nom: 'Infectiologie', slug: 'mi-infectiologie' },
   urgences: [{ id: 1, nom: 'Paludisme grave', slug: 'paludisme-grave-urgence', categorie: 'medicale' }],
@@ -119,7 +131,7 @@ const fiche = {
   sources: [{ id: 5, titre: 'WHO guidelines for malaria', niveau: 1, url: null }],
 };
 
-function renderApp(path, apiOverrides = {}) {
+function renderApp(path, apiOverrides = {}, user = null) {
   const api = {
     departements: vi.fn(async () => [
       {
@@ -133,14 +145,14 @@ function renderApp(path, apiOverrides = {}) {
       },
     ]),
     pathologie: vi.fn(async () => fiche),
-    me: vi.fn(),
+    me: vi.fn(async () => user),
     ...apiOverrides,
   };
   const services = {
     api,
     tokenStore: {
-      getToken: () => null,
-      getUser: () => null,
+      getToken: () => (user ? 'jeton' : null),
+      getUser: () => user,
       save: vi.fn(),
       setUser: vi.fn(),
       clear: vi.fn(),
@@ -189,6 +201,7 @@ describe('Fiche pathologie', () => {
       'Diagnostic',
       'Étiologies',
       'Thérapeutique',
+      'Niveaux de soins',
       'Évolution',
     ]);
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
@@ -269,6 +282,205 @@ describe('Fiche pathologie', () => {
       }),
     });
     expect(await screen.findByText('Cette page n’existe pas ou a été déplacée.')).toBeInTheDocument();
+  });
+});
+
+describe('Niveaux de soins, grades et validation', () => {
+  it('affiche ce qu’on fait sur place et quand transférer, par niveau', async () => {
+    renderApp('/pathologies/paludisme-grave?onglet=niveaux');
+    expect(await screen.findByRole('heading', { name: /Centre de santé/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Hôpital provincial/ })).toBeInTheDocument();
+    expect(screen.getByText('Artésunate rectal avant transfert')).toBeInTheDocument();
+    expect(screen.getAllByRole('heading', { name: 'Quand transférer' })).toHaveLength(1);
+    expect(screen.getByText('Tout paludisme grave')).toBeInTheDocument();
+  });
+
+  it('affiche le grade à côté du principe et le statut de validation de la fiche', async () => {
+    renderApp('/pathologies/paludisme-grave?onglet=therapeutique');
+    expect(
+      await screen.findByText(/Recommandation forte · certitude des preuves élevée/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/OMS —/)).toBeInTheDocument();
+    expect(screen.getByRole('note')).toHaveTextContent('en attente de validation médicale');
+  });
+
+  it('indique la validation par un médecin', async () => {
+    renderApp('/pathologies/paludisme-grave', {
+      pathologie: vi.fn(async () => ({
+        ...fiche,
+        validation: { statut: 'valide', valide_le: '2026-10-01 10:00:00', valide_par: 'Dr Mingalu' },
+      })),
+    });
+    expect(await screen.findByRole('note')).toHaveTextContent('Fiche validée par Dr Mingalu le 01/10/2026');
+  });
+});
+
+describe('Posologies et calcul de dose', () => {
+  const molecule = {
+    id: 1,
+    dci: 'Paracétamol',
+    slug: 'paracetamol',
+    classe: 'Antalgiques',
+    produits: [],
+    pathologies: [],
+    posologies: [
+      { id: 1, population: 'adulte', dose_texte: '1 g', dose_par_kg: null, dose_max: null, unite: 'mg' },
+      { id: 2, population: 'enfant', dose_texte: '15 mg/kg', dose_par_kg: 15, dose_max: 1000, unite: 'mg' },
+      { id: 3, population: 'grossesse', dose_texte: 'Posologie adulte', securite: 'autorise', unite: 'mg' },
+    ],
+  };
+
+  it('sépare les populations et calcule la dose selon le poids', async () => {
+    const user = userEvent.setup();
+    renderApp('/molecules/paracetamol', { molecule: vi.fn(async () => molecule) });
+    const enfant = await screen.findByRole('button', { name: 'Enfant' });
+    expect(enfant).toHaveAttribute('aria-pressed', 'true');
+    await user.type(screen.getByLabelText('Poids du patient'), '20');
+    expect(screen.getByRole('status')).toHaveTextContent('Pour 20 kg : 300 mg');
+    await user.clear(screen.getByLabelText('Poids du patient'));
+    await user.type(screen.getByLabelText('Poids du patient'), '90');
+    expect(screen.getByRole('status')).toHaveTextContent('1 000 mg');
+    expect(screen.getByRole('status')).toHaveTextContent('plafonné');
+
+    await user.click(screen.getByRole('button', { name: 'Grossesse' }));
+    expect(screen.getByText('Autorisé')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Poids du patient')).toBeNull();
+  });
+});
+
+describe('Administration', () => {
+  it('demande une connexion, puis refuse un compte sans rôle éditeur', async () => {
+    renderApp('/admin');
+    expect(await screen.findByText(/Connectez-vous avec un compte administrateur/)).toBeInTheDocument();
+  });
+
+  it('refuse un compte « user »', async () => {
+    renderApp('/admin', {}, { id: 1, nom: 'Lecteur', email: 'l@x.cd', role: 'user' });
+    expect(await screen.findByText(/Accès réservé aux administrateurs/)).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Administration' })).toBeNull();
+  });
+
+  it('affiche le tableau de bord et le lien de menu pour un administrateur', async () => {
+    const adminResume = vi.fn(async () => ({
+      statuts: { brouillon: 0, a_valider: 1, valide: 1 },
+      pathologies: [
+        {
+          id: 3,
+          nom: 'Paludisme grave',
+          specialite: 'Infectiologie',
+          departement: 'Médecine interne',
+          statut: 'a_valider',
+        },
+        {
+          id: 4,
+          nom: 'Asthme',
+          specialite: 'Pneumologie',
+          departement: 'Médecine interne',
+          statut: 'valide',
+          valide_par: 'Dr X',
+          valide_le: '2026-10-01 10:00:00',
+        },
+      ],
+      molecules: [],
+      medicaments: [],
+      modifications: [],
+    }));
+    const user = userEvent.setup();
+    renderApp('/admin', { adminResume }, { id: 1, nom: 'Admin', email: 'a@x.cd', role: 'admin' });
+    expect(await screen.findByRole('link', { name: 'Paludisme grave' })).toHaveAttribute(
+      'href',
+      '/admin/pathologies/3',
+    );
+    expect(screen.getByRole('link', { name: 'Administration' })).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText('Statut'), 'valide');
+    expect(screen.queryByRole('link', { name: 'Paludisme grave' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Asthme' })).toBeInTheDocument();
+  });
+
+  it('édite une fiche validée : elle repasse « à valider » et l’enregistrement envoie les collections', async () => {
+    const adminPathologie = vi.fn(async () => ({
+      id: 3,
+      nom: 'Paludisme grave',
+      slug: 'paludisme-grave',
+      resume: 'Urgence',
+      definition: 'def',
+      statut: 'valide',
+      valide_par: 'Dr X',
+      valide_le: '2026-10-01 10:00:00',
+      principes: [
+        {
+          titre: 'Artésunate',
+          objectif: '',
+          details: '',
+          grade_force: 'forte',
+          grade_detail: '',
+          grade_source: 'OMS',
+        },
+      ],
+      complications: [],
+      niveaux: [
+        { niveau: 'centre_sante', prise_en_charge: 'A', criteres_transfert: 'B' },
+        { niveau: 'hopital_general', prise_en_charge: null, criteres_transfert: null },
+        { niveau: 'hopital_tertiaire', prise_en_charge: null, criteres_transfert: null },
+      ],
+      examens: [],
+      differentiels: [],
+      options: { examens: [], pathologies: [] },
+      historique: [],
+    }));
+    const adminSavePathologie = vi.fn(async () => ({ ok: true }));
+    const user = userEvent.setup();
+    renderApp(
+      '/admin/pathologies/3',
+      { adminPathologie, adminSavePathologie },
+      { id: 1, nom: 'Admin', email: 'a@x.cd', role: 'admin' },
+    );
+    const resume = await screen.findByLabelText('Résumé');
+    await user.type(resume, ' corrigé');
+    expect(screen.getByText(/La fiche repassera « À valider »/)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '+ Ajouter un principe' }));
+    await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
+    // Le nouveau principe sans titre est envoyé : c'est l'API qui renvoie l'erreur par champ
+    expect(adminSavePathologie).toHaveBeenCalledWith(
+      '3',
+      expect.objectContaining({
+        resume: 'Urgence corrigé',
+        statut: 'a_valider',
+        principes: expect.any(Array),
+      }),
+    );
+    const payload = adminSavePathologie.mock.calls[0][1];
+    expect(payload.principes).toHaveLength(2);
+    expect(payload).not.toHaveProperty('options');
+    expect(payload).not.toHaveProperty('historique');
+  });
+
+  it('affiche les erreurs par champ renvoyées par l’API', async () => {
+    const adminMedicament = vi.fn(async () => ({
+      id: 4,
+      nom_commercial: 'Coartem',
+      dci: 'Artéméther + Luméfantrine',
+      operateur: 'Novartis',
+      disponible_rdc: true,
+      prix_indicatif_cdf: null,
+      historique: [],
+    }));
+    const adminSaveMedicament = vi.fn(async () => {
+      throw Object.assign(new Error('Données invalides'), {
+        status: 400,
+        details: { prix_indicatif_cdf: 'Nombre entre 0 et 10000000000 attendu' },
+      });
+    });
+    const user = userEvent.setup();
+    renderApp(
+      '/admin/medicaments/4',
+      { adminMedicament, adminSaveMedicament },
+      { id: 1, nom: 'Admin', email: 'a@x.cd', role: 'medecin' },
+    );
+    await user.type(await screen.findByLabelText('Prix indicatif (FC)'), '-3');
+    await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
+    expect(await screen.findByText('Nombre entre 0 et 10000000000 attendu')).toBeInTheDocument();
+    expect(screen.getByLabelText('Prix indicatif (FC)')).toHaveAttribute('aria-invalid', 'true');
   });
 });
 

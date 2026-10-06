@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuth } from '../context/auth.jsx';
 import { useOnline } from '../hooks/useOnline.js';
+import { isEditor } from './AdminForm.jsx';
 
 export const QUICK_ACCESS = [
   { to: '/urgences', label: 'Urgences', hint: 'Conduite ABCDE, signes de gravité', tone: 'urgence' },
@@ -49,6 +50,7 @@ export function Layout() {
               </NavLink>
             ))}
             <NavLink to="/prescriptions">Prescriptions</NavLink>
+            {isEditor(user) && <NavLink to="/admin">Administration</NavLink>}
           </nav>
           <div className="account">
             {user ? (

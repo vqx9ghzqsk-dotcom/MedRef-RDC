@@ -16,7 +16,7 @@ function createApp() {
   app.use(
     cors({
       origin: config.corsOrigin,
-      methods: ['GET', 'POST', 'DELETE'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     }),
   );
@@ -49,6 +49,7 @@ function createApp() {
   app.use('/api', require('./routes/sources'));
   app.use('/api', require('./routes/recherche'));
   app.use('/api', require('./routes/prescriptions'));
+  app.use('/api', require('./routes/admin'));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

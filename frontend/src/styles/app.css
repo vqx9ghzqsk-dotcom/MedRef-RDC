@@ -1457,9 +1457,373 @@ html {
   margin-top: 0.35rem;
 }
 
+/* ------------------------------------------------------------ Validation, grades, niveaux de soins */
+.validation {
+  margin: 0.75rem 0 0;
+  padding: 0.55rem 0.85rem;
+  border-radius: var(--radius-small);
+  font-size: 0.92rem;
+  max-width: var(--measure);
+}
+.validation-ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+  font-weight: 600;
+}
+.validation-pending {
+  background: var(--warn-bg);
+  color: var(--ink);
+}
+.grade {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin: 0 0 0.45rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-small);
+  font-size: 0.84rem;
+  font-weight: 600;
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.grade-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+.grade-source {
+  font-weight: 700;
+}
+.grade-forte {
+  background: var(--ok-bg);
+}
+.grade-conditionnelle,
+.grade-consensus {
+  background: var(--warn-bg);
+}
+.grade-bonne_pratique,
+.grade-preuve {
+  background: var(--link-bg);
+}
+
+.niveaux {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+.niveau-soins {
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--ok);
+  border-radius: var(--radius-small);
+  padding: 0.8rem 1rem;
+  background: var(--surface);
+}
+.niveau-hopital_general {
+  border-left-color: var(--link);
+}
+.niveau-hopital_tertiaire {
+  border-left-color: var(--brand);
+}
+.niveau-titre {
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+.niveau-bloc + .niveau-bloc {
+  margin-top: 0.5rem;
+}
+.niveau-transfert {
+  padding: 0.5rem 0.75rem;
+  background: var(--urgence-bg);
+  border-radius: var(--radius-small);
+}
+.niveau-transfert .surveillance-label {
+  color: var(--urgence);
+}
+
+/* ------------------------------------------------------------ Posologies */
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+.segmented-btn {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  padding: 0.4rem 0.9rem;
+  min-height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.segmented-btn[aria-pressed='true'] {
+  background: var(--link);
+  border-color: var(--link);
+  color: var(--surface);
+}
+.posologie-poids input {
+  max-width: 8rem;
+}
+.posologie-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.posologie {
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.posologie:last-child {
+  border-bottom: 0;
+}
+.posologie-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+.posologie-indication {
+  font-weight: 700;
+}
+.posologie-dose,
+.posologie-rythme,
+.posologie-remarque {
+  margin: 0.2rem 0 0;
+}
+.posologie-rythme {
+  font-size: 0.92rem;
+}
+.posologie-calcul {
+  margin: 0.4rem 0 0;
+  padding: 0.4rem 0.7rem;
+  border-left: 3px solid var(--link);
+  background: var(--link-bg);
+  border-radius: var(--radius-small);
+}
+.posologie-avert {
+  font-size: 0.82rem;
+  margin: 0.6rem 0 0;
+}
+.pharmaco-posologies {
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line);
+}
+.tag.securite-autorise {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.tag.securite-prudence {
+  background: var(--warn-bg);
+  color: var(--ink);
+}
+.tag.securite-contre_indique {
+  background: var(--urgence-bg);
+  color: var(--urgence);
+}
+
+/* ------------------------------------------------------------ Administration */
+.stat-tiles {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--line);
+  border-radius: var(--radius-small);
+}
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+.stat-label {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+.stat-tile.statut-valide {
+  border-top-color: var(--ok);
+}
+.stat-tile.statut-a_valider {
+  border-top-color: var(--pending);
+}
+.tag.statut-valide {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.tag.statut-a_valider {
+  background: var(--warn-bg);
+  color: var(--ink);
+}
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.93rem;
+}
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.admin-table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+}
+.admin-table a {
+  font-weight: 650;
+}
+.historique {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.historique li {
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.92rem;
+}
+.historique.card li {
+  padding-inline: 0.2rem;
+}
+
+.admin-editor {
+  padding-bottom: 5rem;
+}
+.form-grid {
+  display: grid;
+  gap: 0 1rem;
+}
+@media (min-width: 720px) {
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .form-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.field input[type='text'],
+.field input[type='search'],
+.field select {
+  width: 100%;
+}
+.field-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.btn-link {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: none;
+  border: 0;
+  padding: 0.2rem 0;
+  color: var(--link);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.apercu {
+  padding: 0.6rem 0.8rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-small);
+  background: var(--surface-2);
+}
+.field-error {
+  display: block;
+  margin-top: 0.25rem;
+}
+.list-editor {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  padding: 0.75rem 0.9rem 0.9rem;
+  margin: 0 0 1rem;
+}
+.list-editor legend {
+  font-weight: 700;
+  padding: 0 0.3rem;
+}
+.list-editor-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px dashed var(--line);
+}
+.list-editor-item:last-of-type {
+  margin-bottom: 0.75rem;
+}
+.list-editor-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.list-editor-title {
+  font-weight: 650;
+}
+.list-editor-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+.save-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 16px rgb(0 0 0 / 10%);
+}
+.save-bar-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+.save-bar-status {
+  margin-right: auto;
+  font-size: 0.92rem;
+}
+.save-bar-status .form-error,
+.save-bar-status .form-success {
+  margin: 0;
+}
+
 @media (max-width: 520px) {
   .search {
     flex-direction: column;
+  }
+  .stat-tiles {
+    grid-template-columns: 1fr;
   }
   .tabpanel {
     padding: 1rem 0.85rem 0.5rem;

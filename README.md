@@ -142,11 +142,36 @@ Sous Windows (PowerShell), remplacez `cp` par `Copy-Item`.
 | Définition    | définition, physiopathologie |
 | Diagnostic    | diagnostic clinique ; bilan biologique, imagerie et explorations classés par catégorie (1re intention, 2e intention, présomption, confirmation, gravité, étiologique, pré-thérapeutique, suivi), chacun avec son interprétation dans la pathologie et ses valeurs normales ; scores ; diagnostics différentiels ouvrables |
 | Étiologies    | agents, terrain, facteurs favorisants |
-| Thérapeutique | sommaire des principes de prise en charge puis détail de chacun ; molécules (ligne, contexte) avec leurs produits par opérateur ; traitement de chaque complication |
+| Thérapeutique | sommaire des principes de prise en charge (avec le grade de la recommandation : source, force, niveau de preuve) puis détail de chacun ; molécules (ligne, contexte) avec leurs produits par opérateur ; traitement de chaque complication |
+| Niveaux de soins | pour le centre de santé, l'hôpital général de référence et l'hôpital provincial/universitaire : ce qu'on peut faire sur place et quand transférer |
 | Évolution     | évolution et pronostic ; surveillance clinique et paraclinique de chaque complication |
 
-Rôles : `user` (défaut, seul actif en phase 1), `medecin`, `admin` (prévus dans le schéma et le middleware
-`requireRole`).
+Chaque fiche affiche son statut de relecture : « en attente de validation médicale » ou « validée par … le … ».
+
+Les **posologies** sont structurées par population (adulte, enfant, nouveau-né, grossesse, avec le niveau de sécurité
+pendant la grossesse). Pour les doses exprimées par kilo, la fiche molécule et la fiche produit proposent un calcul
+automatique selon le poids, plafonné à la dose maximale par prise.
+
+### Administration du contenu
+
+Les comptes `admin` et `medecin` accèdent à **/admin** (lien « Administration » dans le menu) pour :
+
+- corriger chaque fiche (textes, examens, différentiels, principes et grades, complications, niveaux de soins) ;
+- la **valider** sous leur nom (date et validateur affichés sur la fiche publique). Toute modification ultérieure
+  repasse la fiche « à valider » ;
+- compléter les posologies et la fiche pharmacologique des molécules, la disponibilité en RDC et le prix des produits ;
+- consulter l'historique de toutes les modifications.
+
+L'inscription crée toujours un compte `user`. Pour donner les droits, créer d'abord le compte depuis l'application,
+puis :
+
+```bash
+cd backend
+npm run user:role -- votre.email@exemple.cd admin      # ou medecin ; « user » pour retirer les droits
+```
+
+Le rôle est relu en base à chaque requête d'administration : un retrait de droits prend effet immédiatement
+(reconnectez-vous pour voir apparaître ou disparaître le lien du menu).
 
 ---
 
@@ -180,8 +205,12 @@ Toutes les réponses sont en JSON. Les listes sont dans `data`. Les erreurs ont 
 | GET     | `/api/prescriptions`               | 🔒 prescriptions de l'utilisateur                                   |
 | POST    | `/api/prescriptions/sync`          | 🔒 synchronisation idempotente (voir plus bas)                      |
 | DELETE  | `/api/prescriptions/:id`           | 🔒 suppression logique                                              |
+| GET     | `/api/admin/resume`                | 🛡 statuts, listes des fiches, molécules, produits, historique      |
+| GET/PUT | `/api/admin/pathologies/:id`       | 🛡 lecture / enregistrement complet d'une fiche (+ validation)      |
+| GET/PUT | `/api/admin/molecules/:id`         | 🛡 fiche pharmacologique et posologies                              |
+| GET/PUT | `/api/admin/medicaments/:id`       | 🛡 produit : disponibilité RDC, prix, informations propres          |
 
-🔒 = en-tête `Authorization: Bearer <jwt>` requis.
+🔒 = en-tête `Authorization: Bearer <jwt>` requis. 🛡 = idem, avec un rôle `admin` ou `medecin`.
 
 **Sécurité** : helmet (en-têtes HTTP), CORS limité à `CORS_ORIGIN`, limitation de débit (1000 req/15 min sur
 `/api`, 20 req/15 min sur `/api/auth`), mots de passe hachés (bcrypt), requêtes SQL toutes paramétrées, rôle
@@ -276,7 +305,11 @@ Les molécules (fiche pharmacologique) et les produits (opérateur, composition)
 les examens et leurs valeurs normales dans `seed-data/referentiels.js`. Le script s'arrête avec un message clair si une
 référence (spécialité, molécule, examen, source, fiche…) n'existe pas.
 
-Une interface d'administration (rôle `admin`) est la suite logique pour éditer le contenu sans toucher au code.
+Les niveaux de soins sont dans `seed-data/niveaux.js`, les grades dans `seed-data/grades.js` (seuls les grades vérifiés
+dans la source sont renseignés) et les posologies structurées dans `seed-data/posologies.js`.
+
+Au quotidien, corrigez le contenu depuis **/admin** : `npm run db:reset` recharge les fichiers et **efface** les
+modifications faites dans l'administration.
 
 ---
 

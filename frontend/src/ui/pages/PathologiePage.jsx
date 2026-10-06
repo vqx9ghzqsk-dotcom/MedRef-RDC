@@ -9,7 +9,9 @@ import { ProduitList } from '../components/Pharmaco.jsx';
 import {
   CATEGORIES_EXAMEN,
   FREQUENCES,
+  GRADES,
   LIGNES,
+  NIVEAUX_SOINS,
   NIVEAUX_SOURCE,
   ONGLETS,
   TYPES_EXAMEN,
@@ -209,6 +211,7 @@ function TherapeutiquePanel({ content }) {
               <h4>
                 <span className="principe-num">{pr.ordre}</span> {pr.titre}
               </h4>
+              <GradeBadge principe={pr} />
               {pr.objectif && <p className="principe-objectif">Objectif : {pr.objectif}</p>}
               <RichText text={pr.details} headingLevel={5} />
             </article>
@@ -254,6 +257,78 @@ function TherapeutiquePanel({ content }) {
         <p className="muted">Contenu à rédiger.</p>
       )}
     </>
+  );
+}
+
+/** « OMS — Recommandation forte · certitude des preuves élevée » */
+function GradeBadge({ principe: pr }) {
+  if (!pr.grade_force && !pr.grade_detail) return null;
+  const libelle = [pr.grade_force && GRADES[pr.grade_force], pr.grade_detail].filter(Boolean).join(' · ');
+  return (
+    <p className={`grade grade-${pr.grade_force || 'preuve'}`}>
+      <span className="grade-label">Grade</span>
+      {pr.grade_source && <span className="grade-source">{pr.grade_source} — </span>}
+      {libelle}
+    </p>
+  );
+}
+
+// ------------------------------------------------------------------ Niveaux de soins
+
+function NiveauxPanel({ content }) {
+  if (!content.length) return <p className="muted">Contenu à rédiger.</p>;
+  return (
+    <>
+      <p className="muted">
+        Ce qu’on peut faire à chaque niveau de la pyramide sanitaire et quand transférer. À adapter au plateau
+        technique réellement disponible.
+      </p>
+      <ol className="niveaux">
+        {content.map((n) => (
+          <li key={n.niveau} className={`niveau-soins niveau-${n.niveau}`}>
+            <h3 className="niveau-titre">
+              {NIVEAUX_SOINS[n.niveau].label}
+              <span className="row-sub">{NIVEAUX_SOINS[n.niveau].sub}</span>
+            </h3>
+            {n.prise_en_charge && (
+              <div className="niveau-bloc">
+                <h4 className="surveillance-label">Sur place</h4>
+                <RichText text={n.prise_en_charge} headingLevel={5} />
+              </div>
+            )}
+            {n.criteres_transfert && (
+              <div className="niveau-bloc niveau-transfert">
+                <h4 className="surveillance-label">Quand transférer</h4>
+                <RichText text={n.criteres_transfert} headingLevel={5} />
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+    </>
+  );
+}
+
+/** Statut de relecture médicale de la fiche. */
+function ValidationBanner({ validation }) {
+  if (!validation) return null;
+  if (validation.statut === 'valide') {
+    const date = validation.valide_le
+      ? new Date(validation.valide_le.replace(' ', 'T')).toLocaleDateString('fr-FR')
+      : null;
+    return (
+      <p className="validation validation-ok" role="note">
+        Fiche validée{validation.valide_par ? ` par ${validation.valide_par}` : ''}
+        {date ? ` le ${date}` : ''}.
+      </p>
+    );
+  }
+  return (
+    <p className="validation validation-pending" role="note">
+      Fiche{' '}
+      {validation.statut === 'brouillon' ? 'en cours de rédaction' : 'en attente de validation médicale'} :
+      vérifier les posologies avec le protocole national.
+    </p>
   );
 }
 
@@ -319,6 +394,8 @@ function TabContent({ active, content }) {
       return <DiagnosticPanel content={content} />;
     case 'therapeutique':
       return <TherapeutiquePanel content={content} />;
+    case 'niveaux':
+      return <NiveauxPanel content={content || []} />;
     case 'evolution':
       return <EvolutionPanel content={content} />;
     default:
@@ -418,6 +495,7 @@ export function PathologiePage() {
           <header className="page-header">
             <h1>{f.nom}</h1>
             {f.resume && <p className="lead">{f.resume}</p>}
+            <ValidationBanner validation={f.validation} />
           </header>
 
           {f.urgences.length > 0 && (

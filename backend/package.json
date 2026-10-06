@@ -17,7 +17,8 @@
     "test": "jest --runInBand",
     "test:integration": "jest --runInBand --testPathPattern integration",
     "lint": "eslint src tests scripts",
-    "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\""
+    "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
+    "user:role": "node scripts/role.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

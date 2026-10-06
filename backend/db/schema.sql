@@ -11,7 +11,10 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS modifications;
 DROP TABLE IF EXISTS prescriptions;
+DROP TABLE IF EXISTS molecule_posologies;
+DROP TABLE IF EXISTS pathologie_niveaux;
 DROP TABLE IF EXISTS pathologie_sources;
 DROP TABLE IF EXISTS sources;
 DROP TABLE IF EXISTS pathologie_scores;
@@ -99,13 +102,32 @@ CREATE TABLE pathologies (
   therapeutique    TEXT,
   -- Onglet 5 : Évolution, pronostic, critères de guérison (surveillance des complications : complications)
   evolution        TEXT,
+  -- Validation médicale : toute fiche est « à valider » tant qu'un médecin ne l'a pas relue
+  statut           ENUM('brouillon', 'a_valider', 'valide') NOT NULL DEFAULT 'a_valider',
+  valide_par       INT UNSIGNED NULL,
+  valide_le        DATETIME NULL,
   created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_pathologies_specialite_nom (specialite_id, nom),
   UNIQUE KEY uq_pathologies_slug (slug),
+  KEY idx_pathologies_statut (statut),
   FULLTEXT KEY ft_pathologies (nom, definition),
   CONSTRAINT fk_pathologies_specialite FOREIGN KEY (specialite_id)
-    REFERENCES specialites (id) ON DELETE CASCADE ON UPDATE CASCADE
+    REFERENCES specialites (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_pathologies_valide_par FOREIGN KEY (valide_par)
+    REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Prise en charge selon le niveau de la pyramide sanitaire : ce qu'on peut faire
+-- sur place et quand transférer
+CREATE TABLE pathologie_niveaux (
+  pathologie_id      INT UNSIGNED NOT NULL,
+  niveau             ENUM('centre_sante', 'hopital_general', 'hopital_tertiaire') NOT NULL,
+  prise_en_charge    TEXT,
+  criteres_transfert TEXT,
+  PRIMARY KEY (pathologie_id, niveau),
+  CONSTRAINT fk_pn_pathologie FOREIGN KEY (pathologie_id)
+    REFERENCES pathologies (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
@@ -250,6 +272,28 @@ CREATE TABLE medicament_molecules (
     REFERENCES molecules (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Posologies structurées par population. dose_par_kg (+ unite, dose_max) permet
+-- le calcul automatique selon le poids ; dose_texte est la posologie lisible.
+CREATE TABLE molecule_posologies (
+  id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  molecule_id INT UNSIGNED NOT NULL,
+  population  ENUM('adulte', 'enfant', 'nouveau_ne', 'grossesse') NOT NULL,
+  indication  VARCHAR(190),
+  voie        VARCHAR(60),
+  dose_texte  VARCHAR(400) NOT NULL,
+  dose_par_kg DECIMAL(10, 3) NULL,
+  dose_max    DECIMAL(10, 2) NULL,
+  unite       VARCHAR(20) NOT NULL DEFAULT 'mg',
+  frequence   VARCHAR(160),
+  duree       VARCHAR(160),
+  securite    ENUM('autorise', 'prudence', 'contre_indique') NULL,
+  remarque    TEXT,
+  ordre       SMALLINT NOT NULL DEFAULT 0,
+  KEY idx_mpos_molecule (molecule_id, population, ordre),
+  CONSTRAINT fk_mpos_molecule FOREIGN KEY (molecule_id)
+    REFERENCES molecules (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE molecule_pathologies (
   molecule_id   INT UNSIGNED NOT NULL,
   pathologie_id INT UNSIGNED NOT NULL,
@@ -323,6 +367,10 @@ CREATE TABLE pathologie_principes (
   titre         VARCHAR(190) NOT NULL,
   objectif      VARCHAR(500),
   details       TEXT,
+  -- Grade de la recommandation (NULL = non renseigné)
+  grade_force   ENUM('forte', 'conditionnelle', 'bonne_pratique', 'consensus') NULL,
+  grade_detail  VARCHAR(190) NULL,
+  grade_source  VARCHAR(190) NULL,
   KEY idx_pp_pathologie (pathologie_id, ordre),
   CONSTRAINT fk_pp_pathologie FOREIGN KEY (pathologie_id)
     REFERENCES pathologies (id) ON DELETE CASCADE
@@ -430,4 +478,20 @@ CREATE TABLE prescriptions (
   KEY idx_prescriptions_user (user_id, client_updated_at),
   CONSTRAINT fk_prescriptions_user FOREIGN KEY (user_id)
     REFERENCES users (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
+-- Historique des modifications faites depuis l'administration (traçabilité)
+-- ---------------------------------------------------------------------
+CREATE TABLE modifications (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id    INT UNSIGNED NULL,
+  entite     ENUM('pathologie', 'molecule', 'medicament') NOT NULL,
+  entite_id  INT UNSIGNED NOT NULL,
+  action     ENUM('modification', 'validation') NOT NULL,
+  resume     VARCHAR(300),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_modifications_entite (entite, entite_id, created_at),
+  CONSTRAINT fk_modifications_user FOREIGN KEY (user_id)
+    REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

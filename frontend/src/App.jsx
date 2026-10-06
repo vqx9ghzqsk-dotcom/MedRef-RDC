@@ -11,6 +11,12 @@ import { MedicamentPage, MedicamentsPage } from './ui/pages/MedicamentsPages.jsx
 import { MoleculePage, MoleculesPage } from './ui/pages/MoleculesPages.jsx';
 import { ExamenPage, ExamensPage } from './ui/pages/ExamensPages.jsx';
 import { SourcesPage } from './ui/pages/SourcesPage.jsx';
+import {
+  AdminHomePage,
+  AdminMedicamentPage,
+  AdminMoleculePage,
+  AdminPathologiePage,
+} from './ui/pages/AdminPages.jsx';
 import { RecherchePage } from './ui/pages/RecherchePage.jsx';
 import { PrescriptionsPage } from './ui/pages/PrescriptionsPage.jsx';
 import { NotFoundPage } from './ui/pages/NotFoundPage.jsx';
@@ -40,6 +46,10 @@ export function AppRoutes() {
         <Route path="sources" element={<SourcesPage />} />
         <Route path="recherche" element={<RecherchePage />} />
         <Route path="prescriptions" element={<PrescriptionsPage />} />
+        <Route path="admin" element={<AdminHomePage />} />
+        <Route path="admin/pathologies/:id" element={<AdminPathologiePage />} />
+        <Route path="admin/molecules/:id" element={<AdminMoleculePage />} />
+        <Route path="admin/medicaments/:id" element={<AdminMedicamentPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

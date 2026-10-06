@@ -3,7 +3,7 @@ import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
-import { FichePharmaco, ProduitList } from '../components/Pharmaco.jsx';
+import { FichePharmaco, Posologies, ProduitList } from '../components/Pharmaco.jsx';
 import { LIGNES } from '../../core/labels.js';
 
 export function MoleculesPage() {
@@ -79,6 +79,12 @@ export function MoleculePage() {
 
             <div className="fiche-layout">
               <div>
+                {m.posologies?.length > 0 && (
+                  <section className="card">
+                    <h2>Posologies par population</h2>
+                    <Posologies posologies={m.posologies} />
+                  </section>
+                )}
                 <section className="card">
                   <h2>Fiche pharmacologique</h2>
                   <FichePharmaco molecule={m} headingLevel={3} />

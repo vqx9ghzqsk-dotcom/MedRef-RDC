@@ -12,6 +12,7 @@ const router = express.Router();
 
 const FREQ_ORDER = "FIELD(ps.frequence, 'tres_frequent', 'frequent', 'occasionnel', 'rare')";
 const LIGNE_ORDER = "FIELD(mp.ligne, 'premiere', 'deuxieme', 'alternative', 'adjuvant')";
+const NIVEAU_ORDER = "'centre_sante', 'hopital_general', 'hopital_tertiaire'";
 const EXAMEN_ORDER = `FIELD(e.type, 'biologie', 'imagerie', 'exploration'),
   FIELD(pe.categorie, 'premiere_intention', 'deuxieme_intention', 'presomption', 'confirmation', 'gravite',
         'etiologique', 'pretherapeutique', 'suivi'), pe.ordre`;
@@ -99,12 +100,14 @@ router.get(
   asyncHandler(async (req, res) => {
     const [p] = await db.query(
       `SELECT p.id, p.nom, p.slug, p.resume, p.definition, p.physiopathologie, p.diagnostic,
-              p.etiologies, p.therapeutique, p.evolution, p.updated_at,
+              p.etiologies, p.therapeutique, p.evolution, p.updated_at, p.statut, p.valide_le,
+              v.nom AS valide_par_nom,
               s.id AS specialite_id, s.nom AS specialite_nom, s.slug AS specialite_slug,
               d.id AS departement_id, d.nom AS departement_nom, d.slug AS departement_slug
          FROM pathologies p
          JOIN specialites s ON s.id = p.specialite_id
          JOIN departements d ON d.id = s.departement_id
+         LEFT JOIN users v ON v.id = p.valide_par
         WHERE p.slug = ?`,
       [req.params.slug],
     );
@@ -121,6 +124,7 @@ router.get(
       differentiels,
       principes,
       complications,
+      niveaux,
     ] = await Promise.all([
       db.query(
         `SELECT u.id, u.nom, u.slug, u.categorie
@@ -179,7 +183,8 @@ router.get(
         [p.id],
       ),
       db.query(
-        'SELECT id, ordre, titre, objectif, details FROM pathologie_principes WHERE pathologie_id = ? ORDER BY ordre',
+        `SELECT id, ordre, titre, objectif, details, grade_force, grade_detail, grade_source
+           FROM pathologie_principes WHERE pathologie_id = ? ORDER BY ordre`,
         [p.id],
       ),
       db.query(
@@ -187,6 +192,11 @@ router.get(
                 c.surveillance_paraclinique, f.slug AS fiche_slug, f.nom AS fiche_nom
            FROM complications c LEFT JOIN pathologies f ON f.id = c.fiche_id
           WHERE c.pathologie_id = ? ORDER BY c.ordre`,
+        [p.id],
+      ),
+      db.query(
+        `SELECT niveau, prise_en_charge, criteres_transfert FROM pathologie_niveaux
+          WHERE pathologie_id = ? ORDER BY FIELD(niveau, ${NIVEAU_ORDER})`,
         [p.id],
       ),
     ]);
@@ -201,6 +211,7 @@ router.get(
         slug: p.slug,
         resume: p.resume,
         updated_at: p.updated_at,
+        validation: { statut: p.statut, valide_le: p.valide_le, valide_par: p.valide_par_nom || null },
         onglets: {
           definition: { definition: p.definition, physiopathologie: p.physiopathologie },
           diagnostic: {
@@ -225,6 +236,7 @@ router.get(
               fiche: fiche(c),
             })),
           },
+          niveaux,
           evolution: {
             texte: p.evolution,
             complications: complications.map((c) => ({

@@ -4,16 +4,25 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+# Un nouvel envoi annule le contrôle encore en cours sur la même branche
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   backend:
+    name: API (lint, tests, migrations, sauvegardes)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: backend
     services:
       mysql:
-        image: mysql:8.0
+        # Même version majeure que le MySQL de WAMP utilisé en local
+        image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: medref_test
@@ -35,17 +44,32 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install --no-audit --no-fund
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci --no-audit --no-fund
       - run: npm run lint
       - name: Tests unitaires (Jest + Supertest)
         run: npm test -- --testPathIgnorePatterns integration
-      - name: Tests d'intégration (MySQL 8)
+      - name: Tests d'intégration (MySQL 8.4)
         run: npm run test:integration
         env:
           DB_INTEGRATION: '1'
+      - name: Réinitialisation, migrations et sauvegarde depuis une base vide
+        env:
+          BACKUP_DIR: ${{ runner.temp }}/sauvegardes
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot -e "DROP DATABASE medref_test; CREATE DATABASE medref_test"
+          npm run db:migrate
+          npm run db:reset
+          npm run db:migrate
+          npm run db:status
+          npm run db:backup
+          npm run db:backup -- --liste
 
   frontend:
+    name: Interface (lint, tests, build)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: frontend
@@ -54,7 +78,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install --no-audit --no-fund
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
       - run: npm run lint
       - name: Tests (Vitest)
         run: npm test

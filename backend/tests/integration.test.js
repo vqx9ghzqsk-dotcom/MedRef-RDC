@@ -2,11 +2,12 @@
 
 /**
  * Tests d'intégration contre un vrai MySQL 8 (exécutés en CI, ou en local avec
- * `DB_INTEGRATION=1 npm run test:integration`). ATTENTION : la base DB_NAME est
- * entièrement recréée — utilisez une base dédiée aux tests.
+ * `DB_INTEGRATION=1 npm run test:integration`). La base DB_NAME est
+ * entièrement recréée : son nom doit désigner une base de test (medref_rdc_test).
  */
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 const enabled = process.env.DB_INTEGRATION === '1';
@@ -18,19 +19,16 @@ describeDb('Intégration MySQL', () => {
   let db;
 
   beforeAll(async () => {
-    const mysql = require('mysql2/promise');
     const config = require('../src/config');
+    const { connect, isTestDatabase } = require('../db/connexion');
+    const { createBaseline, migrate } = require('../db/migrations');
     const { seed } = require('../db/seed');
-    const conn = await mysql.createConnection({
-      host: config.db.host,
-      port: config.db.port,
-      user: config.db.user,
-      password: config.db.password,
-      multipleStatements: true,
-    });
-    await conn.query(`CREATE DATABASE IF NOT EXISTS \`${config.db.database}\` CHARACTER SET utf8mb4`);
-    await conn.query(`USE \`${config.db.database}\``);
-    await conn.query(fs.readFileSync(path.join(__dirname, '..', 'db', 'schema.sql'), 'utf8'));
+    if (!isTestDatabase(config.db.database)) {
+      throw new Error(`Refus : « ${config.db.database} » n'est pas une base de test (DB_NAME=…_test)`);
+    }
+    const conn = await connect({ createIfMissing: true });
+    await createBaseline(conn);
+    await migrate(conn);
     await seed(conn);
     await conn.end();
 
@@ -189,5 +187,87 @@ describeDb('Intégration MySQL', () => {
     expect(publiqueMol.posologies.find((p) => p.population === 'nouveau_ne')).toMatchObject({
       dose_par_kg: 10,
     });
+  });
+
+  describe('migrations et sauvegardes', () => {
+    const { connect } = require('../db/connexion');
+    const { migrate, status } = require('../db/migrations');
+    const { backup, restore, listBackups } = require('../db/sauvegarde');
+    let conn;
+    let tmp;
+
+    beforeAll(async () => {
+      conn = await connect();
+      tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'medref-'));
+    });
+
+    afterAll(async () => {
+      await conn.query('DROP TABLE IF EXISTS zz_essai_migration');
+      await conn.query("DELETE FROM schema_migrations WHERE version = '901'");
+      await conn.end();
+      fs.rmSync(tmp, { recursive: true, force: true });
+    });
+
+    it('applique une migration une seule fois, sans toucher aux données, et refuse sa modification', async () => {
+      const dir = path.join(tmp, 'migrations');
+      fs.mkdirSync(dir);
+      const file = path.join(dir, '901_essai.sql');
+      fs.writeFileSync(
+        file,
+        'CREATE TABLE zz_essai_migration (id INT PRIMARY KEY);\nALTER TABLE zz_essai_migration ADD COLUMN nom VARCHAR(20);\n',
+      );
+      const [[avant]] = await conn.query('SELECT COUNT(*) AS n FROM pathologies');
+
+      expect(await migrate(conn, { dir })).toEqual(['901_essai.sql']);
+      expect(await migrate(conn, { dir })).toEqual([]);
+      const { appliquees, enAttente } = await status(conn, { dir });
+      expect(appliquees.map((m) => m.version)).toEqual(['000', '901']);
+      expect(enAttente).toHaveLength(0);
+      const [[apres]] = await conn.query('SELECT COUNT(*) AS n FROM pathologies');
+      expect(apres.n).toEqual(avant.n);
+
+      fs.appendFileSync(file, 'ALTER TABLE zz_essai_migration ADD COLUMN autre INT;\n');
+      await expect(migrate(conn, { dir })).rejects.toThrow(/modifiée/);
+    });
+
+    it('sauvegarde puis restaure la base à l’identique (dates, JSON, accents)', async () => {
+      const compter = async () => {
+        const [rows] = await conn.query(
+          'SELECT (SELECT COUNT(*) FROM pathologies) AS p, (SELECT COUNT(*) FROM molecule_posologies) AS po, ' +
+            '(SELECT COUNT(*) FROM users) AS u, (SELECT COUNT(*) FROM modifications) AS m',
+        );
+        return rows[0];
+      };
+      const [[fiche]] = await conn.query(
+        "SELECT resume, valide_le FROM pathologies WHERE slug = 'paludisme-grave'",
+      );
+      await conn.query(
+        `INSERT INTO prescriptions (id, user_id, patient_label, contenu, client_updated_at)
+         SELECT '0e9c5f3a-1b2c-4d5e-8f90-a1b2c3d4e5f6', id, 'Bébé « K. »', ?, '2026-10-05 08:30:15.123'
+         FROM users ORDER BY id LIMIT 1`,
+        [JSON.stringify({ lignes: [{ dci: 'Artésunate', posologie: "2,4 mg/kg \\ l'injection\n" }] })],
+      );
+      const [prescriptions] = await conn.query('SELECT * FROM prescriptions ORDER BY id');
+      const comptes = await compter();
+
+      const s = await backup(conn, { dir: tmp, keep: 30 });
+      expect(fs.existsSync(s.file)).toBe(true);
+      expect(listBackups(tmp, s.database)).toHaveLength(1);
+
+      await conn.query("UPDATE pathologies SET resume = 'abîmé' WHERE slug = 'paludisme-grave'");
+      await conn.query('DELETE FROM molecule_posologies');
+      await conn.query('DELETE FROM prescriptions');
+      await restore(conn, s.file);
+
+      expect(await compter()).toEqual(comptes);
+      const [[restauree]] = await conn.query(
+        "SELECT resume, valide_le FROM pathologies WHERE slug = 'paludisme-grave'",
+      );
+      expect(restauree).toEqual(fiche);
+      expect((await conn.query('SELECT * FROM prescriptions ORDER BY id'))[0]).toEqual(prescriptions);
+      expect(prescriptions.some((p) => p.patient_label === 'Bébé « K. »')).toBe(true);
+      const res = await request(app).get('/api/pathologies/paludisme-grave');
+      expect(res.body.data.validation.statut).toBe('valide');
+    }, 120000);
   });
 });

@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+
 require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
@@ -17,6 +19,14 @@ const config = {
     user: process.env.DB_USER || 'medref',
     password: process.env.DB_PASSWORD || 'medref',
     database: process.env.DB_NAME || 'medref_rdc',
+  },
+  backup: {
+    // Dossier des sauvegardes : de préférence hors du projet (disque externe, dossier synchronisé)
+    dir: path.resolve(process.env.BACKUP_DIR || path.join(__dirname, '..', 'backups')),
+    keep: Number(process.env.BACKUP_KEEP) || 30,
+    // Sauvegarde automatique au démarrage de l'API puis toutes les N heures
+    auto: process.env.BACKUP_AUTO ? process.env.BACKUP_AUTO !== '0' : env !== 'test',
+    intervalHours: Number(process.env.BACKUP_INTERVAL_HOURS) || 24,
   },
   jwt: {
     secret: process.env.JWT_SECRET || (env === 'production' ? '' : 'dev-secret-medref-rdc'),

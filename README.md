@@ -38,8 +38,11 @@ medref-rdc/
 │   │   ├── schema.sql       schéma normalisé (24 tables, liaisons N:N, FULLTEXT)
 │   │   ├── seed-data/       contenu d'amorçage par thème (référentiels, médicaments, sources,
 │   │   │                    pathologies/ par département)
-│   │   └── seed.js          insertion paramétrée, vérifie toutes les références croisées
-│   ├── scripts/migrate.js   création du schéma (+ --seed)
+│   │   ├── seed.js          insertion paramétrée, vérifie toutes les références croisées
+│   │   ├── migrations/      évolutions du schéma (001_….sql), appliquées une seule fois
+│   │   ├── migrations.js    suivi des migrations (table schema_migrations)
+│   │   └── sauvegarde.js    sauvegarde / restauration en Node (fichiers .sql.gz)
+│   ├── scripts/             migrate.js (migrations, reset protégé), backup.js, role.js
 │   ├── src/
 │   │   ├── app.js           helmet, cors, rate-limit, routes
 │   │   ├── routes/          auth, catalogue, referentiels (urgences, symptômes, scores, examens),
@@ -81,7 +84,8 @@ Ouvrez <http://localhost:8080>. L'API répond sur <http://localhost:4000/api/hea
 En production, définissez au minimum `JWT_SECRET`, `DB_PASSWORD` et `MYSQL_ROOT_PASSWORD` (fichier `.env` à la
 racine, lu automatiquement par Docker Compose).
 
-> `db:reset` **supprime et recrée** toutes les tables. Ne le lancez pas sur une base contenant des données réelles.
+> `db:reset` **supprime et recrée** toutes les tables. Sur une base réelle, il exige `-- --confirmer=<nom de la base>`
+> et fait d'abord une sauvegarde. Pour une base existante, utilisez `npm run db:migrate`.
 
 ---
 
@@ -94,7 +98,7 @@ Prérequis : Node.js 20+ et MySQL 8 (ou seulement le conteneur `db` : `docker co
 cd backend
 cp .env.example .env          # ajustez DB_* et JWT_SECRET
 npm install
-npm run db:reset              # schéma + données
+npm run db:reset              # 1re installation : schéma + données
 npm run dev                   # http://localhost:4000 (nodemon)
 
 # Frontend (autre terminal)
@@ -105,46 +109,84 @@ npm run dev                   # http://localhost:5173 — /api est relayé vers 
 
 Sous Windows (PowerShell), remplacez `cp` par `Copy-Item`.
 
-| Script               | Backend                                | Frontend                    |
-| -------------------- | -------------------------------------- | --------------------------- |
-| `npm run dev`        | API avec rechargement (nodemon)        | serveur Vite                |
-| `npm test`           | Jest + Supertest                       | Vitest                      |
-| `npm run lint`       | ESLint                                 | ESLint (+ React, hooks)     |
-| `npm run format`     | Prettier                               | Prettier                    |
-| `npm run build`      | —                                      | build de production (dist/) |
-| `npm run db:migrate` | schéma seul                            | —                           |
-| `npm run db:reset`   | schéma + données d'amorçage            | —                           |
+| Script               | Backend                                 | Frontend                    |
+| -------------------- | --------------------------------------- | --------------------------- |
+| `npm run dev`        | API avec rechargement (nodemon)         | serveur Vite                |
+| `npm test`           | Jest + Supertest                        | Vitest                      |
+| `npm run lint`       | ESLint                                  | ESLint (+ React, hooks)     |
+| `npm run format`     | Prettier                                | Prettier                    |
+| `npm run build`      | —                                       | build de production (dist/) |
+| `npm run db:migrate` | applique les migrations en attente      | —                           |
+| `npm run db:status`  | migrations appliquées / en attente      | —                           |
+| `npm run db:backup`  | sauvegarde de la base (`-- --liste`)    | —                           |
+| `npm run db:restore` | restaure une sauvegarde                 | —                           |
+| `npm run db:reset`   | DESTRUCTIF : schéma + données initiales | —                           |
+
+---
+
+## Protection des données
+
+Depuis l'interface **/admin**, la base (`medref_rdc`) contient le contenu corrigé et validé : c'est elle la référence,
+plus les fichiers `seed-data/`. Trois mécanismes la protègent.
+
+**Sauvegardes.** L'API sauvegarde la base à son démarrage puis toutes les 24 h tant qu'elle tourne (fichiers
+`backups/medref_rdc-AAAA-MM-JJ_HHMMSS.sql.gz`, 30 derniers conservés). Réglages dans `.env` :
+
+| Variable                | Défaut             | Rôle                                                        |
+| ----------------------- | ------------------ | ----------------------------------------------------------- |
+| `BACKUP_DIR`            | `backend/backups/` | dossier ; choisissez-en un hors de l'ordinateur si possible |
+| `BACKUP_KEEP`           | `30`               | nombre de sauvegardes périodiques conservées                |
+| `BACKUP_INTERVAL_HOURS` | `24`               | intervalle entre deux sauvegardes automatiques              |
+| `BACKUP_AUTO`           | `1` (`0` en test)  | `0` désactive la sauvegarde automatique                     |
+
+```bash
+npm run db:backup                                     # sauvegarde immédiate
+npm run db:backup -- --liste                          # sauvegardes disponibles
+npm run db:restore -- medref_rdc-2026-10-05_210335.sql.gz --confirmer=medref_rdc
+```
+
+Une restauration, une migration ou un reset sauvegarde d'abord l'état actuel (fichiers `…-avant-restauration`,
+`…-avant-migration`, `…-avant-reset`, jamais supprimés par la rotation). Le dossier `backups/` n'est pas versionné :
+copiez régulièrement les sauvegardes sur un autre support (clé USB, Drive…).
+
+**Reset verrouillé.** `npm run db:reset` refuse de toucher une base réelle sans `-- --confirmer=medref_rdc`. Les bases
+dont le nom contient `test` (`medref_rdc_test`) n'ont pas besoin de confirmation ; les tests d'intégration refusent
+toute autre base.
+
+**Migrations.** `db/schema.sql` est le schéma de départ et ne change plus. Une évolution (colonne, table, index) s'écrit
+dans `db/migrations/001_description.sql` et s'applique avec `npm run db:migrate`, sans perte de données. Chaque
+migration est appliquée une seule fois et ne doit plus être modifiée ensuite (voir `db/migrations/LISEZMOI.md`).
 
 ---
 
 ## Fonctionnalités (phase 1 — web)
 
-| #   | Fonctionnalité            | Où                                                                       |
-| --- | ------------------------- | ------------------------------------------------------------------------ |
-| 1   | Page d'accueil            | identité, recherche, 5 accès rapides, grille des départements, contact   |
-| 2   | Authentification          | inscription, connexion, `/me`, session persistée (JWT 7 j)               |
-| 3   | Navigation catalogue      | Département → Spécialité → Pathologie, fil d'Ariane                      |
-| 4   | Fiche pathologie          | 5 onglets (clavier ←/→), urgences en tête, symptômes, médicaments, scores, sources (détail ci-dessous) |
-| 5   | Urgences                  | A→Z, filtre par catégorie, signes de gravité, ABCDE, transfert           |
-| 6   | Symptômes                 | A→Z, pathologies triées par fréquence                                    |
-| 7   | Calculatrices / scores    | IMC, Glasgow, Blantyre, Apgar, Silverman, qSOFA, index de choc, déshydratation OMS, contrôle GINA, Child-Pugh, APRI, CKD-EPI 2021, Cockcroft-Gault, Holliday-Segar, débit, dose pondérale, Alvarado ; classifications descriptives (NYHA, NIHSS, KDIGO, stades OMS du VIH) |
-| 8   | Médicaments               | filtres molécule / classe / opérateur ; fiche produit (identification, usage propre au produit, fiche pharmacologique de chaque molécule) ; fiche molécule avec ses produits seuls ou en association |
-| 8b  | Examens                   | valeurs normales de référence et interprétation dans chaque pathologie   |
-| 9   | Sources                   | 4 niveaux de preuve, domaine (spécialité), filtre global / département / pathologie |
-| 10  | Recherche globale         | un endpoint, résultats regroupés par type                                |
-| 11  | Prescriptions hors ligne  | IndexedDB, badge « En attente », synchro automatique                     |
-| 12  | PWA                       | manifest, service worker (assets uniquement, jamais `/api`)              |
+| #   | Fonctionnalité           | Où                                                                                                                                                                                                                                                                         |
+| --- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Page d'accueil           | identité, recherche, 5 accès rapides, grille des départements, contact                                                                                                                                                                                                     |
+| 2   | Authentification         | inscription, connexion, `/me`, session persistée (JWT 7 j)                                                                                                                                                                                                                 |
+| 3   | Navigation catalogue     | Département → Spécialité → Pathologie, fil d'Ariane                                                                                                                                                                                                                        |
+| 4   | Fiche pathologie         | 5 onglets (clavier ←/→), urgences en tête, symptômes, médicaments, scores, sources (détail ci-dessous)                                                                                                                                                                     |
+| 5   | Urgences                 | A→Z, filtre par catégorie, signes de gravité, ABCDE, transfert                                                                                                                                                                                                             |
+| 6   | Symptômes                | A→Z, pathologies triées par fréquence                                                                                                                                                                                                                                      |
+| 7   | Calculatrices / scores   | IMC, Glasgow, Blantyre, Apgar, Silverman, qSOFA, index de choc, déshydratation OMS, contrôle GINA, Child-Pugh, APRI, CKD-EPI 2021, Cockcroft-Gault, Holliday-Segar, débit, dose pondérale, Alvarado ; classifications descriptives (NYHA, NIHSS, KDIGO, stades OMS du VIH) |
+| 8   | Médicaments              | filtres molécule / classe / opérateur ; fiche produit (identification, usage propre au produit, fiche pharmacologique de chaque molécule) ; fiche molécule avec ses produits seuls ou en association                                                                       |
+| 8b  | Examens                  | valeurs normales de référence et interprétation dans chaque pathologie                                                                                                                                                                                                     |
+| 9   | Sources                  | 4 niveaux de preuve, domaine (spécialité), filtre global / département / pathologie                                                                                                                                                                                        |
+| 10  | Recherche globale        | un endpoint, résultats regroupés par type                                                                                                                                                                                                                                  |
+| 11  | Prescriptions hors ligne | IndexedDB, badge « En attente », synchro automatique                                                                                                                                                                                                                       |
+| 12  | PWA                      | manifest, service worker (assets uniquement, jamais `/api`)                                                                                                                                                                                                                |
 
 ### Structure d'une fiche pathologie
 
-| Onglet        | Contenu |
-| ------------- | ------- |
-| Définition    | définition, physiopathologie |
-| Diagnostic    | diagnostic clinique ; bilan biologique, imagerie et explorations classés par catégorie (1re intention, 2e intention, présomption, confirmation, gravité, étiologique, pré-thérapeutique, suivi), chacun avec son interprétation dans la pathologie et ses valeurs normales ; scores ; diagnostics différentiels ouvrables |
-| Étiologies    | agents, terrain, facteurs favorisants |
-| Thérapeutique | sommaire des principes de prise en charge (avec le grade de la recommandation : source, force, niveau de preuve) puis détail de chacun ; molécules (ligne, contexte) avec leurs produits par opérateur ; traitement de chaque complication |
-| Niveaux de soins | pour le centre de santé, l'hôpital général de référence et l'hôpital provincial/universitaire : ce qu'on peut faire sur place et quand transférer |
-| Évolution     | évolution et pronostic ; surveillance clinique et paraclinique de chaque complication |
+| Onglet           | Contenu                                                                                                                                                                                                                                                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Définition       | définition, physiopathologie                                                                                                                                                                                                                                                                                              |
+| Diagnostic       | diagnostic clinique ; bilan biologique, imagerie et explorations classés par catégorie (1re intention, 2e intention, présomption, confirmation, gravité, étiologique, pré-thérapeutique, suivi), chacun avec son interprétation dans la pathologie et ses valeurs normales ; scores ; diagnostics différentiels ouvrables |
+| Étiologies       | agents, terrain, facteurs favorisants                                                                                                                                                                                                                                                                                     |
+| Thérapeutique    | sommaire des principes de prise en charge (avec le grade de la recommandation : source, force, niveau de preuve) puis détail de chacun ; molécules (ligne, contexte) avec leurs produits par opérateur ; traitement de chaque complication                                                                                |
+| Niveaux de soins | pour le centre de santé, l'hôpital général de référence et l'hôpital provincial/universitaire : ce qu'on peut faire sur place et quand transférer                                                                                                                                                                         |
+| Évolution        | évolution et pronostic ; surveillance clinique et paraclinique de chaque complication                                                                                                                                                                                                                                     |
 
 Chaque fiche affiche son statut de relecture : « en attente de validation médicale » ou « validée par … le … ».
 
@@ -180,35 +222,35 @@ Le rôle est relu en base à chaque requête d'administration : un retrait de dr
 Toutes les réponses sont en JSON. Les listes sont dans `data`. Les erreurs ont la forme
 `{ "error": "message", "details"?: {...} }`.
 
-| Méthode | Route                              | Description                                                         |
-| ------- | ---------------------------------- | ------------------------------------------------------------------- |
-| GET     | `/api/health`                      | état du service                                                     |
-| POST    | `/api/auth/register`               | `{ email, password, nom }` → `{ token, user }`                       |
-| POST    | `/api/auth/login`                  | `{ email, password }` → `{ token, user }`                            |
-| GET     | `/api/auth/me`                     | 🔒 utilisateur courant                                              |
-| GET     | `/api/departements`                | départements + compteurs                                            |
-| GET     | `/api/departements/:slug`          | département + spécialités                                           |
-| GET     | `/api/specialites/:slug`           | spécialité + pathologies                                            |
-| GET     | `/api/pathologies/:slug`           | fiche complète (5 onglets + blocs liés)                             |
-| GET     | `/api/urgences?categorie=`         | urgences A→Z (`medicale`, `chirurgicale`, `gyneco-obstetricale`, `pediatrique`) |
-| GET     | `/api/urgences/:slug`              | urgence + pathologies associées                                     |
-| GET     | `/api/symptomes`                   | symptômes A→Z                                                       |
-| GET     | `/api/symptomes/:slug`             | symptôme + pathologies par fréquence                                |
-| GET     | `/api/scores`, `/api/scores/:slug` | scores/calculatrices + pathologies liées                            |
-| GET     | `/api/medicaments?operateur=&classe=&molecule=&q=` | liste filtrée                                       |
-| GET     | `/api/medicaments/filtres`         | opérateurs, classes, molécules disponibles                          |
-| GET     | `/api/medicaments/:id`             | fiche produit + composition (fiche de chaque molécule) + pathologies + même composition chez d'autres opérateurs |
-| GET     | `/api/molecules`, `/api/molecules/:slug` | molécules ; fiche pharmacologique + produits (seule / association) + pathologies |
-| GET     | `/api/examens`, `/api/examens/:slug` | examens ; valeurs normales + interprétation par pathologie |
-| GET     | `/api/sources?scope=&departement=&pathologie=&niveau=` | `scope` = `global` / `departement` / `pathologie` |
-| GET     | `/api/recherche?q=`                | `{ total, data: { pathologies, medicaments, molecules, examens, urgences, symptomes, scores } }` |
-| GET     | `/api/prescriptions`               | 🔒 prescriptions de l'utilisateur                                   |
-| POST    | `/api/prescriptions/sync`          | 🔒 synchronisation idempotente (voir plus bas)                      |
-| DELETE  | `/api/prescriptions/:id`           | 🔒 suppression logique                                              |
-| GET     | `/api/admin/resume`                | 🛡 statuts, listes des fiches, molécules, produits, historique      |
-| GET/PUT | `/api/admin/pathologies/:id`       | 🛡 lecture / enregistrement complet d'une fiche (+ validation)      |
-| GET/PUT | `/api/admin/molecules/:id`         | 🛡 fiche pharmacologique et posologies                              |
-| GET/PUT | `/api/admin/medicaments/:id`       | 🛡 produit : disponibilité RDC, prix, informations propres          |
+| Méthode | Route                                                  | Description                                                                                                      |
+| ------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| GET     | `/api/health`                                          | état du service                                                                                                  |
+| POST    | `/api/auth/register`                                   | `{ email, password, nom }` → `{ token, user }`                                                                   |
+| POST    | `/api/auth/login`                                      | `{ email, password }` → `{ token, user }`                                                                        |
+| GET     | `/api/auth/me`                                         | 🔒 utilisateur courant                                                                                           |
+| GET     | `/api/departements`                                    | départements + compteurs                                                                                         |
+| GET     | `/api/departements/:slug`                              | département + spécialités                                                                                        |
+| GET     | `/api/specialites/:slug`                               | spécialité + pathologies                                                                                         |
+| GET     | `/api/pathologies/:slug`                               | fiche complète (5 onglets + blocs liés)                                                                          |
+| GET     | `/api/urgences?categorie=`                             | urgences A→Z (`medicale`, `chirurgicale`, `gyneco-obstetricale`, `pediatrique`)                                  |
+| GET     | `/api/urgences/:slug`                                  | urgence + pathologies associées                                                                                  |
+| GET     | `/api/symptomes`                                       | symptômes A→Z                                                                                                    |
+| GET     | `/api/symptomes/:slug`                                 | symptôme + pathologies par fréquence                                                                             |
+| GET     | `/api/scores`, `/api/scores/:slug`                     | scores/calculatrices + pathologies liées                                                                         |
+| GET     | `/api/medicaments?operateur=&classe=&molecule=&q=`     | liste filtrée                                                                                                    |
+| GET     | `/api/medicaments/filtres`                             | opérateurs, classes, molécules disponibles                                                                       |
+| GET     | `/api/medicaments/:id`                                 | fiche produit + composition (fiche de chaque molécule) + pathologies + même composition chez d'autres opérateurs |
+| GET     | `/api/molecules`, `/api/molecules/:slug`               | molécules ; fiche pharmacologique + produits (seule / association) + pathologies                                 |
+| GET     | `/api/examens`, `/api/examens/:slug`                   | examens ; valeurs normales + interprétation par pathologie                                                       |
+| GET     | `/api/sources?scope=&departement=&pathologie=&niveau=` | `scope` = `global` / `departement` / `pathologie`                                                                |
+| GET     | `/api/recherche?q=`                                    | `{ total, data: { pathologies, medicaments, molecules, examens, urgences, symptomes, scores } }`                 |
+| GET     | `/api/prescriptions`                                   | 🔒 prescriptions de l'utilisateur                                                                                |
+| POST    | `/api/prescriptions/sync`                              | 🔒 synchronisation idempotente (voir plus bas)                                                                   |
+| DELETE  | `/api/prescriptions/:id`                               | 🔒 suppression logique                                                                                           |
+| GET     | `/api/admin/resume`                                    | 🛡 statuts, listes des fiches, molécules, produits, historique                                                    |
+| GET/PUT | `/api/admin/pathologies/:id`                           | 🛡 lecture / enregistrement complet d'une fiche (+ validation)                                                    |
+| GET/PUT | `/api/admin/molecules/:id`                             | 🛡 fiche pharmacologique et posologies                                                                            |
+| GET/PUT | `/api/admin/medicaments/:id`                           | 🛡 produit : disponibilité RDC, prix, informations propres                                                        |
 
 🔒 = en-tête `Authorization: Bearer <jwt>` requis. 🛡 = idem, avec un rôle `admin` ou `medecin`.
 
@@ -285,7 +327,10 @@ cd frontend && npm test
 - **Frontend** : calculatrices (valeurs de référence), analyseur de texte (aucun HTML injecté), client API,
   dépôt IndexedDB et synchronisation (fake-indexeddb), rendu de l'accueil et de la fiche (onglets au clavier).
 
-La CI GitHub Actions exécute lint, tests unitaires, intégration MySQL et build à chaque push.
+La CI GitHub Actions (`.github/workflows/ci.yml`) s'exécute à chaque push et pull request : lint, tests unitaires,
+intégration sur MySQL 8.4 (y compris migrations et aller-retour sauvegarde / restauration), puis, sur une base vide,
+`db:migrate`, `db:reset`, `db:backup` ; côté interface, lint, Vitest et build. Résultat dans l'onglet **Actions** du
+dépôt GitHub.
 
 ---
 
@@ -309,7 +354,7 @@ Les niveaux de soins sont dans `seed-data/niveaux.js`, les grades dans `seed-dat
 dans la source sont renseignés) et les posologies structurées dans `seed-data/posologies.js`.
 
 Au quotidien, corrigez le contenu depuis **/admin** : `npm run db:reset` recharge les fichiers et **efface** les
-modifications faites dans l'administration.
+modifications faites dans l'administration (d'où la confirmation exigée et la sauvegarde préalable).
 
 ---
 

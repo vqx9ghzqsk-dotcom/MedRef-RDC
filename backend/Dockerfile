@@ -6,6 +6,7 @@ RUN npm install --omit=dev --no-audit --no-fund
 COPY src ./src
 COPY db ./db
 COPY scripts ./scripts
+RUN mkdir -p /data/backups /data/logs && chown -R node:node /data
 USER node
 EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \

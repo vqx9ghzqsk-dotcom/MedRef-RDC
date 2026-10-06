@@ -9,16 +9,21 @@
  *   les collections envoyées remplacent les anciennes.
  * - Toute modification d'une fiche la repasse « à valider », sauf si elle est
  *   enregistrée explicitement comme « validée » (la validation est tracée).
+ * - Chaque enregistrement conserve l'état complet avant / après (table
+ *   `modifications`) : on peut comparer deux versions et revenir en arrière.
+ * - Une fiche validée reçoit une date de révision (config.contenu.revisionMois).
+ * - Double validation (VALIDATION_DOUBLE=1) : on ne valide pas ce qu'on vient
+ *   de rédiger soi-même.
  */
 
 const express = require('express');
 const db = require('../db');
-const { requireAuth } = require('../middleware/auth');
+const config = require('../config');
+const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middleware/auth');
 const { asyncHandler, HttpError, notFound, toInt } = require('../utils/http');
 
 const router = express.Router();
 
-const EDITOR_ROLES = ['admin', 'medecin'];
 const STATUTS = ['brouillon', 'a_valider', 'valide'];
 const GRADES = ['forte', 'conditionnelle', 'bonne_pratique', 'consensus'];
 const NIVEAUX = ['centre_sante', 'hopital_general', 'hopital_tertiaire'];
@@ -57,7 +62,8 @@ const PATHOLOGIE_TEXTES = [
 
 /** Relit le rôle en base : seuls « admin » et « medecin » accèdent à l'administration. */
 const requireEditor = asyncHandler(async (req, _res, next) => {
-  const [user] = await db.query('SELECT id, nom, role FROM users WHERE id = ?', [req.user.id]);
+  const [user] = await db.query('SELECT id, nom, role, token_version FROM users WHERE id = ?', [req.user.id]);
+  if (user) assertSessionActive(req, user);
   if (!user || !EDITOR_ROLES.includes(user.role))
     throw new HttpError(403, 'Accès réservé aux administrateurs');
   req.editor = user;
@@ -129,19 +135,87 @@ async function withDuplicateCheck(fn, message) {
   }
 }
 
-const logModification = (conn, { userId, entite, entiteId, action, resume }) =>
+const logModification = (conn, { userId, entite, entiteId, action, resume, avant, apres }) =>
   conn.execute(
-    'INSERT INTO modifications (user_id, entite, entite_id, action, resume) VALUES (?, ?, ?, ?, ?)',
-    [userId, entite, entiteId, action, resume],
+    `INSERT INTO modifications (user_id, entite, entite_id, action, resume, avant, apres)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [userId, entite, entiteId, action, resume, JSON.stringify(avant), JSON.stringify(apres)],
   );
 
 const historique = (entite, id) =>
-  db.query(
-    `SELECT m.id, m.action, m.resume, m.created_at, u.nom AS auteur
+  db
+    .query(
+      `SELECT m.id, m.action, m.resume, m.created_at, u.nom AS auteur,
+            (m.avant IS NOT NULL OR m.apres IS NOT NULL) AS a_version
        FROM modifications m LEFT JOIN users u ON u.id = m.user_id
-      WHERE m.entite = ? AND m.entite_id = ? ORDER BY m.created_at DESC, m.id DESC LIMIT 20`,
-    [entite, id],
-  );
+      WHERE m.entite = ? AND m.entite_id = ? ORDER BY m.created_at DESC, m.id DESC LIMIT 50`,
+      [entite, id],
+    )
+    .then((rows) => rows.map((r) => ({ ...r, a_version: Boolean(Number(r.a_version)) })));
+
+/** Exécuteur de requêtes : le pool, ou la connexion d'une transaction en cours. */
+const viaPool = (sql, params = []) => db.query(sql, params);
+const viaConn =
+  (conn) =>
+  async (sql, params = []) =>
+    (await conn.execute(sql, params))[0];
+
+/** Comparaison stable de deux états (ordre des clés indifférent). */
+function stable(value) {
+  if (Array.isArray(value)) return `[${value.map(stable).join(',')}]`;
+  if (value && typeof value === 'object') {
+    return `{${Object.keys(value)
+      .sort()
+      .map((k) => `${JSON.stringify(k)}:${stable(value[k])}`)
+      .join(',')}}`;
+  }
+  return JSON.stringify(value === undefined ? null : value);
+}
+
+/** Rubriques qui diffèrent entre deux états (hors `ignorer`). */
+function rubriquesModifiees(avant, apres, ignorer = []) {
+  const cles = new Set([...Object.keys(avant || {}), ...Object.keys(apres || {})]);
+  return [...cles].filter((k) => !ignorer.includes(k) && stable(avant?.[k]) !== stable(apres?.[k]));
+}
+
+const LIBELLES_RUBRIQUES = {
+  nom: 'nom',
+  resume: 'résumé',
+  definition: 'définition',
+  physiopathologie: 'physiopathologie',
+  diagnostic: 'diagnostic',
+  etiologies: 'étiologies',
+  therapeutique: 'thérapeutique',
+  evolution: 'évolution',
+  principes: 'principes',
+  complications: 'complications',
+  niveaux: 'niveaux de soins',
+  examens: 'examens',
+  differentiels: 'différentiels',
+  posologies: 'posologies',
+};
+
+const listeRubriques = (cles) => cles.map((k) => LIBELLES_RUBRIQUES[k] || k.replace(/_/g, ' ')).join(', ');
+
+// ---------------------------------------------------------------- Versions
+
+router.get(
+  '/admin/modifications/:id',
+  asyncHandler(async (req, res) => {
+    const id = toInt(req.params.id);
+    if (!id) throw notFound('Version');
+    const [m] = await db.query(
+      `SELECT m.id, m.entite, m.entite_id, m.action, m.resume, m.created_at, m.avant, m.apres, u.nom AS auteur
+         FROM modifications m LEFT JOIN users u ON u.id = m.user_id WHERE m.id = ?`,
+      [id],
+    );
+    if (!m) throw notFound('Version');
+    const parse = (v) => (typeof v === 'string' ? JSON.parse(v) : v);
+    const avant = parse(m.avant);
+    const apres = parse(m.apres);
+    res.json({ data: { ...m, avant, apres, rubriques: rubriquesModifiees(avant, apres) } });
+  }),
+);
 
 // ---------------------------------------------------------------- Tableau de bord
 
@@ -150,7 +224,8 @@ router.get(
   asyncHandler(async (_req, res) => {
     const [pathologies, molecules, medicaments, modifications] = await Promise.all([
       db.query(
-        `SELECT p.id, p.nom, p.slug, p.statut, p.updated_at, p.valide_le, v.nom AS valide_par,
+        `SELECT p.id, p.nom, p.slug, p.statut, p.updated_at, p.valide_le, v.nom AS valide_par, p.revision_le,
+                (p.statut = 'valide' AND p.revision_le IS NOT NULL AND p.revision_le <= CURDATE()) AS a_revoir,
                 s.nom AS specialite, d.nom AS departement
            FROM pathologies p
            JOIN specialites s ON s.id = p.specialite_id
@@ -181,13 +256,17 @@ router.get(
           ORDER BY m.created_at DESC, m.id DESC LIMIT 30`,
       ),
     ]);
-    const statuts = Object.fromEntries(
-      STATUTS.map((s) => [s, pathologies.filter((p) => p.statut === s).length]),
-    );
+    const fiches = pathologies.map((p) => ({ ...p, a_revoir: Boolean(Number(p.a_revoir)) }));
+    const statuts = Object.fromEntries(STATUTS.map((s) => [s, fiches.filter((p) => p.statut === s).length]));
+    statuts.a_revoir = fiches.filter((p) => p.a_revoir).length;
     res.json({
       data: {
         statuts,
-        pathologies,
+        parametres: {
+          double_validation: config.contenu.doubleValidation,
+          revision_mois: config.contenu.revisionMois,
+        },
+        pathologies: fiches,
         molecules,
         medicaments: medicaments.map((m) => ({ ...m, disponible_rdc: Boolean(m.disponible_rdc) })),
         modifications,
@@ -198,70 +277,85 @@ router.get(
 
 // ---------------------------------------------------------------- Pathologies
 
+/** État éditable complet d'une fiche (celui qu'on enregistre et qu'on versionne). */
+async function etatPathologie(q, id) {
+  const [p] = await q(
+    `SELECT nom, resume, ${PATHOLOGIE_TEXTES.join(', ')}, statut FROM pathologies WHERE id = ?`,
+    [id],
+  );
+  if (!p) return null;
+  const [principes, complications, niveaux, examens, differentiels] = await Promise.all([
+    q(
+      `SELECT titre, objectif, details, grade_force, grade_detail, grade_source
+         FROM pathologie_principes WHERE pathologie_id = ? ORDER BY ordre`,
+      [id],
+    ),
+    q(
+      `SELECT c.nom, c.description, c.traitement, c.surveillance_clinique, c.surveillance_paraclinique,
+              f.slug AS fiche_slug
+         FROM complications c LEFT JOIN pathologies f ON f.id = c.fiche_id
+        WHERE c.pathologie_id = ? ORDER BY c.ordre`,
+      [id],
+    ),
+    q('SELECT niveau, prise_en_charge, criteres_transfert FROM pathologie_niveaux WHERE pathologie_id = ?', [
+      id,
+    ]),
+    q(
+      `SELECT e.slug AS examen_slug, pe.categorie, pe.interpretation
+         FROM pathologie_examens pe JOIN examens e ON e.id = pe.examen_id
+        WHERE pe.pathologie_id = ? ORDER BY pe.ordre`,
+      [id],
+    ),
+    q(
+      `SELECT f.slug AS fiche_slug, d.nom, d.elements_distinctifs
+         FROM pathologie_differentiels d LEFT JOIN pathologies f ON f.id = d.differentiel_id
+        WHERE d.pathologie_id = ? ORDER BY d.ordre`,
+      [id],
+    ),
+  ]);
+  return {
+    ...p,
+    principes,
+    complications,
+    niveaux: NIVEAUX.map(
+      (niveau) =>
+        niveaux.find((n) => n.niveau === niveau) || {
+          niveau,
+          prise_en_charge: null,
+          criteres_transfert: null,
+        },
+    ),
+    examens,
+    differentiels,
+  };
+}
+
 router.get(
   '/admin/pathologies/:id',
   asyncHandler(async (req, res) => {
     const id = toInt(req.params.id);
     if (!id) throw notFound('Pathologie');
-    const [p] = await db.query(
-      `SELECT p.id, p.nom, p.slug, p.resume, ${PATHOLOGIE_TEXTES.map((c) => `p.${c}`).join(', ')},
-              p.statut, p.valide_le, v.nom AS valide_par, p.updated_at
+    const [meta] = await db.query(
+      `SELECT p.id, p.slug, p.valide_le, v.nom AS valide_par, p.revision_le, p.updated_at,
+              (p.statut = 'valide' AND p.revision_le IS NOT NULL AND p.revision_le <= CURDATE()) AS a_revoir
          FROM pathologies p LEFT JOIN users v ON v.id = p.valide_par
         WHERE p.id = ?`,
       [id],
     );
-    if (!p) throw notFound('Pathologie');
-    const [principes, complications, niveaux, examens, differentiels, optExamens, optPathologies, hist] =
-      await Promise.all([
-        db.query(
-          `SELECT titre, objectif, details, grade_force, grade_detail, grade_source
-             FROM pathologie_principes WHERE pathologie_id = ? ORDER BY ordre`,
-          [id],
-        ),
-        db.query(
-          `SELECT c.nom, c.description, c.traitement, c.surveillance_clinique, c.surveillance_paraclinique,
-                  f.slug AS fiche_slug
-             FROM complications c LEFT JOIN pathologies f ON f.id = c.fiche_id
-            WHERE c.pathologie_id = ? ORDER BY c.ordre`,
-          [id],
-        ),
-        db.query(
-          'SELECT niveau, prise_en_charge, criteres_transfert FROM pathologie_niveaux WHERE pathologie_id = ?',
-          [id],
-        ),
-        db.query(
-          `SELECT e.slug AS examen_slug, pe.categorie, pe.interpretation
-             FROM pathologie_examens pe JOIN examens e ON e.id = pe.examen_id
-            WHERE pe.pathologie_id = ? ORDER BY pe.ordre`,
-          [id],
-        ),
-        db.query(
-          `SELECT f.slug AS fiche_slug, d.nom, d.elements_distinctifs
-             FROM pathologie_differentiels d LEFT JOIN pathologies f ON f.id = d.differentiel_id
-            WHERE d.pathologie_id = ? ORDER BY d.ordre`,
-          [id],
-        ),
-        db.query(
-          "SELECT slug, nom, type FROM examens ORDER BY FIELD(type, 'biologie', 'imagerie', 'exploration'), nom",
-        ),
-        db.query('SELECT slug, nom FROM pathologies WHERE id <> ? ORDER BY nom', [id]),
-        historique('pathologie', id),
-      ]);
+    if (!meta) throw notFound('Pathologie');
+    const [etat, optExamens, optPathologies, hist] = await Promise.all([
+      etatPathologie(viaPool, id),
+      db.query(
+        "SELECT slug, nom, type FROM examens ORDER BY FIELD(type, 'biologie', 'imagerie', 'exploration'), nom",
+      ),
+      db.query('SELECT slug, nom FROM pathologies WHERE id <> ? ORDER BY nom', [id]),
+      historique('pathologie', id),
+    ]);
     res.json({
       data: {
-        ...p,
-        principes,
-        complications,
-        niveaux: NIVEAUX.map(
-          (niveau) =>
-            niveaux.find((n) => n.niveau === niveau) || {
-              niveau,
-              prise_en_charge: null,
-              criteres_transfert: null,
-            },
-        ),
-        examens,
-        differentiels,
+        ...meta,
+        a_revoir: Boolean(Number(meta.a_revoir)),
+        ...etat,
         options: { examens: optExamens, pathologies: optPathologies },
         historique: hist,
       },
@@ -347,6 +441,32 @@ function parsePathologie(body, refs) {
   return out;
 }
 
+/**
+ * Double validation : on ne valide ni une fiche qu'on modifie dans le même
+ * enregistrement, ni la dernière version qu'on a soi-même rédigée.
+ */
+async function verifierDoubleValidation(q, { id, editorId, rubriques }) {
+  if (rubriques.length) {
+    throw new HttpError(
+      409,
+      'Validation à deux relecteurs : enregistrez d’abord vos modifications « à valider » ; ' +
+        'un autre relecteur validera la fiche.',
+    );
+  }
+  const [dernier] = await q(
+    `SELECT user_id FROM modifications
+      WHERE entite = 'pathologie' AND entite_id = ? AND action = 'modification'
+      ORDER BY id DESC LIMIT 1`,
+    [id],
+  );
+  if (dernier && dernier.user_id === editorId) {
+    throw new HttpError(
+      409,
+      'Validation à deux relecteurs : vous avez rédigé la dernière version, un autre relecteur doit la valider.',
+    );
+  }
+}
+
 router.put(
   '/admin/pathologies/:id',
   asyncHandler(async (req, res) => {
@@ -363,14 +483,17 @@ router.put(
     const data = parsePathologie(req.body || {}, refs);
     const valide = data.statut === 'valide';
 
-    await withDuplicateCheck(
+    const resultat = await withDuplicateCheck(
       () =>
         db.transaction(async (conn) => {
-          const [[current]] = await conn.execute('SELECT id FROM pathologies WHERE id = ? FOR UPDATE', [id]);
+          const q = viaConn(conn);
+          const [current] = await q('SELECT id FROM pathologies WHERE id = ? FOR UPDATE', [id]);
           if (!current) throw notFound('Pathologie');
+          const avant = await etatPathologie(q, id);
           await conn.execute(
             `UPDATE pathologies SET nom = ?, resume = ?, ${PATHOLOGIE_TEXTES.map((c) => `${c} = ?`).join(', ')},
-                    statut = ?, valide_par = ?, valide_le = ${valide ? 'NOW()' : 'NULL'}
+                    statut = ?, valide_par = ?, valide_le = ${valide ? 'NOW()' : 'NULL'},
+                    revision_le = ${valide ? 'DATE_ADD(CURDATE(), INTERVAL ? MONTH)' : 'NULL'}
               WHERE id = ?`,
             [
               data.nom,
@@ -378,6 +501,7 @@ router.put(
               ...PATHOLOGIE_TEXTES.map((c) => data[c]),
               data.statut,
               valide ? req.editor.id : null,
+              ...(valide ? [config.contenu.revisionMois] : []),
               id,
             ],
           );
@@ -449,52 +573,75 @@ router.put(
               );
             }
           }
+
+          const apres = await etatPathologie(q, id);
+          const rubriques = rubriquesModifiees(avant, apres, ['statut']);
+          if (valide && config.contenu.doubleValidation) {
+            await verifierDoubleValidation(q, { id, editorId: req.editor.id, rubriques });
+          }
+          // Rien n'a changé (ni contenu ni statut) : pas d'entrée d'historique
+          if (!valide && !rubriques.length && avant.statut === apres.statut) return { inchange: true };
+
+          const statutLisible = data.statut.replace('_', ' ');
+          let resume;
+          if (valide) {
+            resume = rubriques.length
+              ? `Fiche modifiée et validée : ${listeRubriques(rubriques)}`
+              : 'Fiche validée';
+          } else if (rubriques.length) {
+            resume = `Fiche modifiée : ${listeRubriques(rubriques)} (statut : ${statutLisible})`;
+          } else {
+            resume = `Statut changé : ${statutLisible}`;
+          }
           await logModification(conn, {
             userId: req.editor.id,
             entite: 'pathologie',
             entiteId: id,
             action: valide ? 'validation' : 'modification',
-            resume: valide ? 'Fiche validée' : `Fiche modifiée (statut : ${data.statut.replace('_', ' ')})`,
+            resume: resume.slice(0, 300),
+            avant,
+            apres,
           });
+          return { inchange: false };
         }),
       'Une autre fiche de cette spécialité porte déjà ce nom',
     );
-    res.json({ ok: true, statut: data.statut });
+    res.json({ ok: true, statut: data.statut, inchange: resultat.inchange });
   }),
 );
 
 // ---------------------------------------------------------------- Molécules
+
+const nombreOuNull = (v) => (v === null || v === undefined ? null : Number(v));
+
+async function etatMolecule(q, id) {
+  const [mo] = await q(`SELECT ${FICHE_PHARMACO.join(', ')} FROM molecules WHERE id = ?`, [id]);
+  if (!mo) return null;
+  const posologies = await q(
+    `SELECT population, indication, voie, dose_texte, dose_par_kg, dose_max, unite, frequence, duree,
+            securite, remarque
+       FROM molecule_posologies WHERE molecule_id = ? ORDER BY ordre`,
+    [id],
+  );
+  return {
+    ...mo,
+    posologies: posologies.map((p) => ({
+      ...p,
+      dose_par_kg: nombreOuNull(p.dose_par_kg),
+      dose_max: nombreOuNull(p.dose_max),
+    })),
+  };
+}
 
 router.get(
   '/admin/molecules/:id',
   asyncHandler(async (req, res) => {
     const id = toInt(req.params.id);
     if (!id) throw notFound('Molécule');
-    const [mo] = await db.query(
-      `SELECT id, dci, slug, ${FICHE_PHARMACO.join(', ')} FROM molecules WHERE id = ?`,
-      [id],
-    );
-    if (!mo) throw notFound('Molécule');
-    const [posologies, hist] = await Promise.all([
-      db.query(
-        `SELECT population, indication, voie, dose_texte, dose_par_kg, dose_max, unite, frequence, duree,
-                securite, remarque
-           FROM molecule_posologies WHERE molecule_id = ? ORDER BY ordre`,
-        [id],
-      ),
-      historique('molecule', id),
-    ]);
-    res.json({
-      data: {
-        ...mo,
-        posologies: posologies.map((p) => ({
-          ...p,
-          dose_par_kg: p.dose_par_kg === null ? null : Number(p.dose_par_kg),
-          dose_max: p.dose_max === null ? null : Number(p.dose_max),
-        })),
-        historique: hist,
-      },
-    });
+    const [meta] = await db.query('SELECT id, dci, slug FROM molecules WHERE id = ?', [id]);
+    if (!meta) throw notFound('Molécule');
+    const [etat, hist] = await Promise.all([etatMolecule(viaPool, id), historique('molecule', id)]);
+    res.json({ data: { ...meta, ...etat, historique: hist } });
   }),
 );
 
@@ -521,9 +668,11 @@ router.put(
     }));
     v.check();
 
-    await db.transaction(async (conn) => {
-      const [[current]] = await conn.execute('SELECT id FROM molecules WHERE id = ? FOR UPDATE', [id]);
+    const resultat = await db.transaction(async (conn) => {
+      const q = viaConn(conn);
+      const [current] = await q('SELECT id FROM molecules WHERE id = ? FOR UPDATE', [id]);
       if (!current) throw notFound('Molécule');
+      const avant = await etatMolecule(q, id);
       await conn.execute(
         `UPDATE molecules SET ${FICHE_PHARMACO.map((c) => `${c} = ?`).join(', ')} WHERE id = ?`,
         [...FICHE_PHARMACO.map((c) => fiche[c]), id],
@@ -553,17 +702,21 @@ router.put(
           );
         }
       }
+      const apres = await etatMolecule(q, id);
+      const rubriques = rubriquesModifiees(avant, apres);
+      if (!rubriques.length) return { inchange: true };
       await logModification(conn, {
         userId: req.editor.id,
         entite: 'molecule',
         entiteId: id,
         action: 'modification',
-        resume: posologies
-          ? `Fiche et posologies modifiées (${posologies.length} posologies)`
-          : 'Fiche modifiée',
+        resume: `Fiche modifiée : ${listeRubriques(rubriques)}`.slice(0, 300),
+        avant,
+        apres,
       });
+      return { inchange: false };
     });
-    res.json({ ok: true });
+    res.json({ ok: true, inchange: resultat.inchange });
   }),
 );
 
@@ -582,27 +735,34 @@ const PRODUIT_TEXTES = [
   ['sources_text', LONG],
 ];
 
+async function etatMedicament(q, id) {
+  const [m] = await q(
+    `SELECT ${PRODUIT_TEXTES.map(([c]) => c).join(', ')}, photo_url, disponible_rdc, prix_indicatif_cdf
+       FROM medicaments WHERE id = ?`,
+    [id],
+  );
+  if (!m) return null;
+  return {
+    ...m,
+    disponible_rdc: Boolean(m.disponible_rdc),
+    prix_indicatif_cdf: nombreOuNull(m.prix_indicatif_cdf),
+  };
+}
+
 router.get(
   '/admin/medicaments/:id',
   asyncHandler(async (req, res) => {
     const id = toInt(req.params.id);
     if (!id) throw notFound('Médicament');
-    const [m] = await db.query(
-      `SELECT m.id, m.nom_commercial, m.dci, ${PRODUIT_TEXTES.map(([c]) => `m.${c}`).join(', ')},
-              m.photo_url, m.disponible_rdc, m.prix_indicatif_cdf, o.nom AS operateur
+    const [meta] = await db.query(
+      `SELECT m.id, m.nom_commercial, m.dci, o.nom AS operateur
          FROM medicaments m LEFT JOIN operateurs o ON o.id = m.operateur_id
         WHERE m.id = ?`,
       [id],
     );
-    if (!m) throw notFound('Médicament');
-    res.json({
-      data: {
-        ...m,
-        disponible_rdc: Boolean(m.disponible_rdc),
-        prix_indicatif_cdf: m.prix_indicatif_cdf === null ? null : Number(m.prix_indicatif_cdf),
-        historique: await historique('medicament', id),
-      },
-    });
+    if (!meta) throw notFound('Médicament');
+    const [etat, hist] = await Promise.all([etatMedicament(viaPool, id), historique('medicament', id)]);
+    res.json({ data: { ...meta, ...etat, historique: hist } });
   }),
 );
 
@@ -620,26 +780,35 @@ router.put(
     const prix = v.number(body.prix_indicatif_cdf, 'prix_indicatif_cdf', { min: 0, max: 1e10 });
     v.check();
 
-    await db.transaction(async (conn) => {
-      const [[current]] = await conn.execute('SELECT id FROM medicaments WHERE id = ? FOR UPDATE', [id]);
+    const resultat = await db.transaction(async (conn) => {
+      const q = viaConn(conn);
+      const [current] = await q('SELECT id FROM medicaments WHERE id = ? FOR UPDATE', [id]);
       if (!current) throw notFound('Médicament');
+      const avant = await etatMedicament(q, id);
       await conn.execute(
         `UPDATE medicaments SET ${PRODUIT_TEXTES.map(([c]) => `${c} = ?`).join(', ')}, photo_url = ?,
                 disponible_rdc = ?, prix_indicatif_cdf = ?
           WHERE id = ?`,
         [...PRODUIT_TEXTES.map(([c]) => champs[c]), photo, body.disponible_rdc ? 1 : 0, prix, id],
       );
+      const apres = await etatMedicament(q, id);
+      const rubriques = rubriquesModifiees(avant, apres);
+      if (!rubriques.length) return { inchange: true };
       await logModification(conn, {
         userId: req.editor.id,
         entite: 'medicament',
         entiteId: id,
         action: 'modification',
-        resume: 'Produit modifié',
+        resume: `Produit modifié : ${listeRubriques(rubriques)}`.slice(0, 300),
+        avant,
+        apres,
       });
+      return { inchange: false };
     });
-    res.json({ ok: true });
+    res.json({ ok: true, inchange: resultat.inchange });
   }),
 );
 
 module.exports = router;
 module.exports.parsePathologie = parsePathologie;
+module.exports.rubriquesModifiees = rubriquesModifiees;

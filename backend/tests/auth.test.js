@@ -40,13 +40,13 @@ describe('POST /api/auth/register', () => {
     db.query.mockResolvedValueOnce([]).mockResolvedValueOnce({ insertId: 42 });
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: 'Dr.Test@Example.com ', password: 'motdepasse123', nom: 'Dr Test', role: 'admin' });
+      .send({ email: 'Dr.Test@Example.com ', password: 'Quinine-2026', nom: 'Dr Test', role: 'admin' });
     expect(res.status).toBe(201);
     expect(res.body.token).toEqual(expect.any(String));
     expect(res.body.user).toEqual({ id: 42, email: 'dr.test@example.com', nom: 'Dr Test', role: 'user' });
     const [, params] = db.query.mock.calls[1];
     expect(params[0]).toBe('dr.test@example.com');
-    expect(params[1]).not.toBe('motdepasse123'); // mot de passe haché
+    expect(params[1]).not.toBe('Quinine-2026'); // mot de passe haché
     expect(params[3]).toBe('user'); // le rôle envoyé par le client est ignoré
   });
 
@@ -54,7 +54,7 @@ describe('POST /api/auth/register', () => {
     db.query.mockResolvedValueOnce([{ id: 1 }]);
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: 'a@b.cd', password: 'motdepasse123', nom: 'Ab' });
+      .send({ email: 'a@b.cd', password: 'Quinine-2026', nom: 'Ab' });
     expect(res.status).toBe(409);
   });
 });
@@ -131,5 +131,101 @@ describe('Erreurs génériques', () => {
     const res = await request(app).get('/api/departements');
     expect(res.status).toBe(500);
     expect(res.body.error).toBe('Erreur interne du serveur');
+  });
+});
+
+describe('Sécurité des comptes', () => {
+  const { verifierMotDePasse } = require('../src/utils/motDePasse');
+  const hash = bcrypt.hashSync('Quinine-2026', 4);
+  const compte = (patch = {}) => ({
+    id: 7,
+    email: 'a@b.cd',
+    nom: 'Ab',
+    role: 'user',
+    password_hash: hash,
+    token_version: 0,
+    echecs_connexion: 0,
+    bloque: 0,
+    ...patch,
+  });
+
+  it('impose un mot de passe solide', () => {
+    expect(verifierMotDePasse('court1')).toMatch(/entre 10 et 128/);
+    expect(verifierMotDePasse('seulementdeslettres')).toMatch(/lettre et un chiffre/);
+    expect(verifierMotDePasse('Password123')).toMatch(/courant/);
+    expect(verifierMotDePasse('mingalu2026!', { email: 'b.mingalu@x.cd', nom: 'Ben Mingalu' })).toMatch(
+      /e-mail ou votre nom/,
+    );
+    expect(verifierMotDePasse('Quinine-2026', { email: 'a@b.cd', nom: 'Ab' })).toBeNull();
+  });
+
+  it('bloque le compte après 5 échecs, même avec le bon mot de passe ensuite', async () => {
+    db.query.mockResolvedValueOnce([compte({ echecs_connexion: 4 })]).mockResolvedValueOnce({});
+    const echec = await request(app).post('/api/auth/login').send({ email: 'a@b.cd', password: 'mauvais' });
+    expect(echec.status).toBe(401);
+    const [sql, params] = db.query.mock.calls[1];
+    expect(sql).toMatch(/bloque_jusqu_a = DATE_ADD\(NOW\(\), INTERVAL \? MINUTE\)/);
+    expect(params).toEqual([0, 15, 7]);
+
+    db.query.mockResolvedValueOnce([compte({ bloque: 1 })]);
+    const bloque = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'a@b.cd', password: 'Quinine-2026' });
+    expect(bloque.status).toBe(429);
+    expect(bloque.body.error).toMatch(/bloqué/);
+  });
+
+  it('remet le compteur à zéro après une connexion réussie', async () => {
+    db.query.mockResolvedValueOnce([compte({ echecs_connexion: 2 })]).mockResolvedValueOnce({});
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'a@b.cd', password: 'Quinine-2026' });
+    expect(res.status).toBe(200);
+    expect(db.query.mock.calls[1][0]).toMatch(/echecs_connexion = 0, bloque_jusqu_a = NULL/);
+  });
+
+  it('change le mot de passe et révoque les anciennes sessions', async () => {
+    const ancien = { Authorization: `Bearer ${tokenFor(7)}` };
+    db.query.mockResolvedValueOnce([compte()]);
+    const mauvais = await request(app)
+      .post('/api/auth/password')
+      .set(ancien)
+      .send({ actuel: 'faux', nouveau: 'Artesunate-2026' });
+    expect(mauvais.status).toBe(400);
+    expect(mauvais.body.details.actuel).toBeDefined();
+
+    db.query.mockResolvedValueOnce([compte()]).mockResolvedValueOnce({});
+    const ok = await request(app)
+      .post('/api/auth/password')
+      .set(ancien)
+      .send({ actuel: 'Quinine-2026', nouveau: 'Artesunate-2026' });
+    expect(ok.status).toBe(200);
+    expect(db.query.mock.calls.at(-1)[0]).toMatch(/token_version = token_version \+ 1/);
+
+    // L'ancien jeton (version 0) est refusé une fois la version passée à 1
+    db.query.mockResolvedValueOnce([compte({ token_version: 1 })]);
+    const me = await request(app).get('/api/auth/me').set(ancien);
+    expect(me.status).toBe(401);
+    db.query.mockResolvedValueOnce([compte({ token_version: 1 })]);
+    const nouveau = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${ok.body.token}`);
+    expect(nouveau.status).toBe(200);
+  });
+
+  it('refuse une configuration de production avec des secrets d’exemple', () => {
+    const { verifierProduction } = require('../src/config');
+    const avant = process.env.DB_PASSWORD;
+    process.env.DB_PASSWORD = 'medref';
+    expect(() =>
+      verifierProduction({
+        jwt: { secret: 'change-me-with-a-long-random-string' },
+        db: { password: 'medref' },
+      }),
+    ).toThrow(/JWT_SECRET[\s\S]*DB_PASSWORD/);
+    process.env.DB_PASSWORD = 'un-vrai-mot-de-passe';
+    expect(() =>
+      verifierProduction({ jwt: { secret: 'x'.repeat(40) }, db: { password: 'un-vrai-mot-de-passe' } }),
+    ).not.toThrow();
+    if (avant === undefined) delete process.env.DB_PASSWORD;
+    else process.env.DB_PASSWORD = avant;
   });
 });

@@ -49,6 +49,8 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(user),
       login: (payload) => authenticate('login', payload),
       register: (payload) => authenticate('register', payload),
+      // Nouveau jeton : les autres sessions du compte sont déconnectées
+      changePassword: (payload) => authenticate('changePassword', payload),
       logout,
     }),
     [user, authenticate, logout],

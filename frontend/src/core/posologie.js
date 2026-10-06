@@ -39,3 +39,61 @@ export function calculerDose(posologie, poidsBrut) {
     affichage: `${valeur.toLocaleString('fr-FR')} ${unite}`,
   };
 }
+
+/**
+ * Cohérence entre le poids saisi et la population choisie : renvoie une liste
+ * d'alertes { niveau: 'attention' | 'danger', message } (vide si tout est cohérent).
+ */
+export function alertesPoids(population, poidsBrut) {
+  const poids = parsePoids(poidsBrut);
+  if (poids === null) return [];
+  const alertes = [];
+  const attention = (message) => alertes.push({ niveau: 'attention', message });
+  if (population === 'nouveau_ne') {
+    if (poids > 6)
+      attention('Poids inhabituel pour un nouveau-né (plus de 6 kg) : vérifier la population choisie.');
+    if (poids < 0.5)
+      attention('Poids très faible (prématuré extrême) : posologie à adapter avec un avis spécialisé.');
+  } else if (population === 'enfant') {
+    if (poids < 2.5) attention('Poids de nouveau-né : vérifier l’onglet « Nouveau-né ».');
+    if (poids > 50) {
+      attention(
+        'Au-delà de 50 kg, la dose calculée peut dépasser la dose adulte : ne jamais dépasser la dose adulte.',
+      );
+    }
+  } else if (population === 'adulte' || population === 'grossesse') {
+    if (poids < 35) {
+      attention(
+        'Poids très bas pour un adulte : vérifier le poids saisi (en kg) ou utiliser l’onglet « Enfant ».',
+      );
+    }
+    if (poids > 150) attention('Poids élevé : vérifier si la dose doit être calculée sur le poids idéal.');
+  }
+  return alertes;
+}
+
+/** Alertes propres à une ligne de posologie pour le poids saisi. */
+export function alertesPosologie(posologie, poidsBrut) {
+  const alertes = [];
+  if (posologie?.securite === 'contre_indique') {
+    alertes.push({
+      niveau: 'danger',
+      message: 'Contre-indiqué dans cette population : ne pas administrer sans avis spécialisé.',
+    });
+    return alertes;
+  }
+  const dose = calculerDose(posologie, poidsBrut);
+  if (!dose) return alertes;
+  if (dose.plafonnee) {
+    alertes.push({
+      niveau: 'attention',
+      message: `Dose plafonnée à la dose maximale : le calcul au poids donnait ${dose.brute.toLocaleString('fr-FR')} ${dose.unite}.`,
+    });
+  } else if (!posologie.dose_max && parsePoids(poidsBrut) >= 40) {
+    alertes.push({
+      niveau: 'attention',
+      message: 'Aucune dose maximale renseignée pour cette posologie : vérifier la dose adulte maximale.',
+    });
+  }
+  return alertes;
+}

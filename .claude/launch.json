@@ -4,15 +4,34 @@
     {
       "name": "api",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "backend", "run", "dev"],
+      "runtimeArgs": [
+        "--prefix",
+        "backend",
+        "run",
+        "dev"
+      ],
       "port": 4000,
       "url": "http://localhost:4000"
     },
     {
       "name": "web",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "frontend", "run", "dev"],
+      "runtimeArgs": [
+        "--prefix",
+        "frontend",
+        "run",
+        "dev"
+      ],
       "port": 5173
+    },
+    {
+      "name": "site-compile",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": [
+        "/c",
+        "cd backend && set PORT=4100&& set FRONTEND_DIST=../frontend/dist&& set BACKUP_AUTO=0&& node src/server.js"
+      ],
+      "port": 4100
     }
   ]
 }

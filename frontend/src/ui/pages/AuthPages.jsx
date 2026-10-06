@@ -65,9 +65,9 @@ function AuthForm({ mode }) {
         {field('password', 'Mot de passe', {
           type: 'password',
           autoComplete: isRegister ? 'new-password' : 'current-password',
-          minLength: isRegister ? 8 : undefined,
+          minLength: isRegister ? 10 : undefined,
         })}
-        {isRegister && <p className="hint">8 caractères minimum.</p>}
+        {isRegister && <p className="hint">10 caractères minimum, avec au moins une lettre et un chiffre.</p>}
         {error && (
           <p className="form-error" role="alert">
             {error}

@@ -2,10 +2,25 @@ import { useId, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RichText } from './RichText.jsx';
 import { FICHE_PHARMACO, POPULATIONS, SECURITES } from '../../core/labels.js';
-import { calculerDose, parsePoids } from '../../core/posologie.js';
+import { alertesPoids, alertesPosologie, calculerDose, parsePoids } from '../../core/posologie.js';
+
+function Alertes({ alertes }) {
+  if (!alertes.length) return null;
+  return (
+    <ul className="alertes-dose">
+      {alertes.map((a) => (
+        <li key={a.message} className={`alerte-dose alerte-${a.niveau}`} role="alert">
+          {a.message}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 function PosologieLigne({ posologie: p, poids }) {
-  const dose = calculerDose(p, poids);
+  // Pas de calcul affiché pour une posologie contre-indiquée
+  const dose = p.securite === 'contre_indique' ? null : calculerDose(p, poids);
+  const alertes = poids ? alertesPosologie(p, poids) : [];
   return (
     <li className="posologie">
       <div className="posologie-head">
@@ -22,14 +37,10 @@ function PosologieLigne({ posologie: p, poids }) {
       {dose && (
         <p className="posologie-calcul" role="status">
           Pour {String(poids).replace('.', ',')} kg : <strong>{dose.affichage}</strong>
-          {dose.plafonnee && (
-            <span className="tag tag-warn">
-              {' '}
-              plafonné (calcul brut {dose.brute} {dose.unite})
-            </span>
-          )}
+          {dose.plafonnee && <span className="tag tag-warn"> dose maximale</span>}
         </p>
       )}
+      <Alertes alertes={alertes} />
       {p.remarque && <p className="muted posologie-remarque">{p.remarque}</p>}
     </li>
   );
@@ -84,6 +95,7 @@ export function Posologies({ posologies }) {
           </span>
         </div>
       )}
+      {ponderale && <Alertes alertes={alertesPoids(courant, poidsValide)} />}
       <ul className="posologie-list">
         {liste.map((p) => (
           <PosologieLigne key={p.id ?? `${p.population}-${p.dose_texte}`} posologie={p} poids={poidsValide} />

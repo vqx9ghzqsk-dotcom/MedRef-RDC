@@ -310,24 +310,38 @@ function NiveauxPanel({ content }) {
 }
 
 /** Statut de relecture médicale de la fiche. */
+// Une date seule (AAAA-MM-JJ) est lue en heure locale, pas en UTC (sinon décalage d'un jour)
+const dateFr = (d) =>
+  d ? new Date(d.length === 10 ? `${d}T00:00:00` : d.replace(' ', 'T')).toLocaleDateString('fr-FR') : null;
+
 function ValidationBanner({ validation }) {
   if (!validation) return null;
   if (validation.statut === 'valide') {
-    const date = validation.valide_le
-      ? new Date(validation.valide_le.replace(' ', 'T')).toLocaleDateString('fr-FR')
-      : null;
+    const date = dateFr(validation.valide_le);
+    if (validation.a_revoir) {
+      return (
+        <p className="validation validation-revoir" role="note">
+          Fiche validée{date ? ` le ${date}` : ''}, <strong>révision en retard</strong> depuis le{' '}
+          {dateFr(validation.revision_le)} : vérifier qu’aucune recommandation n’a changé depuis.
+        </p>
+      );
+    }
     return (
       <p className="validation validation-ok" role="note">
         Fiche validée{validation.valide_par ? ` par ${validation.valide_par}` : ''}
-        {date ? ` le ${date}` : ''}.
+        {date ? ` le ${date}` : ''}
+        {validation.revision_le ? `, prochaine révision le ${dateFr(validation.revision_le)}` : ''}.
       </p>
     );
   }
   return (
     <p className="validation validation-pending" role="note">
-      Fiche{' '}
-      {validation.statut === 'brouillon' ? 'en cours de rédaction' : 'en attente de validation médicale'} :
-      vérifier les posologies avec le protocole national.
+      <strong>
+        Fiche{' '}
+        {validation.statut === 'brouillon' ? 'en cours de rédaction' : 'en attente de validation médicale'}
+      </strong>{' '}
+      : ne pas l’utiliser comme seule référence. Vérifier les posologies avec le protocole national et la
+      notice du produit.
     </p>
   );
 }

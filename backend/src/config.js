@@ -28,14 +28,42 @@ const config = {
     auto: process.env.BACKUP_AUTO ? process.env.BACKUP_AUTO !== '0' : env !== 'test',
     intervalHours: Number(process.env.BACKUP_INTERVAL_HOURS) || 24,
   },
+  contenu: {
+    // Délai avant qu'une fiche validée soit signalée « à revoir »
+    revisionMois: Number(process.env.REVISION_MOIS) || 24,
+    // 1 = celui qui modifie une fiche ne peut pas la valider lui-même
+    doubleValidation: process.env.VALIDATION_DOUBLE === '1',
+  },
+  securite: {
+    maxEchecs: Number(process.env.CONNEXION_MAX_ECHECS) || 5,
+    blocageMinutes: Number(process.env.CONNEXION_BLOCAGE_MINUTES) || 15,
+  },
+  logDir: path.resolve(process.env.LOG_DIR || path.join(__dirname, '..', 'logs')),
   jwt: {
     secret: process.env.JWT_SECRET || (env === 'production' ? '' : 'dev-secret-medref-rdc'),
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    // Sessions plus courtes pour les comptes qui peuvent modifier le contenu
+    editorExpiresIn: process.env.JWT_EDITOR_EXPIRES_IN || '12h',
   },
 };
 
-if (env === 'production' && !config.jwt.secret) {
-  throw new Error('JWT_SECRET doit être défini en production');
+/** Valeurs d'exemple ou de développement à ne jamais utiliser en production. */
+const SECRETS_INTERDITS = ['change-me-with-a-long-random-string', 'dev-secret-medref-rdc', 'ci-secret'];
+
+function verifierProduction(c) {
+  const problemes = [];
+  if (!c.jwt.secret || SECRETS_INTERDITS.includes(c.jwt.secret) || c.jwt.secret.length < 32) {
+    problemes.push('JWT_SECRET doit être une chaîne aléatoire d’au moins 32 caractères');
+  }
+  if (!process.env.DB_PASSWORD || ['medref', 'root', ''].includes(c.db.password)) {
+    problemes.push('DB_PASSWORD doit être défini et différent des valeurs par défaut');
+  }
+  if (problemes.length) {
+    throw new Error(`Configuration de production refusée :\n  - ${problemes.join('\n  - ')}`);
+  }
 }
 
+if (env === 'production') verifierProduction(config);
+
 module.exports = config;
+module.exports.verifierProduction = verifierProduction;

@@ -20,6 +20,8 @@ import {
 import { RecherchePage } from './ui/pages/RecherchePage.jsx';
 import { PrescriptionsPage } from './ui/pages/PrescriptionsPage.jsx';
 import { NotFoundPage } from './ui/pages/NotFoundPage.jsx';
+import { HorsLignePage } from './ui/pages/HorsLignePage.jsx';
+import { ComptePage } from './ui/pages/ComptePage.jsx';
 
 export function AppRoutes() {
   return (
@@ -46,6 +48,8 @@ export function AppRoutes() {
         <Route path="sources" element={<SourcesPage />} />
         <Route path="recherche" element={<RecherchePage />} />
         <Route path="prescriptions" element={<PrescriptionsPage />} />
+        <Route path="hors-ligne" element={<HorsLignePage />} />
+        <Route path="compte" element={<ComptePage />} />
         <Route path="admin" element={<AdminHomePage />} />
         <Route path="admin/pathologies/:id" element={<AdminPathologiePage />} />
         <Route path="admin/molecules/:id" element={<AdminMoleculePage />} />

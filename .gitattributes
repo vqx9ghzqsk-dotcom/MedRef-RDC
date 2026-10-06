@@ -1,2 +1,5 @@
 * text=auto eol=lf
 *.png binary
+# Scripts Windows : fins de ligne CRLF obligatoires
+*.bat text eol=crlf
+*.ps1 text eol=crlf

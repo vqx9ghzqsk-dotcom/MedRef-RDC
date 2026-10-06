@@ -26,6 +26,11 @@ export function ErrorState({ error, onRetry }) {
           ? 'Contenu indisponible hors connexion. Reconnectez-vous puis réessayez.'
           : (error && error.message) || 'Une erreur est survenue.'}
       </p>
+      {error && error.reference && (
+        <p className="muted">
+          Si le problème persiste, communiquez la référence <code>{error.reference}</code>.
+        </p>
+      )}
       {onRetry && (
         <button type="button" className="btn btn-secondary" onClick={onRetry}>
           Réessayer

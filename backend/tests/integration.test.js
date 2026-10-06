@@ -95,7 +95,7 @@ describeDb('Intégration MySQL', () => {
     const email = `test-${Date.now()}@medref.cd`;
     const reg = await request(app)
       .post('/api/auth/register')
-      .send({ email, password: 'motdepasse123', nom: 'Test' });
+      .send({ email, password: 'Quinine-2026', nom: 'Test' });
     expect(reg.status).toBe(201);
     const auth = { Authorization: `Bearer ${reg.body.token}` };
     const body = {
@@ -124,7 +124,7 @@ describeDb('Intégration MySQL', () => {
     const inscrire = async (prefix) => {
       const r = await request(app)
         .post('/api/auth/register')
-        .send({ email: `${prefix}-${Date.now()}@medref.cd`, password: 'motdepasse123', nom: `Dr ${prefix}` });
+        .send({ email: `${prefix}-${Date.now()}@medref.cd`, password: 'Quinine-2026', nom: `Dr ${prefix}` });
       return { id: r.body.user.id, headers: { Authorization: `Bearer ${r.body.token}` } };
     };
     const simple = await inscrire('lecteur');
@@ -165,7 +165,34 @@ describeDb('Intégration MySQL', () => {
     expect(publique.onglets.niveaux).toHaveLength(3);
 
     const apres = (await request(app).get(`/api/admin/pathologies/${id}`).set(editeur.headers)).body.data;
-    expect(apres.historique[0]).toMatchObject({ action: 'validation', auteur: 'Dr validateur' });
+    expect(apres.historique[0]).toMatchObject({
+      action: 'validation',
+      auteur: 'Dr validateur',
+      a_version: true,
+    });
+    expect(apres.revision_le).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(publique.validation.revision_le).toBe(apres.revision_le);
+
+    // Version complète : on retrouve l'ancien résumé et on peut le restaurer
+    const version = (
+      await request(app).get(`/api/admin/modifications/${apres.historique[0].id}`).set(editeur.headers)
+    ).body.data;
+    expect(version.avant.resume).toBe(avant.resume);
+    expect(version.apres.resume).toBe('Résumé relu et validé.');
+    expect(version.rubriques).toEqual(expect.arrayContaining(['resume', 'principes', 'statut']));
+    const restauration = await request(app)
+      .put(`/api/admin/pathologies/${id}`)
+      .set(editeur.headers)
+      .send({ ...version.avant, statut: 'a_valider' });
+    expect(restauration.status).toBe(200);
+    expect((await request(app).get('/api/pathologies/paludisme-grave')).body.data.resume).toBe(avant.resume);
+
+    // Un nouvel enregistrement identique n'ajoute pas d'entrée à l'historique
+    const encore = await request(app)
+      .put(`/api/admin/pathologies/${id}`)
+      .set(editeur.headers)
+      .send({ ...version.avant, statut: 'a_valider' });
+    expect(encore.body.inchange).toBe(true);
 
     const mol = resume.body.data.molecules.find((m) => m.slug === 'paracetamol');
     const fichePara = (await request(app).get(`/api/admin/molecules/${mol.id}`).set(editeur.headers)).body
@@ -221,7 +248,8 @@ describeDb('Intégration MySQL', () => {
       expect(await migrate(conn, { dir })).toEqual(['901_essai.sql']);
       expect(await migrate(conn, { dir })).toEqual([]);
       const { appliquees, enAttente } = await status(conn, { dir });
-      expect(appliquees.map((m) => m.version)).toEqual(['000', '901']);
+      const versions = appliquees.map((m) => m.version);
+      expect([versions[0], versions.at(-1)]).toEqual(['000', '901']);
       expect(enAttente).toHaveLength(0);
       const [[apres]] = await conn.query('SELECT COUNT(*) AS n FROM pathologies');
       expect(apres.n).toEqual(avant.n);
@@ -267,7 +295,7 @@ describeDb('Intégration MySQL', () => {
       expect((await conn.query('SELECT * FROM prescriptions ORDER BY id'))[0]).toEqual(prescriptions);
       expect(prescriptions.some((p) => p.patient_label === 'Bébé « K. »')).toBe(true);
       const res = await request(app).get('/api/pathologies/paludisme-grave');
-      expect(res.body.data.validation.statut).toBe('valide');
+      expect(res.body.data.resume).toBe(fiche.resume);
     }, 120000);
   });
 });

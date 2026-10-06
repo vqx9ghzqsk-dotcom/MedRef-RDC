@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useAuth } from '../context/auth.jsx';
 import { useOnline } from '../hooks/useOnline.js';
 import { isEditor } from './AdminForm.jsx';
+import { ErrorBoundary } from './ErrorBoundary.jsx';
 
 export const QUICK_ACCESS = [
   { to: '/urgences', label: 'Urgences', hint: 'Conduite ABCDE, signes de gravité', tone: 'urgence' },
@@ -55,9 +56,9 @@ export function Layout() {
           <div className="account">
             {user ? (
               <>
-                <span className="account-name" title={user.email}>
+                <Link to="/compte" className="account-name" title={`${user.email} — mon compte`}>
                   {user.nom}
-                </span>
+                </Link>
                 <button type="button" className="btn btn-ghost" onClick={logout}>
                   Se déconnecter
                 </button>
@@ -71,13 +72,16 @@ export function Layout() {
         </div>
         {!online && (
           <p className="offline-banner" role="status">
-            Hors connexion : vos prescriptions restent disponibles et seront envoyées au retour du réseau.
+            Hors connexion : les fiches déjà consultées ou <Link to="/hors-ligne">téléchargées</Link> restent
+            lisibles ; vos prescriptions seront envoyées au retour du réseau.
           </p>
         )}
       </header>
 
       <main id="contenu" className="content" tabIndex={-1}>
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
 
       <footer className="footer">
@@ -87,7 +91,8 @@ export function Layout() {
             professionnels de santé. Elle ne remplace pas le jugement clinique.
           </p>
           <p>
-            Contact : <a href="mailto:bmingalu@gmail.com">bmingalu@gmail.com</a>
+            <Link to="/hors-ligne">Utiliser sans connexion</Link> · Contact :{' '}
+            <a href="mailto:bmingalu@gmail.com">bmingalu@gmail.com</a>
           </p>
         </div>
       </footer>

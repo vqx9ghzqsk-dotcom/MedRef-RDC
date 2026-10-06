@@ -233,7 +233,106 @@ export function SaveBar({ saving, dirty, message, error, onSave, children }) {
 }
 
 /** Historique des modifications d'une entité. */
-export function Historique({ items }) {
+const LIBELLES_RUBRIQUES = {
+  nom: 'Nom',
+  resume: 'Résumé',
+  statut: 'Statut',
+  definition: 'Définition',
+  physiopathologie: 'Physiopathologie',
+  diagnostic: 'Diagnostic clinique',
+  etiologies: 'Étiologies',
+  therapeutique: 'Notes thérapeutiques',
+  evolution: 'Évolution',
+  principes: 'Principes de traitement',
+  complications: 'Complications',
+  niveaux: 'Niveaux de soins',
+  examens: 'Examens',
+  differentiels: 'Diagnostics différentiels',
+  posologies: 'Posologies',
+  disponible_rdc: 'Disponible en RDC',
+  prix_indicatif_cdf: 'Prix indicatif',
+  photo_url: 'Photo',
+};
+
+/** Résumé lisible d'une valeur versionnée (texte, liste d'éléments, booléen…). */
+function resumeValeur(v) {
+  if (v === null || v === undefined || v === '') return '—';
+  if (typeof v === 'boolean') return v ? 'Oui' : 'Non';
+  if (Array.isArray(v)) {
+    if (!v.length) return '(aucun élément)';
+    return v
+      .map((item, i) => {
+        if (!item || typeof item !== 'object') return `${i + 1}. ${item}`;
+        const titre =
+          item.titre || item.nom || item.examen_slug || item.niveau || item.population || `élément ${i + 1}`;
+        const detail = item.dose_texte || item.categorie || item.grade_force || item.prise_en_charge || '';
+        return `${i + 1}. ${titre}${detail ? ` — ${String(detail).slice(0, 120)}` : ''}`;
+      })
+      .join('\n');
+  }
+  if (typeof v === 'object') return JSON.stringify(v, null, 2);
+  return String(v);
+}
+
+/** Comparaison avant / après d'un enregistrement, avec restauration de l'une ou l'autre version. */
+function Version({ id, charger, onRestaurer }) {
+  const [etat, setEtat] = useState({ loading: true });
+  useEffect(() => {
+    let annule = false;
+    charger(id)
+      .then((data) => !annule && setEtat({ data }))
+      .catch((error) => !annule && setEtat({ error }));
+    return () => {
+      annule = true;
+    };
+  }, [id, charger]);
+  if (etat.loading) return <p className="muted">Chargement de la version…</p>;
+  if (etat.error) return <p className="field-error">{etat.error.message}</p>;
+  const { avant, apres, rubriques } = etat.data;
+  if (!avant && !apres) return <p className="muted">Version non conservée (enregistrement antérieur).</p>;
+  return (
+    <div className="version">
+      {rubriques.length === 0 && <p className="muted">Aucune différence de contenu.</p>}
+      {rubriques.map((k) => (
+        <div key={k} className="version-rubrique">
+          <h4>{LIBELLES_RUBRIQUES[k] || k.replace(/_/g, ' ')}</h4>
+          <div className="version-cols">
+            <div>
+              <span className="version-label">Avant</span>
+              <pre className="version-texte version-avant">{resumeValeur(avant?.[k])}</pre>
+            </div>
+            <div>
+              <span className="version-label">Après</span>
+              <pre className="version-texte version-apres">{resumeValeur(apres?.[k])}</pre>
+            </div>
+          </div>
+        </div>
+      ))}
+      {onRestaurer && (
+        <div className="version-actions">
+          {avant && (
+            <button type="button" className="btn btn-secondary btn-small" onClick={() => onRestaurer(avant)}>
+              Revenir à la version d’avant
+            </button>
+          )}
+          {apres && (
+            <button type="button" className="btn btn-ghost btn-small" onClick={() => onRestaurer(apres)}>
+              Reprendre cette version
+            </button>
+          )}
+          <span className="hint">Le formulaire est rempli ; vérifiez puis enregistrez.</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Historique d'une fiche. Chaque enregistrement récent garde l'état complet
+ * avant / après : on peut comparer et revenir en arrière (`onRestaurer`).
+ */
+export function Historique({ items, charger, onRestaurer }) {
+  const [ouvert, setOuvert] = useState(null);
   if (!items?.length) return null;
   return (
     <section className="card">
@@ -248,6 +347,32 @@ export function Historique({ items }) {
             <span className="muted">
               — {h.auteur || 'compte supprimé'}, {formatDateTime(h.created_at)}
             </span>
+            {h.a_version && charger && (
+              <>
+                {' '}
+                <button
+                  type="button"
+                  className="btn btn-link"
+                  aria-expanded={ouvert === h.id}
+                  onClick={() => setOuvert(ouvert === h.id ? null : h.id)}
+                >
+                  {ouvert === h.id ? 'Masquer' : 'Voir les changements'}
+                </button>
+                {ouvert === h.id && (
+                  <Version
+                    id={h.id}
+                    charger={charger}
+                    onRestaurer={
+                      onRestaurer &&
+                      ((etat) => {
+                        onRestaurer(etat);
+                        setOuvert(null);
+                      })
+                    }
+                  />
+                )}
+              </>
+            )}
           </li>
         ))}
       </ul>

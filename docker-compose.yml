@@ -1,24 +1,25 @@
 # MedRef RDC — environnement complet : MySQL 8 + API + interface web
+#   Créez d'abord un fichier .env à la racine avec JWT_SECRET, DB_PASSWORD et MYSQL_ROOT_PASSWORD
 #   docker compose up -d --build
 #   docker compose run --rm api npm run db:reset    (1re fois : schéma + données)
 #   → http://localhost:8080
 
 services:
   db:
-    image: mysql:8.0
+    image: mysql:8.4
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root-medref}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Définissez MYSQL_ROOT_PASSWORD dans .env}
       MYSQL_DATABASE: medref_rdc
       MYSQL_USER: medref
-      MYSQL_PASSWORD: ${DB_PASSWORD:-medref}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Définissez DB_PASSWORD dans .env}
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - db-data:/var/lib/mysql
     ports:
       - '3306:3306'
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-uroot', '-p${MYSQL_ROOT_PASSWORD:-root-medref}']
+      test: ['CMD-SHELL', 'mysqladmin ping -h localhost -uroot -p"$$MYSQL_ROOT_PASSWORD"']
       interval: 5s
       timeout: 5s
       retries: 20
@@ -35,10 +36,14 @@ services:
       DB_HOST: db
       DB_PORT: 3306
       DB_USER: medref
-      DB_PASSWORD: ${DB_PASSWORD:-medref}
+      DB_PASSWORD: ${DB_PASSWORD:?Définissez DB_PASSWORD dans .env}
       DB_NAME: medref_rdc
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-please}
+      JWT_SECRET: ${JWT_SECRET:?Définissez JWT_SECRET (32 caractères ou plus) dans .env}
       CORS_ORIGIN: http://localhost:8080
+      BACKUP_DIR: /data/backups
+      LOG_DIR: /data/logs
+    volumes:
+      - api-data:/data
     ports:
       - '4000:4000'
 
@@ -52,3 +57,4 @@ services:
 
 volumes:
   db-data:
+  api-data:

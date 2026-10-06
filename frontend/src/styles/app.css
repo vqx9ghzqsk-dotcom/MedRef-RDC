@@ -1843,3 +1843,132 @@ html {
     animation: none !important;
   }
 }
+
+/* ------------------------------------------------------------------ Robustesse */
+
+/* Garde-fous des doses */
+.alertes-dose {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.alerte-dose {
+  border-left: 4px solid var(--pending);
+  background: var(--warn-bg);
+  color: var(--ink);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-small);
+  font-size: 0.92rem;
+}
+.alerte-danger {
+  border-left-color: var(--urgence);
+  background: var(--urgence-bg);
+  font-weight: 600;
+}
+
+/* Fiche dont la révision est dépassée */
+.validation-revoir {
+  background: var(--urgence-bg);
+  color: var(--ink);
+  border-left: 4px solid var(--urgence);
+}
+.stat-tile.statut-a_revoir {
+  border-top-color: var(--urgence);
+}
+
+/* Page qui a planté */
+.crash h1 {
+  font-size: 1.3rem;
+  margin-top: 0;
+}
+.crash-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* Hors ligne */
+.hors-ligne-etat {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+.hors-ligne-etat dt {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+.hors-ligne-etat dd {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.hors-ligne-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.progression {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+}
+.progression progress {
+  flex: 1;
+  min-width: 0;
+  height: 0.8rem;
+}
+
+/* Comparaison de versions (administration) */
+.version {
+  margin: 0.75rem 0 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  background: var(--surface-2);
+}
+.version-rubrique h4 {
+  margin: 0.5rem 0 0.35rem;
+}
+.version-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.5rem;
+}
+.version-label {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.version-texte {
+  margin: 0.2rem 0 0;
+  padding: 0.5rem;
+  max-height: 16rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 0.9rem;
+  background: var(--surface);
+  border-radius: var(--radius-small);
+  border-left: 3px solid var(--line);
+}
+.version-avant {
+  border-left-color: var(--urgence);
+}
+.version-apres {
+  border-left-color: var(--ok);
+}
+.version-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}

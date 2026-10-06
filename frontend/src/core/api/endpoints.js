@@ -11,6 +11,7 @@ export function createMedRefApi(client) {
     register: (payload) => client.post('/api/auth/register', payload),
     login: (payload) => client.post('/api/auth/login', payload),
     me: () => client.get('/api/auth/me').then((r) => r.user),
+    changePassword: (payload) => client.post('/api/auth/password', payload),
 
     // Catalogue
     departements: () => data(client.get('/api/departements')),
@@ -34,6 +35,8 @@ export function createMedRefApi(client) {
     examen: (slug) => data(client.get(`/api/examens/${enc(slug)}`)),
     sources: (filtres) => data(client.get('/api/sources', filtres)),
     recherche: (q) => client.get('/api/recherche', { q }),
+    horsLigne: () => data(client.get('/api/hors-ligne')),
+    signalerErreur: (payload) => client.post('/api/journal/erreur', payload),
 
     // Administration (rôles admin et medecin)
     adminResume: () => data(client.get('/api/admin/resume')),
@@ -43,6 +46,7 @@ export function createMedRefApi(client) {
     adminSaveMolecule: (id, payload) => client.put(`/api/admin/molecules/${enc(id)}`, payload),
     adminMedicament: (id) => data(client.get(`/api/admin/medicaments/${enc(id)}`)),
     adminSaveMedicament: (id, payload) => client.put(`/api/admin/medicaments/${enc(id)}`, payload),
+    adminVersion: (id) => data(client.get(`/api/admin/modifications/${enc(id)}`)),
 
     // Prescriptions
     prescriptions: () => data(client.get('/api/prescriptions')),

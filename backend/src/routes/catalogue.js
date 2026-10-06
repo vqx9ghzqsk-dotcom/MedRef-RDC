@@ -100,7 +100,8 @@ router.get(
   asyncHandler(async (req, res) => {
     const [p] = await db.query(
       `SELECT p.id, p.nom, p.slug, p.resume, p.definition, p.physiopathologie, p.diagnostic,
-              p.etiologies, p.therapeutique, p.evolution, p.updated_at, p.statut, p.valide_le,
+              p.etiologies, p.therapeutique, p.evolution, p.updated_at, p.statut, p.valide_le, p.revision_le,
+              (p.revision_le IS NOT NULL AND p.revision_le <= CURDATE()) AS a_revoir,
               v.nom AS valide_par_nom,
               s.id AS specialite_id, s.nom AS specialite_nom, s.slug AS specialite_slug,
               d.id AS departement_id, d.nom AS departement_nom, d.slug AS departement_slug
@@ -211,7 +212,13 @@ router.get(
         slug: p.slug,
         resume: p.resume,
         updated_at: p.updated_at,
-        validation: { statut: p.statut, valide_le: p.valide_le, valide_par: p.valide_par_nom || null },
+        validation: {
+          statut: p.statut,
+          valide_le: p.valide_le,
+          valide_par: p.valide_par_nom || null,
+          revision_le: p.revision_le || null,
+          a_revoir: Boolean(Number(p.a_revoir)),
+        },
         onglets: {
           definition: { definition: p.definition, physiopathologie: p.physiopathologie },
           diagnostic: {

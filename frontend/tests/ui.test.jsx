@@ -313,6 +313,73 @@ describe('Niveaux de soins, grades et validation', () => {
     });
     expect(await screen.findByRole('note')).toHaveTextContent('Fiche validée par Dr Mingalu le 01/10/2026');
   });
+
+  it('signale une fiche dont la date de révision est dépassée', async () => {
+    renderApp('/pathologies/paludisme-grave', {
+      pathologie: vi.fn(async () => ({
+        ...fiche,
+        validation: {
+          statut: 'valide',
+          valide_le: '2024-01-15 10:00:00',
+          valide_par: 'Dr Mingalu',
+          revision_le: '2026-01-15',
+          a_revoir: true,
+        },
+      })),
+    });
+    const note = await screen.findByRole('note');
+    expect(note).toHaveTextContent('révision en retard');
+    expect(note).toHaveTextContent('15/01/2026');
+  });
+});
+
+describe('Robustesse de l’interface', () => {
+  it('remplace une page qui plante par un message clair et signale l’erreur au serveur', async () => {
+    const erreur = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const signalerErreur = vi.fn(async () => ({ reference: 'ab12cd34ef56' }));
+    renderApp('/pathologies/paludisme-grave', {
+      // Données corrompues : la page plante au rendu
+      pathologie: vi.fn(async () => ({ ...fiche, onglets: null })),
+      signalerErreur,
+    });
+    expect(
+      await screen.findByRole('heading', { name: 'Une erreur est survenue sur cette page' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Recharger la page' })).toBeInTheDocument();
+    expect(signalerErreur).toHaveBeenCalledWith(
+      expect.objectContaining({ message: expect.any(String), pile: expect.any(String) }),
+    );
+    expect(await screen.findByText('ab12cd34ef56')).toBeInTheDocument();
+    // Le reste de l'application (en-tête, navigation) reste utilisable
+    expect(screen.getByRole('navigation', { name: 'Navigation principale' })).toBeInTheDocument();
+    erreur.mockRestore();
+  });
+
+  it('change le mot de passe depuis « Mon compte » et affiche les erreurs par champ', async () => {
+    const user = userEvent.setup();
+    const medecin = { id: 7, nom: 'Dr Test', email: 'dr@test.cd', role: 'medecin' };
+    const changePassword = vi
+      .fn()
+      .mockRejectedValueOnce(
+        Object.assign(new Error('Données invalides'), {
+          details: { actuel: 'Mot de passe actuel incorrect' },
+        }),
+      )
+      .mockResolvedValueOnce({ token: 'nouveau', user: medecin });
+    renderApp('/compte', { changePassword }, medecin);
+    expect(await screen.findByText('Médecin relecteur')).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Mot de passe actuel'), 'faux');
+    await user.type(screen.getByLabelText('Nouveau mot de passe'), 'Artesunate-2026');
+    await user.type(screen.getByLabelText('Confirmer le nouveau mot de passe'), 'Artesunate-2026');
+    await user.click(screen.getByRole('button', { name: 'Changer le mot de passe' }));
+    expect(await screen.findByText('Mot de passe actuel incorrect')).toBeInTheDocument();
+
+    await user.clear(screen.getByLabelText('Mot de passe actuel'));
+    await user.type(screen.getByLabelText('Mot de passe actuel'), 'Quinine-2026');
+    await user.click(screen.getByRole('button', { name: 'Changer le mot de passe' }));
+    expect(await screen.findByRole('status')).toHaveTextContent('Mot de passe modifié');
+    expect(changePassword).toHaveBeenLastCalledWith({ actuel: 'Quinine-2026', nouveau: 'Artesunate-2026' });
+  });
 });
 
 describe('Posologies et calcul de dose', () => {
@@ -337,10 +404,18 @@ describe('Posologies et calcul de dose', () => {
     expect(enfant).toHaveAttribute('aria-pressed', 'true');
     await user.type(screen.getByLabelText('Poids du patient'), '20');
     expect(screen.getByRole('status')).toHaveTextContent('Pour 20 kg : 300 mg');
+    expect(screen.queryByRole('alert')).toBeNull();
     await user.clear(screen.getByLabelText('Poids du patient'));
     await user.type(screen.getByLabelText('Poids du patient'), '90');
     expect(screen.getByRole('status')).toHaveTextContent('1 000 mg');
-    expect(screen.getByRole('status')).toHaveTextContent('plafonné');
+    // Garde-fous : poids incohérent pour un enfant et dose plafonnée
+    const alertes = screen.getAllByRole('alert').map((a) => a.textContent);
+    expect(alertes).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/Au-delà de 50 kg/),
+        expect.stringMatching(/Dose plafonnée.*1\s350 mg/),
+      ]),
+    );
 
     await user.click(screen.getByRole('button', { name: 'Grossesse' }));
     expect(screen.getByText('Autorisé')).toBeInTheDocument();

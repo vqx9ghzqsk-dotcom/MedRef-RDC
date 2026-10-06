@@ -167,6 +167,8 @@ describe('Catalogue', () => {
       statut: 'valide',
       valide_le: '2026-10-01 10:00:00',
       valide_par: 'Dr Mingalu',
+      revision_le: null,
+      a_revoir: false,
     });
     expect(fiche.onglets.niveaux[0]).toMatchObject({
       niveau: 'centre_sante',

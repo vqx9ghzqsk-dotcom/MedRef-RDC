@@ -4,11 +4,13 @@
  */
 
 export class ApiError extends Error {
-  constructor(status, message, details) {
+  constructor(status, message, details, reference) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.details = details;
+    // Référence du journal serveur (erreurs internes) à communiquer au support
+    this.reference = reference;
   }
 
   get isNetworkError() {
@@ -66,7 +68,7 @@ export function createApiClient({
     if (!response.ok) {
       if (response.status === 401 && token && onUnauthorized) onUnauthorized();
       const message = (payload && payload.error) || `Erreur ${response.status}`;
-      throw new ApiError(response.status, message, payload && payload.details);
+      throw new ApiError(response.status, message, payload && payload.details, payload && payload.reference);
     }
     return payload;
   }

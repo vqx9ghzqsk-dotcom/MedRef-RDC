@@ -36,7 +36,9 @@ function useSave(save) {
     setState({ saving: true, message: null, error: null, errors: {} });
     try {
       const res = await save(payload);
-      setState({ saving: false, message: 'Modifications enregistrées.', error: null, errors: {} });
+      const message =
+        res && res.inchange ? 'Aucune modification à enregistrer.' : 'Modifications enregistrées.';
+      setState({ saving: false, message, error: null, errors: {} });
       return res || true;
     } catch (err) {
       setState({
@@ -95,13 +97,18 @@ function AdminHome() {
           return (
             <>
               <ul className="stat-tiles" aria-label="Statut des fiches">
-                {Object.entries(STATUTS_FICHE).map(([k, label]) => (
+                {[...Object.entries(STATUTS_FICHE), ['a_revoir', 'À revoir']].map(([k, label]) => (
                   <li key={k} className={`stat-tile statut-${k}`}>
                     <span className="stat-value">{d.statuts[k] ?? 0}</span>
                     <span className="stat-label">{label}</span>
                   </li>
                 ))}
               </ul>
+              <p className="hint">
+                Une fiche validée est à revoir après {d.parametres?.revision_mois ?? 24} mois.
+                {d.parametres?.double_validation &&
+                  ' Validation à deux relecteurs active : on ne valide pas une version qu’on a soi-même rédigée.'}
+              </p>
 
               <div className="segmented" role="group" aria-label="Section">
                 {ONGLETS_ADMIN.map(([k, label]) => (
@@ -133,6 +140,7 @@ function AdminHome() {
                             {l}
                           </option>
                         ))}
+                        <option value="a_revoir">À revoir (révision dépassée)</option>
                       </select>
                     </div>
                   )}
@@ -152,7 +160,11 @@ function AdminHome() {
                     </thead>
                     <tbody>
                       {d.pathologies
-                        .filter((p) => (!statut || p.statut === statut) && filtre(`${p.nom} ${p.specialite}`))
+                        .filter(
+                          (p) =>
+                            (!statut || (statut === 'a_revoir' ? p.a_revoir : p.statut === statut)) &&
+                            filtre(`${p.nom} ${p.specialite}`),
+                        )
                         .map((p) => (
                           <tr key={p.id}>
                             <td>
@@ -162,6 +174,7 @@ function AdminHome() {
                             <td>{p.departement}</td>
                             <td>
                               <span className={`tag statut-${p.statut}`}>{STATUTS_FICHE[p.statut]}</span>
+                              {p.a_revoir && <span className="tag tag-warn"> À revoir</span>}
                             </td>
                             <td className="muted">
                               {p.statut === 'valide'
@@ -327,10 +340,20 @@ function PathologieEditor({ id, initial, onSaved }) {
   );
 
   const onSave = async () => {
-    const { id: _id, slug: _slug, valide_le: _v, valide_par: _p, updated_at: _u, ...payload } = form;
-    if (await run(payload)) {
+    const {
+      id: _id,
+      slug: _slug,
+      valide_le: _v,
+      valide_par: _p,
+      updated_at: _u,
+      revision_le: _r,
+      a_revoir: _ar,
+      ...payload
+    } = form;
+    const res = await run(payload);
+    if (res) {
       setDirty(false);
-      onSaved();
+      if (!res.inchange) onSaved();
     }
   };
 
@@ -345,6 +368,13 @@ function PathologieEditor({ id, initial, onSaved }) {
             <span className="muted">
               {' '}
               · validée par {initial.valide_par} le {formatDateTime(initial.valide_le)}
+            </span>
+          )}
+          {initial.statut === 'valide' && initial.revision_le && (
+            <span className={initial.a_revoir ? 'tag tag-warn' : 'muted'}>
+              {' '}
+              · {initial.a_revoir ? 'révision en retard depuis le' : 'à revoir le'}{' '}
+              {new Date(`${initial.revision_le}T00:00:00`).toLocaleDateString('fr-FR')}
             </span>
           )}
         </p>
@@ -650,7 +680,16 @@ function PathologieEditor({ id, initial, onSaved }) {
         ))}
       </section>
 
-      <Historique items={historique} />
+      <Historique
+        items={historique}
+        charger={api.adminVersion}
+        onRestaurer={(etat) => {
+          // Une version restaurée doit être relue : elle repasse « à valider »
+          setForm((f) => ({ ...f, ...etat, statut: 'a_valider' }));
+          setRevalidation(form.statut === 'valide');
+          setDirty(true);
+        }}
+      />
       <SaveBar saving={save.saving} dirty={dirty} message={save.message} error={save.error} onSave={onSave}>
         <span className={`tag statut-${form.statut}`}>{STATUTS_FICHE[form.statut]}</span>
       </SaveBar>
@@ -683,9 +722,10 @@ function MoleculeEditor({ id, initial, onSaved }) {
 
   const onSave = async () => {
     const { id: _id, dci: _dci, slug: _slug, ...payload } = form;
-    if (await run(payload)) {
+    const res = await run(payload);
+    if (res) {
       setDirty(false);
-      onSaved();
+      if (!res.inchange) onSaved();
     }
   };
 
@@ -828,7 +868,14 @@ function MoleculeEditor({ id, initial, onSaved }) {
         ))}
       </section>
 
-      <Historique items={historique} />
+      <Historique
+        items={historique}
+        charger={api.adminVersion}
+        onRestaurer={(etat) => {
+          setForm((f) => ({ ...f, ...etat }));
+          setDirty(true);
+        }}
+      />
       <SaveBar saving={save.saving} dirty={dirty} message={save.message} error={save.error} onSave={onSave} />
     </article>
   );
@@ -872,9 +919,10 @@ function MedicamentEditor({ id, initial, onSaved }) {
 
   const onSave = async () => {
     const { id: _id, nom_commercial: _n, dci: _d, operateur: _o, ...payload } = form;
-    if (await run(payload)) {
+    const res = await run(payload);
+    if (res) {
       setDirty(false);
-      onSaved();
+      if (!res.inchange) onSaved();
     }
   };
 
@@ -943,7 +991,14 @@ function MedicamentEditor({ id, initial, onSaved }) {
         )}
       </section>
 
-      <Historique items={historique} />
+      <Historique
+        items={historique}
+        charger={api.adminVersion}
+        onRestaurer={(etat) => {
+          setForm((f) => ({ ...f, ...etat }));
+          setDirty(true);
+        }}
+      />
       <SaveBar saving={save.saving} dirty={dirty} message={save.message} error={save.error} onSave={onSave} />
     </article>
   );

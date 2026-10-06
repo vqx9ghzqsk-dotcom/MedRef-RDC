@@ -17,15 +17,17 @@ indicatifs sont à confirmer localement.
 ## Sommaire
 
 1. [Architecture](#architecture)
-2. [Démarrage rapide (Docker)](#démarrage-rapide-docker)
+2. [Lancement en un clic (Windows)](#lancement-en-un-clic-windows) · [Démarrage rapide (Docker)](#démarrage-rapide-docker)
 3. [Développement local](#développement-local)
 4. [Fonctionnalités](#fonctionnalités-phase-1--web)
 5. [API](#api)
 6. [Modèle de données](#modèle-de-données)
 7. [Mode hors ligne et synchronisation](#mode-hors-ligne-et-synchronisation)
-8. [Tests et qualité](#tests-et-qualité)
-9. [Ajouter du contenu](#ajouter-du-contenu)
-10. [Vers l'application mobile](#vers-lapplication-mobile)
+8. [Robustesse : contenu, sécurité, erreurs](#robustesse--contenu-sécurité-erreurs)
+9. [Mise en ligne](#mise-en-ligne)
+10. [Tests et qualité](#tests-et-qualité)
+11. [Ajouter du contenu](#ajouter-du-contenu)
+12. [Vers l'application mobile](#vers-lapplication-mobile)
 
 ---
 
@@ -70,6 +72,14 @@ React 18, Vite 6, react-router-dom 6, idb · Jest, Supertest, Vitest · ESLint 9
 
 ---
 
+## Lancement en un clic (Windows)
+
+Démarrez WampServer (icône verte), puis double-cliquez sur **`demarrer.bat`** à la racine du projet. Il vérifie que
+MySQL répond, installe les dépendances si besoin, applique les migrations (sans perte de données), ouvre l'API et
+l'interface dans deux fenêtres puis le site dans le navigateur. Laissez ces deux fenêtres ouvertes.
+
+---
+
 ## Démarrage rapide (Docker)
 
 Prérequis : [Docker Desktop](https://www.docker.com/products/docker-desktop/).
@@ -81,8 +91,9 @@ docker compose run --rm api npm run db:reset   # 1re fois : crée le schéma et 
 
 Ouvrez <http://localhost:8080>. L'API répond sur <http://localhost:4000/api/health>.
 
-En production, définissez au minimum `JWT_SECRET`, `DB_PASSWORD` et `MYSQL_ROOT_PASSWORD` (fichier `.env` à la
-racine, lu automatiquement par Docker Compose).
+Créez d'abord un fichier `.env` à la racine avec `JWT_SECRET` (32 caractères aléatoires ou plus), `DB_PASSWORD` et
+`MYSQL_ROOT_PASSWORD` : Docker Compose refuse de démarrer sans eux, et l'API refuse en production les valeurs d'exemple.
+Les sauvegardes et les journaux sont conservés dans le volume `api-data`.
 
 > `db:reset` **supprime et recrée** toutes les tables. Sur une base réelle, il exige `-- --confirmer=<nom de la base>`
 > et fait d'abord une sauvegarde. Pour une base existante, utilisez `npm run db:migrate`.
@@ -228,6 +239,9 @@ Toutes les réponses sont en JSON. Les listes sont dans `data`. Les erreurs ont 
 | POST    | `/api/auth/register`                                   | `{ email, password, nom }` → `{ token, user }`                                                                   |
 | POST    | `/api/auth/login`                                      | `{ email, password }` → `{ token, user }`                                                                        |
 | GET     | `/api/auth/me`                                         | 🔒 utilisateur courant                                                                                           |
+| POST    | `/api/auth/password`                                   | 🔒 `{ actuel, nouveau }` → nouveau jeton ; les autres sessions sont révoquées                                    |
+| GET     | `/api/hors-ligne`                                      | adresses publiques à télécharger pour la consultation hors ligne                                                 |
+| POST    | `/api/journal/erreur`                                  | erreur survenue dans l'interface → journal du serveur, renvoie une référence                                     |
 | GET     | `/api/departements`                                    | départements + compteurs                                                                                         |
 | GET     | `/api/departements/:slug`                              | département + spécialités                                                                                        |
 | GET     | `/api/specialites/:slug`                               | spécialité + pathologies                                                                                         |
@@ -251,6 +265,7 @@ Toutes les réponses sont en JSON. Les listes sont dans `data`. Les erreurs ont 
 | GET/PUT | `/api/admin/pathologies/:id`                           | 🛡 lecture / enregistrement complet d'une fiche (+ validation)                                                    |
 | GET/PUT | `/api/admin/molecules/:id`                             | 🛡 fiche pharmacologique et posologies                                                                            |
 | GET/PUT | `/api/admin/medicaments/:id`                           | 🛡 produit : disponibilité RDC, prix, informations propres                                                        |
+| GET     | `/api/admin/modifications/:id`                         | 🛡 une version : état avant / après et rubriques modifiées                                                        |
 
 🔒 = en-tête `Authorization: Bearer <jwt>` requis. 🛡 = idem, avec un rôle `admin` ou `medecin`.
 
@@ -308,8 +323,59 @@ Le schéma complet et commenté est dans [`backend/db/schema.sql`](backend/db/sc
    n'est jamais écrasée.
 
 Le **service worker** met en cache la coque de l'application (HTML, JS, CSS, icônes) pour qu'elle s'ouvre sans
-réseau. Il ne met **jamais** en cache les réponses `/api` : le contenu médical vient toujours du serveur à jour.
-Il n'est actif qu'en production (`npm run build`).
+réseau. Pour le **contenu médical public**, il interroge d'abord le serveur ; si le réseau est absent, en panne ou met
+plus de 5 s à répondre, il sert la dernière version reçue. La page **/hors-ligne** (« Utiliser sans connexion »)
+télécharge d'un coup toutes les fiches (`GET /api/hors-ligne` donne la liste des adresses). Les données personnelles
+et d'administration (`/api/auth`, `/api/prescriptions`, `/api/admin`) ne sont jamais mises en cache. Le service
+worker n'est actif qu'avec l'interface compilée (`npm run build`), pas en développement.
+
+---
+
+## Robustesse : contenu, sécurité, erreurs
+
+**Historique complet.** Chaque enregistrement dans /admin conserve l'état complet de la fiche avant et après. Dans
+l'historique, « Voir les changements » compare les deux versions rubrique par rubrique ; « Revenir à la version
+d'avant » remplit le formulaire, à relire puis enregistrer (la fiche repasse « à valider »). Un enregistrement sans
+changement n'ajoute rien à l'historique.
+
+**Date de révision.** Une fiche validée reçoit une date de révision (`REVISION_MOIS`, 24 par défaut). Passé ce délai,
+elle est signalée « À revoir » dans le tableau de bord et sur la fiche publique. Revalider la fiche repousse la date.
+
+**Double validation (optionnelle).** Avec `VALIDATION_DOUBLE=1`, on ne peut ni modifier et valider dans le même
+enregistrement, ni valider une version qu'on a soi-même rédigée : un second relecteur valide.
+
+**Garde-fous des doses.** Le calcul au poids signale un poids incohérent avec la population (adulte de moins de
+35 kg, enfant de plus de 50 kg, nouveau-né de plus de 6 kg…), une dose plafonnée à la dose maximale, l'absence de
+dose maximale renseignée ; aucun calcul n'est proposé pour une posologie contre-indiquée.
+
+**Comptes.** Mots de passe de 10 caractères minimum (lettres et chiffres, ni courants, ni dérivés du nom ou de
+l'e-mail) ; compte bloqué 15 min après 5 échecs ; sessions de 12 h pour les comptes admin / medecin ; « Mon compte »
+(**/compte**) permet de changer de mot de passe, ce qui déconnecte les autres appareils.
+
+**Erreurs.** Une page qui plante affiche un message clair (recharger, revenir à l'accueil) au lieu d'un écran blanc
+et est signalée au serveur. Les erreurs du serveur et de l'interface sont écrites dans `backend/logs/api-AAAA-MM-JJ.log`
+(une ligne JSON par erreur, 30 jours conservés). L'utilisateur voit seulement une **référence** (ex. `3fa9c21b04de`)
+qui permet de retrouver la ligne correspondante dans le journal.
+
+---
+
+## Mise en ligne
+
+Pour que les confrères accèdent au site sans votre ordinateur, il faut un serveur (VPS) avec Node.js 20+ et MySQL 8,
+et un nom de domaine en HTTPS. Le plus simple est d'utiliser **un seul programme** : l'API sert aussi l'interface
+compilée.
+
+```bash
+cd frontend && npm ci && npm run build          # produit frontend/dist
+cd ../backend && npm ci --omit=dev
+npm run db:migrate                              # 1re fois sur une base vide : npm run db:reset
+NODE_ENV=production FRONTEND_DIST=../frontend/dist node src/server.js
+```
+
+En production, l'API refuse de démarrer si `JWT_SECRET` ou `DB_PASSWORD` gardent une valeur d'exemple. Placez un
+proxy HTTPS devant (Caddy ou Nginx avec Let's Encrypt), faites tourner le service avec un gestionnaire (systemd, pm2)
+et réglez `BACKUP_DIR` vers un disque sauvegardé. L'alternative Docker (`docker compose up -d --build`) fait la même
+chose avec Nginx devant l'interface.
 
 ---
 

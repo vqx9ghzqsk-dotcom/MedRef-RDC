@@ -2253,3 +2253,290 @@ details.forme {
   display: grid;
   gap: 1.5rem;
 }
+
+/* ------------------------------------------------------------------ Produits des firmes */
+
+.produit-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #fff;
+  border-radius: var(--radius-small);
+}
+.produit-photo-vide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+}
+.produit-photo-grande {
+  aspect-ratio: auto;
+  max-height: 22rem;
+  margin-bottom: 0.75rem;
+}
+.tag-enfant {
+  background: var(--link-bg);
+  color: var(--ink);
+}
+
+/* Galerie de la fiche molécule */
+.section-produits {
+  margin-top: 1.5rem;
+  scroll-margin-top: 5rem;
+}
+.galerie-filtres {
+  align-items: end;
+}
+.galerie-enfant {
+  align-self: center;
+}
+.galerie-groupe {
+  margin: 1.25rem 0 0.6rem;
+}
+.cartes-produits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  gap: 0.75rem;
+}
+.carte-produit {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+.carte-photo {
+  border: 0;
+  padding: 0.5rem;
+  background: #fff;
+  cursor: pointer;
+}
+.carte-texte {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.55rem 0.65rem 0.7rem;
+  font-size: 0.9rem;
+}
+.carte-titre {
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  color: var(--link);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.carte-firme {
+  font-weight: 600;
+}
+.carte-meta,
+.carte-compo {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+/* Vignettes (onglet Thérapeutique, autres produits) */
+.molecule-produits-titre {
+  margin: 0.5rem 0 0.35rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.vignettes {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0.25rem;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+}
+.vignettes li {
+  flex: 0 0 7.5rem;
+  scroll-snap-align: start;
+}
+.vignette {
+  display: grid;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0.35rem;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+}
+.vignette:hover,
+.carte-produit:hover {
+  border-color: var(--link);
+}
+.vignette-nom {
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.vignette-firme {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+/* Panneau latéral : fiche d'un produit */
+.panneau-fond {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: flex-end;
+}
+.panneau {
+  width: min(32rem, 100%);
+  height: 100%;
+  overflow-y: auto;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.25);
+  animation: panneau-entree 0.18s ease-out;
+}
+@keyframes panneau-entree {
+  from {
+    transform: translateX(2rem);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panneau {
+    animation: none;
+  }
+}
+.panneau-barre {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.panneau-corps {
+  padding: 1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+.panneau-titre {
+  margin: 0;
+}
+.panneau-firme {
+  margin: 0;
+  font-weight: 600;
+}
+.panneau-identite {
+  margin: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+.panneau-identite dt {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+.panneau-identite dd {
+  margin: 0.1rem 0 0;
+}
+.panneau-rubrique h3 {
+  font-size: 1rem;
+  margin: 0.4rem 0 0.25rem;
+}
+.panneau-source {
+  border-left: 3px solid var(--pending);
+  padding-left: 0.6rem;
+}
+
+/* Administration du catalogue */
+.stat-bouton {
+  display: grid;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.stat-bouton[aria-pressed='true'] .stat-label {
+  text-decoration: underline;
+  font-weight: 700;
+}
+.stat-tile.liaison-aucune,
+.tag.liaison-aucune {
+  border-top-color: var(--urgence);
+}
+.tag.liaison-aucune {
+  background: var(--urgence-bg);
+  color: var(--ink);
+}
+.tag.liaison-partielle {
+  background: var(--warn-bg);
+  color: var(--ink);
+}
+.tag.liaison-auto {
+  background: var(--link-bg);
+  color: var(--ink);
+}
+.tag.liaison-verifiee {
+  background: var(--ok-bg);
+  color: var(--ink);
+}
+.admin-produit {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 12rem;
+}
+.admin-produit .produit-photo,
+.admin-produit-ligne .produit-photo {
+  width: 3.5rem;
+  flex: 0 0 3.5rem;
+}
+.admin-produits {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.admin-produit-ligne {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+}
+.admin-produit-texte {
+  flex: 1;
+  min-width: 0;
+}
+.admin-photo .produit-photo {
+  max-width: 14rem;
+  margin-top: 0.5rem;
+}
+.admin-catalogue {
+  display: grid;
+  gap: 1rem;
+}

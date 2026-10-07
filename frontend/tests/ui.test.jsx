@@ -361,16 +361,43 @@ describe('Fiche pathologie', () => {
     expect(screen.getByText('Fièvre typhoïde')).toBeInTheDocument();
   });
 
-  it('thérapeutique : principes, molécules avec produits par opérateur, complications', async () => {
-    renderApp('/pathologies/paludisme-grave?onglet=therapeutique');
+  it('thérapeutique : principes, molécules avec produits en vignettes, complications', async () => {
+    const user = userEvent.setup();
+    const medicament = vi.fn(async () => ({
+      id: 12,
+      nom_commercial: 'ASAQ Winthrop',
+      operateur: 'Sanofi',
+      dci: 'Artésunate + Amodiaquine',
+      photo_url: '/medias/produits/sanofi/asaq.webp',
+      presentation: 'Comprimés',
+      mecanisme: 'Association de deux schizonticides.',
+      sources_text: 'Catalogue Sanofi — à vérifier sur la notice (RCP).',
+      association: true,
+      composition: [{ id: 1, dci: 'Artésunate', slug: 'artesunate' }],
+      autres_produits: [],
+    }));
+    renderApp('/pathologies/paludisme-grave?onglet=therapeutique', { medicament });
     expect(await screen.findByRole('heading', { name: 'Principes de prise en charge' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Traitement parentéral' })).toHaveAttribute(
       'href',
       '#principe-1',
     );
-    expect(screen.getByText('Produits par opérateur (1 seul, 1 en association)')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'ASAQ Winthrop' })).toHaveAttribute('href', '/medicaments/12');
-    expect(screen.getByText('Association : Artésunate + Amodiaquine')).toBeInTheDocument();
+    expect(screen.getByText('Produits disponibles (1 seul, 1 en association)')).toBeInTheDocument();
+    // Vignette → fiche du produit en panneau latéral, sans quitter la pathologie
+    await user.click(screen.getByRole('button', { name: /ASAQ Winthrop/ }));
+    const panneau = await screen.findByRole('dialog', { name: 'ASAQ Winthrop' });
+    expect(medicament).toHaveBeenCalledWith(12);
+    expect(within(panneau).getByText('Association de deux schizonticides.')).toBeInTheDocument();
+    expect(within(panneau).getByRole('img', { name: 'Conditionnement de ASAQ Winthrop' })).toHaveAttribute(
+      'src',
+      '/medias/produits/sanofi/asaq.webp',
+    );
+    expect(within(panneau).getByRole('link', { name: 'Artésunate' })).toHaveAttribute(
+      'href',
+      '/molecules/artesunate',
+    );
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.getByRole('heading', { name: 'Traitement des complications' })).toBeInTheDocument();
     expect(screen.getByText('Dialyse si besoin')).toBeInTheDocument();
   });
@@ -688,5 +715,75 @@ describe('CalculatorForm', () => {
     render(<CalculatorForm code="imc" />);
     await user.click(screen.getByRole('button', { name: 'Calculer' }));
     expect(screen.getByRole('alert')).toHaveTextContent('Renseignez « Poids »');
+  });
+});
+
+describe('Produits des firmes sur la fiche molécule', () => {
+  const produit = (id, nom, operateur, extra = {}) => ({
+    id,
+    nom_commercial: nom,
+    operateur,
+    photo_url: `/medias/produits/test/${id}.webp`,
+    forme_categorie: 'Comprimé',
+    association: false,
+    pediatrique: false,
+    disponible_rdc: false,
+    ...extra,
+  });
+  const molecule = {
+    id: 1,
+    dci: 'Paracétamol',
+    slug: 'paracetamol',
+    classe: 'Antalgiques',
+    pathologies: [],
+    posologies: [],
+    produits: [
+      produit(1, 'Amidol 500', 'Shalina Healthcare'),
+      produit(2, 'Amidol sirop', 'Shalina Healthcare', {
+        forme_categorie: 'Sirop, suspension, solution buvable',
+        pediatrique: true,
+      }),
+      produit(3, 'Dologan Denk', 'Denk Pharma', {
+        association: true,
+        composition: 'Paracétamol + Ibuprofène + Caféine',
+      }),
+    ],
+  };
+
+  it('présente les photos, seule puis en association, avec filtres et fiche en panneau', async () => {
+    const user = userEvent.setup();
+    const medicament = vi.fn(async (id) => ({
+      ...molecule.produits.find((p) => p.id === id),
+      dci: 'Paracétamol',
+      composition: [],
+      autres_produits: [],
+    }));
+    renderApp('/molecules/paracetamol', { molecule: vi.fn(async () => molecule), medicament });
+    const galerie = (await screen.findByRole('heading', { name: 'Produits disponibles chez les firmes' }))
+      .parentElement;
+    expect(within(galerie).getByRole('status')).toHaveTextContent('3 produits de 2 firmes');
+    expect(within(galerie).getByRole('region', { name: 'Paracétamol seule' })).toHaveTextContent(
+      'Amidol 500',
+    );
+    const assoc = within(galerie).getByRole('region', { name: 'Paracétamol en association' });
+    expect(assoc).toHaveTextContent('Paracétamol + Ibuprofène + Caféine');
+    // Vignettes chargées à la demande
+    const img = within(galerie).getByAltText('Conditionnement de Amidol 500');
+    expect(img).toHaveAttribute('src', '/medias/produits/test/1-mini.webp');
+    expect(img).toHaveAttribute('loading', 'lazy');
+
+    await user.selectOptions(within(galerie).getByLabelText('Firme'), 'Denk Pharma');
+    expect(within(galerie).getByRole('status')).toHaveTextContent('1 produit de 1 firme');
+    await user.click(within(galerie).getByRole('button', { name: 'Tout afficher' }));
+    await user.click(within(galerie).getByLabelText(/Adaptés à/));
+    expect(within(galerie).getByRole('status')).toHaveTextContent('1 produit');
+    expect(within(galerie).getByText('Amidol sirop')).toBeInTheDocument();
+
+    await user.click(within(galerie).getByRole('button', { name: 'Amidol sirop' }));
+    const panneau = await screen.findByRole('dialog', { name: 'Amidol sirop' });
+    expect(medicament).toHaveBeenCalledWith(2);
+    expect(within(panneau).getByText('Adapté à l’enfant')).toBeInTheDocument();
+    await user.click(within(panneau).getByRole('button', { name: 'Fermer' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 });

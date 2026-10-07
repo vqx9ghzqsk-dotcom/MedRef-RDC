@@ -77,12 +77,13 @@ router.get(
     }
     const rows = await db.query(
       `SELECT m.id, m.nom_commercial, m.dci, m.forme, m.dosage, m.photo_url, m.disponible_rdc,
-              m.prix_indicatif_cdf, c.id AS classe_id, c.nom AS classe, o.id AS operateur_id, o.nom AS operateur
+              m.prix_indicatif_cdf, m.forme_categorie, m.catalogue_classe,
+              c.id AS classe_id, c.nom AS classe, o.id AS operateur_id, o.nom AS operateur
          FROM medicaments m
          LEFT JOIN classes_pharmacologiques c ON c.id = m.classe_id
          LEFT JOIN operateurs o ON o.id = m.operateur_id
         ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
-        ORDER BY c.nom, m.dci, m.nom_commercial`,
+        ORDER BY COALESCE(c.nom, m.catalogue_classe), m.dci, m.nom_commercial`,
       params,
     );
     res.json({ data: rows.map((r) => ({ ...r, disponible_rdc: Boolean(r.disponible_rdc) })) });
@@ -96,8 +97,8 @@ router.get(
     const id = toInt(req.params.id);
     if (!id) throw notFound('Médicament');
     const [m] = await db.query(
-      `SELECT m.*, c.nom AS classe, o.nom AS operateur, o.type AS operateur_type, o.pays AS operateur_pays,
-              o.site_web AS operateur_site
+      `SELECT m.*, c.nom AS classe, o.nom AS operateur, o.slug AS operateur_slug, o.type AS operateur_type,
+              o.pays AS operateur_pays, o.site_web AS operateur_site
          FROM medicaments m
          LEFT JOIN classes_pharmacologiques c ON c.id = m.classe_id
          LEFT JOIN operateurs o ON o.id = m.operateur_id
@@ -124,9 +125,9 @@ router.get(
       ),
       // Même composition, autres opérateurs
       db.query(
-        `SELECT m.id, m.nom_commercial, o.nom AS operateur
+        `SELECT m.id, m.nom_commercial, m.photo_url, m.forme_categorie, o.nom AS operateur
            FROM medicaments m LEFT JOIN operateurs o ON o.id = m.operateur_id
-          WHERE m.dci = ? AND m.id <> ? ORDER BY m.nom_commercial`,
+          WHERE m.dci = ? AND m.id <> ? ORDER BY o.nom, m.nom_commercial`,
         [m.dci, id],
       ),
       db.query(
@@ -141,7 +142,8 @@ router.get(
       data: {
         ...m,
         disponible_rdc: Boolean(m.disponible_rdc),
-        association: composition.length > 1,
+        pediatrique: Boolean(m.pediatrique),
+        association: (m.nb_composants ?? composition.length) > 1,
         composition: composition.map((c) => ({
           ...c,
           posologies: (posologies || []).filter((pos) => pos.molecule_id === c.id).map(toPosologie),
@@ -183,8 +185,9 @@ router.get(
     const [produits, pathologies, posologies] = await Promise.all([
       db.query(
         `SELECT m.id, m.nom_commercial, m.dci AS composition, m.forme, m.dosage, m.disponible_rdc,
-                mm.dosage AS dosage_molecule, o.nom AS operateur, o.pays AS operateur_pays,
-                (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id) AS nb_molecules
+                m.photo_url, m.presentation, m.forme_categorie, m.pediatrique, m.catalogue_classe,
+                mm.dosage AS dosage_molecule, o.id AS operateur_id, o.nom AS operateur, o.pays AS operateur_pays,
+                COALESCE(m.nb_composants, (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id)) AS nb_molecules
            FROM medicament_molecules mm
            JOIN medicaments m ON m.id = mm.medicament_id
            LEFT JOIN operateurs o ON o.id = m.operateur_id
@@ -207,9 +210,10 @@ router.get(
       data: {
         ...mo,
         posologies: (posologies || []).map(toPosologie),
-        produits: produits.map(({ nb_molecules: nb, disponible_rdc: rdc, ...p }) => ({
+        produits: produits.map(({ nb_molecules: nb, disponible_rdc: rdc, pediatrique, ...p }) => ({
           ...p,
           disponible_rdc: Boolean(rdc),
+          pediatrique: Boolean(pediatrique),
           association: Number(nb) > 1,
         })),
         pathologies,

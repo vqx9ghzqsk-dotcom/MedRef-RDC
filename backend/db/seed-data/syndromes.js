@@ -29,7 +29,8 @@ module.exports = [
   {
     slug: 'syndrome-meninge',
     nom: 'Syndrome méningé',
-    definition: 'Ensemble des signes traduisant une irritation des méninges (infection, hémorragie méningée).',
+    definition:
+      'Ensemble des signes traduisant une irritation des méninges (infection, hémorragie méningée).',
     elements:
       '- **Signes fonctionnels** : céphalées intenses diffuses, vomissements faciles « en jet », photophobie (trépied méningitique), constipation\n- **Signes physiques** : raideur de nuque, signe de Kernig, signe de Brudzinski, attitude en « chien de fusil »\n- Chez le nourrisson : fontanelle antérieure bombée, hypotonie de la nuque, cri plaintif, refus de téter',
     symptomes: ['Céphalées', 'Vomissements', 'Raideur de nuque', 'Fièvre'],
@@ -37,7 +38,8 @@ module.exports = [
   {
     slug: 'syndrome-d-hypertension-intracranienne',
     nom: 'Syndrome d’hypertension intracrânienne (HTIC)',
-    definition: 'Ensemble des signes liés à l’augmentation de la pression à l’intérieur de la boîte crânienne.',
+    definition:
+      'Ensemble des signes liés à l’augmentation de la pression à l’intérieur de la boîte crânienne.',
     elements:
       '- Céphalées matinales, rebelles aux antalgiques, aggravées par l’effort et la toux\n- Vomissements « en jet », soulageant les céphalées\n- Troubles visuels (éclipses), œdème papillaire au fond d’œil\n- Troubles de la conscience, bradycardie et HTA (réflexe de Cushing) annonçant l’engagement\n- Chez le nourrisson : bombement de la fontanelle, macrocrânie, regard « en coucher de soleil »',
     symptomes: ['Céphalées', 'Vomissements', 'Troubles visuels', 'Troubles de la conscience'],
@@ -63,7 +65,8 @@ module.exports = [
   {
     slug: 'syndrome-pyramidal',
     nom: 'Syndrome pyramidal',
-    definition: 'Ensemble des signes traduisant une atteinte de la voie motrice principale (faisceau pyramidal).',
+    definition:
+      'Ensemble des signes traduisant une atteinte de la voie motrice principale (faisceau pyramidal).',
     elements:
       '- Déficit moteur à prédominance distale (hémiplégie, monoplégie)\n- Réflexes ostéotendineux vifs, diffusés, polycinétiques ; clonus\n- Signe de Babinski (extension lente du gros orteil)\n- Hypertonie spastique « en lame de canif » (tardive) ; flasque à la phase aiguë',
     symptomes: ['Déficit moteur', 'Troubles du langage'],
@@ -120,7 +123,8 @@ module.exports = [
   {
     slug: 'syndrome-choleriforme',
     nom: 'Syndrome cholériforme',
-    definition: 'Diarrhée aqueuse abondante d’origine sécrétoire (toxinique), sans sang ni fièvre importante.',
+    definition:
+      'Diarrhée aqueuse abondante d’origine sécrétoire (toxinique), sans sang ni fièvre importante.',
     elements:
       '- Selles liquides très fréquentes et abondantes, « eau de riz »\n- Vomissements\n- Absence habituelle de fièvre et de douleurs abdominales marquées\n- Déshydratation rapide, parfois en quelques heures',
     symptomes: ['Diarrhée', 'Vomissements'],
@@ -136,7 +140,8 @@ module.exports = [
   {
     slug: 'syndrome-de-condensation-pulmonaire',
     nom: 'Syndrome de condensation pulmonaire',
-    definition: 'Signes traduisant le remplacement de l’air alvéolaire par un exsudat ou un tissu (pneumonie).',
+    definition:
+      'Signes traduisant le remplacement de l’air alvéolaire par un exsudat ou un tissu (pneumonie).',
     elements:
       '- Matité à la percussion\n- Augmentation des vibrations vocales\n- Râles crépitants fins, en fin d’inspiration\n- Souffle tubaire (condensation étendue avec bronche perméable)\n- Radiographie : opacité alvéolaire systématisée avec bronchogramme aérien',
     symptomes: ['Toux', 'Dyspnée', 'Fièvre', 'Tachypnée', 'Douleur thoracique'],
@@ -152,7 +157,8 @@ module.exports = [
   {
     slug: 'syndrome-bronchique-obstructif',
     nom: 'Syndrome bronchique obstructif',
-    definition: 'Signes traduisant une diminution du calibre des bronches (bronchospasme, sécrétions, œdème).',
+    definition:
+      'Signes traduisant une diminution du calibre des bronches (bronchospasme, sécrétions, œdème).',
     elements:
       '- Dyspnée expiratoire, freinage expiratoire, expiration prolongée\n- Sibilants diffus, bilatéraux ; « silence auscultatoire » dans les formes graves\n- Distension thoracique, hypersonorité\n- Débit expiratoire de pointe (DEP) et VEMS abaissés, réversibles sous bronchodilatateur dans l’asthme',
     symptomes: ['Dyspnée', 'Sibilants', 'Toux'],
@@ -176,7 +182,8 @@ module.exports = [
   {
     slug: 'syndrome-d-alteration-de-l-etat-general',
     nom: 'Altération de l’état général (AEG)',
-    definition: 'Association d’asthénie, d’anorexie et d’amaigrissement ; signe d’une maladie chronique évolutive.',
+    definition:
+      'Association d’asthénie, d’anorexie et d’amaigrissement ; signe d’une maladie chronique évolutive.',
     elements:
       '- Asthénie (physique, psychique, sexuelle)\n- Anorexie (élective ou globale)\n- Amaigrissement : significatif si > 5 % du poids en 1 mois ou > 10 % en 6 mois',
     symptomes: ['Asthénie', 'Anorexie', 'Perte de poids'],
@@ -208,7 +215,8 @@ module.exports = [
   {
     slug: 'syndrome-uremique',
     nom: 'Syndrome urémique',
-    definition: 'Manifestations cliniques de l’accumulation des déchets azotés lors d’une insuffisance rénale sévère.',
+    definition:
+      'Manifestations cliniques de l’accumulation des déchets azotés lors d’une insuffisance rénale sévère.',
     elements:
       '- Digestifs : anorexie, nausées, vomissements, haleine urémique\n- Neurologiques : asthénie, troubles de la conscience, astérixis, convulsions\n- Péricardite (frottement péricardique), saignements (thrombopathie)\n- Prurit ; acidose (respiration ample de Kussmaul)',
     symptomes: ['Vomissements', 'Anorexie', 'Troubles de la conscience', 'Asthénie'],
@@ -251,7 +259,12 @@ module.exports = [
     definition: 'Arrêt du transit intestinal par obstacle mécanique ou paralysie de l’intestin.',
     elements:
       '- Tétrade : douleur abdominale, vomissements, arrêt des matières et des gaz, météorisme abdominal\n- Ondes péristaltiques visibles (occlusion mécanique du grêle), bruits hydro-aériques\n- Silence auscultatoire (iléus paralytique, occlusion évoluée)\n- ASP : niveaux hydro-aériques',
-    symptomes: ['Douleur abdominale', 'Vomissements', 'Arrêt des matières et des gaz', 'Distension abdominale'],
+    symptomes: [
+      'Douleur abdominale',
+      'Vomissements',
+      'Arrêt des matières et des gaz',
+      'Distension abdominale',
+    ],
   },
   {
     slug: 'syndrome-d-hemorragie-interne',
@@ -291,7 +304,8 @@ module.exports = [
   {
     slug: 'syndrome-de-pre-eclampsie',
     nom: 'Syndrome pré-éclamptique',
-    definition: 'Association d’une HTA gravidique (après 20 SA) et d’une protéinurie significative ou d’une atteinte d’organe.',
+    definition:
+      'Association d’une HTA gravidique (après 20 SA) et d’une protéinurie significative ou d’une atteinte d’organe.',
     elements:
       '- PA ≥ 140/90 mmHg à deux reprises après 20 SA\n- Protéinurie ≥ 0,3 g/24 h (ou ≥ 2+ à la bandelette)\n- Œdèmes d’apparition brutale, prise de poids rapide (non obligatoires)\n- Signes neurosensoriels : céphalées, phosphènes, acouphènes, réflexes vifs',
     symptomes: ['Céphalées', 'Troubles visuels', 'Œdèmes'],

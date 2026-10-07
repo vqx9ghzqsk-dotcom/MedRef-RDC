@@ -175,13 +175,21 @@ export function MedicamentPage() {
                       <Link to={`/molecules/${c.slug}`}>{c.dci}</Link>
                     </span>
                   ))}
-                  {m.classe ? `, ${m.classe.toLowerCase()}` : ''}
+                  {/* Produit de catalogue dont les molécules ne sont pas (toutes) dans MedRef : intitulé d'origine */}
+                  {m.composition.length === 0 && m.dci}
+                  {m.classe
+                    ? `, ${m.classe.toLowerCase()}`
+                    : m.catalogue_classe
+                      ? ` — ${m.catalogue_classe}`
+                      : ''}
                 </p>
                 <p className="tag-row">
                   <span className={`tag ${m.disponible_rdc ? 'tag-ok' : 'tag-warn'}`}>
                     {m.disponible_rdc ? 'Circuit national RDC' : 'Disponibilité à confirmer en RDC'}
                   </span>
                   {m.association && <span className="tag tag-assoc">Association à dose fixe</span>}
+                  {m.pediatrique && <span className="tag tag-enfant">Adapté à l’enfant</span>}
+                  {m.forme_categorie && <span className="tag">{m.forme_categorie}</span>}
                 </p>
               </div>
             </header>
@@ -217,6 +225,8 @@ export function MedicamentPage() {
                     </ul>
                   )}
                 </Row>
+                <Row label="DCI (catalogue)">{m.catalogue_ref ? m.dci : null}</Row>
+                <Row label="Composition détaillée">{m.composition_texte}</Row>
                 <Row label="Forme">{m.forme}</Row>
                 <Row label="Dosage">{m.dosage}</Row>
                 <Row label="Présentation">{m.presentation}</Row>
@@ -228,6 +238,7 @@ export function MedicamentPage() {
             <section className="section">
               <h2 className="section-title">Utilisation de ce produit</h2>
               <dl className="dl">
+                <Row label="Mécanisme d’action">{m.mecanisme}</Row>
                 {CLINIQUE.map(([champ, champMolecule, label]) => {
                   const propre = m[champ];
                   const herite = !propre && seule ? seule[champMolecule] : null;

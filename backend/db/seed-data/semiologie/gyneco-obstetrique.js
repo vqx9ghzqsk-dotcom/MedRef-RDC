@@ -11,16 +11,19 @@ module.exports = {
     urgences: {
       eclampsie:
         'Convulsions chez une femme enceinte ou accouchée, précédées de céphalées, phosphènes, barre épigastrique, réflexes vifs',
-      'urgence-hypertensive': 'PA ≥ 160/110 mmHg avec céphalées, troubles visuels, barre épigastrique, oligurie',
+      'urgence-hypertensive':
+        'PA ≥ 160/110 mmHg avec céphalées, troubles visuels, barre épigastrique, oligurie',
     },
     formes: [
       {
         nom: 'Pré-éclampsie (forme commune)',
         type: 'commune',
-        description: 'HTA ≥ 140/90 mmHg apparue après 20 SA, associée à une protéinurie ≥ 0,3 g/24 h ou à une atteinte d’organe.',
+        description:
+          'HTA ≥ 140/90 mmHg apparue après 20 SA, associée à une protéinurie ≥ 0,3 g/24 h ou à une atteinte d’organe.',
         terrain:
           '- Primigeste, âges extrêmes, grossesse gémellaire, antécédent de pré-éclampsie\n- HTA chronique, diabète, obésité, néphropathie, drépanocytose',
-        fonctionnels: '- Souvent asymptomatique au début ; prise de poids rapide, gonflement des mains et du visage',
+        fonctionnels:
+          '- Souvent asymptomatique au début ; prise de poids rapide, gonflement des mains et du visage',
         generaux: '- État général conservé',
         physiques:
           '- PA ≥ 140/90 mmHg à deux mesures à 4 h d’intervalle\n- Œdèmes (visage, mains), non obligatoires\n- Hauteur utérine parfois inférieure au terme (retard de croissance)',
@@ -57,13 +60,15 @@ module.exports = {
       {
         nom: 'Éclampsie',
         type: 'gravite',
-        description: 'Crise convulsive généralisée chez une femme pré-éclamptique, avant, pendant ou après l’accouchement (jusqu’à 6 semaines).',
+        description:
+          'Crise convulsive généralisée chez une femme pré-éclamptique, avant, pendant ou après l’accouchement (jusqu’à 6 semaines).',
         terrain: '- Pré-éclampsie sévère non traitée ; parfois sans HTA marquée connue',
         fonctionnels: '- Prodromes : céphalées, phosphènes, barre épigastrique',
         generaux: '- Agitation ; puis coma post-critique',
         physiques:
           '- Crise tonico-clonique généralisée (invasion, phase tonique, phase clonique, coma)\n- Morsure de langue, perte d’urines\n- Risque d’hématome rétroplacentaire et de mort fœtale',
-        paraclinique: '- Bilan de pré-éclampsie sévère ; scanner cérébral si signe de localisation ou crise atypique',
+        paraclinique:
+          '- Bilan de pré-éclampsie sévère ; scanner cérébral si signe de localisation ou crise atypique',
         etiologies:
           '- Encéphalopathie hypertensive, vasospasme cérébral\n- Diagnostic différentiel : neuropaludisme, méningite, épilepsie, hypoglycémie',
         syndromes: ['syndrome-convulsif'],
@@ -96,7 +101,8 @@ module.exports = {
       {
         nom: 'Hémorragie du post-partum immédiate par atonie utérine (forme commune)',
         type: 'commune',
-        description: 'Perte sanguine ≥ 500 mL dans les 24 h suivant l’accouchement ; l’atonie en est la première cause.',
+        description:
+          'Perte sanguine ≥ 500 mL dans les 24 h suivant l’accouchement ; l’atonie en est la première cause.',
         terrain:
           '- Surdistension utérine (gémellaire, hydramnios, macrosomie), grande multiparité\n- Travail prolongé ou très rapide, ocytocine prolongée, chorioamnionite, anémie préalable',
         fonctionnels: '- Saignement vaginal abondant, continu ou par vagues, après la naissance',
@@ -128,7 +134,8 @@ module.exports = {
       {
         nom: 'Hémorragie par traumatisme de la filière génitale',
         type: 'etiologique',
-        description: 'Saignement avec utérus bien rétracté : rechercher une déchirure ou une rupture utérine.',
+        description:
+          'Saignement avec utérus bien rétracté : rechercher une déchirure ou une rupture utérine.',
         terrain: '- Accouchement instrumental, macrosomie, utérus cicatriciel, travail dystocique',
         fonctionnels: '- Saignement rouge, continu, malgré un utérus dur',
         generaux: '- Signes d’hypovolémie',
@@ -143,11 +150,13 @@ module.exports = {
         nom: 'Hémorragie par trouble de la coagulation',
         type: 'paraclinique',
         description: 'Saignement incoagulable, souvent associé à une CIVD.',
-        terrain: '- Hématome rétroplacentaire, pré-éclampsie/HELLP, mort fœtale in utero, embolie amniotique, sepsis',
+        terrain:
+          '- Hématome rétroplacentaire, pré-éclampsie/HELLP, mort fœtale in utero, embolie amniotique, sepsis',
         fonctionnels: '- Sang qui ne coagule pas, saignements aux points de ponction',
         generaux: '- Choc',
         physiques: '- Saignements diffus, ecchymoses',
-        paraclinique: '- Test de coagulation au lit : pas de caillot à 7 min\n- Fibrinogène < 2 g/L, plaquettes basses, TP bas',
+        paraclinique:
+          '- Test de coagulation au lit : pas de caillot à 7 min\n- Fibrinogène < 2 g/L, plaquettes basses, TP bas',
         etiologies: '- CIVD obstétricale, coagulopathie de dilution (transfusion massive)',
         syndromes: ['syndrome-hemorragique'],
         examens: [['hemostase', 'CIVD : fibrinogène bas, TP bas, plaquettes basses.']],
@@ -165,7 +174,8 @@ module.exports = {
       {
         nom: 'GEU non rompue (forme commune)',
         type: 'commune',
-        description: 'Implantation de l’œuf hors de la cavité utérine, le plus souvent tubaire, avant toute rupture.',
+        description:
+          'Implantation de l’œuf hors de la cavité utérine, le plus souvent tubaire, avant toute rupture.',
         terrain:
           '- Antécédent d’infection génitale (salpingite, IST), de GEU, de chirurgie tubaire\n- DIU, tabac, procréation médicalement assistée',
         fonctionnels:
@@ -202,7 +212,8 @@ module.exports = {
       {
         nom: 'Forme pseudo-abortive',
         type: 'evolutive',
-        description: 'Métrorragies abondantes faisant évoquer une fausse couche ; utérus vide après « expulsion ».',
+        description:
+          'Métrorragies abondantes faisant évoquer une fausse couche ; utérus vide après « expulsion ».',
         terrain: '- Grossesse débutante mal datée',
         fonctionnels: '- Métrorragies importantes, douleurs pelviennes',
         generaux: '- Variable',

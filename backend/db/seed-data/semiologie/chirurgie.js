@@ -16,7 +16,8 @@ module.exports = {
       {
         nom: 'Appendicite aiguë en position typique (forme commune)',
         type: 'commune',
-        description: 'Inflammation de l’appendice iléo-cæcal en position latéro-cæcale ; urgence chirurgicale la plus fréquente.',
+        description:
+          'Inflammation de l’appendice iléo-cæcal en position latéro-cæcale ; urgence chirurgicale la plus fréquente.',
         terrain: '- Enfant, adolescent, adulte jeune (pic entre 10 et 30 ans)',
         fonctionnels:
           '- Douleur abdominale débutant en péri-ombilical ou à l’épigastre puis migrant en fosse iliaque droite, continue\n- Nausées, vomissements, anorexie\n- Troubles du transit (constipation, parfois diarrhée)',
@@ -36,7 +37,8 @@ module.exports = {
       {
         nom: 'Formes topographiques (rétro-cæcale, pelvienne, sous-hépatique, méso-cœliaque)',
         type: 'topographique',
-        description: 'La position de l’appendice modifie le siège de la douleur et retarde souvent le diagnostic.',
+        description:
+          'La position de l’appendice modifie le siège de la douleur et retarde souvent le diagnostic.',
         terrain: '- Tout âge ; femme jeune (diagnostic différentiel gynécologique)',
         fonctionnels:
           '- **Rétro-cæcale** : douleur lombaire ou du flanc droit\n- **Pelvienne** : douleur sus-pubienne, signes urinaires (dysurie, pollakiurie) ou rectaux (ténesme, diarrhée)\n- **Sous-hépatique** : douleur de l’hypocondre droit (simule une cholécystite)\n- **Méso-cœliaque** : tableau d’occlusion du grêle fébrile',
@@ -53,11 +55,13 @@ module.exports = {
         type: 'evolutive',
         description: 'Évolution d’une appendicite non opérée : perforation, abcès ou péritonite généralisée.',
         terrain: '- Retard de consultation, jeune enfant, sujet âgé, traitement par antibiotiques seuls',
-        fonctionnels: '- Douleur qui s’étend à tout l’abdomen (péritonite) ou se localise avec une masse (plastron)',
+        fonctionnels:
+          '- Douleur qui s’étend à tout l’abdomen (péritonite) ou se localise avec une masse (plastron)',
         generaux: '- Fièvre élevée, frissons, altération de l’état général',
         physiques:
           '- **Plastron** : masse douloureuse et mal limitée de la fosse iliaque droite\n- **Abcès** : masse fluctuante, fièvre oscillante\n- **Péritonite** : contracture généralisée, cri de l’ombilic, Douglas douloureux',
-        paraclinique: '- Hyperleucocytose importante ; échographie ou scanner : collection, épanchement diffus',
+        paraclinique:
+          '- Hyperleucocytose importante ; échographie ou scanner : collection, épanchement diffus',
         etiologies: '- Perforation appendiculaire',
         syndromes: ['syndrome-d-irritation-peritoneale', 'syndrome-infectieux'],
         examens: [['echographie-abdominale', 'Collection péri-appendiculaire, épanchement.']],
@@ -68,7 +72,8 @@ module.exports = {
         description: 'Terrains où le diagnostic est difficile et les complications plus fréquentes.',
         terrain:
           '- **Enfant < 5 ans** : perforation rapide\n- **Femme enceinte** : appendice refoulé vers le haut par l’utérus\n- **Sujet âgé** : symptômes atténués',
-        fonctionnels: '- Douleur atypique (haute chez la femme enceinte), vomissements, diarrhée chez l’enfant',
+        fonctionnels:
+          '- Douleur atypique (haute chez la femme enceinte), vomissements, diarrhée chez l’enfant',
         generaux: '- Fièvre parfois absente chez le sujet âgé',
         physiques: '- Défense moins nette ; tableau occlusif fréquent chez le sujet âgé',
         paraclinique: '- Échographie ; scanner chez le sujet âgé (éliminer un cancer du côlon)',
@@ -132,14 +137,16 @@ module.exports = {
         generaux: '- Signes de la cause (fièvre de la péritonite)',
         physiques: '- Météorisme diffus, **silence auscultatoire**',
         paraclinique: '- ASP : distension gazeuse diffuse du grêle et du côlon\n- Kaliémie',
-        etiologies: '- Péritonite, pancréatite, colique néphrétique, hypokaliémie, traumatisme rachidien, sepsis',
+        etiologies:
+          '- Péritonite, pancréatite, colique néphrétique, hypokaliémie, traumatisme rachidien, sepsis',
         syndromes: ['syndrome-occlusif'],
         examens: [['ionogramme', 'Hypokaliémie à corriger.']],
       },
       {
         nom: 'Occlusion avec souffrance intestinale (strangulation)',
         type: 'gravite',
-        description: 'Ischémie de l’anse étranglée : risque de nécrose et de perforation, chirurgie immédiate.',
+        description:
+          'Ischémie de l’anse étranglée : risque de nécrose et de perforation, chirurgie immédiate.',
         terrain: '- Hernie étranglée, volvulus, bride',
         fonctionnels: '- Douleur intense, permanente, résistant aux antalgiques',
         generaux: '- Fièvre, tachycardie, choc',
@@ -163,12 +170,14 @@ module.exports = {
       {
         nom: 'Péritonite aiguë généralisée par perforation (forme commune)',
         type: 'commune',
-        description: 'Inflammation de tout le péritoine, le plus souvent secondaire à une perforation d’organe creux.',
+        description:
+          'Inflammation de tout le péritoine, le plus souvent secondaire à une perforation d’organe creux.',
         terrain:
           '- Ulcère gastro-duodénal (AINS, *H. pylori*), appendicite négligée, fièvre typhoïde (perforation iléale)\n- Traumatisme abdominal, suites opératoires',
         fonctionnels:
           '- Douleur abdominale brutale (« coup de poignard » de l’ulcère perforé) ou progressive, diffuse\n- Vomissements, arrêt du transit',
-        generaux: '- Fièvre (sauf au début de la perforation d’ulcère), tachycardie, faciès péritonéal (traits tirés)',
+        generaux:
+          '- Fièvre (sauf au début de la perforation d’ulcère), tachycardie, faciès péritonéal (traits tirés)',
         physiques:
           '- **Contracture** abdominale généralisée, permanente, douloureuse, invincible (« ventre de bois »)\n- Disparition de la matité pré-hépatique (pneumopéritoine)\n- Toucher rectal : cri du Douglas\n- Silence auscultatoire',
         paraclinique:
@@ -184,7 +193,8 @@ module.exports = {
       {
         nom: 'Péritonite par perforation typhique',
         type: 'etiologique',
-        description: 'Perforation de l’iléon terminal au cours d’une fièvre typhoïde, fréquente en Afrique centrale.',
+        description:
+          'Perforation de l’iléon terminal au cours d’une fièvre typhoïde, fréquente en Afrique centrale.',
         terrain: '- Fièvre prolongée en plateau depuis 2 à 3 semaines, eau non potable, épidémie de typhoïde',
         fonctionnels: '- Douleur abdominale brutale chez un malade fébrile, diarrhée ou constipation',
         generaux: '- Fièvre en plateau, tuphos (prostration), pouls dissocié',
@@ -233,8 +243,10 @@ module.exports = {
       {
         nom: 'Traumatisme crânien léger (forme commune)',
         type: 'commune',
-        description: 'Glasgow 13–15 après le traumatisme ; la majorité guérit, mais une aggravation secondaire est possible.',
-        terrain: '- Accident de la voie publique (moto), chute, agression ; sujet âgé, anticoagulants, alcool',
+        description:
+          'Glasgow 13–15 après le traumatisme ; la majorité guérit, mais une aggravation secondaire est possible.',
+        terrain:
+          '- Accident de la voie publique (moto), chute, agression ; sujet âgé, anticoagulants, alcool',
         fonctionnels: '- Céphalées, vertiges, nausées, amnésie des faits, perte de connaissance brève',
         generaux: '- Constantes normales',
         physiques:
@@ -248,7 +260,8 @@ module.exports = {
       {
         nom: 'Hématome extradural',
         type: 'etiologique',
-        description: 'Saignement entre l’os et la dure-mère, le plus souvent artériel (artère méningée moyenne) : urgence neurochirurgicale.',
+        description:
+          'Saignement entre l’os et la dure-mère, le plus souvent artériel (artère méningée moyenne) : urgence neurochirurgicale.',
         terrain: '- Adulte jeune, choc temporal, fracture de la voûte',
         fonctionnels: '- Céphalées croissantes, vomissements',
         generaux: '- Bradycardie et HTA tardives',
@@ -277,7 +290,8 @@ module.exports = {
       {
         nom: 'Hématome sous-dural chronique',
         type: 'evolutive',
-        description: 'Collection sous-durale constituée en plusieurs semaines, souvent après un traumatisme minime oublié.',
+        description:
+          'Collection sous-durale constituée en plusieurs semaines, souvent après un traumatisme minime oublié.',
         terrain: '- Sujet âgé, alcoolisme, anticoagulants',
         fonctionnels: '- Céphalées, troubles du comportement, troubles de la marche',
         generaux: '- Pas de fièvre',

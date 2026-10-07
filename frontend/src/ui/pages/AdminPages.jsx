@@ -16,6 +16,7 @@ import {
   useUnsavedWarning,
 } from '../components/AdminForm.jsx';
 import { NumberField } from '../components/NumberField.jsx';
+import { PhotoProduit } from '../components/Produits.jsx';
 import { SUGGESTIONS } from '../../core/saisie.js';
 import {
   CATEGORIES_EXAMEN,
@@ -63,6 +64,7 @@ const ONGLETS_ADMIN = [
   ['fiches', 'Fiches pathologie'],
   ['molecules', 'Molécules et posologies'],
   ['produits', 'Produits'],
+  ['catalogue', 'Catalogue des firmes'],
   ['semiologie', 'Glossaire et syndromes'],
   ['historique', 'Historique'],
 ];
@@ -129,7 +131,7 @@ function AdminHome() {
                 ))}
               </div>
 
-              {onglet !== 'historique' && (
+              {onglet !== 'historique' && onglet !== 'catalogue' && (
                 <form className="filter-bar" onSubmit={(e) => e.preventDefault()} aria-label="Filtres">
                   <div className="field">
                     <label htmlFor="admin-q">Rechercher</label>
@@ -269,6 +271,7 @@ function AdminHome() {
               )}
 
               {onglet === 'semiologie' && <SemiologieAdmin filtre={filtre} />}
+              {onglet === 'catalogue' && <CatalogueAdmin />}
 
               {onglet === 'historique' &&
                 (d.modifications.length ? (
@@ -1101,6 +1104,8 @@ function MoleculeEditor({ id, initial, onSaved }) {
         ))}
       </section>
 
+      <ProduitsMoleculeAdmin moleculeId={id} dci={form.dci} />
+
       <Historique
         items={historique}
         charger={api.adminVersion}
@@ -1121,6 +1126,8 @@ const TEXTES_PRODUIT = [
   ['dosage', 'Dosage', false],
   ['presentation', 'Présentation', false],
   ['conservation', 'Conservation', false],
+  ['composition_texte', 'Composition (texte du catalogue)', false],
+  ['mecanisme', 'Mécanisme d’action', true],
   ['indication', 'Indications propres au produit', true],
   ['posologie', 'Posologie propre au produit', true],
   ['contre_indications', 'Contre-indications', true],
@@ -1139,10 +1146,11 @@ export function AdminMedicamentPage() {
 
 function MedicamentEditor({ id, initial, onSaved }) {
   const { api } = useServices();
-  const { historique, ...depart } = initial;
-  const [form, setForm] = useState(depart);
+  const { historique, options = { molecules: [] }, ...depart } = initial;
+  const [form, setForm] = useState({ ...depart, molecules: depart.molecules || [] });
   const [dirty, setDirty] = useState(false);
   const [save, run] = useSave((payload) => api.adminSaveMedicament(id, payload));
+  const moleculesOptions = useMemo(() => options.molecules.map((m) => [m.slug, m.dci]), [options]);
   useUnsavedWarning(dirty);
   const err = (k) => save.errors[k];
   const set = (patch) => {
@@ -1151,7 +1159,18 @@ function MedicamentEditor({ id, initial, onSaved }) {
   };
 
   const onSave = async () => {
-    const { id: _id, nom_commercial: _n, dci: _d, operateur: _o, ...payload } = form;
+    const {
+      id: _id,
+      nom_commercial: _n,
+      dci: _d,
+      operateur: _o,
+      catalogue_ref: _r,
+      catalogue_classe: _c,
+      catalogue_sous_classe: _sc,
+      forme_categorie: _f,
+      liaison: _l,
+      ...payload
+    } = form;
     const res = await run(payload);
     if (res) {
       setDirty(false);
@@ -1167,7 +1186,70 @@ function MedicamentEditor({ id, initial, onSaved }) {
         <p className="lead">
           {form.dci} · {form.operateur} · <Link to={`/medicaments/${id}`}>Voir la fiche publique</Link>
         </p>
+        {form.catalogue_ref && (
+          <p className="hint">
+            Importé du catalogue {form.operateur}
+            {form.catalogue_classe ? ` — ${form.catalogue_classe}` : ''}
+            {form.catalogue_sous_classe ? ` / ${form.catalogue_sous_classe}` : ''}.
+          </p>
+        )}
       </header>
+
+      <section className="card">
+        <h2>Molécules contenues</h2>
+        <p className="hint">
+          Le produit apparaît dans la galerie de chaque molécule liée, « seule » ou « en association » selon
+          le nombre de principes actifs. Enregistrer ces liens les marque comme vérifiés.
+        </p>
+        {form.liaison && (
+          <p>
+            <span className={`tag liaison-${form.liaison}`}>{LIAISONS[form.liaison]}</span>
+          </p>
+        )}
+        <ListEditor
+          title="Molécules"
+          items={form.molecules}
+          onChange={(molecules) => set({ molecules })}
+          newItem={() => ({ molecule_slug: null, dosage: '' })}
+          itemLabel={(m) => options.molecules.find((x) => x.slug === m.molecule_slug)?.dci}
+          addLabel="Ajouter une molécule"
+          renderItem={(m, update, i) => (
+            <div className="form-grid">
+              <SelectField
+                label="Molécule"
+                value={m.molecule_slug}
+                onChange={(molecule_slug) => update({ molecule_slug })}
+                options={moleculesOptions}
+                emptyLabel="— Choisir —"
+                error={err(`molecules[${i}].molecule_slug`)}
+                required
+              />
+              <TextField
+                label="Dosage dans ce produit"
+                value={m.dosage}
+                onChange={(dosage) => update({ dosage })}
+                placeholder="ex. 500 mg"
+                maxLength={120}
+              />
+            </div>
+          )}
+        />
+        <NumberField
+          label="Nombre de principes actifs du produit"
+          name="nb_composants"
+          min={1}
+          max={30}
+          exemple={2}
+          value={form.nb_composants ?? ''}
+          onChange={(v) => set({ nb_composants: v === '' ? null : v })}
+          error={err('nb_composants')}
+          hint="Y compris ceux qui n’ont pas encore de fiche molécule (association si plus de 1)"
+        />
+        <p className="hint">
+          Molécule absente de la liste ? Créez-la depuis l’onglet « Catalogue des firmes » de
+          l’administration.
+        </p>
+      </section>
 
       <section className="card">
         <h2>Disponibilité en RDC</h2>
@@ -1193,14 +1275,19 @@ function MedicamentEditor({ id, initial, onSaved }) {
             hint="Prix public constaté en francs congolais ; laisser vide si inconnu"
           />
           <TextField
-            label="Photo (adresse https)"
+            label="Photo (adresse https ou photo du catalogue)"
             value={form.photo_url}
-            placeholder="https://…"
+            placeholder="https://… ou /medias/produits/…"
             inputMode="url"
             onChange={(photo_url) => set({ photo_url })}
             error={err('photo_url')}
           />
         </div>
+        {form.photo_url && (
+          <div className="admin-photo">
+            <PhotoProduit produit={{ ...form, nom_commercial: form.nom_commercial }} />
+          </div>
+        )}
       </section>
 
       <section className="card">
@@ -1559,5 +1646,263 @@ function SyndromeEditor({ initial, onSaved }) {
       />
       <SaveBar saving={save.saving} dirty={dirty} message={save.message} error={save.error} onSave={onSave} />
     </article>
+  );
+}
+
+// ================================================================== Catalogue des firmes
+
+const LIAISONS = {
+  aucune: 'À lier',
+  partielle: 'Liaison partielle',
+  auto: 'Liée automatiquement',
+  verifiee: 'Liaison vérifiée',
+};
+
+/** Créer une molécule absente : les produits du catalogue qui la contiennent sont liés aussitôt. */
+function CreerMolecule() {
+  const { api } = useServices();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ dci: '', classe: '' });
+  const [save, run] = useSave((payload) => api.adminCreerMolecule(payload));
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const res = await run(form);
+    if (res) navigate(`/admin/molecules/${res.id}`);
+  };
+  return (
+    <form className="card" onSubmit={onSubmit} noValidate>
+      <h2>Créer une molécule</h2>
+      <p className="hint">
+        Pour une DCI des catalogues absente de MedRef RDC. Les produits qui la contiennent sont liés
+        automatiquement ; complétez ensuite sa fiche pharmacologique.
+      </p>
+      <div className="form-grid">
+        <TextField
+          label="DCI"
+          value={form.dci}
+          onChange={(dci) => setForm((f) => ({ ...f, dci }))}
+          error={save.errors.dci}
+          placeholder="ex. Clotrimazole"
+          maxLength={190}
+          required
+        />
+        <TextField
+          label="Classe pharmacologique"
+          value={form.classe}
+          onChange={(classe) => setForm((f) => ({ ...f, classe }))}
+          error={save.errors.classe}
+          placeholder="ex. Antifongiques"
+          maxLength={190}
+        />
+      </div>
+      {save.error && (
+        <p className="form-error" role="alert">
+          {save.error}
+        </p>
+      )}
+      <button type="submit" className="btn btn-primary" disabled={save.saving || !form.dci.trim()}>
+        {save.saving ? 'Création…' : 'Créer et lier les produits'}
+      </button>
+    </form>
+  );
+}
+
+/** Onglet « Catalogue des firmes » : état des liaisons produit → molécule. */
+function CatalogueAdmin() {
+  const { api } = useServices();
+  const [filtres, setFiltres] = useState({ liaison: 'aucune', firme: '', q: '' });
+  const [version, setVersion] = useState(0);
+  const [message, setMessage] = useState(null);
+  const state = useAsync(
+    () => api.adminCatalogue(filtres),
+    [api, filtres.liaison, filtres.firme, filtres.q, version],
+  );
+  const relier = async () => {
+    setMessage(null);
+    try {
+      const r = await api.adminRelierCatalogue();
+      setMessage(`${r.completes} produit(s) complété(s) sur ${r.examines} examiné(s).`);
+      setVersion((v) => v + 1);
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+  return (
+    <div className="admin-catalogue">
+      <AsyncView state={state}>
+        {(d) => (
+          <>
+            <ul className="stat-tiles" aria-label="Liaison des produits aux molécules">
+              {Object.entries(LIAISONS).map(([k, label]) => (
+                <li key={k} className={`stat-tile liaison-${k}`}>
+                  <button
+                    type="button"
+                    className="stat-bouton"
+                    aria-pressed={filtres.liaison === k}
+                    onClick={() => setFiltres((f) => ({ ...f, liaison: f.liaison === k ? '' : k }))}
+                  >
+                    <span className="stat-value">{d.compteurs[k]}</span>
+                    <span className="stat-label">{label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <form
+              className="filter-bar"
+              onSubmit={(e) => e.preventDefault()}
+              aria-label="Filtres du catalogue"
+            >
+              <div className="field">
+                <label htmlFor="cat-firme">Firme</label>
+                <select
+                  id="cat-firme"
+                  value={filtres.firme}
+                  onChange={(e) => setFiltres((f) => ({ ...f, firme: e.target.value }))}
+                >
+                  <option value="">Toutes</option>
+                  {d.firmes.map((f) => (
+                    <option key={f.slug} value={f.slug}>
+                      {f.nom} ({f.n})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor="cat-q">Rechercher (Entrée)</label>
+                <input
+                  id="cat-q"
+                  type="search"
+                  defaultValue={filtres.q}
+                  placeholder="ex. clotrimazole, Shal’Artem"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      const q = e.currentTarget.value.trim();
+                      setFiltres((f) => ({ ...f, q }));
+                    }
+                  }}
+                />
+              </div>
+              <button type="button" className="btn btn-secondary" onClick={relier}>
+                Relancer le rapprochement automatique
+              </button>
+            </form>
+            {message && (
+              <p className="form-success" role="status">
+                {message}
+              </p>
+            )}
+            <p className="muted">
+              {d.produits.length >= 300 ? 'Les 300 premiers produits' : `${d.produits.length} produit(s)`}
+              {filtres.liaison ? ` — ${LIAISONS[filtres.liaison].toLowerCase()}` : ''}
+            </p>
+            <div className="table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Produit</th>
+                    <th scope="col">DCI du catalogue</th>
+                    <th scope="col">Molécules liées</th>
+                    <th scope="col">Liaison</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {d.produits.map((p) => (
+                    <tr key={p.id}>
+                      <td>
+                        <div className="admin-produit">
+                          <PhotoProduit produit={p} />
+                          <span>
+                            <Link to={`/admin/medicaments/${p.id}`}>{p.nom_commercial}</Link>
+                            <span className="row-sub">{p.operateur}</span>
+                          </span>
+                        </div>
+                      </td>
+                      <td>{p.dci}</td>
+                      <td>{p.molecules_liees || '—'}</td>
+                      <td>
+                        <span className={`tag liaison-${p.liaison}`}>{LIAISONS[p.liaison]}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </AsyncView>
+      <CreerMolecule />
+    </div>
+  );
+}
+
+/** Fiche molécule (admin) : produits liés et suggestions du catalogue à lier d'un clic. */
+function ProduitsMoleculeAdmin({ moleculeId, dci }) {
+  const { api } = useServices();
+  const [version, setVersion] = useState(0);
+  const [erreur, setErreur] = useState(null);
+  const state = useAsync(() => api.adminProduitsMolecule(moleculeId), [api, moleculeId, version]);
+  const agir = async (action, medicamentId) => {
+    setErreur(null);
+    try {
+      await (action === 'lier'
+        ? api.adminLierProduit(moleculeId, medicamentId)
+        : api.adminDelierProduit(moleculeId, medicamentId));
+      setVersion((v) => v + 1);
+    } catch (err) {
+      setErreur(err.message);
+    }
+  };
+  const ligne = (p, action) => (
+    <li key={p.id} className="admin-produit-ligne">
+      <PhotoProduit produit={p} />
+      <span className="admin-produit-texte">
+        <Link to={`/admin/medicaments/${p.id}`}>{p.nom_commercial}</Link>
+        <span className="row-sub">
+          {[p.operateur, p.dci, p.origine === 'auto' ? 'lien automatique' : null].filter(Boolean).join(' · ')}
+        </span>
+      </span>
+      <button
+        type="button"
+        className={`btn btn-small ${action === 'lier' ? 'btn-secondary' : 'btn-ghost'}`}
+        onClick={() => agir(action, p.id)}
+        aria-label={`${action === 'lier' ? 'Lier' : 'Délier'} ${p.nom_commercial} (${p.operateur})`}
+      >
+        {action === 'lier' ? 'Lier' : 'Délier'}
+      </button>
+    </li>
+  );
+  return (
+    <section className="card">
+      <h2>Produits des firmes</h2>
+      <AsyncView state={state}>
+        {({ lies, suggestions }) => (
+          <>
+            <h3>
+              Liés à {dci} ({lies.length})
+            </h3>
+            {lies.length ? (
+              <ul className="admin-produits">{lies.map((p) => ligne(p, 'delier'))}</ul>
+            ) : (
+              <p className="muted">Aucun produit lié.</p>
+            )}
+            <h3>Suggestions du catalogue ({suggestions.length})</h3>
+            <p className="hint">
+              Produits dont l’intitulé ou la composition cite « {dci} » mais qui ne lui sont pas liés.
+            </p>
+            {suggestions.length ? (
+              <ul className="admin-produits">{suggestions.map((p) => ligne(p, 'lier'))}</ul>
+            ) : (
+              <p className="muted">Aucune suggestion.</p>
+            )}
+          </>
+        )}
+      </AsyncView>
+      {erreur && (
+        <p className="form-error" role="alert">
+          {erreur}
+        </p>
+      )}
+    </section>
   );
 }

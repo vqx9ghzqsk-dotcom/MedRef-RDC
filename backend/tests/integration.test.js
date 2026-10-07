@@ -327,6 +327,113 @@ describeDb('Intégration MySQL', () => {
     expect(page.symptomes.map((s) => s.nom)).toEqual(['Céphalées']);
   });
 
+  it('catalogues des firmes : produits avec photo sur la fiche molécule, seuls et en association', async () => {
+    const mol = (await request(app).get('/api/molecules/paracetamol')).body.data;
+    const firmes = new Set(mol.produits.map((p) => p.operateur));
+    for (const f of ['Shalina Healthcare', 'Denk Pharma', 'Arauphar']) expect(firmes).toContain(f);
+    const seul = mol.produits.find((p) => p.operateur === 'Shalina Healthcare' && !p.association);
+    const assoc = mol.produits.find((p) => p.nom_commercial === 'Dologan Denk');
+    expect(seul.photo_url).toMatch(/^\/medias\/produits\/shalina-healthcare\/.+\.webp$/);
+    expect(assoc).toMatchObject({ association: true });
+    expect(mol.produits.some((p) => p.pediatrique)).toBe(true);
+
+    // La photo est servie, avec un cache long
+    const photo = await request(app).get(seul.photo_url);
+    expect(photo.status).toBe(200);
+    expect(photo.headers['content-type']).toBe('image/webp');
+    expect(photo.headers['cache-control']).toMatch(/max-age=2592000/);
+    expect((await request(app).get(seul.photo_url.replace('.webp', '-mini.webp'))).status).toBe(200);
+    expect((await request(app).get('/medias/produits/inconnu.webp')).status).toBe(404);
+
+    // Fiche du produit : rubriques du catalogue et molécules liées
+    const fiche = (await request(app).get(`/api/medicaments/${assoc.id}`)).body.data;
+    expect(fiche).toMatchObject({ operateur: 'Denk Pharma', association: true, liaison: 'partielle' });
+    expect(fiche.mecanisme).toBeTruthy();
+    expect(fiche.sources_text).toMatch(/à vérifier sur la notice/);
+    expect(fiche.composition.map((c) => c.slug)).toEqual(
+      expect.arrayContaining(['paracetamol', 'ibuprofene']),
+    );
+
+    // Onglet Thérapeutique d'une pathologie : produits avec photo sous chaque molécule
+    const palu = (await request(app).get('/api/pathologies/paludisme-simple')).body.data;
+    const produitsPalu = palu.onglets.therapeutique.molecules.flatMap((m) => m.produits);
+    expect(produitsPalu.some((p) => p.photo_url && p.operateur === 'Shalina Healthcare')).toBe(true);
+  });
+
+  it('administration du catalogue : liaisons, création de molécule et rapprochement', async () => {
+    const r = await request(app)
+      .post('/api/auth/register')
+      .send({ email: `catalogue-${Date.now()}@medref.cd`, password: 'Quinine-2026', nom: 'Dr Catalogue' });
+    await db.query("UPDATE users SET role = 'admin' WHERE id = ?", [r.body.user.id]);
+    const headers = { Authorization: `Bearer ${r.body.token}` };
+
+    const cat = (await request(app).get('/api/admin/catalogue').set(headers)).body.data;
+    expect(cat.firmes).toHaveLength(6);
+    expect(cat.compteurs.aucune).toBeGreaterThan(100);
+    const avant = cat.compteurs.aucune;
+
+    // Créer la molécule clotrimazole relie automatiquement les produits qui en contiennent
+    const cree = await request(app)
+      .post('/api/admin/molecules')
+      .set(headers)
+      .send({ dci: 'Clotrimazole', classe: 'Antifongiques' });
+    expect(cree.status).toBe(201);
+    expect(cree.body.produits_lies).toBeGreaterThan(3);
+    const apres = (await request(app).get('/api/admin/catalogue').set(headers)).body.data;
+    expect(apres.compteurs.aucune).toBeLessThan(avant);
+    const clotri = (await request(app).get('/api/molecules/clotrimazole')).body.data;
+    expect(clotri.produits.length).toBe(cree.body.produits_lies);
+    expect(
+      (await request(app).post('/api/admin/molecules').set(headers).send({ dci: 'Clotrimazole' })).status,
+    ).toBe(409);
+
+    // Lien manuel depuis la fiche molécule, puis retrait
+    const para = (await request(app).get('/api/admin/resume').set(headers)).body.data.molecules.find(
+      (m) => m.slug === 'paracetamol',
+    );
+    const { suggestions, lies } = (
+      await request(app).get(`/api/admin/molecules/${para.id}/produits`).set(headers)
+    ).body.data;
+    expect(lies.length).toBeGreaterThan(20);
+    const libre = (await request(app).get('/api/admin/catalogue?liaison=aucune&q=Tramadol').set(headers)).body
+      .data.produits[0];
+    expect(
+      (
+        await request(app)
+          .post(`/api/admin/molecules/${para.id}/produits`)
+          .set(headers)
+          .send({ medicament_id: libre.id })
+      ).status,
+    ).toBe(201);
+    const lie = (await request(app).get(`/api/admin/medicaments/${libre.id}`).set(headers)).body.data;
+    expect(lie.molecules.map((m) => m.molecule_slug)).toContain('paracetamol');
+    expect(lie.historique[0].resume).toMatch(/Lié à Paracétamol/);
+    expect(
+      (await request(app).delete(`/api/admin/molecules/${para.id}/produits/${libre.id}`).set(headers)).status,
+    ).toBe(204);
+    expect(Array.isArray(suggestions)).toBe(true);
+
+    // Édition des molécules d'un produit : liaison vérifiée
+    const { options: _o, historique: _h, ...produit } = lie;
+    const maj = await request(app)
+      .put(`/api/admin/medicaments/${libre.id}`)
+      .set(headers)
+      .send({
+        ...produit,
+        nb_composants: 1,
+        molecules: [{ molecule_slug: 'paracetamol', dosage: '500 mg' }],
+      });
+    expect(maj.status).toBe(200);
+    expect(
+      (await request(app).get(`/api/admin/medicaments/${libre.id}`).set(headers)).body.data.liaison,
+    ).toBe('verifiee');
+    const refus = await request(app)
+      .put(`/api/admin/medicaments/${libre.id}`)
+      .set(headers)
+      .send({ ...produit, photo_url: '/autre/chemin.webp' });
+    expect(refus.status).toBe(400);
+  });
+
   describe('migrations et sauvegardes', () => {
     const { connect } = require('../db/connexion');
     const { migrate, status } = require('../db/migrations');

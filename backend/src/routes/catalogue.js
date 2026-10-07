@@ -23,9 +23,12 @@ const EXAMEN_ORDER = `FIELD(e.type, 'biologie', 'imagerie', 'exploration'),
 function withProduits(molecules, produits) {
   const byMolecule = new Map(molecules.map((m) => [m.id, { ...m, produits: [] }]));
   for (const { molecule_id: moleculeId, nb_molecules: nb, disponible_rdc: rdc, ...prod } of produits) {
-    byMolecule
-      .get(moleculeId)
-      ?.produits.push({ ...prod, disponible_rdc: Boolean(rdc), association: Number(nb) > 1 });
+    byMolecule.get(moleculeId)?.produits.push({
+      ...prod,
+      disponible_rdc: Boolean(rdc),
+      pediatrique: Boolean(prod.pediatrique),
+      association: Number(nb) > 1,
+    });
   }
   return [...byMolecule.values()];
 }
@@ -153,8 +156,8 @@ router.get(
       // Produits (par opérateur) contenant chacune des molécules de la fiche
       db.query(
         `SELECT mm.molecule_id, m.id, m.nom_commercial, m.dci AS composition, m.forme, m.dosage,
-                m.disponible_rdc, o.nom AS operateur,
-                (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id) AS nb_molecules
+                m.disponible_rdc, m.photo_url, m.forme_categorie, m.pediatrique, o.nom AS operateur,
+                COALESCE(m.nb_composants, (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id)) AS nb_molecules
            FROM medicament_molecules mm
            JOIN medicaments m ON m.id = mm.medicament_id
            LEFT JOIN operateurs o ON o.id = m.operateur_id

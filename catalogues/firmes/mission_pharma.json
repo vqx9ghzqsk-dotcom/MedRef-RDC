@@ -1,0 +1,857 @@
+{
+ "firme": "Missionpharma",
+ "source": "catalogue de stock Missionpharma (Danemark/Inde) — missionpharma.com, édition 2026, section « Pharmaceuticals »",
+ "note": "Missionpharma est un fournisseur/distributeur (génériques et marques) : le catalogue ne comporte pas de photos de produits ; il est rangé par DCI. Les dispositifs médicaux et kits d'urgence OMS du catalogue ne sont pas repris.",
+ "produits": [
+  {
+   "nom": "Abacavir 120mg + Lamivudine 60mg",
+   "presentation": "dispersible — conditionnement : 30 tablets",
+   "mol": "abacavir-lamivudine"
+  },
+  {
+   "nom": "Acetylsalicylic Acid 500mg",
+   "presentation": "aluminium strip 10 x 10 — conditionnement : 100 tablets",
+   "mol": "acide-acetylsalicylique"
+  },
+  {
+   "nom": "Acetylsalicylic Acid 75mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "acide-acetylsalicylique"
+  },
+  {
+   "nom": "Aciclovir 200mg",
+   "presentation": "blister 3 x 10 — conditionnement : 30 tablets",
+   "mol": "aciclovir"
+  },
+  {
+   "nom": "Actrapid 100 IU/ml",
+   "presentation": "10ml,  solution for injection,  NOVO — conditionnement : 1 vial",
+   "mol": "insuline-humaine-rapide"
+  },
+  {
+   "nom": "Adrenaline 1mg/ml",
+   "presentation": "1ml,  solution for injection — conditionnement : 50 ampoules",
+   "mol": "adrenaline"
+  },
+  {
+   "nom": "Adrenaline 1mg/ml",
+   "presentation": "1ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "adrenaline"
+  },
+  {
+   "nom": "Albendazole 400mg",
+   "presentation": "chewable,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "albendazole"
+  },
+  {
+   "nom": "Amitriptyline Hydrochloride 25mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "amitriptyline"
+  },
+  {
+   "nom": "Amlodipine 5mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "amlodipine"
+  },
+  {
+   "nom": "Amoxicillin 125mg/5ml",
+   "presentation": "100ml,  powder for suspension,  plastic bottle — conditionnement : 1 bottle",
+   "mol": "amoxicilline"
+  },
+  {
+   "nom": "Amoxicillin 125mg/5ml + Clavulanic Acid  31.25mg/5ml",
+   "presentation": "100ml,  powder for suspension,  plastic — conditionnement : 1 bottle",
+   "mol": "amoxicilline-clavulanate"
+  },
+  {
+   "nom": "Amoxicillin 1g + Clavulanic Acid 200mg",
+   "presentation": "powder for injection — conditionnement : 10 vials",
+   "mol": "amoxicilline-clavulanate"
+  },
+  {
+   "nom": "Amoxicillin 250mg",
+   "presentation": "blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "amoxicilline"
+  },
+  {
+   "nom": "Amoxicillin 250mg",
+   "presentation": "dispersible,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "amoxicilline"
+  },
+  {
+   "nom": "Amoxicillin 250mg/5ml",
+   "presentation": "100ml,  powder for suspension,  plastic bottle — conditionnement : 1 bottle",
+   "mol": "amoxicilline"
+  },
+  {
+   "nom": "Amoxicillin 500mg + Clavulanic Acid 125mg",
+   "presentation": "blister alu-alu,  10 x 10 — conditionnement : 100 tablets",
+   "mol": "amoxicilline-clavulanate"
+  },
+  {
+   "nom": "Amoxicillin 500mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "amoxicilline"
+  },
+  {
+   "nom": "Amoxicillin 875mg + Clavulanic Acid 125mg",
+   "presentation": "blister alu-alu,  10 x 10 — conditionnement : 100 tablets",
+   "mol": "amoxicilline-clavulanate"
+  },
+  {
+   "nom": "Ampicillin 1g as Sodium",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "ampicilline"
+  },
+  {
+   "nom": "Ampicillin 500mg as Sodium",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "ampicilline"
+  },
+  {
+   "nom": "Artemether 20mg + Lumefantrine 120mg  (>35kg)",
+   "presentation": "blister 30 x (6 x 4) — conditionnement : 30 treatments",
+   "mol": "artemether-lumefantrine"
+  },
+  {
+   "nom": "Artemether 20mg + Lumefantrine 120mg  (25-34kg)",
+   "presentation": "blister 30 x (6 x 3) — conditionnement : 30 treatments",
+   "mol": "artemether-lumefantrine"
+  },
+  {
+   "nom": "Artemether 20mg + Lumefantrine 120mg (15-25kg)",
+   "presentation": "dispersible,  blister 30 x (6 x 2) — conditionnement : 30 treatments",
+   "mol": "artemether-lumefantrine"
+  },
+  {
+   "nom": "Artemether 20mg + Lumefantrine 120mg (5-15kg)",
+   "presentation": "dispersible,  blister 30 x (6 x 1) — conditionnement : 30 treatments",
+   "mol": "artemether-lumefantrine"
+  },
+  {
+   "nom": "Artesunate 60mg",
+   "presentation": "pfi + Sod. Bicarbonate 5%,  1ml as solv. + Sodium Chloride 0.9%,  5ml as solv. — conditionnement : 1 vial",
+   "mol": "artesunate-inj"
+  },
+  {
+   "nom": "Atenolol 50mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "atenolol"
+  },
+  {
+   "nom": "Atropine Sulfate 1mg/ml",
+   "presentation": "1ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "atropine"
+  },
+  {
+   "nom": "Azithromycin 250mg",
+   "presentation": "blister 1 x 6 — conditionnement : 6 tablets",
+   "mol": "azithromycine"
+  },
+  {
+   "nom": "Azithromycin 500mg",
+   "presentation": "blister 1 x 3 — conditionnement : 3 tablets",
+   "mol": "azithromycine"
+  },
+  {
+   "nom": "Azithromycin Dihydrate 200mg/5ml",
+   "presentation": "15ml,  powder for suspension,  amber glass bottle — conditionnement : 10 bottles",
+   "mol": "azithromycine"
+  },
+  {
+   "nom": "Beclomethasone 100mcg/dose",
+   "presentation": "200 doses Aerosol,  with dispenser — conditionnement : 1 inhaler",
+   "mol": "beclometasone"
+  },
+  {
+   "nom": "Beclomethasone 250mcg/dose",
+   "presentation": "200 doses Aerosol,  with dispenser — conditionnement : 1 inhaler",
+   "mol": "beclometasone"
+  },
+  {
+   "nom": "Benzathine Benzylpenicillin 1.2M IU",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "benzathine-benzylpenicilline"
+  },
+  {
+   "nom": "Benzathine Benzylpenicillin 2.4M IU",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "benzathine-benzylpenicilline"
+  },
+  {
+   "nom": "Benzyl Benzoate 25%",
+   "presentation": "500ml application,  plastic bottle — conditionnement : 1 bottle",
+   "mol": "benzoate-benzyle"
+  },
+  {
+   "nom": "Benzylpenicillin Sodium 1M IU",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "benzylpenicilline"
+  },
+  {
+   "nom": "Benzylpenicillin Sodium 5M IU",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "benzylpenicilline"
+  },
+  {
+   "nom": "Bisacodyl 5mg",
+   "presentation": "enteric coated,  blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "bisacodyl"
+  },
+  {
+   "nom": "Bisoprolol 5mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "bisoprolol"
+  },
+  {
+   "nom": "Bleomycin 15 Units (15",
+   "presentation": "000 IU),  Lyophilized — conditionnement : 1 vial",
+   "mol": "bleomycine"
+  },
+  {
+   "nom": "Calamine 15%",
+   "presentation": "100ml lotion,  plastic bottle — conditionnement : 1 bottle",
+   "mol": "calamine"
+  },
+  {
+   "nom": "Calcium Gluconate 10%",
+   "presentation": "10ml,  plastic ampoule — conditionnement : 20 ampoules",
+   "mol": "calcium-gluconate"
+  },
+  {
+   "nom": "Captopril 25mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "captopril"
+  },
+  {
+   "nom": "Carbamazepine 200mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "carbamazepine"
+  },
+  {
+   "nom": "Cefalexin 250mg/5ml",
+   "presentation": "100ml,  powder for suspension,  glass bottle — conditionnement : 1 bottle",
+   "mol": "cefalexine"
+  },
+  {
+   "nom": "Cefixime 100mg/5ml",
+   "presentation": "60ml,  powder for suspension,  amber glass bottle — conditionnement : 1 bottle",
+   "mol": "cefixime"
+  },
+  {
+   "nom": "Cefixime 200mg",
+   "presentation": "blister alu-alu 1 x 10 — conditionnement : 10 tablets",
+   "mol": "cefixime"
+  },
+  {
+   "nom": "Cefotaxime 500mg",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "cefotaxime"
+  },
+  {
+   "nom": "Ceftriaxone 1g",
+   "presentation": "powder for injection — conditionnement : 10 vials",
+   "mol": "ceftriaxone"
+  },
+  {
+   "nom": "Ceftriaxone 1g",
+   "presentation": "powder for injection — conditionnement : 100 vials",
+   "mol": "ceftriaxone"
+  },
+  {
+   "nom": "Ceftriaxone 250mg",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "ceftriaxone"
+  },
+  {
+   "nom": "Ceftriaxone 500mg",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "ceftriaxone"
+  },
+  {
+   "nom": "Chloramphenicol 1g as Sodium Succinate",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "chloramphenicol"
+  },
+  {
+   "nom": "Chloramphenicol 250mg",
+   "presentation": "blister 100 x 10 — conditionnement : 1000 capsules",
+   "mol": "chloramphenicol"
+  },
+  {
+   "nom": "Chlorhexidine Gluconate 5% w/v",
+   "presentation": "1000ml,  plastic bottle — conditionnement : 1 bottle",
+   "mol": "chlorhexidine"
+  },
+  {
+   "nom": "Chlorphenamine Maleate 4mg",
+   "presentation": "conditionnement : 1000 tablets",
+   "mol": "chlorphenamine"
+  },
+  {
+   "nom": "Chlorpromazine Hydrochloride 100mg",
+   "presentation": "film-coated,  blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "chlorpromazine"
+  },
+  {
+   "nom": "Ciprofloxacin 250mg",
+   "presentation": "film-coated,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "ciprofloxacine"
+  },
+  {
+   "nom": "Ciprofloxacin 2mg/ml",
+   "presentation": "100ml,  nipplehead bottle — conditionnement : 1 bottle",
+   "mol": "ciprofloxacine"
+  },
+  {
+   "nom": "Ciprofloxacin 500mg",
+   "presentation": "film-coated,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "ciprofloxacine"
+  },
+  {
+   "nom": "Clotrimazole 1%",
+   "presentation": "20g,  cream — conditionnement : 1 tube",
+   "mol": "clotrimazole"
+  },
+  {
+   "nom": "Clotrimazole 100mg",
+   "presentation": "with applicator,  strip aluminium 1 x 6 — conditionnement : 6 vaginal tablets",
+   "mol": "clotrimazole"
+  },
+  {
+   "nom": "Clotrimazole 500mg",
+   "presentation": "with applicator,  strip aluminium — conditionnement : 1 vaginal tablet",
+   "mol": "clotrimazole"
+  },
+  {
+   "nom": "Clotrimazole 500mg",
+   "presentation": "with 10 applicators,  strip aluminium 10 x 10 — conditionnement : 100 vaginal tablets",
+   "mol": "clotrimazole"
+  },
+  {
+   "nom": "Cloxacillin 250mg",
+   "presentation": "strip aluminium 10 x 10 — conditionnement : 100 capsules",
+   "mol": "cloxacilline"
+  },
+  {
+   "nom": "Cloxacillin 500mg",
+   "presentation": "strip aluminium 10 x 10 — conditionnement : 100 capsules",
+   "mol": "cloxacilline"
+  },
+  {
+   "nom": "Cloxacillin 500mg",
+   "presentation": "powder for injection — conditionnement : 50 vials",
+   "mol": "cloxacilline"
+  },
+  {
+   "nom": "Compound Benzoic Acid 40g",
+   "presentation": "ointment — conditionnement : 1 tube",
+   "mol": "acide-benzoique-compose"
+  },
+  {
+   "nom": "Cotrimoxazole 120mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "cotrimoxazole"
+  },
+  {
+   "nom": "Cotrimoxazole 240mg/5ml",
+   "presentation": "100ml,  liquid suspension,  plastic bottle — conditionnement : 1 bottle",
+   "mol": "cotrimoxazole"
+  },
+  {
+   "nom": "Cotrimoxazole 480mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "cotrimoxazole"
+  },
+  {
+   "nom": "Cotrimoxazole 960mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "cotrimoxazole"
+  },
+  {
+   "nom": "Dexamethasone Sodium Phosphate 4mg/ml",
+   "presentation": "1ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "dexamethasone"
+  },
+  {
+   "nom": "Dextrose (Glucose) 5%",
+   "presentation": "500ml infusion,  eurohead plastic bottle — conditionnement : 1 bottle",
+   "mol": "dextrose"
+  },
+  {
+   "nom": "Dextrose (Glucose) 50%",
+   "presentation": "50ml,  solution for injection — conditionnement : 10 vials",
+   "mol": "dextrose"
+  },
+  {
+   "nom": "Diclofenac Sodium 25mg/ml",
+   "presentation": "3ml,  solution for injection — conditionnement : 100 ampoules",
+   "mol": "diclofenac"
+  },
+  {
+   "nom": "Diclofenac Sodium 50mg",
+   "presentation": "enteric coated,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "diclofenac"
+  },
+  {
+   "nom": "Divalproex Sodium (Valproic acid 500mg)",
+   "presentation": "extended-release,  strip aluminium 10 x 10 — conditionnement : 100 tablets",
+   "mol": "valproate"
+  },
+  {
+   "nom": "Dolutegravir 10mg",
+   "presentation": "dispersible — conditionnement : 90 tablets",
+   "mol": "dolutegravir"
+  },
+  {
+   "nom": "Dolutegravir 50mg",
+   "presentation": "conditionnement : 30 tablets",
+   "mol": "dolutegravir"
+  },
+  {
+   "nom": "Dopamine Hydrochloride 40mg/ml",
+   "presentation": "5ml,  solution for injection — conditionnement : 50 ampoules",
+   "mol": "dopamine"
+  },
+  {
+   "nom": "Doxycycline 100mg",
+   "presentation": "as Hyclate,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "doxycycline"
+  },
+  {
+   "nom": "Enalapril 5mg",
+   "presentation": "strip aluminium 10 x 10 — conditionnement : 100 tablets",
+   "mol": "enalapril"
+  },
+  {
+   "nom": "Ephedrine Hydrochloride 30mg/ml",
+   "presentation": "1ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "ephedrine"
+  },
+  {
+   "nom": "Erythromycin 125mg/5ml",
+   "presentation": "100ml as Ethyl Succinate,  powder for suspension,  plastic bottle — conditionnement : 5 bottles",
+   "mol": "erythromycine"
+  },
+  {
+   "nom": "Erythromycin 250mg",
+   "presentation": "as Stearate,  blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "erythromycine"
+  },
+  {
+   "nom": "Erythromycin 500mg",
+   "presentation": "as Stearate,  blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "erythromycine"
+  },
+  {
+   "nom": "Ferrous Fumarate 182mg (equivalent to Ferrous iron 60mg) + Folic acid 0.4mg",
+   "presentation": "film-coated — conditionnement : 100 tablets",
+   "mol": "fer-fumarate"
+  },
+  {
+   "nom": "Ferrous Fumarate 182mg (equivalent to Ferrous iron 60mg) film coated",
+   "presentation": "conditionnement : 100 tablets",
+   "mol": "fer-fumarate"
+  },
+  {
+   "nom": "Folic Acid 5mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "acide-folique"
+  },
+  {
+   "nom": "Furosemide 10mg/ml",
+   "presentation": "2ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "furosemide"
+  },
+  {
+   "nom": "Furosemide 40mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "furosemide"
+  },
+  {
+   "nom": "Gentamicin 0.3%",
+   "presentation": "10ml,  eye/ear drops,  plastic bottle with dropper,  individually packed — conditionnement : 1 bottle",
+   "mol": "gentamicine-collyre"
+  },
+  {
+   "nom": "Gentamicin 10mg/ml",
+   "presentation": "2ml,  solution for injection — conditionnement : 100 ampoules",
+   "mol": "gentamicine"
+  },
+  {
+   "nom": "Gentamicin 40mg/ml",
+   "presentation": "2ml,  solution for injection — conditionnement : 100 ampoules",
+   "mol": "gentamicine"
+  },
+  {
+   "nom": "Glibenclamide 5mg",
+   "presentation": "blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "glibenclamide"
+  },
+  {
+   "nom": "Glyceryl Trinitrate 0.5mg",
+   "presentation": "sublingual,  glass bottle — conditionnement : 30 tablets",
+   "mol": "trinitrine"
+  },
+  {
+   "nom": "Griseofulvin 500mg",
+   "presentation": "blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "griseofulvine"
+  },
+  {
+   "nom": "Haloperidol 5mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "haloperidol"
+  },
+  {
+   "nom": "Hydralazine Hydrochloride 20mg",
+   "presentation": "Lyophilised — conditionnement : 5 ampoules",
+   "mol": "hydralazine"
+  },
+  {
+   "nom": "Hydrochlorothiazide 25mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "hydrochlorothiazide"
+  },
+  {
+   "nom": "Hydrocortisone 100mg as Sodium Succinate",
+   "presentation": "powder for injection,  individually packed — conditionnement : 1 vial",
+   "mol": "hydrocortisone"
+  },
+  {
+   "nom": "Hydrocortisone Acetate 1%",
+   "presentation": "15g,  cream — conditionnement : 50 tubes",
+   "mol": "hydrocortisone-creme"
+  },
+  {
+   "nom": "Hyoscine Butylbromide 10mg",
+   "presentation": "film-coated,  blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "hyoscine-butylbromure"
+  },
+  {
+   "nom": "Hyoscine Butylbromide 20mg/ml",
+   "presentation": "1ml,  solution for injection — conditionnement : 100 ampoules",
+   "mol": "hyoscine-butylbromure"
+  },
+  {
+   "nom": "Ibuprofen 100mg/5ml",
+   "presentation": "100ml,  liquid suspension,  plastic bottle,  individually packed — conditionnement : 1 bottle",
+   "mol": "ibuprofene"
+  },
+  {
+   "nom": "Ibuprofen 200mg",
+   "presentation": "film-coated,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "ibuprofene"
+  },
+  {
+   "nom": "Ibuprofen 400mg",
+   "presentation": "film-coated,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "ibuprofene"
+  },
+  {
+   "nom": "Levonorgestrel 1.5mg",
+   "presentation": "blister — conditionnement : 1 tablet",
+   "mol": "levonorgestrel"
+  },
+  {
+   "nom": "Lidocaine 1%",
+   "presentation": "20ml,  solution for injection — conditionnement : 25 vials",
+   "mol": "lidocaine"
+  },
+  {
+   "nom": "Lidocaine 1%",
+   "presentation": "20ml,  solution for injection — conditionnement : 20 vials",
+   "mol": "lidocaine"
+  },
+  {
+   "nom": "Lidocaine 2%",
+   "presentation": "20ml,  solution for injection,  individually packed — conditionnement : 1 vial",
+   "mol": "lidocaine"
+  },
+  {
+   "nom": "Loperamide Hydrochloride 2mg",
+   "presentation": "conditionnement : 1000 tablets",
+   "mol": "loperamide"
+  },
+  {
+   "nom": "Magnesium Sulphate 50%",
+   "presentation": "10ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "magnesium-sulfate"
+  },
+  {
+   "nom": "Malaria",
+   "presentation": "First Response,  HRP2/pLDH(P.f./PAN) Combo card test,  25 tests — conditionnement : 1 kit",
+   "mol": "test-paludisme"
+  },
+  {
+   "nom": "Mebendazole 100mg",
+   "presentation": "blister 10 x10 — conditionnement : 100 tablets",
+   "mol": "mebendazole"
+  },
+  {
+   "nom": "Mebendazole 500mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 chewable tablets",
+   "mol": "mebendazole"
+  },
+  {
+   "nom": "Medroxyprogesterone Acetate 150mg/ml",
+   "presentation": "1ml,  suspension for injection,  Triclofem — conditionnement : 20 vials",
+   "mol": "medroxyprogesterone-inj"
+  },
+  {
+   "nom": "Metformin 500mg",
+   "presentation": "film coated,  blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "metformine"
+  },
+  {
+   "nom": "Methyldopa 250mg",
+   "presentation": "film-coated,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "methyldopa"
+  },
+  {
+   "nom": "Metoclopramide Hydrochloride 5mg/ml",
+   "presentation": "2ml,  solution for injection — conditionnement : 5 ampoules",
+   "mol": "metoclopramide"
+  },
+  {
+   "nom": "Metronidazole 200mg/5ml",
+   "presentation": "100ml,  as  Benzoate,  powder for suspension,  plastic bottle — conditionnement : 1 bottle",
+   "mol": "metronidazole"
+  },
+  {
+   "nom": "Metronidazole 250mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "metronidazole"
+  },
+  {
+   "nom": "Metronidazole 500mg",
+   "presentation": "blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "metronidazole"
+  },
+  {
+   "nom": "Metronidazole 5mg/ml",
+   "presentation": "100ml,  nipplehead plastic bottle,  individually packed — conditionnement : 1 bottle",
+   "mol": "metronidazole"
+  },
+  {
+   "nom": "Miconazole Nitrate 2%",
+   "presentation": "30g cream,  individually packed — conditionnement : 1 tube",
+   "mol": "miconazole"
+  },
+  {
+   "nom": "Misoprostol 0.2mg",
+   "presentation": "blister alu-alu 1 x 4 — conditionnement : 4 tablets",
+   "mol": "misoprostol"
+  },
+  {
+   "nom": "Mixtard 30",
+   "presentation": "100 IU/ml,  10ml,  suspension for injection,  NOVO — conditionnement : 1 vial",
+   "mol": "insuline-humaine-mixte"
+  },
+  {
+   "nom": "Multivitamin 100ml syrup",
+   "presentation": "glass bottle,  individually packed — conditionnement : 1 bottle",
+   "mol": "multivitamines"
+  },
+  {
+   "nom": "Multivitamin",
+   "presentation": "film-coated,  blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "multivitamines"
+  },
+  {
+   "nom": "Naloxone Hydrochloride 0.4mg/ml",
+   "presentation": "1ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "naloxone"
+  },
+  {
+   "nom": "Nitrofurantoin 100mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "nitrofurantoine"
+  },
+  {
+   "nom": "Nystatin 100000 IU/ml",
+   "presentation": "30ml,  liquid suspension,  glass bottle,  individually packed w. dropper — conditionnement : 1 bottle",
+   "mol": "nystatine"
+  },
+  {
+   "nom": "Omeprazole 20mg",
+   "presentation": "gastro-resistant,  strip aluminium 10 x 10 — conditionnement : 100 capsules",
+   "mol": "omeprazole"
+  },
+  {
+   "nom": "Oral Rehydration Salts 20.5g",
+   "presentation": "WHO formula — conditionnement : 100 sachets",
+   "mol": "sro"
+  },
+  {
+   "nom": "Oral Rehydration Salts 42g equivalent to 1 liter",
+   "presentation": "WHO Formula (Resomal) — conditionnement : 1 sachet",
+   "mol": "sro"
+  },
+  {
+   "nom": "Oxytocin 10 IU/ml",
+   "presentation": "1ml solution for injection — conditionnement : 10 ampoules",
+   "mol": "oxytocine"
+  },
+  {
+   "nom": "Paracetamol 100mg",
+   "presentation": "dispersible,  blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "paracetamol"
+  },
+  {
+   "nom": "Paracetamol 120mg/5ml",
+   "presentation": "60ml,  liquid solution,  plastic bottle — conditionnement : 10 bottles",
+   "mol": "paracetamol"
+  },
+  {
+   "nom": "Paracetamol 500mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "paracetamol"
+  },
+  {
+   "nom": "Permethrin 1%",
+   "presentation": "100ml lotion — conditionnement : 1 bottle",
+   "mol": "permethrine"
+  },
+  {
+   "nom": "Permethrin 5%",
+   "presentation": "30g cream,  individually packed — conditionnement : 1 tube",
+   "mol": "permethrine"
+  },
+  {
+   "nom": "Phenoxymethylpenicillin 250mg",
+   "presentation": "film-coated,  blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "phenoxymethylpenicilline"
+  },
+  {
+   "nom": "Povidone Iodine 10%",
+   "presentation": "200ml,  topical solution,  plastic bottle — conditionnement : 1 bottle",
+   "mol": "povidone-iodee"
+  },
+  {
+   "nom": "Praziquantel 600mg",
+   "presentation": "blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "praziquantel"
+  },
+  {
+   "nom": "Prednisolone 5mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "prednisolone"
+  },
+  {
+   "nom": "Protamine Sulphate 10mg/ml",
+   "presentation": "5ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "protamine"
+  },
+  {
+   "nom": "Pyrantel 125mg/2.5ml",
+   "presentation": "15ml,  as Embonate,  oral susp.,  glass bottle w. polystyrene measuring sp — conditionnement : 1 bottle",
+   "mol": "pyrantel"
+  },
+  {
+   "nom": "Quinine dihydrochloride 300mg/ml",
+   "presentation": "2ml,  solution for injection — conditionnement : 100 ampoules",
+   "mol": "quinine-dichlorhydrate"
+  },
+  {
+   "nom": "Ringers Lactate 500ml",
+   "presentation": "eurohead plastic bottle — conditionnement : 1 bottle",
+   "mol": "ringer-lactate"
+  },
+  {
+   "nom": "Salbutamol 100mcg/dose",
+   "presentation": "200 doses,  CFC free Aerosol,  with dispenser — conditionnement : 1 inhaler",
+   "mol": "salbutamol"
+  },
+  {
+   "nom": "Salbutamol 4mg",
+   "presentation": "blister 10 x 10 — conditionnement : 100 tablets",
+   "mol": "salbutamol"
+  },
+  {
+   "nom": "Silver Sulphadiazine 1%",
+   "presentation": "50g cream,  individually packed — conditionnement : 1 tube",
+   "mol": "sulfadiazine-argentique"
+  },
+  {
+   "nom": "Sodium Chloride 0.9%",
+   "presentation": "500ml,  eurohead plastic bottle — conditionnement : 1 bottle",
+   "mol": "chlorure-sodium"
+  },
+  {
+   "nom": "Sulfadoxine 500mg + Pyrimethamine 25mg",
+   "presentation": "blister 50 x 3 — conditionnement : 150 tablets",
+   "mol": "sulfadoxine-pyrimethamine"
+  },
+  {
+   "nom": "Tenofovir disoproxil 300mg + Lamivudine 300mg + Dolutegravir 50mg",
+   "presentation": "conditionnement : 30 tablets",
+   "mol": "tenofovir-lamivudine-dolutegravir"
+  },
+  {
+   "nom": "Tetracycline Hydrochloride 1%",
+   "presentation": "5g,  eye ointment,  individually packed — conditionnement : 1 tube",
+   "mol": "tetracycline"
+  },
+  {
+   "nom": "Tranexamic Acid 100mg/ml",
+   "presentation": "5ml,  solution for injection — conditionnement : 10 ampoules",
+   "mol": "acide-tranexamique"
+  },
+  {
+   "nom": "Vitamin A 100000 IU (Retinol)",
+   "presentation": "blister 10 x 10 — conditionnement : 100 capsules",
+   "mol": "vitamine-a"
+  },
+  {
+   "nom": "Vitamin A 200000 IU (Retinol)",
+   "presentation": "blister 10 x 10 — conditionnement : 100 capsules",
+   "mol": "vitamine-a"
+  },
+  {
+   "nom": "Vitamin A 200000 IU (Retinol)",
+   "presentation": "conditionnement : 500 capsules",
+   "mol": "vitamine-a"
+  },
+  {
+   "nom": "Vitamin B1 50mg (Thiamine)",
+   "presentation": "blister 100 x 10 — conditionnement : 1000 tablets",
+   "mol": "vitamine-b1"
+  },
+  {
+   "nom": "Vitamin B6 50mg (Pyridoxine)",
+   "presentation": "conditionnement : 1000 tablets",
+   "mol": "vitamine-b6"
+  },
+  {
+   "nom": "Vitamin C 250mg (Ascorbic Acid)",
+   "presentation": "strip aluminium 100 x 10 — conditionnement : 1000 chewable tablets",
+   "mol": "vitamine-c"
+  },
+  {
+   "nom": "Vitamin K1 1mg/ml",
+   "presentation": "1ml (Phytomenadione),  solution for injection — conditionnement : 10 ampoules",
+   "mol": "vitamine-k"
+  },
+  {
+   "nom": "Water for injection",
+   "presentation": "10ml,  plastic ampoule — conditionnement : 50 ampoules",
+   "mol": "eau-ppi"
+  },
+  {
+   "nom": "Water for injection",
+   "presentation": "5ml,  plastic ampoule — conditionnement : 50 ampoules",
+   "mol": "eau-ppi"
+  },
+  {
+   "nom": "Zinc Oxide 10%",
+   "presentation": "100g ointment,  individually packed — conditionnement : 1 tube",
+   "mol": "oxyde-zinc"
+  },
+  {
+   "nom": "Zinc Sulphate 20mg",
+   "presentation": "dispersible,  blister alu-alu 10 X 10 — conditionnement : 100 tablets",
+   "mol": "zinc"
+  }
+ ]
+}

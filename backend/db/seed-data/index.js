@@ -24,6 +24,7 @@ const posologies = require('./posologies');
 const syndromes = require('./syndromes');
 const glossaire = require('./glossaire');
 const semiologie = require('./semiologie');
+const catalogues = require('./catalogues');
 
 const pathologies = [
   ...require('./pathologies/infectiologie'),
@@ -52,4 +53,5 @@ module.exports = {
   syndromes,
   glossaire,
   semiologie,
+  catalogues,
 };

@@ -23,6 +23,8 @@ const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middlewar
 const { asyncHandler, HttpError, notFound, toInt } = require('../utils/http');
 const { chargerFormes } = require('../services/formes');
 const { slugify } = require('../utils/slugify');
+const { relierAutomatiquement } = require('../../db/catalogues');
+const { normaliser: normaliserNom } = require('../../db/correspondance');
 
 const router = express.Router();
 
@@ -850,6 +852,8 @@ const PRODUIT_TEXTES = [
   ['dosage', 120],
   ['presentation', 255],
   ['conservation', 255],
+  ['composition_texte', 500],
+  ['mecanisme', LONG],
   ['indication', LONG],
   ['posologie', LONG],
   ['contre_indications', LONG],
@@ -858,18 +862,43 @@ const PRODUIT_TEXTES = [
   ['sources_text', LONG],
 ];
 
+/** Photo : adresse http(s) externe ou photo locale importée d'un catalogue (/medias/…). */
+const PHOTO_VALIDE = /^(https?:\/\/\S+|\/medias\/[\w./-]+)$/i;
+
 async function etatMedicament(q, id) {
   const [m] = await q(
-    `SELECT ${PRODUIT_TEXTES.map(([c]) => c).join(', ')}, photo_url, disponible_rdc, prix_indicatif_cdf
+    `SELECT ${PRODUIT_TEXTES.map(([c]) => c).join(', ')}, photo_url, disponible_rdc, prix_indicatif_cdf, nb_composants
        FROM medicaments WHERE id = ?`,
     [id],
   );
   if (!m) return null;
+  const molecules = await q(
+    `SELECT mo.slug AS molecule_slug, mm.dosage
+       FROM medicament_molecules mm JOIN molecules mo ON mo.id = mm.molecule_id
+      WHERE mm.medicament_id = ? ORDER BY mm.ordre, mo.dci`,
+    [id],
+  );
   return {
     ...m,
     disponible_rdc: Boolean(m.disponible_rdc),
     prix_indicatif_cdf: nombreOuNull(m.prix_indicatif_cdf),
+    nb_composants: nombreOuNull(m.nb_composants),
+    molecules,
   };
+}
+
+/** État de liaison après une modification manuelle des molécules d'un produit. */
+async function majLiaison(conn, id) {
+  await conn.execute(
+    `UPDATE medicaments m
+        SET m.liaison = CASE
+              WHEN (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id) = 0 THEN 'aucune'
+              WHEN (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id)
+                   >= COALESCE(m.nb_composants, 1) THEN 'verifiee'
+              ELSE 'partielle' END
+      WHERE m.id = ?`,
+    [id],
+  );
 }
 
 router.get(
@@ -878,14 +907,19 @@ router.get(
     const id = toInt(req.params.id);
     if (!id) throw notFound('Médicament');
     const [meta] = await db.query(
-      `SELECT m.id, m.nom_commercial, m.dci, o.nom AS operateur
+      `SELECT m.id, m.nom_commercial, m.dci, m.catalogue_ref, m.catalogue_classe, m.catalogue_sous_classe,
+              m.forme_categorie, m.liaison, o.nom AS operateur
          FROM medicaments m LEFT JOIN operateurs o ON o.id = m.operateur_id
         WHERE m.id = ?`,
       [id],
     );
     if (!meta) throw notFound('Médicament');
-    const [etat, hist] = await Promise.all([etatMedicament(viaPool, id), historique('medicament', id)]);
-    res.json({ data: { ...meta, ...etat, historique: hist } });
+    const [etat, hist, molecules] = await Promise.all([
+      etatMedicament(viaPool, id),
+      historique('medicament', id),
+      db.query('SELECT slug, dci FROM molecules ORDER BY dci'),
+    ]);
+    res.json({ data: { ...meta, ...etat, options: { molecules }, historique: hist } });
   }),
 );
 
@@ -898,22 +932,65 @@ router.put(
     const v = createValidator();
     const champs = Object.fromEntries(PRODUIT_TEXTES.map(([c, max]) => [c, v.text(body[c], max, c)]));
     const photo = v.text(body.photo_url, 255, 'photo_url');
-    if (photo && !/^https?:\/\//i.test(photo)) v.errors.photo_url = 'Adresse http(s) attendue';
+    if (photo && !PHOTO_VALIDE.test(photo))
+      v.errors.photo_url = 'Adresse http(s) ou photo du catalogue attendue';
     if (typeof body.disponible_rdc !== 'boolean') v.errors.disponible_rdc = 'Oui ou non attendu';
     const prix = v.number(body.prix_indicatif_cdf, 'prix_indicatif_cdf', { min: 0, max: 1e10 });
+    const nbComposants = v.number(body.nb_composants, 'nb_composants', { min: 1, max: 30 });
+
+    // Molécules contenues (facultatif : absent = inchangé)
+    let molecules;
+    if (body.molecules !== undefined) {
+      const connues = new Map(
+        (await db.query('SELECT id, slug, dci FROM molecules')).map((m) => [m.slug, m]),
+      );
+      const vues = new Set();
+      molecules = v.list(body.molecules, 'molecules', 30)?.map((m, i) => {
+        const mol = connues.get(m.molecule_slug);
+        if (!mol) v.errors[`molecules[${i}].molecule_slug`] = 'Molécule inconnue';
+        else if (vues.has(mol.id)) v.errors[`molecules[${i}].molecule_slug`] = 'Molécule en double';
+        if (mol) vues.add(mol.id);
+        return { id: mol?.id, dci: mol?.dci, dosage: v.text(m.dosage, 120, `molecules[${i}].dosage`) };
+      });
+    }
     v.check();
 
     const resultat = await db.transaction(async (conn) => {
       const q = viaConn(conn);
-      const [current] = await q('SELECT id FROM medicaments WHERE id = ? FOR UPDATE', [id]);
+      const [current] = await q('SELECT id, catalogue_ref FROM medicaments WHERE id = ? FOR UPDATE', [id]);
       if (!current) throw notFound('Médicament');
       const avant = await etatMedicament(q, id);
       await conn.execute(
         `UPDATE medicaments SET ${PRODUIT_TEXTES.map(([c]) => `${c} = ?`).join(', ')}, photo_url = ?,
-                disponible_rdc = ?, prix_indicatif_cdf = ?
+                disponible_rdc = ?, prix_indicatif_cdf = ?, nb_composants = ?
           WHERE id = ?`,
-        [...PRODUIT_TEXTES.map(([c]) => champs[c]), photo, body.disponible_rdc ? 1 : 0, prix, id],
+        [
+          ...PRODUIT_TEXTES.map(([c]) => champs[c]),
+          photo,
+          body.disponible_rdc ? 1 : 0,
+          prix,
+          nbComposants,
+          id,
+        ],
       );
+      if (molecules) {
+        await conn.execute('DELETE FROM medicament_molecules WHERE medicament_id = ?', [id]);
+        for (const [i, m] of molecules.entries()) {
+          await conn.execute(
+            `INSERT INTO medicament_molecules (medicament_id, molecule_id, dosage, ordre, origine)
+             VALUES (?, ?, ?, ?, 'manuel')`,
+            [id, m.id, m.dosage, i + 1],
+          );
+        }
+        // Produits saisis à la main : la DCI affichée suit les molécules ; catalogue : intitulé d'origine
+        if (!current.catalogue_ref && molecules.length) {
+          await conn.execute('UPDATE medicaments SET dci = ? WHERE id = ?', [
+            molecules.map((m) => m.dci).join(' + '),
+            id,
+          ]);
+        }
+        await majLiaison(conn, id);
+      }
       const apres = await etatMedicament(q, id);
       const rubriques = rubriquesModifiees(avant, apres);
       if (!rubriques.length) return { inchange: true };
@@ -929,6 +1006,224 @@ router.put(
       return { inchange: false };
     });
     res.json({ ok: true, inchange: resultat.inchange });
+  }),
+);
+
+// ---------------------------------------------------------------- Catalogues des firmes
+
+const LIAISONS = ['verifiee', 'auto', 'partielle', 'aucune'];
+
+/** Produits importés des catalogues, avec leur état de liaison aux molécules. */
+router.get(
+  '/admin/catalogue',
+  asyncHandler(async (req, res) => {
+    const where = ['m.catalogue_ref IS NOT NULL'];
+    const params = [];
+    if (LIAISONS.includes(req.query.liaison)) {
+      where.push('m.liaison = ?');
+      params.push(req.query.liaison);
+    }
+    if (typeof req.query.firme === 'string' && req.query.firme) {
+      where.push('o.slug = ?');
+      params.push(req.query.firme);
+    }
+    if (typeof req.query.q === 'string' && req.query.q.trim()) {
+      const like = `%${req.query.q.trim()}%`;
+      where.push('(m.nom_commercial LIKE ? OR m.dci LIKE ? OR m.composition_texte LIKE ?)');
+      params.push(like, like, like);
+    }
+    const [produits, compteurs, firmes] = await Promise.all([
+      db.query(
+        `SELECT m.id, m.nom_commercial, m.dci, m.photo_url, m.forme_categorie, m.liaison, m.catalogue_classe,
+                o.nom AS operateur, o.slug AS operateur_slug,
+                (SELECT GROUP_CONCAT(mo.dci ORDER BY mm.ordre SEPARATOR ' + ')
+                   FROM medicament_molecules mm JOIN molecules mo ON mo.id = mm.molecule_id
+                  WHERE mm.medicament_id = m.id) AS molecules_liees
+           FROM medicaments m LEFT JOIN operateurs o ON o.id = m.operateur_id
+          WHERE ${where.join(' AND ')}
+          ORDER BY FIELD(m.liaison, 'aucune', 'partielle', 'auto', 'verifiee'), o.nom, m.nom_commercial
+          LIMIT 300`,
+        params,
+      ),
+      db.query(
+        `SELECT liaison, COUNT(*) AS n FROM medicaments WHERE catalogue_ref IS NOT NULL GROUP BY liaison`,
+      ),
+      db.query(
+        `SELECT o.slug, o.nom, COUNT(m.id) AS n
+           FROM operateurs o JOIN medicaments m ON m.operateur_id = o.id AND m.catalogue_ref IS NOT NULL
+          GROUP BY o.id ORDER BY o.nom`,
+      ),
+    ]);
+    res.json({
+      data: {
+        compteurs: Object.fromEntries(
+          LIAISONS.map((l) => [l, Number(compteurs.find((c) => c.liaison === l)?.n || 0)]),
+        ),
+        firmes: firmes.map((f) => ({ ...f, n: Number(f.n) })),
+        produits,
+      },
+    });
+  }),
+);
+
+/** Relance le rapprochement automatique (après création de molécules). */
+router.post(
+  '/admin/catalogue/relier',
+  asyncHandler(async (_req, res) => {
+    const resultat = await db.transaction((conn) => relierAutomatiquement(conn));
+    res.json({ ok: true, ...resultat });
+  }),
+);
+
+/** Création d'une molécule (fiche à compléter ensuite), puis rapprochement du catalogue. */
+router.post(
+  '/admin/molecules',
+  asyncHandler(async (req, res) => {
+    const body = req.body || {};
+    const v = createValidator();
+    const dci = v.text(body.dci, 190, 'dci', { required: true });
+    const classe = v.text(body.classe, 190, 'classe');
+    v.check();
+    const resultat = await withDuplicateCheck(
+      () =>
+        db.transaction(async (conn) => {
+          let classeId = null;
+          if (classe) {
+            const [[c]] = await conn.execute('SELECT id FROM classes_pharmacologiques WHERE nom = ?', [
+              classe,
+            ]);
+            if (c) classeId = c.id;
+            else {
+              const [ins] = await conn.execute('INSERT INTO classes_pharmacologiques (nom) VALUES (?)', [
+                classe,
+              ]);
+              classeId = ins.insertId;
+            }
+          }
+          const [r] = await conn.execute('INSERT INTO molecules (dci, slug, classe_id) VALUES (?, ?, ?)', [
+            dci,
+            slugify(dci),
+            classeId,
+          ]);
+          await logModification(conn, {
+            userId: req.editor.id,
+            entite: 'molecule',
+            entiteId: r.insertId,
+            action: 'modification',
+            resume: 'Molécule créée',
+            avant: null,
+            apres: { dci, classe },
+          });
+          const liaisons = await relierAutomatiquement(conn);
+          return { id: r.insertId, slug: slugify(dci), produits_lies: liaisons.completes };
+        }),
+      'Une molécule porte déjà ce nom',
+    );
+    res.status(201).json({ ok: true, ...resultat });
+  }),
+);
+
+/** Produits liés à une molécule et suggestions du catalogue (nom de la molécule cité). */
+async function produitsDeMolecule(id) {
+  const [[mo]] = [await db.query('SELECT id, dci, slug FROM molecules WHERE id = ?', [id])];
+  if (!mo) return null;
+  const [lies, candidats] = await Promise.all([
+    db.query(
+      `SELECT m.id, m.nom_commercial, m.dci, m.photo_url, m.forme_categorie, m.liaison, mm.origine,
+              o.nom AS operateur
+         FROM medicament_molecules mm
+         JOIN medicaments m ON m.id = mm.medicament_id
+         LEFT JOIN operateurs o ON o.id = m.operateur_id
+        WHERE mm.molecule_id = ? ORDER BY o.nom, m.nom_commercial`,
+      [id],
+    ),
+    db.query(
+      `SELECT m.id, m.nom_commercial, m.dci, m.composition_texte, m.photo_url, m.forme_categorie, m.liaison,
+              o.nom AS operateur
+         FROM medicaments m LEFT JOIN operateurs o ON o.id = m.operateur_id
+        WHERE m.catalogue_ref IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM medicament_molecules x WHERE x.medicament_id = m.id AND x.molecule_id = ?)`,
+      [id],
+    ),
+  ]);
+  // Suggestion : le nom (normalisé, sans accents ni sel) apparaît dans l'intitulé ou la composition
+  const nom = normaliserNom(mo.dci).split(' ')[0];
+  const suggestions =
+    nom.length >= 4
+      ? candidats
+          .filter((p) =>
+            normaliserNom(`${p.dci} ${p.composition_texte || ''}`)
+              .split(' ')
+              .some((m) => m.startsWith(nom)),
+          )
+          .slice(0, 60)
+          .map(({ composition_texte: _c, ...p }) => p)
+      : [];
+  return { lies, suggestions };
+}
+
+router.get(
+  '/admin/molecules/:id/produits',
+  asyncHandler(async (req, res) => {
+    const data = await produitsDeMolecule(toInt(req.params.id));
+    if (!data) throw notFound('Molécule');
+    res.json({ data });
+  }),
+);
+
+/** Lier ou délier un produit d'une molécule (depuis la fiche de la molécule). */
+async function changerLien(req, ajouter) {
+  const moleculeId = toInt(req.params.id);
+  const medicamentId = toInt(ajouter ? req.body?.medicament_id : req.params.medicamentId);
+  if (!moleculeId || !medicamentId) throw notFound('Produit');
+  return db.transaction(async (conn) => {
+    const q = viaConn(conn);
+    const [[mo]] = [await q('SELECT dci FROM molecules WHERE id = ?', [moleculeId])];
+    if (!mo) throw notFound('Molécule');
+    const [current] = await q('SELECT id FROM medicaments WHERE id = ? FOR UPDATE', [medicamentId]);
+    if (!current) throw notFound('Produit');
+    const avant = await etatMedicament(q, medicamentId);
+    if (ajouter) {
+      await conn.execute(
+        `INSERT IGNORE INTO medicament_molecules (medicament_id, molecule_id, ordre, origine)
+         VALUES (?, ?, (SELECT COALESCE(MAX(x.ordre), 0) + 1 FROM medicament_molecules x WHERE x.medicament_id = ?), 'manuel')`,
+        [medicamentId, moleculeId, medicamentId],
+      );
+    } else {
+      await conn.execute('DELETE FROM medicament_molecules WHERE medicament_id = ? AND molecule_id = ?', [
+        medicamentId,
+        moleculeId,
+      ]);
+    }
+    await majLiaison(conn, medicamentId);
+    const apres = await etatMedicament(q, medicamentId);
+    if (rubriquesModifiees(avant, apres).length) {
+      await logModification(conn, {
+        userId: req.editor.id,
+        entite: 'medicament',
+        entiteId: medicamentId,
+        action: 'modification',
+        resume: `${ajouter ? 'Lié à' : 'Délié de'} ${mo.dci}`.slice(0, 300),
+        avant,
+        apres,
+      });
+    }
+  });
+}
+
+router.post(
+  '/admin/molecules/:id/produits',
+  asyncHandler(async (req, res) => {
+    await changerLien(req, true);
+    res.status(201).json({ ok: true });
+  }),
+);
+
+router.delete(
+  '/admin/molecules/:id/produits/:medicamentId',
+  asyncHandler(async (req, res) => {
+    await changerLien(req, false);
+    res.status(204).end();
   }),
 );
 

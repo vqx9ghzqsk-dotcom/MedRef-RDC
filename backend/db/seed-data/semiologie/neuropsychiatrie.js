@@ -38,7 +38,8 @@ module.exports = {
       {
         nom: 'État de mal de l’enfant et convulsions fébriles prolongées',
         type: 'terrain',
-        description: 'Chez l’enfant, la fièvre et les infections du système nerveux sont les causes principales.',
+        description:
+          'Chez l’enfant, la fièvre et les infections du système nerveux sont les causes principales.',
         terrain: '- Enfant de 6 mois à 5 ans, fièvre, zone d’endémie palustre',
         fonctionnels: '- Fièvre, vomissements, diarrhée avant les crises',
         generaux: '- Fièvre élevée, signes de déshydratation possibles',
@@ -76,14 +77,16 @@ module.exports = {
       {
         nom: 'Épilepsie généralisée (crises tonico-cloniques)',
         type: 'commune',
-        description: 'Crises récurrentes non provoquées d’emblée bilatérales, dont la plus connue est la crise tonico-clonique.',
+        description:
+          'Crises récurrentes non provoquées d’emblée bilatérales, dont la plus connue est la crise tonico-clonique.',
         terrain:
           '- Antécédents familiaux, souffrance néonatale, convulsions fébriles complexes\n- Facteurs déclenchants : manque de sommeil, alcool, arrêt du traitement, stimulation lumineuse',
         fonctionnels: '- Parfois prodromes vagues (irritabilité, céphalées) ; pas d’aura',
         generaux: '- Entre les crises : examen normal',
         physiques:
           '- **Crise tonico-clonique** : perte de connaissance brutale, chute, phase tonique, phase clonique, phase résolutive avec stertor\n- Morsure latérale de langue, perte d’urines, confusion post-critique\n- **Absences** (enfant) : rupture de contact brève de quelques secondes, regard fixe\n- **Myoclonies** : secousses brèves, matinales',
-        paraclinique: '- EEG intercritique : pointes-ondes généralisées (peut être normal)\n- Imagerie si crise atypique ou signe focal',
+        paraclinique:
+          '- EEG intercritique : pointes-ondes généralisées (peut être normal)\n- Imagerie si crise atypique ou signe focal',
         etiologies:
           '- **Génétiques** (idiopathiques) : épilepsie-absences, épilepsie myoclonique juvénile\n- **Structurelles** et **infectieuses** à éliminer selon le contexte',
         syndromes: ['syndrome-convulsif'],
@@ -92,13 +95,16 @@ module.exports = {
       {
         nom: 'Épilepsie focale (partielle)',
         type: 'topographique',
-        description: 'Crises naissant d’une zone du cerveau ; la sémiologie dépend de cette zone et oriente vers une lésion.',
-        terrain: '- Antécédent de méningite, de neuropaludisme, de traumatisme crânien, d’AVC, de neurocysticercose',
+        description:
+          'Crises naissant d’une zone du cerveau ; la sémiologie dépend de cette zone et oriente vers une lésion.',
+        terrain:
+          '- Antécédent de méningite, de neuropaludisme, de traumatisme crânien, d’AVC, de neurocysticercose',
         fonctionnels:
           '- **Aura** : sensation épigastrique ascendante, peur, déjà-vu (temporal), fourmillements (pariétal), éclairs (occipital)',
         physiques:
           '- Crise focale motrice (secousses d’un membre, marche bravais-jacksonienne), sensitive ou visuelle\n- Rupture de contact avec automatismes (mâchonnement, gestes stéréotypés) : temporale\n- Généralisation secondaire possible\n- Déficit post-critique transitoire (paralysie de Todd)',
-        paraclinique: '- EEG : anomalies focales\n- Imagerie cérébrale (scanner, IRM) : recherche d’une lésion',
+        paraclinique:
+          '- EEG : anomalies focales\n- Imagerie cérébrale (scanner, IRM) : recherche d’une lésion',
         etiologies:
           '- **Séquelles d’infections** : méningite, neuropaludisme, encéphalite\n- **Neurocysticercose** (*Taenia solium*), toxoplasmose (VIH)\n- **Vasculaires** : AVC, malformations ; **traumatiques** ; **tumorales** ; souffrance néonatale',
         syndromes: [],
@@ -135,7 +141,8 @@ module.exports = {
         nom: 'AVC ischémique carotidien (forme commune)',
         type: 'commune',
         description: 'Infarctus cérébral dans le territoire de l’artère cérébrale moyenne, le plus fréquent.',
-        terrain: '- HTA (1er facteur), diabète, tabac, dyslipidémie, fibrillation atriale, drépanocytose chez le jeune',
+        terrain:
+          '- HTA (1er facteur), diabète, tabac, dyslipidémie, fibrillation atriale, drépanocytose chez le jeune',
         fonctionnels: '- Déficit brutal, souvent au réveil ; trouble du langage ; céphalées rares',
         generaux: '- HTA fréquente à la phase aiguë',
         physiques:
@@ -154,12 +161,12 @@ module.exports = {
       {
         nom: 'AVC hémorragique (hématome intracérébral)',
         type: 'etiologique',
-        description: 'Saignement dans le parenchyme cérébral ; proportion plus élevée en Afrique subsaharienne.',
+        description:
+          'Saignement dans le parenchyme cérébral ; proportion plus élevée en Afrique subsaharienne.',
         terrain: '- HTA sévère mal contrôlée, alcool, anticoagulants, sujet plus jeune',
         fonctionnels: '- Céphalées brutales, vomissements, déficit d’installation rapide',
         generaux: '- HTA très élevée',
-        physiques:
-          '- Déficit neurologique focal, troubles de la conscience précoces\n- Signes d’HTIC',
+        physiques: '- Déficit neurologique focal, troubles de la conscience précoces\n- Signes d’HTIC',
         paraclinique: '- Scanner : hyperdensité spontanée intraparenchymateuse',
         etiologies:
           '- HTA (hématomes profonds : noyaux gris, thalamus, cervelet)\n- Malformations vasculaires, troubles de l’hémostase, anticoagulants, angiopathie amyloïde (sujet âgé)',
@@ -171,7 +178,8 @@ module.exports = {
         type: 'topographique',
         description: 'Atteinte du tronc cérébral ou du cervelet, avec signes croisés ou cérébelleux.',
         terrain: '- Mêmes facteurs de risque vasculaire',
-        fonctionnels: '- Vertiges, troubles de l’équilibre, vision double (diplopie), troubles de la déglutition',
+        fonctionnels:
+          '- Vertiges, troubles de l’équilibre, vision double (diplopie), troubles de la déglutition',
         generaux: '- Vomissements',
         physiques:
           '- **Syndrome alterne** : atteinte d’un nerf crânien d’un côté, déficit moteur ou sensitif de l’autre\n- Syndrome cérébelleux (ataxie, dysmétrie), nystagmus\n- Dysarthrie, troubles de la déglutition',
@@ -183,7 +191,8 @@ module.exports = {
       {
         nom: 'Accident ischémique transitoire (AIT)',
         type: 'evolutive',
-        description: 'Déficit neurologique régressant totalement, généralement en moins d’une heure, sans lésion à l’imagerie : alerte majeure.',
+        description:
+          'Déficit neurologique régressant totalement, généralement en moins d’une heure, sans lésion à l’imagerie : alerte majeure.',
         terrain: '- Facteurs de risque vasculaire',
         fonctionnels: '- Déficit transitoire, cécité monoculaire transitoire (amaurose fugace)',
         physiques: '- Examen normal après l’épisode',

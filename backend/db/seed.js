@@ -3,6 +3,7 @@
 const data = require('./seed-data');
 const { slugify } = require('../src/utils/slugify');
 const { chargerSemiologie } = require('./semiologie');
+const { chargerCatalogues } = require('./catalogues');
 
 /** Référence à une fiche par son slug (sinon : libellé libre). */
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -370,9 +371,12 @@ async function seed(conn) {
 
   // Formes cliniques, sémiologie, syndromes, glossaire, signes d'alerte des urgences
   const semiologie = await chargerSemiologie(conn, data);
+  // Produits des catalogues de firmes (photos, fiches), liés aux molécules quand c'est sûr
+  const catalogues = await chargerCatalogues(conn, data.catalogues);
 
   return {
     semiologie,
+    catalogues,
     departements: data.departements.length,
     pathologies: data.pathologies.length,
     molecules: data.molecules.length,

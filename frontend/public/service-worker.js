@@ -11,6 +11,8 @@
 
 const VERSION = 'medref-v2';
 const API_CACHE = 'medref-api-v1';
+// Photos des produits : cache d'abord (noms uniques), conservées pour le hors ligne
+const MEDIAS_CACHE = 'medref-medias-v1';
 const DELAI_RESEAU_MS = 5000;
 const API_PRIVEES = ['/api/auth', '/api/prescriptions', '/api/admin', '/api/journal'];
 const SHELL = [
@@ -36,7 +38,9 @@ self.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((k) => k !== VERSION && k !== API_CACHE).map((k) => caches.delete(k))),
+        Promise.all(
+          keys.filter((k) => ![VERSION, API_CACHE, MEDIAS_CACHE].includes(k)).map((k) => caches.delete(k)),
+        ),
       )
       .then(() => self.clients.claim()),
   );
@@ -47,6 +51,10 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/medias/')) {
+    event.respondWith(cacheDabord(request));
+    return;
+  }
   if (url.pathname.startsWith('/api/')) {
     if (API_PRIVEES.some((p) => url.pathname.startsWith(p))) return;
     event.respondWith(reseauPuisCache(request));
@@ -102,4 +110,14 @@ async function reseauPuisCache(request) {
     // réseau indisponible : on sert la copie locale
   }
   return enCache;
+}
+
+/** Photos : servies depuis le cache si déjà vues, sinon téléchargées puis gardées. */
+async function cacheDabord(request) {
+  const cache = await caches.open(MEDIAS_CACHE);
+  const enCache = await cache.match(request);
+  if (enCache) return enCache;
+  const response = await fetch(request);
+  if (response.ok) cache.put(request, response.clone());
+  return response;
 }

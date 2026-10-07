@@ -420,6 +420,29 @@ référence (spécialité, molécule, examen, source, fiche…) n'existe pas.
 Les niveaux de soins sont dans `seed-data/niveaux.js`, les grades dans `seed-data/grades.js` (seuls les grades vérifiés
 dans la source sont renseignés) et les posologies structurées dans `seed-data/posologies.js`.
 
+**Catalogues des firmes.** Les catalogues Word des firmes (Arauphar, Denk Pharma, New Cesamex, PrincePharma, Shalina
+Healthcare, Unique Pharma) sont convertis par un script Python (python-docx et Pillow) :
+
+```bash
+cd backend
+python scripts/catalogues/extraire_catalogues.py "C:/chemin/Catalogues" Catalogue_Firme.docx
+npm run db:enrichir
+```
+
+Le script produit `seed-data/catalogues/<firme>.json` (nom, présentation, DCI, composition, mécanisme, indications,
+repère posologique, classe, forme, « adapté à l'enfant ») et les photos optimisées `medias/produits/<firme>/` (WebP
+800 px et vignette 240 px). L'import rattache chaque produit aux molécules de MedRef RDC uniquement quand la
+correspondance est sûre (`db/correspondance.js` : nom exact après retrait des doses et des sels, synonymes) ; les
+solutés ne sont jamais rattachés automatiquement. Chaque produit a un état de liaison : _vérifiée_, _automatique_,
+_partielle_ (une partie des principes actifs) ou _à lier_. Dans /admin, l'onglet « Catalogue des firmes » liste les
+produits à lier, permet de créer une molécule absente (les produits qui la contiennent sont alors liés aussitôt) et
+de relancer le rapprochement ; la fiche d'une molécule propose les produits du catalogue qui la citent. Un produit
+déjà importé n'est jamais réécrit par un nouvel import.
+
+Sur la fiche d'une molécule, la galerie « Produits disponibles chez les firmes » montre les photos (seule, puis en
+association), filtrables par forme, firme et « adapté à l'enfant » ; un clic sur le nom ouvre la fiche du produit en
+panneau latéral. L'onglet Thérapeutique des pathologies montre les mêmes produits en vignettes.
+
 **Formes cliniques et sémiologie.** `seed-data/semiologie/` décrit, pour chaque fiche, ses formes cliniques (commune,
 grave, selon le terrain, topographique, évolutive, paraclinique, étiologique). Chaque forme a sa sémiologie
 systématisée (terrain, signes fonctionnels, généraux, physiques, paraclinique), ses syndromes, ses examens de

@@ -61,6 +61,18 @@ function createApp() {
   );
   app.use(express.json({ limit: '1mb' }));
 
+  // Photos des produits (catalogues) : noms uniques par produit, donc cache long
+  app.use(
+    '/medias',
+    express.static(path.join(__dirname, '..', 'medias'), {
+      maxAge: '30d',
+      fallthrough: false,
+      setHeaders(res) {
+        res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      },
+    }),
+  );
+
   app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'medref-rdc-api' }));
 
   app.use('/api', limiter(1000));

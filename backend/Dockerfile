@@ -6,6 +6,7 @@ RUN npm install --omit=dev --no-audit --no-fund
 COPY src ./src
 COPY db ./db
 COPY scripts ./scripts
+COPY medias ./medias
 RUN mkdir -p /data/backups /data/logs && chown -R node:node /data
 USER node
 EXPOSE 4000

@@ -18,12 +18,12 @@ module.exports = {
       {
         nom: 'Marasme (malnutrition sans œdème)',
         type: 'commune',
-        description: 'Émaciation majeure par déficit global d’apport énergétique, avec fonte musculaire et adipeuse.',
+        description:
+          'Émaciation majeure par déficit global d’apport énergétique, avec fonte musculaire et adipeuse.',
         terrain:
           '- Enfant de 6 à 59 mois, sevrage précoce ou brutal, insécurité alimentaire, conflits, déplacés\n- Infections répétées (diarrhée, rougeole, tuberculose, VIH)',
         fonctionnels: '- Appétit souvent conservé (« enfant affamé »), irritabilité',
-        generaux:
-          '- Amaigrissement extrême, aspect de « petit vieillard »\n- Hypothermie possible',
+        generaux: '- Amaigrissement extrême, aspect de « petit vieillard »\n- Hypothermie possible',
         physiques:
           '- **Anthropométrie** : P/T < −3 z-score et/ou périmètre brachial < 115 mm\n- Fonte musculaire (fesses « en culotte flottante », côtes visibles), peau fripée\n- Absence d’œdème',
         paraclinique:
@@ -39,8 +39,10 @@ module.exports = {
       {
         nom: 'Kwashiorkor (malnutrition œdémateuse)',
         type: 'commune',
-        description: 'Malnutrition aiguë sévère définie par des œdèmes bilatéraux prenant le godet, quel que soit le poids.',
-        terrain: '- Enfant de 1 à 3 ans, sevrage vers une alimentation pauvre en protéines (bouillies), infections',
+        description:
+          'Malnutrition aiguë sévère définie par des œdèmes bilatéraux prenant le godet, quel que soit le poids.',
+        terrain:
+          '- Enfant de 1 à 3 ans, sevrage vers une alimentation pauvre en protéines (bouillies), infections',
         fonctionnels: '- Anorexie, apathie, irritabilité, diarrhée',
         generaux: '- Poids parfois peu abaissé (masqué par les œdèmes)',
         physiques:
@@ -54,14 +56,16 @@ module.exports = {
       {
         nom: 'Malnutrition aiguë sévère compliquée',
         type: 'gravite',
-        description: 'MAS avec perte d’appétit ou complication médicale : hospitalisation (unité nutritionnelle thérapeutique).',
+        description:
+          'MAS avec perte d’appétit ou complication médicale : hospitalisation (unité nutritionnelle thérapeutique).',
         terrain: '- Tout enfant MAS ; kwashiorkor-marasme (forme mixte), nourrisson < 6 mois',
         fonctionnels: '- Test de l’appétit échoué, vomissements, diarrhée profuse',
         generaux: '- Hypothermie (< 35,5 °C) ou fièvre, léthargie',
         physiques:
           '- Œdèmes +++, détresse respiratoire, déshydratation, lésions cutanées étendues\n- Signes de danger PCIME, pâleur sévère, signes oculaires de carence en vitamine A',
         paraclinique: '- Hypoglycémie, anémie sévère, infections (paludisme, pneumonie, sepsis)',
-        etiologies: '- Infections intercurrentes, déséquilibres hydro-électrolytiques, carences en micronutriments',
+        etiologies:
+          '- Infections intercurrentes, déséquilibres hydro-électrolytiques, carences en micronutriments',
         syndromes: ['syndrome-infectieux', 'syndrome-de-deshydratation-extracellulaire'],
         examens: [
           ['nfs', 'Anémie sévère : transfusion prudente.'],
@@ -82,12 +86,15 @@ module.exports = {
         nom: 'Diarrhée aqueuse aiguë (forme commune)',
         type: 'commune',
         description: '≥ 3 selles liquides par jour depuis moins de 14 jours, sans sang.',
-        terrain: '- Enfant de moins de 5 ans, eau non potable, hygiène des mains, sevrage, rotavirus avant vaccination',
-        fonctionnels: '- Selles liquides fréquentes, vomissements, douleurs abdominales, refus de boire ou soif',
+        terrain:
+          '- Enfant de moins de 5 ans, eau non potable, hygiène des mains, sevrage, rotavirus avant vaccination',
+        fonctionnels:
+          '- Selles liquides fréquentes, vomissements, douleurs abdominales, refus de boire ou soif',
         generaux: '- Fièvre modérée possible',
         physiques:
           '- **Classer la déshydratation (PCIME)** :\n  - pas de déshydratation visible\n  - signes évidents : agité, irritable, yeux enfoncés, boit avidement, pli cutané lent\n  - sévère : léthargique, yeux enfoncés, boit difficilement, pli cutané très lent\n- Peser l’enfant (perte de poids)',
-        paraclinique: '- Pas d’examen systématique ; TDR paludisme si fièvre ; ionogramme si déshydratation sévère',
+        paraclinique:
+          '- Pas d’examen systématique ; TDR paludisme si fièvre ; ionogramme si déshydratation sévère',
         etiologies:
           '- **Virales** (les plus fréquentes) : rotavirus, norovirus, adénovirus\n- **Bactériennes** : *E. coli* entérotoxinogène, *Vibrio cholerae*\n- **Parasitaires** : *Giardia*, *Cryptosporidium* (VIH)\n- **Extra-digestives** : paludisme, otite, infection urinaire',
         syndromes: ['syndrome-de-deshydratation-extracellulaire', 'syndrome-choleriforme'],
@@ -130,7 +137,8 @@ module.exports = {
         nom: 'Pneumonie (forme commune PCIME)',
         type: 'commune',
         description: 'Toux ou difficulté respiratoire avec respiration rapide, sans signe de gravité.',
-        terrain: '- Enfant de moins de 5 ans, malnutrition, VIH, fumée domestique, non vacciné (pneumocoque, Hib, rougeole)',
+        terrain:
+          '- Enfant de moins de 5 ans, malnutrition, VIH, fumée domestique, non vacciné (pneumocoque, Hib, rougeole)',
         fonctionnels: '- Toux, difficulté respiratoire, refus de s’alimenter',
         generaux: '- Fièvre',
         physiques:

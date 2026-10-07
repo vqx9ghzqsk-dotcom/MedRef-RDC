@@ -5,7 +5,7 @@ import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { RichText } from '../components/RichText.jsx';
-import { ProduitList } from '../components/Pharmaco.jsx';
+import { VignettesProduits } from '../components/Produits.jsx';
 import {
   CATEGORIES_EXAMEN,
   FREQUENCES,
@@ -270,9 +270,9 @@ function MoleculeBlock({ molecule }) {
       </div>
       {molecule.contexte && <p className="molecule-contexte">{molecule.contexte}</p>}
       {molecule.produits.length > 0 && (
-        <details className="molecule-produits">
-          <summary>
-            Produits par opérateur (
+        <div className="molecule-produits">
+          <p className="molecule-produits-titre">
+            Produits disponibles (
             {[
               seuls.length > 0 && `${seuls.length} seul${seuls.length > 1 ? 's' : ''}`,
               assoc.length > 0 && `${assoc.length} en association`,
@@ -280,9 +280,9 @@ function MoleculeBlock({ molecule }) {
               .filter(Boolean)
               .join(', ')}
             )
-          </summary>
-          <ProduitList produits={molecule.produits} />
-        </details>
+          </p>
+          <VignettesProduits produits={molecule.produits} slug={molecule.slug} />
+        </div>
       )}
     </li>
   );

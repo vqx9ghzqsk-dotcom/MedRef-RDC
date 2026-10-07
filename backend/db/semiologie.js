@@ -12,15 +12,32 @@
 
 const { slugify } = require('../src/utils/slugify');
 
-const TYPES_FORME = ['commune', 'gravite', 'terrain', 'topographique', 'evolutive', 'paraclinique', 'etiologique'];
-const RUBRIQUES = ['description', 'terrain', 'fonctionnels', 'generaux', 'physiques', 'paraclinique', 'etiologies'];
+const TYPES_FORME = [
+  'commune',
+  'gravite',
+  'terrain',
+  'topographique',
+  'evolutive',
+  'paraclinique',
+  'etiologique',
+];
+const RUBRIQUES = [
+  'description',
+  'terrain',
+  'fonctionnels',
+  'generaux',
+  'physiques',
+  'paraclinique',
+  'etiologies',
+];
 
 /** Vérifie la cohérence interne des données avant toute écriture. */
 function verifier(data) {
   const erreurs = [];
   const syndromes = new Set(data.syndromes.map((s) => s.slug));
   for (const g of data.glossaire) {
-    if (g.syndrome && !syndromes.has(g.syndrome)) erreurs.push(`glossaire « ${g.terme} » : syndrome ${g.syndrome}`);
+    if (g.syndrome && !syndromes.has(g.syndrome))
+      erreurs.push(`glossaire « ${g.terme} » : syndrome ${g.syndrome}`);
   }
   for (const [slug, fiche] of Object.entries(data.semiologie)) {
     if (!fiche.formes?.length) erreurs.push(`${slug} : aucune forme`);
@@ -32,7 +49,8 @@ function verifier(data) {
           erreurs.push(`${slug} / ${f.nom} : rubrique inconnue ${k}`);
         }
       }
-      for (const s of f.syndromes || []) if (!syndromes.has(s)) erreurs.push(`${slug} / ${f.nom} : syndrome ${s}`);
+      for (const s of f.syndromes || [])
+        if (!syndromes.has(s)) erreurs.push(`${slug} / ${f.nom} : syndrome ${s}`);
     }
   }
   if (erreurs.length) throw new Error(`Sémiologie : références invalides\n  - ${erreurs.join('\n  - ')}`);
@@ -53,12 +71,10 @@ async function chargerSemiologie(conn, data) {
   const syndromes = await ids('SELECT id, slug AS k FROM syndromes');
   for (const s of data.syndromes) {
     if (syndromes.has(s.slug)) continue;
-    const [r] = await conn.execute('INSERT INTO syndromes (nom, slug, definition, elements) VALUES (?, ?, ?, ?)', [
-      s.nom,
-      s.slug,
-      s.definition,
-      s.elements || null,
-    ]);
+    const [r] = await conn.execute(
+      'INSERT INTO syndromes (nom, slug, definition, elements) VALUES (?, ?, ?, ?)',
+      [s.nom, s.slug, s.definition, s.elements || null],
+    );
     syndromes.set(s.slug, r.insertId);
     for (const nom of s.symptomes || []) {
       await q('INSERT INTO syndrome_symptomes (syndrome_id, symptome_id) VALUES (?, ?)', [
@@ -76,7 +92,13 @@ async function chargerSemiologie(conn, data) {
     if (termes.has(slug)) continue;
     const [r] = await conn.execute(
       'INSERT INTO glossaire (terme, slug, variantes, definition, syndrome_id) VALUES (?, ?, ?, ?, ?)',
-      [g.terme, slug, (g.variantes || []).join('|') || null, g.definition, g.syndrome ? syndromes.get(g.syndrome) : null],
+      [
+        g.terme,
+        slug,
+        (g.variantes || []).join('|') || null,
+        g.definition,
+        g.syndrome ? syndromes.get(g.syndrome) : null,
+      ],
     );
     termes.set(slug, r.insertId);
     compte.glossaire += 1;
@@ -88,7 +110,9 @@ async function chargerSemiologie(conn, data) {
   const urgences = await ids('SELECT id, slug AS k FROM urgences');
   for (const [slug, fiche] of Object.entries(data.semiologie)) {
     const pathologieId = need(pathologies, slug, 'fiche', 'semiologie');
-    const [{ n }] = await q('SELECT COUNT(*) AS n FROM pathologie_formes WHERE pathologie_id = ?', [pathologieId]);
+    const [{ n }] = await q('SELECT COUNT(*) AS n FROM pathologie_formes WHERE pathologie_id = ?', [
+      pathologieId,
+    ]);
     if (Number(n) > 0) {
       compte.fiches_conservees += 1;
     } else {
@@ -119,12 +143,15 @@ async function chargerSemiologie(conn, data) {
           ]);
         }
         for (const [j, [examen, interpretation]] of (f.examens || []).entries()) {
-          await q('INSERT INTO forme_examens (forme_id, examen_id, interpretation, ordre) VALUES (?, ?, ?, ?)', [
-            r.insertId,
-            need(examens, examen, 'examen', `${slug} / ${f.nom}`),
-            interpretation || null,
-            j + 1,
-          ]);
+          await q(
+            'INSERT INTO forme_examens (forme_id, examen_id, interpretation, ordre) VALUES (?, ?, ?, ?)',
+            [
+              r.insertId,
+              need(examens, examen, 'examen', `${slug} / ${f.nom}`),
+              interpretation || null,
+              j + 1,
+            ],
+          );
         }
         compte.formes += 1;
       }
@@ -133,10 +160,10 @@ async function chargerSemiologie(conn, data) {
 
     for (const [urgence, signes] of Object.entries(fiche.urgences || {})) {
       const urgenceId = need(urgences, urgence, 'urgence', slug);
-      const lien = await q('SELECT signes_alerte FROM pathologie_urgences WHERE pathologie_id = ? AND urgence_id = ?', [
-        pathologieId,
-        urgenceId,
-      ]);
+      const lien = await q(
+        'SELECT signes_alerte FROM pathologie_urgences WHERE pathologie_id = ? AND urgence_id = ?',
+        [pathologieId, urgenceId],
+      );
       if (!lien.length) throw new Error(`Sémiologie : ${slug} n'est pas liée à l'urgence « ${urgence} »`);
       if (lien[0].signes_alerte) continue;
       await q('UPDATE pathologie_urgences SET signes_alerte = ? WHERE pathologie_id = ? AND urgence_id = ?', [

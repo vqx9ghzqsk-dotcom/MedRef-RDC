@@ -1,0 +1,385 @@
+{
+ "firme": "Sanofi",
+ "source": "étiquetage officiel Sanofi / Genzyme / Bioverativ (DailyMed, NLM/FDA) ; gamme Sanofi Afrique (sanofi.com/fr/subsaharan-francophone-africa : distribution par E.P.DIS / Eurapharma) ; images : cartons/étiquettes officiels des notices",
+ "note": "Les visuels sont les maquettes de carton/étiquette déposées auprès de la FDA : ils identifient le produit mais l'emballage vendu en RDC peut différer. Les produits sans photo appartiennent à la gamme Sanofi historique en Afrique (marques locales hors DailyMed). Les vaccins (Sanofi Pasteur) et les produits de santé grand public (Opella : Doliprane, Maalox, Dulcolax...) ne sont pas inclus. Disponibilité en RDC : à confirmer pour chaque produit.",
+ "produits": [
+  {
+   "nom": "Avapro (Aprovel)",
+   "presentation": "Irbésartan 75 / 150 / 300 mg, comprimés pelliculés",
+   "mol": "irbesartan",
+   "image": "img_sanofi/avapro_aprovel.jpg"
+  },
+  {
+   "nom": "Avalide (CoAprovel)",
+   "presentation": "Irbésartan/hydrochlorothiazide, comprimés pelliculés",
+   "mol": "irbesartan-hctz",
+   "image": "img_sanofi/avalide_coaprovel.jpg"
+  },
+  {
+   "nom": "Rifadin",
+   "presentation": "Rifampicine 150 / 300 mg, gélules ; 600 mg poudre pour perfusion IV",
+   "mol": "rifampicine",
+   "image": "img_sanofi/rifadin.jpg"
+  },
+  {
+   "nom": "Dupixent",
+   "presentation": "Dupilumab 200 / 300 mg, seringue ou stylo prérempli SC",
+   "mol": "dupilumab",
+   "image": "img_sanofi/dupixent.jpg"
+  },
+  {
+   "nom": "Elitek",
+   "presentation": "Rasburicase 1,5 / 7,5 mg, poudre pour perfusion IV",
+   "mol": "rasburicase",
+   "image": "img_sanofi/elitek.jpg"
+  },
+  {
+   "nom": "Praluent",
+   "presentation": "Alirocumab 75 / 150 mg, stylo prérempli SC",
+   "mol": "alirocumab",
+   "image": "img_sanofi/praluent.jpg"
+  },
+  {
+   "nom": "Sarclisa",
+   "presentation": "Isatuximab 100 / 500 mg, solution à diluer pour perfusion IV",
+   "mol": "isatuximab",
+   "image": "img_sanofi/sarclisa.jpg"
+  },
+  {
+   "nom": "Sarclisa Escena (sous-cutané)",
+   "presentation": "Isatuximab, formulation sous-cutanée",
+   "mol": "isatuximab",
+   "image": "img_sanofi/sarclisa_escena_sous_cutan.jpg"
+  },
+  {
+   "nom": "Lovenox (Clexane)",
+   "presentation": "Énoxaparine 20-150 mg, seringues préremplies / flacons multidoses",
+   "mol": "enoxaparine",
+   "image": "img_sanofi/lovenox_clexane.jpg"
+  },
+  {
+   "nom": "Énoxaparine sodique (Winthrop)",
+   "presentation": "Énoxaparine, seringues préremplies — version générique du laboratoire",
+   "mol": "enoxaparine",
+   "image": "img_sanofi/noxaparine_sodique_winthrop.jpg"
+  },
+  {
+   "nom": "Soliqua 100/33",
+   "presentation": "Insuline glargine 100 U/mL + lixisénatide 33 µg/mL, stylo SC",
+   "mol": "insuline-glargine-lixisenatide",
+   "image": "img_sanofi/soliqua_100_33.jpg"
+  },
+  {
+   "nom": "Kevzara",
+   "presentation": "Sarilumab 150 / 200 mg, stylo/seringue préremplie SC",
+   "mol": "sarilumab",
+   "image": "img_sanofi/kevzara.jpg"
+  },
+  {
+   "nom": "Primaquine",
+   "presentation": "Primaquine phosphate 26,3 mg (15 mg base), comprimés pelliculés",
+   "mol": "primaquine",
+   "image": "img_sanofi/primaquine.jpg",
+   "ov": {}
+  },
+  {
+   "nom": "Priftin",
+   "presentation": "Rifapentine 150 mg, comprimés pelliculés",
+   "mol": "rifapentine",
+   "image": "img_sanofi/priftin.jpg"
+  },
+  {
+   "nom": "Sévélamer carbonate (Winthrop)",
+   "presentation": "Sévélamer carbonate 800 mg comprimés ; poudre pour suspension",
+   "mol": "sevelamer",
+   "image": "img_sanofi/s_v_lamer_carbonate_winthrop.jpg"
+  },
+  {
+   "nom": "Ferrlecit",
+   "presentation": "Gluconate ferrique de sodium 62,5 mg/5 mL, injectable IV",
+   "mol": "fer-gluconate-sodique",
+   "image": "img_sanofi/ferrlecit.jpg"
+  },
+  {
+   "nom": "Jevtana",
+   "presentation": "Cabazitaxel 60 mg/1,5 mL, solution à diluer pour perfusion IV",
+   "mol": "cabazitaxel",
+   "image": "img_sanofi/jevtana.jpg"
+  },
+  {
+   "nom": "Apidra / Apidra SoloStar",
+   "presentation": "Insuline glulisine 100 U/mL, flacon 10 mL ou stylo SoloStar",
+   "mol": "insuline-glulisine",
+   "image": "img_sanofi/apidra_apidra_solostar.jpg"
+  },
+  {
+   "nom": "Merilog",
+   "presentation": "Insuline asparte (biosimilaire) 100 U/mL, flacon/stylo",
+   "mol": "insuline-aspart",
+   "image": "img_sanofi/merilog.jpg"
+  },
+  {
+   "nom": "Zaltrap",
+   "presentation": "Ziv-aflibercept 100 / 200 mg, solution à diluer pour perfusion IV",
+   "mol": "aflibercept-ziv",
+   "image": "img_sanofi/zaltrap.jpg"
+  },
+  {
+   "nom": "Mozobil",
+   "presentation": "Plérixafor 24 mg/1,2 mL, solution injectable SC",
+   "mol": "plerixafor",
+   "image": "img_sanofi/mozobil.jpg"
+  },
+  {
+   "nom": "Insuline glargine U-300 (Winthrop)",
+   "presentation": "Insuline glargine 300 U/mL, stylo SC",
+   "mol": "insuline-glargine",
+   "image": "img_sanofi/insuline_glargine_u_300_winthrop.jpg"
+  },
+  {
+   "nom": "Lantus / Lantus SoloStar",
+   "presentation": "Insuline glargine 100 U/mL, flacon 10 mL ou stylo SoloStar 3 mL",
+   "mol": "insuline-glargine",
+   "image": "img_sanofi/lantus_lantus_solostar.jpg"
+  },
+  {
+   "nom": "Admelog",
+   "presentation": "Insuline lispro 100 U/mL, flacon ou stylo SoloStar",
+   "mol": "insuline-lispro",
+   "image": "img_sanofi/admelog.jpg"
+  },
+  {
+   "nom": "Multaq",
+   "presentation": "Dronédarone 400 mg, comprimés pelliculés",
+   "mol": "dronedarone",
+   "image": "img_sanofi/multaq.jpg"
+  },
+  {
+   "nom": "Toujeo / Toujeo Max",
+   "presentation": "Insuline glargine 300 U/mL, stylo SoloStar / DoubleStar",
+   "mol": "insuline-glargine",
+   "image": "img_sanofi/toujeo_toujeo_max.jpg"
+  },
+  {
+   "nom": "Plavix",
+   "presentation": "Clopidogrel 75 / 300 mg, comprimés pelliculés",
+   "mol": "clopidogrel",
+   "image": "img_sanofi/plavix.jpg"
+  },
+  {
+   "nom": "Arava",
+   "presentation": "Léflunomide 10 / 20 / 100 mg, comprimés pelliculés",
+   "mol": "leflunomide",
+   "image": "img_sanofi/arava.jpg"
+  },
+  {
+   "nom": "Fexinidazole Winthrop",
+   "presentation": "Fexinidazole 600 mg, comprimés",
+   "mol": "fexinidazole",
+   "image": "img_sanofi/fexinidazole_winthrop.jpg"
+  },
+  {
+   "nom": "Ambien (Stilnox)",
+   "presentation": "Zolpidem tartrate 5 / 10 mg, comprimés pelliculés",
+   "mol": "zolpidem",
+   "image": "img_sanofi/ambien_stilnox.jpg"
+  },
+  {
+   "nom": "Docétaxel (Winthrop)",
+   "presentation": "Docétaxel 20-160 mg, solution à diluer pour perfusion IV",
+   "mol": "docetaxel",
+   "image": "img_sanofi/doc_taxel_winthrop.jpg"
+  },
+  {
+   "nom": "Aldurazyme",
+   "presentation": "Laronidase 100 U/5 mL, perfusion IV",
+   "mol": "laronidase",
+   "image": "img_sanofi/aldurazyme.jpg"
+  },
+  {
+   "nom": "Cerezyme",
+   "presentation": "Imiglucérase 400 U, poudre pour perfusion IV",
+   "mol": "imiglucerase",
+   "image": "img_sanofi/cerezyme.jpg"
+  },
+  {
+   "nom": "Thymoglobuline",
+   "presentation": "Immunoglobuline anti-thymocytes de lapin 25 mg, poudre pour perfusion IV",
+   "mol": "thymoglobuline",
+   "image": "img_sanofi/thymoglobuline.jpg"
+  },
+  {
+   "nom": "Cablivi",
+   "presentation": "Caplacizumab 10 mg, kit injectable IV/SC",
+   "mol": "caplacizumab",
+   "image": "img_sanofi/cablivi.jpg"
+  },
+  {
+   "nom": "Caprelsa",
+   "presentation": "Vandétanib 100 / 300 mg, comprimés pelliculés",
+   "mol": "vandetanib",
+   "image": "img_sanofi/caprelsa.jpg"
+  },
+  {
+   "nom": "Aubagio",
+   "presentation": "Tériflunomide 7 / 14 mg, comprimés pelliculés",
+   "mol": "teriflunomide",
+   "image": "img_sanofi/aubagio.jpg"
+  },
+  {
+   "nom": "Xenpozyme",
+   "presentation": "Olipudase alfa 20 mg, poudre pour perfusion IV",
+   "mol": "olipudase",
+   "image": "img_sanofi/xenpozyme.jpg"
+  },
+  {
+   "nom": "Renvela",
+   "presentation": "Sévélamer carbonate 800 mg comprimés ; poudre pour suspension orale",
+   "mol": "sevelamer",
+   "image": "img_sanofi/renvela.jpg"
+  },
+  {
+   "nom": "Campath",
+   "presentation": "Alemtuzumab 30 mg, perfusion IV",
+   "mol": "alemtuzumab",
+   "image": "img_sanofi/campath.jpg"
+  },
+  {
+   "nom": "Lemtrada",
+   "presentation": "Alemtuzumab 12 mg, solution à diluer pour perfusion IV",
+   "mol": "alemtuzumab",
+   "image": "img_sanofi/lemtrada.jpg"
+  },
+  {
+   "nom": "Qfitlia",
+   "presentation": "Fitusiran, solution injectable SC",
+   "mol": "fitusiran",
+   "image": "img_sanofi/qfitlia.jpg"
+  },
+  {
+   "nom": "Wayrilz",
+   "presentation": "Rilzabrutinib 400 mg, comprimés pelliculés",
+   "mol": "rilzabrutinib",
+   "image": "img_sanofi/wayrilz.jpg"
+  },
+  {
+   "nom": "Fabrazyme",
+   "presentation": "Agalsidase bêta 5 / 35 mg, poudre pour perfusion IV",
+   "mol": "agalsidase",
+   "image": "img_sanofi/fabrazyme.jpg"
+  },
+  {
+   "nom": "Nexviazyme",
+   "presentation": "Avalglucosidase alfa 100 mg, poudre pour perfusion IV",
+   "mol": "avalglucosidase",
+   "image": "img_sanofi/nexviazyme.jpg"
+  },
+  {
+   "nom": "Lumizyme",
+   "presentation": "Alglucosidase alfa 50 mg, poudre pour perfusion IV",
+   "mol": "alglucosidase",
+   "image": "img_sanofi/lumizyme.jpg"
+  },
+  {
+   "nom": "Cerdelga",
+   "presentation": "Éliglustat 84 mg, gélules",
+   "mol": "eliglustat",
+   "image": "img_sanofi/cerdelga.jpg"
+  },
+  {
+   "nom": "Thyrogen",
+   "presentation": "Thyrotropine alfa 0,9 mg, poudre pour injection IM",
+   "mol": "thyrotropine",
+   "image": "img_sanofi/thyrogen.jpg"
+  },
+  {
+   "nom": "Altuviiio",
+   "presentation": "Facteur VIII recombinant (efanesoctocog alfa), kit IV",
+   "mol": "facteur-viii-fc",
+   "image": "img_sanofi/altuviiio.jpg"
+  },
+  {
+   "nom": "Alprolix",
+   "presentation": "Facteur IX recombinant Fc, kit IV",
+   "mol": "facteur-ix-fc",
+   "image": "img_sanofi/alprolix.jpg"
+  },
+  {
+   "nom": "Enjaymo",
+   "presentation": "Sutimlimab 1100 mg/22 mL, perfusion IV",
+   "mol": "sutimlimab",
+   "image": "img_sanofi/enjaymo.jpg"
+  },
+  {
+   "nom": "Eloctate",
+   "presentation": "Facteur VIII recombinant Fc, kit IV",
+   "mol": "facteur-viii-fc",
+   "image": "img_sanofi/eloctate.jpg"
+  },
+  {
+   "nom": "Lasix",
+   "presentation": "Furosémide 40 mg comprimés ; 20 mg/2 mL injectable — gamme Sanofi Afrique (pas de photo)",
+   "mol": "furosemide"
+  },
+  {
+   "nom": "Daonil",
+   "presentation": "Glibenclamide 5 mg, comprimés — gamme Sanofi Afrique (pas de photo)",
+   "mol": "glibenclamide"
+  },
+  {
+   "nom": "Amarel (Amaryl)",
+   "presentation": "Glimépiride 1 / 2 / 3 / 4 mg, comprimés — gamme Sanofi Afrique (pas de photo)",
+   "mol": "glimepiride"
+  },
+  {
+   "nom": "Flagyl",
+   "presentation": "Métronidazole 250 / 500 mg comprimés ; suspension ; perfusion — gamme Sanofi Afrique (pas de photo)",
+   "mol": "metronidazole"
+  },
+  {
+   "nom": "Cordarone",
+   "presentation": "Amiodarone 200 mg comprimés ; 150 mg/3 mL injectable — gamme Sanofi Afrique (pas de photo)",
+   "mol": "amiodarone"
+  },
+  {
+   "nom": "Depakine",
+   "presentation": "Valproate de sodium comprimés gastro-résistants, solution buvable, injectable — gamme Sanofi Afrique (pas de photo)",
+   "mol": "valproate"
+  },
+  {
+   "nom": "Tavanic",
+   "presentation": "Lévofloxacine 250 / 500 mg, comprimés — gamme Sanofi Afrique (pas de photo)",
+   "mol": "levofloxacine"
+  },
+  {
+   "nom": "Nivaquine",
+   "presentation": "Chloroquine phosphate/sulfate, comprimés ; sirop — gamme Sanofi Afrique (pas de photo)",
+   "mol": "chloroquine"
+  },
+  {
+   "nom": "Rifinah",
+   "presentation": "Rifampicine/isoniazide 150/75 et 300/150 mg — gamme Sanofi Afrique (pas de photo)",
+   "mol": "rifampicine-isoniazide"
+  },
+  {
+   "nom": "Rifater",
+   "presentation": "Rifampicine 120 + isoniazide 50 + pyrazinamide 300 mg, comprimés — gamme Sanofi Afrique (pas de photo)",
+   "mol": "rifampicine-isoniazide-pyrazinamide"
+  },
+  {
+   "nom": "ASAQ Winthrop",
+   "presentation": "Artésunate + amodiaquine, comprimés par tranches de poids — Sanofi/DNDi (pas de photo)",
+   "mol": "artesunate-amodiaquine"
+  },
+  {
+   "nom": "Xatral",
+   "presentation": "Alfuzosine 10 mg, comprimés LP — gamme Sanofi Afrique (pas de photo)",
+   "mol": "alfuzosine"
+  },
+  {
+   "nom": "Tildiem",
+   "presentation": "Diltiazem 60 mg comprimés ; LP — gamme Sanofi Afrique (pas de photo)",
+   "mol": "diltiazem"
+  }
+ ]
+}

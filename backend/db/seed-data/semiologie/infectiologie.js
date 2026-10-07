@@ -47,7 +47,8 @@ module.exports = {
           'Coma (Glasgow < 11 chez l’adulte, Blantyre < 3 chez l’enfant) persistant plus de 30 min après une convulsion, sans autre cause.',
         terrain: '- Enfant de 6 mois à 5 ans en zone d’endémie ; adulte non immun',
         fonctionnels: '- Céphalées, agitation ou somnolence précédant le coma',
-        generaux: '- Fièvre élevée, parfois hypothermie\n- Respiration de Kussmaul fréquente (acidose associée)',
+        generaux:
+          '- Fièvre élevée, parfois hypothermie\n- Respiration de Kussmaul fréquente (acidose associée)',
         physiques:
           '- Coma calme, hypotonique, sans signe de localisation\n- Convulsions généralisées ou focales, parfois subtiles (mâchonnement, déviation du regard)\n- Opisthotonos, postures de décortication ou décérébration (formes graves)\n- Absence habituelle de raideur de nuque (à distinguer de la méningite)\n- Fond d’œil : rétinopathie palustre (blanchiment, hémorragies)',
         paraclinique:
@@ -63,13 +64,15 @@ module.exports = {
       {
         nom: 'Forme anémique de l’enfant',
         type: 'terrain',
-        description: 'Anémie sévère (Hb < 5 g/dL) avec parasitémie, première forme grave chez le jeune enfant en RDC.',
+        description:
+          'Anémie sévère (Hb < 5 g/dL) avec parasitémie, première forme grave chez le jeune enfant en RDC.',
         terrain: '- Enfant de moins de 5 ans, accès palustres répétés, malnutrition, drépanocytose',
         fonctionnels: '- Fatigue, refus de jouer, difficultés à téter ou à boire',
         generaux: '- Fièvre ou notion de fièvre\n- Tachycardie',
         physiques:
           '- Pâleur palmaire et conjonctivale intense\n- Polypnée, tirage (insuffisance cardiaque d’anémie)\n- Hépatomégalie, splénomégalie\n- Bruit de galop, souffle systolique fonctionnel',
-        paraclinique: '- Hb < 5 g/dL (hématocrite < 15 %), réticulocytes variables\n- Goutte épaisse positive',
+        paraclinique:
+          '- Hb < 5 g/dL (hématocrite < 15 %), réticulocytes variables\n- Goutte épaisse positive',
         etiologies:
           '- Hémolyse des hématies parasitées et non parasitées, dysérythropoïèse\n- Facteurs associés : carence martiale, helminthiases, malnutrition',
         syndromes: ['syndrome-anemique', 'syndrome-hemolytique'],
@@ -78,7 +81,8 @@ module.exports = {
       {
         nom: 'Paludisme grave de la femme enceinte',
         type: 'terrain',
-        description: 'Formes plus fréquentes et plus graves, surtout chez la primigeste et au 2e–3e trimestre.',
+        description:
+          'Formes plus fréquentes et plus graves, surtout chez la primigeste et au 2e–3e trimestre.',
         terrain: '- Grossesse (immunité diminuée), primigeste, VIH, absence de TPI',
         fonctionnels: '- Céphalées, vomissements, contractions utérines',
         generaux: '- Fièvre élevée, hypotension',
@@ -135,12 +139,14 @@ module.exports = {
       {
         nom: 'Paludisme viscéral évolutif',
         type: 'evolutive',
-        description: 'Forme subaiguë des infections répétées, chez l’enfant non immun soumis à des réinfections.',
+        description:
+          'Forme subaiguë des infections répétées, chez l’enfant non immun soumis à des réinfections.',
         terrain: '- Enfant en zone d’endémie, chimioprophylaxie inefficace ou irrégulière',
         fonctionnels: '- Asthénie, anorexie, dyspnée d’effort',
         generaux: '- Fébricule intermittent, amaigrissement, retard de croissance',
         physiques: '- Pâleur importante, splénomégalie volumineuse (stade III–IV de Hackett), parfois ictère',
-        paraclinique: '- Anémie, thrombopénie, hypergammaglobulinémie\n- Parasitémie faible, parfois négative',
+        paraclinique:
+          '- Anémie, thrombopénie, hypergammaglobulinémie\n- Parasitémie faible, parfois négative',
         etiologies: '- Réinfections répétées par *P. falciparum* (ou *P. vivax*)',
         syndromes: ['syndrome-anemique', 'syndrome-d-alteration-de-l-etat-general'],
         examens: [['echographie-abdominale', 'Mesure de la splénomégalie.']],
@@ -154,12 +160,14 @@ module.exports = {
       {
         nom: 'Infection asymptomatique (stade clinique OMS 1)',
         type: 'commune',
-        description: 'Phase de latence clinique, de plusieurs années, pendant laquelle le virus se réplique et les CD4 baissent.',
+        description:
+          'Phase de latence clinique, de plusieurs années, pendant laquelle le virus se réplique et les CD4 baissent.',
         terrain:
           '- Exposition sexuelle non protégée, transmission mère-enfant, transfusion ou matériel souillé\n- Dépistage : CPN, tuberculose, IST, partenaire séropositif',
         fonctionnels: '- Aucun symptôme ou symptômes discrets',
         generaux: '- État général conservé',
-        physiques: '- Polyadénopathie généralisée persistante possible (≥ 2 aires extra-inguinales, > 1 cm, > 3 mois)',
+        physiques:
+          '- Polyadénopathie généralisée persistante possible (≥ 2 aires extra-inguinales, > 1 cm, > 3 mois)',
         paraclinique: '- TDR VIH positifs (algorithme national à 2 ou 3 tests)\n- CD4 souvent > 500/mm³',
         etiologies: '- VIH-1 (très majoritaire en RDC) ; VIH-2 exceptionnel',
         syndromes: [],
@@ -171,7 +179,8 @@ module.exports = {
       {
         nom: 'Primo-infection symptomatique (syndrome rétroviral aigu)',
         type: 'evolutive',
-        description: 'Syndrome pseudo-grippal 2 à 6 semaines après la contamination ; période très contagieuse.',
+        description:
+          'Syndrome pseudo-grippal 2 à 6 semaines après la contamination ; période très contagieuse.',
         terrain: '- Exposition récente à risque',
         fonctionnels: '- Odynophagie, céphalées, myalgies, diarrhée',
         generaux: '- Fièvre, asthénie',
@@ -207,7 +216,8 @@ module.exports = {
       {
         nom: 'Infection VIH de l’enfant',
         type: 'terrain',
-        description: 'Transmission surtout mère-enfant ; évolution plus rapide que chez l’adulte sans traitement.',
+        description:
+          'Transmission surtout mère-enfant ; évolution plus rapide que chez l’adulte sans traitement.',
         terrain: '- Mère séropositive non traitée, allaitement sans prophylaxie',
         fonctionnels: '- Diarrhées et infections respiratoires récidivantes',
         generaux: '- Retard de croissance staturo-pondérale, malnutrition résistante au traitement',
@@ -226,7 +236,8 @@ module.exports = {
     urgences: {
       'syndrome-meninge-febrile':
         'Fièvre, céphalées intenses, raideur de nuque, vomissements en jet, fontanelle bombée chez le nourrisson',
-      'choc-septique': 'Purpura extensif, marbrures, extrémités froides, hypotension, troubles de la conscience',
+      'choc-septique':
+        'Purpura extensif, marbrures, extrémités froides, hypotension, troubles de la conscience',
     },
     formes: [
       {
@@ -253,7 +264,8 @@ module.exports = {
       {
         nom: 'Méningite du nourrisson et du nouveau-né',
         type: 'terrain',
-        description: 'Syndrome méningé souvent absent : tableau trompeur, à évoquer devant toute fièvre mal expliquée.',
+        description:
+          'Syndrome méningé souvent absent : tableau trompeur, à évoquer devant toute fièvre mal expliquée.',
         terrain: '- Nouveau-né (infection materno-fœtale), nourrisson non vacciné (Hib, pneumocoque)',
         fonctionnels: '- Refus de téter, vomissements, cri plaintif, geignement',
         generaux: '- Fièvre ou hypothermie, teint gris, léthargie ou irritabilité',
@@ -271,7 +283,8 @@ module.exports = {
       {
         nom: 'Purpura fulminans (méningococcémie)',
         type: 'gravite',
-        description: 'Purpura extensif avec choc septique : urgence absolue, antibiothérapie immédiate avant tout examen.',
+        description:
+          'Purpura extensif avec choc septique : urgence absolue, antibiothérapie immédiate avant tout examen.',
         terrain: '- Enfant, adolescent, adulte jeune ; épidémies à méningocoque',
         fonctionnels: '- Douleurs des membres, malaise brutal',
         generaux: '- Fièvre élevée, état de choc : tachycardie, hypotension, marbrures',
@@ -295,7 +308,8 @@ module.exports = {
       {
         nom: 'Forme typique (cholériforme)',
         type: 'commune',
-        description: 'Diarrhée aqueuse aiguë très abondante, entraînant une déshydratation en quelques heures.',
+        description:
+          'Diarrhée aqueuse aiguë très abondante, entraînant une déshydratation en quelques heures.',
         terrain:
           '- Zone d’épidémie (Kivu, Katanga, bassins des lacs et du fleuve), cas groupés\n- Eau non potable, absence d’assainissement, camps de déplacés\n- Incubation courte : quelques heures à 5 jours',
         fonctionnels:
@@ -316,7 +330,8 @@ module.exports = {
       {
         nom: 'Forme grave (choléra « sec » et choc hypovolémique)',
         type: 'gravite',
-        description: 'Déshydratation sévère avec choc ; dans le choléra « sec », le liquide s’accumule dans l’intestin avant la diarrhée.',
+        description:
+          'Déshydratation sévère avec choc ; dans le choléra « sec », le liquide s’accumule dans l’intestin avant la diarrhée.',
         terrain: '- Enfant, sujet âgé, malnutrition, retard de prise en charge',
         fonctionnels: '- Incapacité à boire, crampes intenses',
         generaux: '- État de choc : pouls imperceptible, hypotension, hypothermie',
@@ -330,7 +345,8 @@ module.exports = {
       {
         nom: 'Forme pauci-symptomatique',
         type: 'evolutive',
-        description: 'Diarrhée modérée, souvent méconnue ; porteurs participant à la diffusion de l’épidémie.',
+        description:
+          'Diarrhée modérée, souvent méconnue ; porteurs participant à la diffusion de l’épidémie.',
         terrain: '- Contacts familiaux d’un cas, sujets partiellement immuns',
         fonctionnels: '- Diarrhée aqueuse modérée',
         generaux: '- Absence de fièvre',
@@ -372,21 +388,25 @@ module.exports = {
       {
         nom: 'Tuberculose chez la personne vivant avec le VIH',
         type: 'terrain',
-        description: 'Présentation atypique, souvent extra-pulmonaire ou disséminée, crachats fréquemment négatifs.',
+        description:
+          'Présentation atypique, souvent extra-pulmonaire ou disséminée, crachats fréquemment négatifs.',
         terrain: '- VIH, surtout si CD4 < 200/mm³',
         fonctionnels: '- Toux parfois courte ou absente, dyspnée',
         generaux: '- Fièvre prolongée, amaigrissement important',
-        physiques: '- Adénopathies, hépatosplénomégalie, épanchements des séreuses (plèvre, péricarde, péritoine)',
+        physiques:
+          '- Adénopathies, hépatosplénomégalie, épanchements des séreuses (plèvre, péricarde, péritoine)',
         paraclinique:
           '- Radiographie atypique : opacités des bases, miliaire, adénopathies médiastinales, parfois normale\n- TB-LAM urinaire, Xpert sur crachats et autres prélèvements',
-        etiologies: '- Réactivation d’une infection latente ou réinfection, favorisées par l’immunodépression',
+        etiologies:
+          '- Réactivation d’une infection latente ou réinfection, favorisées par l’immunodépression',
         syndromes: ['syndrome-d-alteration-de-l-etat-general'],
         examens: [['tb-lam', 'Utile si CD4 bas ou patient grave.']],
       },
       {
         nom: 'Miliaire tuberculeuse',
         type: 'gravite',
-        description: 'Dissémination hématogène avec atteinte pulmonaire micronodulaire diffuse ; forme grave.',
+        description:
+          'Dissémination hématogène avec atteinte pulmonaire micronodulaire diffuse ; forme grave.',
         terrain: '- Jeune enfant non vacciné, immunodéprimé (VIH), malnutrition',
         fonctionnels: '- Dyspnée progressive, toux sèche, céphalées (méningite associée)',
         generaux: '- Fièvre élevée en plateau, altération rapide de l’état général',
@@ -400,7 +420,8 @@ module.exports = {
       {
         nom: 'Tuberculose de l’enfant',
         type: 'terrain',
-        description: 'Souvent paucibacillaire : diagnostic sur un faisceau d’arguments (contage, clinique, radiographie).',
+        description:
+          'Souvent paucibacillaire : diagnostic sur un faisceau d’arguments (contage, clinique, radiographie).',
         terrain: '- Contact familial d’un adulte tuberculeux, malnutrition, VIH',
         fonctionnels: '- Toux persistante, wheezing (compression bronchique)',
         generaux: '- Cassure de la courbe de poids, fièvre persistante, fatigue',

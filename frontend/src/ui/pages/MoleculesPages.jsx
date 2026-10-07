@@ -1,9 +1,11 @@
-import { Link, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
-import { FichePharmaco, Posologies, ProduitList } from '../components/Pharmaco.jsx';
+import { FichePharmaco, Posologies } from '../components/Pharmaco.jsx';
+import { ProduitsGalerie } from '../components/Produits.jsx';
 import { LIGNES } from '../../core/labels.js';
 
 export function MoleculesPage() {
@@ -57,12 +59,17 @@ export function MoleculePage() {
   const { slug } = useParams();
   const { api } = useServices();
   const state = useAsync(() => api.molecule(slug), [api, slug]);
+  const { hash } = useLocation();
+
+  // Lien « Voir les N produits » (/molecules/x#produits) : aller directement à la galerie
+  useEffect(() => {
+    if (hash === '#produits' && state.data) document.getElementById('produits')?.scrollIntoView?.();
+  }, [hash, state.data]);
 
   return (
     <AsyncView state={state}>
       {(m) => {
-        const seuls = m.produits.filter((p) => !p.association);
-        const assoc = m.produits.filter((p) => p.association);
+        const firmes = new Set(m.produits.map((p) => p.operateur)).size;
         return (
           <article>
             <Breadcrumb
@@ -91,15 +98,13 @@ export function MoleculePage() {
                 </section>
               </div>
               <div className="fiche-side">
-                <section className="related" aria-label="Produits">
-                  <h2>Produits contenant la molécule seule ({seuls.length})</h2>
-                  <ProduitList produits={seuls} />
-                </section>
-                {assoc.length > 0 && (
-                  <section className="related" aria-label="Associations">
-                    <h2>En association ({assoc.length})</h2>
-                    <ProduitList produits={assoc} />
-                  </section>
+                {m.produits.length > 0 && (
+                  <p className="related">
+                    <a href="#produits">
+                      {m.produits.length} produit{m.produits.length > 1 ? 's' : ''} de {firmes} firme
+                      {firmes > 1 ? 's' : ''}, en photos ↓
+                    </a>
+                  </p>
                 )}
                 {m.pathologies.length > 0 && (
                   <section className="related" aria-label="Pathologies">
@@ -117,6 +122,15 @@ export function MoleculePage() {
                 )}
               </div>
             </div>
+
+            {/* Tout en bas : les produits des firmes contenant la molécule, en photos */}
+            <section id="produits" className="card section-produits">
+              <h2>Produits disponibles chez les firmes</h2>
+              <p className="hint">
+                Seule ou en association. Touchez le nom d’un produit pour afficher sa fiche pharmacologique.
+              </p>
+              <ProduitsGalerie produits={m.produits} dci={m.dci} />
+            </section>
           </article>
         );
       }}

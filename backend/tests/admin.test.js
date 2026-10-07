@@ -336,6 +336,7 @@ describe('Molécules et produits', () => {
       .send({ disponible_rdc: true, prix_indicatif_cdf: '12500', forme: 'Comprimé' });
     expect(ok.status).toBe(200);
     const params = conn.execute.mock.calls.find(([q]) => q.includes('UPDATE medicaments'))[1];
-    expect(params.slice(-4)).toEqual([null, 1, 12500, 4]);
+    // photo, disponibilité, prix, nombre de composants, id
+    expect(params.slice(-5)).toEqual([null, 1, 12500, null, 4]);
   });
 });

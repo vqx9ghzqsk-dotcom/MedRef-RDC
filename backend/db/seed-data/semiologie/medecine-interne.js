@@ -17,7 +17,8 @@ module.exports = {
       {
         nom: 'Crise d’asthme commune',
         type: 'commune',
-        description: 'Épisode de dyspnée sifflante paroxystique, réversible spontanément ou sous bronchodilatateur.',
+        description:
+          'Épisode de dyspnée sifflante paroxystique, réversible spontanément ou sous bronchodilatateur.',
         terrain:
           '- Atopie personnelle ou familiale (rhinite, eczéma), asthme connu\n- Facteurs déclenchants : infection virale, allergènes (acariens, pollens, moisissures), fumée de bois ou de tabac, effort, froid, AINS, aspirine',
         fonctionnels:
@@ -42,10 +43,12 @@ module.exports = {
         terrain:
           '- Antécédent d’intubation pour asthme, hospitalisations répétées, asthme mal contrôlé, arrêt récent des corticoïdes, mauvaise observance',
         fonctionnels: '- Dyspnée intense, parole impossible ou phrases courtes, impossibilité de s’allonger',
-        generaux: '- Sueurs, agitation puis somnolence (hypercapnie)\n- Tachycardie > 120/min, pouls paradoxal',
+        generaux:
+          '- Sueurs, agitation puis somnolence (hypercapnie)\n- Tachycardie > 120/min, pouls paradoxal',
         physiques:
           '- Polypnée > 30/min, tirage, contraction des sterno-cléido-mastoïdiens\n- Cyanose\n- **Silence auscultatoire** (signe de gravité majeure)\n- Signes de menace d’arrêt : bradycardie, bradypnée, troubles de la conscience, balancement thoraco-abdominal',
-        paraclinique: '- DEP < 50 % de la théorique (< 30 % : très grave), SpO₂ < 92 %\n- Gaz du sang : normo- ou hypercapnie (gravité)',
+        paraclinique:
+          '- DEP < 50 % de la théorique (< 30 % : très grave), SpO₂ < 92 %\n- Gaz du sang : normo- ou hypercapnie (gravité)',
         etiologies: '- Mêmes facteurs déclenchants ; souvent asthme sous-traité',
         syndromes: ['syndrome-de-detresse-respiratoire', 'syndrome-bronchique-obstructif'],
         examens: [
@@ -60,7 +63,8 @@ module.exports = {
         terrain: '- ≥ 3 épisodes de sifflements, atopie familiale, viroses',
         fonctionnels: '- Toux nocturne ou à l’effort, sifflements, gêne respiratoire',
         generaux: '- Apyrexie hors infection',
-        physiques: '- Sibilants, tirage, battement des ailes du nez, difficultés à parler ou à téter (gravité)',
+        physiques:
+          '- Sibilants, tirage, battement des ailes du nez, difficultés à parler ou à téter (gravité)',
         paraclinique: '- DEP (à partir de 6 ans) ; radiographie si premier épisode ou fièvre',
         etiologies: '- Infections virales (rhinovirus, VRS), allergènes domestiques, fumée',
         syndromes: ['syndrome-bronchique-obstructif'],
@@ -74,7 +78,8 @@ module.exports = {
     urgences: {
       'urgence-hypertensive':
         'PA ≥ 180/110 mmHg avec céphalées intenses, troubles visuels, confusion, douleur thoracique, dyspnée ou oligurie',
-      'avc-aigu': 'Déficit moteur brutal d’un côté, bouche déviée, trouble du langage, troubles de la conscience',
+      'avc-aigu':
+        'Déficit moteur brutal d’un côté, bouche déviée, trouble du langage, troubles de la conscience',
     },
     formes: [
       {
@@ -103,14 +108,16 @@ module.exports = {
       {
         nom: 'HTA secondaire',
         type: 'etiologique',
-        description: 'HTA liée à une cause curable ; à suspecter devant une HTA sévère, résistante, d’apparition brutale ou avant 30 ans.',
+        description:
+          'HTA liée à une cause curable ; à suspecter devant une HTA sévère, résistante, d’apparition brutale ou avant 30 ans.',
         terrain: '- Sujet jeune, HTA résistante à une trithérapie, hypokaliémie spontanée',
         fonctionnels:
           '- Triade de Ménard (céphalées, sueurs, palpitations) : phéochromocytome\n- Ronflement, somnolence diurne : apnées du sommeil',
         generaux: '- Selon la cause : obésité facio-tronculaire (Cushing)',
         physiques:
           '- Souffle abdominal (sténose de l’artère rénale)\n- Abolition des pouls fémoraux (coarctation de l’aorte)\n- Gros reins palpables (polykystose)',
-        paraclinique: '- Kaliémie, créatinine, bandelette urinaire, échographie rénale ; examens spécialisés selon l’orientation',
+        paraclinique:
+          '- Kaliémie, créatinine, bandelette urinaire, échographie rénale ; examens spécialisés selon l’orientation',
         etiologies:
           '- **Rénales** : néphropathies chroniques (glomérulopathies, néphropathie diabétique), polykystose\n- **Rénovasculaires** : sténose de l’artère rénale\n- **Endocriniennes** : hyperaldostéronisme primaire, phéochromocytome, syndrome de Cushing, dysthyroïdie\n- **Autres** : coarctation de l’aorte, apnées du sommeil, médicaments (AINS, corticoïdes, contraceptifs œstro-progestatifs), alcool',
         syndromes: [],
@@ -131,7 +138,8 @@ module.exports = {
           '- Fond d’œil : hémorragies, exsudats, œdème papillaire (stade III–IV)\n- Signes d’OAP, déficit neurologique, convulsions',
         paraclinique:
           '- Insuffisance rénale, protéinurie, hématurie\n- Anémie hémolytique mécanique (schizocytes) dans l’HTA maligne\n- ECG, troponine selon le tableau',
-        etiologies: '- HTA essentielle négligée ; causes secondaires (rénale, phéochromocytome) ; éclampsie chez la femme enceinte',
+        etiologies:
+          '- HTA essentielle négligée ; causes secondaires (rénale, phéochromocytome) ; éclampsie chez la femme enceinte',
         syndromes: ['syndrome-d-insuffisance-cardiaque-gauche'],
         examens: [['fond-d-oeil', 'Rétinopathie hypertensive stade III–IV : HTA maligne.']],
       },
@@ -177,7 +185,8 @@ module.exports = {
         generaux: '- Asthénie',
         physiques:
           '- Turgescence jugulaire, reflux hépato-jugulaire\n- Hépatomégalie douloureuse, ferme\n- Œdèmes des membres inférieurs prenant le godet, ascite, épanchement pleural\n- Signe de Harzer, souffle d’insuffisance tricuspidienne',
-        paraclinique: '- Échocardiographie : dilatation des cavités droites, pressions pulmonaires élevées\n- Cholestase et cytolyse modérées (foie cardiaque)',
+        paraclinique:
+          '- Échocardiographie : dilatation des cavités droites, pressions pulmonaires élevées\n- Cholestase et cytolyse modérées (foie cardiaque)',
         etiologies:
           '- Insuffisance cardiaque gauche évoluée\n- Hypertension pulmonaire (pathologie respiratoire chronique, embolie pulmonaire, drépanocytose)\n- Péricardite chronique constrictive (tuberculose), endomyocardiofibrose',
         syndromes: ['syndrome-d-insuffisance-cardiaque-droite', 'syndrome-oedemateux'],
@@ -190,8 +199,10 @@ module.exports = {
         terrain: '- Poussée hypertensive, SCA, arythmie, surcharge hydrosodée',
         fonctionnels: '- Dyspnée brutale, intense, orthopnée, toux avec expectoration mousseuse rosée',
         generaux: '- Angoisse, sueurs, tachycardie, HTA fréquente',
-        physiques: '- Polypnée, cyanose\n- Râles crépitants bilatéraux remontant vers les sommets (« marée montante »)\n- Bruit de galop',
-        paraclinique: '- Radiographie : opacités alvéolaires bilatérales péri-hilaires « en ailes de papillon »\n- ECG, troponine (rechercher un SCA)',
+        physiques:
+          '- Polypnée, cyanose\n- Râles crépitants bilatéraux remontant vers les sommets (« marée montante »)\n- Bruit de galop',
+        paraclinique:
+          '- Radiographie : opacités alvéolaires bilatérales péri-hilaires « en ailes de papillon »\n- ECG, troponine (rechercher un SCA)',
         etiologies: '- Poussée hypertensive, infarctus, valvulopathie, trouble du rythme, écart de régime',
         syndromes: ['syndrome-de-detresse-respiratoire', 'syndrome-d-insuffisance-cardiaque-gauche'],
         examens: [
@@ -234,7 +245,8 @@ module.exports = {
         generaux: '- Amaigrissement, fonte musculaire',
         physiques:
           '- Foie dur à bord inférieur tranchant\n- Insuffisance hépatocellulaire : ictère, angiomes stellaires, érythrose palmaire, astérixis\n- Hypertension portale : splénomégalie, ascite, circulation veineuse collatérale',
-        paraclinique: '- TP bas, albumine basse, thrombopénie\n- Échographie : foie dysmorphique, signes d’hypertension portale',
+        paraclinique:
+          '- TP bas, albumine basse, thrombopénie\n- Échographie : foie dysmorphique, signes d’hypertension portale',
         etiologies: '- VHB évolutif ; facteurs : alcool, VHD, âge, sexe masculin',
         syndromes: ['syndrome-d-insuffisance-hepatocellulaire', 'syndrome-d-hypertension-portale'],
         examens: [['echographie-abdominale', 'Dysmorphie hépatique, ascite, nodule.']],
@@ -268,11 +280,13 @@ module.exports = {
       {
         nom: 'Insuffisance rénale aiguë fonctionnelle (prérénale)',
         type: 'commune',
-        description: 'Baisse du débit de filtration par hypoperfusion rénale, réversible si la cause est corrigée rapidement.',
+        description:
+          'Baisse du débit de filtration par hypoperfusion rénale, réversible si la cause est corrigée rapidement.',
         terrain: '- Diarrhée, vomissements, hémorragie, choc, diurétiques, AINS, IEC, sujet âgé',
         fonctionnels: '- Soif, oligurie',
         generaux: '- Tachycardie, hypotension, perte de poids',
-        physiques: '- Signes de déshydratation extracellulaire : pli cutané, yeux enfoncés, veines plates, hypotension orthostatique',
+        physiques:
+          '- Signes de déshydratation extracellulaire : pli cutané, yeux enfoncés, veines plates, hypotension orthostatique',
         paraclinique:
           '- Urée/créatinine plasmatiques élevées avec rapport urée/créatinine augmenté\n- Natriurèse < 20 mmol/L, urines concentrées',
         etiologies:
@@ -286,8 +300,10 @@ module.exports = {
       {
         nom: 'Insuffisance rénale aiguë organique (rénale)',
         type: 'etiologique',
-        description: 'Lésion du parenchyme rénal : tubules (nécrose tubulaire aiguë), glomérules, interstitium ou vaisseaux.',
-        terrain: '- Choc prolongé, sepsis, paludisme grave, hémolyse, toxiques, produits de contraste, plantes médicinales',
+        description:
+          'Lésion du parenchyme rénal : tubules (nécrose tubulaire aiguë), glomérules, interstitium ou vaisseaux.',
+        terrain:
+          '- Choc prolongé, sepsis, paludisme grave, hémolyse, toxiques, produits de contraste, plantes médicinales',
         fonctionnels: '- Oligo-anurie ou diurèse conservée, urines foncées (hémoglobinurie)',
         generaux: '- Fièvre selon la cause',
         physiques:
@@ -329,7 +345,8 @@ module.exports = {
       {
         nom: 'Diabète de type 2 (forme commune)',
         type: 'commune',
-        description: 'Hyperglycémie chronique par insulinorésistance et déficit relatif de sécrétion d’insuline ; souvent découvert fortuitement.',
+        description:
+          'Hyperglycémie chronique par insulinorésistance et déficit relatif de sécrétion d’insuline ; souvent découvert fortuitement.',
         terrain:
           '- Âge > 40 ans, surpoids, obésité abdominale, sédentarité\n- Antécédents familiaux, diabète gestationnel, HTA, dyslipidémie',
         fonctionnels:
@@ -363,7 +380,10 @@ module.exports = {
           '- Acidocétose : glycémie > 2,5 g/L, cétonémie > 3 mmol/L (ou cétonurie ≥ ++), pH < 7,30, bicarbonates < 15 mmol/L\n- Hyperosmolarité : glycémie souvent > 6 g/L, osmolarité > 320 mOsm/kg, sans cétose importante',
         etiologies:
           '- Infection (pneumonie, infection urinaire, paludisme, pied diabétique), arrêt de l’insuline, découverte du diabète, corticoïdes, infarctus',
-        syndromes: ['syndrome-de-deshydratation-intracellulaire', 'syndrome-de-deshydratation-extracellulaire'],
+        syndromes: [
+          'syndrome-de-deshydratation-intracellulaire',
+          'syndrome-de-deshydratation-extracellulaire',
+        ],
         examens: [
           ['cetonemie', 'Cétonémie > 3 mmol/L : acidocétose.'],
           ['ionogramme', 'Kaliémie, bicarbonates, trou anionique.'],
@@ -426,7 +446,8 @@ module.exports = {
         generaux: '- Fièvre, tachycardie',
         physiques: '- Polypnée, râles crépitants, syndrome de condensation, hypoxie',
         paraclinique: '- Radiographie : nouvel infiltrat pulmonaire\n- SpO₂ abaissée, chute de l’hémoglobine',
-        etiologies: '- Infection (pneumocoque, germes atypiques), embolie graisseuse, vaso-occlusion pulmonaire',
+        etiologies:
+          '- Infection (pneumocoque, germes atypiques), embolie graisseuse, vaso-occlusion pulmonaire',
         syndromes: ['syndrome-thoracique-aigu', 'syndrome-de-detresse-respiratoire'],
         examens: [['radiographie-thoracique', 'Nouvel infiltrat : syndrome thoracique aigu.']],
       },
@@ -434,7 +455,8 @@ module.exports = {
         nom: 'Crises anémiques aiguës (séquestration splénique, érythroblastopénie)',
         type: 'gravite',
         description: 'Aggravation brutale de l’anémie, menace vitale chez l’enfant.',
-        terrain: '- Enfant de moins de 5 ans (séquestration) ; infection à parvovirus B19 (érythroblastopénie)',
+        terrain:
+          '- Enfant de moins de 5 ans (séquestration) ; infection à parvovirus B19 (érythroblastopénie)',
         fonctionnels: '- Fatigue brutale, douleur de l’hypocondre gauche',
         generaux: '- Tachycardie, signes de choc possibles',
         physiques: '- Pâleur intense, splénomégalie brutalement augmentée (séquestration), polypnée',
@@ -447,7 +469,8 @@ module.exports = {
       {
         nom: 'Accident vasculaire cérébral drépanocytaire',
         type: 'gravite',
-        description: 'Vasculopathie cérébrale, surtout chez l’enfant de 2 à 16 ans ; prévenue par le doppler transcrânien.',
+        description:
+          'Vasculopathie cérébrale, surtout chez l’enfant de 2 à 16 ans ; prévenue par le doppler transcrânien.',
         terrain: '- Enfant SS, vitesses élevées au doppler transcrânien, anémie profonde',
         fonctionnels: '- Céphalées, troubles du langage',
         generaux: '- Fièvre possible',

@@ -1,0 +1,408 @@
+{
+ "firme": "Novartis",
+ "source": "gamme Novartis publiée par l'étiquetage officiel (DailyMed, NLM/FDA) et novartis.com/about/products ; images : cartons/étiquettes officiels des notices",
+ "note": "Les visuels sont les maquettes de carton/étiquette déposées auprès de la FDA : ils identifient le produit, mais l'emballage vendu en RDC peut différer. La gamme Novartis commercialisée en RDC est plus limitée (antipaludiques, antituberculeux/lèpre, cardiovasculaire, anti-épileptiques...) : disponibilité à confirmer pour chaque produit. Les génériques de Sandoz (société distincte depuis 2023) ne sont pas inclus.",
+ "produits": [
+  {
+   "nom": "Zortress",
+   "presentation": "Évérolimus 0,25 / 0,5 / 0,75 / 1 mg, comprimés",
+   "mol": "everolimus-transplant",
+   "image": "img_novartis/zortress.jpg"
+  },
+  {
+   "nom": "Scemblix",
+   "presentation": "Asciminib 20 / 40 mg, comprimés pelliculés",
+   "mol": "asciminib",
+   "image": "img_novartis/scemblix.jpg"
+  },
+  {
+   "nom": "Cosentyx",
+   "presentation": "Sécukinumab 150 mg, stylo/seringue préremplie SC ; 125 mg/5 mL perfusion IV",
+   "mol": "secukinumab",
+   "image": "img_novartis/cosentyx.jpg"
+  },
+  {
+   "nom": "Leqvio",
+   "presentation": "Inclisiran 284 mg/1,5 mL, seringue préremplie SC",
+   "mol": "inclisiran",
+   "image": "img_novartis/leqvio.jpg"
+  },
+  {
+   "nom": "Tegretol / Tegretol XR",
+   "presentation": "Carbamazépine 100/200 mg comprimés, LP 100-400 mg, suspension 100 mg/5 mL",
+   "mol": "carbamazepine",
+   "image": "img_novartis/tegretol_tegretol_xr.jpg"
+  },
+  {
+   "nom": "Lamprene",
+   "presentation": "Clofazimine 50 / 100 mg, capsules",
+   "mol": "clofazimine",
+   "image": "img_novartis/lamprene.jpg"
+  },
+  {
+   "nom": "Pluvicto",
+   "presentation": "Lutétium (177Lu) vipivotide tétraxétan, solution injectable IV",
+   "mol": "lutetium-vipivotide",
+   "image": "img_novartis/pluvicto.jpg"
+  },
+  {
+   "nom": "Diovan",
+   "presentation": "Valsartan 40 / 80 / 160 / 320 mg, comprimés",
+   "mol": "valsartan",
+   "image": "img_novartis/diovan.jpg"
+  },
+  {
+   "nom": "Neoral",
+   "presentation": "Ciclosporine 25 / 50 / 100 mg capsules, solution buvable 100 mg/mL",
+   "mol": "ciclosporine",
+   "image": "img_novartis/neoral.jpg"
+  },
+  {
+   "nom": "Myfortic",
+   "presentation": "Acide mycophénolique 180 / 360 mg, comprimés gastro-résistants",
+   "mol": "mycophenolate",
+   "image": "img_novartis/myfortic.jpg"
+  },
+  {
+   "nom": "Sandostatin",
+   "presentation": "Octréotide acétate 50 / 100 / 500 µg/mL, solution injectable",
+   "mol": "octreotide",
+   "image": "img_novartis/sandostatin.jpg"
+  },
+  {
+   "nom": "Tobradex",
+   "presentation": "Tobramycine 0,3 % + dexaméthasone 0,1 %, pommade ophtalmique",
+   "mol": "tobramycine-dexamethasone",
+   "image": "img_novartis/tobradex.jpg"
+  },
+  {
+   "nom": "Gilenya",
+   "presentation": "Fingolimod 0,25 / 0,5 mg, capsules",
+   "mol": "fingolimod",
+   "image": "img_novartis/gilenya.jpg"
+  },
+  {
+   "nom": "Gleevec (Glivec)",
+   "presentation": "Imatinib 100 / 400 mg, comprimés",
+   "mol": "imatinib",
+   "image": "img_novartis/gleevec_glivec.jpg"
+  },
+  {
+   "nom": "Fabhalta",
+   "presentation": "Iptacopan 200 mg, capsules",
+   "mol": "iptacopan",
+   "image": "img_novartis/fabhalta.jpg"
+  },
+  {
+   "nom": "Sandimmune",
+   "presentation": "Ciclosporine 25 / 100 mg capsules, 50 mg/mL injectable",
+   "mol": "ciclosporine",
+   "image": "img_novartis/sandimmune.jpg"
+  },
+  {
+   "nom": "Kisqali",
+   "presentation": "Ribociclib 200 mg, comprimés pelliculés",
+   "mol": "ribociclib",
+   "image": "img_novartis/kisqali.jpg"
+  },
+  {
+   "nom": "Mayzent",
+   "presentation": "Siponimod 0,25 / 2 mg, comprimés pelliculés",
+   "mol": "siponimod",
+   "image": "img_novartis/mayzent.jpg"
+  },
+  {
+   "nom": "Entresto",
+   "presentation": "Sacubitril/valsartan 24/26, 49/51, 97/103 mg ; granulés pédiatriques",
+   "mol": "sacubitril-valsartan",
+   "image": "img_novartis/entresto.jpg"
+  },
+  {
+   "nom": "Femara",
+   "presentation": "Létrozole 2,5 mg, comprimés pelliculés",
+   "mol": "letrozole",
+   "image": "img_novartis/femara.jpg"
+  },
+  {
+   "nom": "Vanrafia",
+   "presentation": "Atrasentan 0,75 mg, comprimés pelliculés",
+   "mol": "atrasentan",
+   "image": "img_novartis/vanrafia.jpg"
+  },
+  {
+   "nom": "Afinitor / Afinitor Disperz",
+   "presentation": "Évérolimus 2,5 / 5 / 7,5 / 10 mg, comprimés et comprimés dispersibles",
+   "mol": "everolimus-onco",
+   "image": "img_novartis/afinitor_afinitor_disperz.jpg"
+  },
+  {
+   "nom": "Rydapt",
+   "presentation": "Midostaurine 25 mg, capsules molles",
+   "mol": "midostaurine",
+   "image": "img_novartis/rydapt.jpg"
+  },
+  {
+   "nom": "Ilaris",
+   "presentation": "Canakinumab 150 mg/mL, solution injectable SC",
+   "mol": "canakinumab",
+   "image": "img_novartis/ilaris.jpg"
+  },
+  {
+   "nom": "Egaten",
+   "presentation": "Triclabendazole 250 mg, comprimés",
+   "mol": "triclabendazole",
+   "image": "img_novartis/egaten.jpg"
+  },
+  {
+   "nom": "Adakveo",
+   "presentation": "Crizanlizumab 100 mg/10 mL, perfusion IV",
+   "mol": "crizanlizumab",
+   "image": "img_novartis/adakveo.jpg"
+  },
+  {
+   "nom": "Tafinlar",
+   "presentation": "Dabrafénib 50 / 75 mg capsules ; comprimés dispersibles 10 mg",
+   "mol": "dabrafenib",
+   "image": "img_novartis/tafinlar.jpg"
+  },
+  {
+   "nom": "Mekinist",
+   "presentation": "Tramétinib 0,5 / 2 mg comprimés ; solution buvable",
+   "mol": "trametinib",
+   "image": "img_novartis/mekinist.jpg"
+  },
+  {
+   "nom": "Kesimpta",
+   "presentation": "Ofatumumab 20 mg, stylo prérempli SC",
+   "mol": "ofatumumab",
+   "image": "img_novartis/kesimpta.jpg"
+  },
+  {
+   "nom": "Travatan Z",
+   "presentation": "Travoprost 0,004 %, collyre",
+   "mol": "travoprost",
+   "image": "img_novartis/travatan_z.jpg"
+  },
+  {
+   "nom": "Triesence",
+   "presentation": "Triamcinolone acétonide 40 mg/mL, suspension injectable intravitréenne",
+   "mol": "triamcinolone-intravitreen",
+   "image": "img_novartis/triesence.jpg"
+  },
+  {
+   "nom": "Ilevro",
+   "presentation": "Népafénac 0,3 %, collyre en suspension",
+   "mol": "nepafenac",
+   "image": "img_novartis/ilevro.jpg"
+  },
+  {
+   "nom": "Coartem / Coartem Dispersible",
+   "presentation": "Artéméther 20 mg + luméfantrine 120 mg, comprimés et comprimés dispersibles (enfants)",
+   "mol": "artemether-lumefantrine",
+   "image": "img_novartis/coartem_coartem_dispersible.jpg"
+  },
+  {
+   "nom": "Rhapsido",
+   "presentation": "Rémibrutinib 25 mg, comprimés",
+   "mol": "remibrutinib",
+   "image": "img_novartis/rhapsido.jpg"
+  },
+  {
+   "nom": "Exforge",
+   "presentation": "Amlodipine/valsartan, comprimés pelliculés",
+   "mol": "amlodipine-valsartan",
+   "image": "img_novartis/exforge.jpg"
+  },
+  {
+   "nom": "Diovan HCT (Co-Diovan)",
+   "presentation": "Valsartan/hydrochlorothiazide, comprimés pelliculés",
+   "mol": "valsartan-hctz",
+   "image": "img_novartis/diovan_hct_co_diovan.jpg"
+  },
+  {
+   "nom": "Exjade",
+   "presentation": "Déférasirox 125 / 250 / 500 mg, comprimés dispersibles",
+   "mol": "deferasirox",
+   "image": "img_novartis/exjade.jpg"
+  },
+  {
+   "nom": "Tykerb",
+   "presentation": "Lapatinib 250 mg, comprimés",
+   "mol": "lapatinib",
+   "image": "img_novartis/tykerb.jpg"
+  },
+  {
+   "nom": "Locametz",
+   "presentation": "Kit pour préparation de gozétotide marqué au gallium-68",
+   "mol": "gozetotide-ga68",
+   "image": "img_novartis/locametz.jpg"
+  },
+  {
+   "nom": "Sandostatin LAR Depot",
+   "presentation": "Octréotide LP 10 / 20 / 30 mg, poudre pour suspension injectable IM",
+   "mol": "octreotide",
+   "image": "img_novartis/sandostatin_lar_depot.jpg",
+   "ov": {
+    "posologie": "20 mg IM profonde toutes les 4 semaines (acromégalie, tumeurs neuroendocrines), ajustée selon la réponse."
+   }
+  },
+  {
+   "nom": "Kymriah",
+   "presentation": "Tisagenlécleucel, suspension pour perfusion IV (CAR-T)",
+   "mol": "tisagenlecleucel",
+   "image": "img_novartis/kymriah.jpg"
+  },
+  {
+   "nom": "Promacta",
+   "presentation": "Eltrombopag 12,5-75 mg comprimés ; poudre pour suspension",
+   "mol": "eltrombopag",
+   "image": "img_novartis/promacta.jpg"
+  },
+  {
+   "nom": "Trileptal",
+   "presentation": "Oxcarbazépine 150 / 300 / 600 mg comprimés ; suspension 60 mg/mL",
+   "mol": "oxcarbazepine",
+   "image": "img_novartis/trileptal.jpg"
+  },
+  {
+   "nom": "Tobrex",
+   "presentation": "Tobramycine 0,3 %, pommade ophtalmique",
+   "mol": "tobramycine-ophtalmique",
+   "image": "img_novartis/tobrex.jpg"
+  },
+  {
+   "nom": "Tasigna",
+   "presentation": "Nilotinib 50 / 150 / 200 mg, capsules",
+   "mol": "nilotinib",
+   "image": "img_novartis/tasigna.jpg"
+  },
+  {
+   "nom": "Votrient",
+   "presentation": "Pazopanib 200 mg, comprimés pelliculés",
+   "mol": "pazopanib",
+   "image": "img_novartis/votrient.jpg"
+  },
+  {
+   "nom": "Tabrecta",
+   "presentation": "Capmatinib 150 / 200 mg, comprimés pelliculés",
+   "mol": "capmatinib",
+   "image": "img_novartis/tabrecta.jpg"
+  },
+  {
+   "nom": "Piqray",
+   "presentation": "Alpélisib 50 / 150 / 200 mg, comprimés pelliculés",
+   "mol": "alpelisib",
+   "image": "img_novartis/piqray.jpg"
+  },
+  {
+   "nom": "Zykadia",
+   "presentation": "Cératinib 150 mg comprimés ; capsules",
+   "mol": "ceritinib",
+   "image": "img_novartis/zykadia.jpg"
+  },
+  {
+   "nom": "Exforge HCT",
+   "presentation": "Amlodipine/valsartan/hydrochlorothiazide, comprimés pelliculés",
+   "mol": "amlodipine-valsartan-hctz",
+   "image": "img_novartis/exforge_hct.jpg"
+  },
+  {
+   "nom": "Simulect",
+   "presentation": "Basiliximab 20 mg, poudre pour solution injectable/perfusion IV",
+   "mol": "basiliximab",
+   "image": "img_novartis/simulect.jpg"
+  },
+  {
+   "nom": "Jadenu",
+   "presentation": "Déférasirox 90 / 180 / 360 mg, comprimés pelliculés ; granulés",
+   "mol": "deferasirox",
+   "image": "img_novartis/jadenu.jpg"
+  },
+  {
+   "nom": "Focalin XR",
+   "presentation": "Dexméthylphénidate LP 5-40 mg, gélules",
+   "mol": "dexmethylphenidate",
+   "image": "img_novartis/focalin_xr.jpg"
+  },
+  {
+   "nom": "Beovu",
+   "presentation": "Brolucizumab 120 mg/mL, injection intravitréenne",
+   "mol": "brolucizumab",
+   "image": "img_novartis/beovu.jpg"
+  },
+  {
+   "nom": "Vijoice",
+   "presentation": "Alpélisib 50 / 125 / 200 mg, comprimés ; granulés (syndromes PROS)",
+   "mol": "alpelisib",
+   "image": "img_novartis/vijoice.jpg",
+   "ov": {
+    "indications": "Syndromes de croissance excessive associés à PIK3CA (PROS) sévères ou menaçant le pronostic.",
+    "posologie": "50 mg/j (2 à < 6 ans : 50 mg/j ; ≥ 6 ans : 50-250 mg/j selon l'âge/poids), 1x/j avec repas ; spécialiste."
+   }
+  },
+  {
+   "nom": "Exelon Patch",
+   "presentation": "Rivastigmine 4,6 / 9,5 / 13,3 mg/24 h, dispositif transdermique",
+   "mol": "rivastigmine",
+   "image": "img_novartis/exelon_patch.jpg"
+  },
+  {
+   "nom": "Ritalin LA",
+   "presentation": "Méthylphénidate LP 10-40 mg, gélules",
+   "mol": "methylphenidate",
+   "image": "img_novartis/ritalin_la.jpg"
+  },
+  {
+   "nom": "Maxitrol",
+   "presentation": "Néomycine + polymyxine B + dexaméthasone, pommade ophtalmique",
+   "mol": "neomycine-polymyxine-dexamethasone",
+   "image": "img_novartis/maxitrol.jpg"
+  },
+  {
+   "nom": "Xiidra",
+   "presentation": "Lifitégrast 5 %, collyre",
+   "mol": "lifitegrast",
+   "image": "img_novartis/xiidra.jpg"
+  },
+  {
+   "nom": "Desferal",
+   "presentation": "Déféroxamine mésilate 500 mg, poudre pour solution injectable",
+   "mol": "deferoxamine",
+   "image": "img_novartis/desferal.jpg"
+  },
+  {
+   "nom": "Betoptic S",
+   "presentation": "Bétaxolol 0,25 %, collyre en suspension",
+   "mol": "betaxolol-ophtalmique",
+   "image": "img_novartis/betoptic_s.jpg"
+  },
+  {
+   "nom": "Vigamox",
+   "presentation": "Moxifloxacine 0,5 %, collyre",
+   "mol": "moxifloxacine-ophtalmique",
+   "image": "img_novartis/vigamox.jpg"
+  },
+  {
+   "nom": "Nevanac",
+   "presentation": "Népafénac 0,1 %, collyre en suspension",
+   "mol": "nepafenac",
+   "image": "img_novartis/nevanac.jpg"
+  },
+  {
+   "nom": "Hycamtin",
+   "presentation": "Topotécan 4 mg, poudre pour solution à diluer pour perfusion IV",
+   "mol": "topotecan",
+   "image": "img_novartis/hycamtin.jpg"
+  },
+  {
+   "nom": "Zometa",
+   "presentation": "Acide zolédronique 4 mg/5 mL, perfusion IV — gamme Novartis hors DailyMed (pas de photo)",
+   "mol": "zoledronate"
+  },
+  {
+   "nom": "Aclasta / Reclast",
+   "presentation": "Acide zolédronique 5 mg/100 mL, perfusion IV — gamme Novartis hors DailyMed (pas de photo)",
+   "mol": "zoledronate"
+  }
+ ]
+}

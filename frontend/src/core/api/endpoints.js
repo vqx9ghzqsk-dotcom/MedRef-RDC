@@ -51,6 +51,14 @@ export function createMedRefApi(client) {
     adminSaveMedicament: (id, payload) => client.put(`/api/admin/medicaments/${enc(id)}`, payload),
     adminVersion: (id) => data(client.get(`/api/admin/modifications/${enc(id)}`)),
     adminSemiologie: () => data(client.get('/api/admin/semiologie')),
+    adminCatalogue: (filtres) => data(client.get('/api/admin/catalogue', filtres)),
+    adminRelierCatalogue: () => client.post('/api/admin/catalogue/relier', {}),
+    adminCreerMolecule: (payload) => client.post('/api/admin/molecules', payload),
+    adminProduitsMolecule: (id) => data(client.get(`/api/admin/molecules/${enc(id)}/produits`)),
+    adminLierProduit: (moleculeId, medicamentId) =>
+      client.post(`/api/admin/molecules/${enc(moleculeId)}/produits`, { medicament_id: medicamentId }),
+    adminDelierProduit: (moleculeId, medicamentId) =>
+      client.del(`/api/admin/molecules/${enc(moleculeId)}/produits/${enc(medicamentId)}`),
     adminTerme: (id) => data(client.get(`/api/admin/glossaire/${enc(id)}`)),
     adminSaveTerme: (id, payload) =>
       id

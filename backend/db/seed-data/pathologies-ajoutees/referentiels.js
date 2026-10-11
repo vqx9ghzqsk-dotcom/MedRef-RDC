@@ -130,6 +130,38 @@ const specialites = [
     description:
       'Anesthésie, prise en charge des états de choc et des défaillances d’organes, soins périopératoires.',
   },
+  // --- Lot 29
+  {
+    departement: 'neuropsychiatrie',
+    nom: 'Neuro-infectiologie',
+    description:
+      'Infections du système nerveux de l’adulte : neuropaludisme, méningites tuberculeuse et opportunistes, trypanosomiase en phase neurologique, encéphalites.',
+  },
+  // --- Lot 31
+  {
+    departement: 'neuropsychiatrie',
+    nom: 'Psychiatrie de l’enfant et de l’adolescent',
+    description:
+      'Troubles du neurodéveloppement (autisme, TDAH, déficience intellectuelle), troubles émotionnels et du comportement, enfants exposés aux conflits.',
+  },
+  {
+    departement: 'neuropsychiatrie',
+    nom: 'Addictologie',
+    description:
+      'Usage de l’alcool et des drogues : dépendance, sevrage, complications neurologiques et intoxications (méthanol, alcool frelaté).',
+  },
+  {
+    departement: 'neuropsychiatrie',
+    nom: 'Démences et neurogériatrie',
+    description: 'Troubles cognitifs du sujet âgé, démences, syndrome confusionnel aigu.',
+  },
+  // --- Lot 32
+  {
+    departement: 'neuropsychiatrie',
+    nom: 'Psychotraumatologie',
+    description:
+      'Conséquences psychologiques des violences et des catastrophes : violences sexuelles, conflits armés, tortures, déplacements ; soutien psychosocial et soins spécialisés.',
+  },
 ];
 
 const examens = [
@@ -666,6 +698,73 @@ const examens = [
     valeurs_normales:
       '- Pas de sténose ni de plaque significative\n- Sténose carotidienne symptomatique ≥ 50–70 % : discuter une endartériectomie',
   },
+  // --- Lot 29
+  {
+    slug: 'electromyogramme',
+    nom: 'Électroneuromyogramme (ENMG)',
+    type: 'exploration',
+    description:
+      'Étude de la conduction nerveuse et de l’activité musculaire : neuropathies périphériques (axonale ou démyélinisante), Guillain-Barré, atteintes de la jonction neuromusculaire.',
+    valeurs_normales:
+      '- Vitesses de conduction et amplitudes normales\n- Guillain-Barré : ralentissement, blocs de conduction, ondes F allongées (souvent normales la 1re semaine)',
+  },
+  // --- Lot 30
+  {
+    slug: 'lithemie',
+    nom: 'Lithémie',
+    type: 'biologie',
+    description:
+      'Dosage du lithium sanguin, 12 heures après la dernière prise : adaptation de la posologie et dépistage du surdosage.',
+    valeurs_normales:
+      '- Zone thérapeutique : 0,6 à 1,0 mmol/L (entretien)\n- Toxicité : > 1,2–1,5 mmol/L (tremblements, diarrhée, confusion) ; > 2 mmol/L : intoxication grave',
+  },
+  {
+    slug: 'cpk',
+    nom: 'Créatine phosphokinase (CPK)',
+    type: 'biologie',
+    description:
+      'Enzyme musculaire : rhabdomyolyse (traumatismes, électrisation, syndrome malin des neuroleptiques, effort, intoxications), myosites.',
+    valeurs_normales:
+      '- < 200 UI/L (selon le laboratoire)\n- Rhabdomyolyse : > 5 fois la normale ; risque d’insuffisance rénale > 5 000 UI/L',
+  },
+  // --- Lot 31
+  {
+    slug: 'evaluation-cognitive',
+    nom: 'Évaluation cognitive (MMSE, MoCA, CSI-D)',
+    type: 'exploration',
+    description:
+      'Tests standardisés de dépistage des troubles cognitifs : orientation, mémoire, attention, langage, fonctions exécutives ; outils adaptés aux personnes peu scolarisées (CSI-D, RUDAS).',
+    valeurs_normales:
+      '- MMSE ≥ 24/30 et MoCA ≥ 26/30 (à interpréter selon l’âge et le niveau d’études)\n- Un score bas impose un bilan des causes curables',
+  },
+  {
+    slug: 'audiometrie',
+    nom: 'Audiométrie',
+    type: 'exploration',
+    description:
+      'Mesure de l’audition (tonale, vocale ; potentiels évoqués auditifs chez le jeune enfant) : retard de langage, suspicion d’autisme, surdité.',
+    valeurs_normales:
+      '- Seuils auditifs ≤ 20 dB à toutes les fréquences\n- Toute suspicion d’autisme ou retard de langage impose de vérifier l’audition',
+  },
+  // --- Lot 32
+  {
+    slug: 't4-libre',
+    nom: 'T4 libre (thyroxine libre)',
+    type: 'biologie',
+    description:
+      'Hormone thyroïdienne libre : à interpréter avec la TSH pour confirmer une hyperthyroïdie (T4L élevée) ou une hypothyroïdie (T4L basse).',
+    valeurs_normales:
+      '- Environ 10 à 23 pmol/L (selon le laboratoire)\n- TSH basse + T4L élevée : hyperthyroïdie ; TSH élevée + T4L basse : hypothyroïdie',
+  },
+  {
+    slug: 'cortisolemie',
+    nom: 'Cortisolémie',
+    type: 'biologie',
+    description:
+      'Dosage du cortisol sanguin (idéalement à 8 h) : dépistage de l’insuffisance surrénalienne ; test au Synacthène si disponible.',
+    valeurs_normales:
+      '- Cortisol de 8 h : environ 140 à 690 nmol/L\n- < 100 nmol/L : insuffisance surrénalienne très probable ; ne pas retarder l’hydrocortisone en urgence pour ce dosage',
+  },
 ];
 
 const symptomes = [
@@ -811,6 +910,39 @@ const symptomes = [
     'Hochements de tête',
     'Chutes répétées et involontaires de la tête vers l’avant, souvent déclenchées par les repas ou le froid.',
   ],
+  // --- Lot 29
+  ['Paralysie faciale', 'Faiblesse ou paralysie des muscles d’une moitié du visage.'],
+  [
+    'Troubles de la marche',
+    'Difficulté à marcher : instabilité, ataxie, faiblesse ou raideur des membres inférieurs.',
+  ],
+  // --- Lot 30
+  ['Humeur dépressive', 'Tristesse persistante, perte d’intérêt et de plaisir, sentiment de dévalorisation.'],
+  ['Idées suicidaires', 'Pensées de mort ou de suicide, avec ou sans projet.'],
+  [
+    'Hallucinations',
+    'Perceptions sans objet : entendre des voix, voir des choses que les autres ne voient pas.',
+  ],
+  ['Idées délirantes', 'Convictions fausses et inébranlables (persécution, grandeur, ensorcellement…).'],
+  ['Anxiété', 'Inquiétude excessive, tension, peur, avec signes physiques (palpitations, sueurs).'],
+  ['Agitation', 'Activité motrice excessive et désordonnée, souvent avec irritabilité ou agressivité.'],
+  ['Rigidité musculaire', 'Raideur des muscles à la mobilisation passive.'],
+  [
+    'Lenteur des mouvements',
+    'Ralentissement de l’initiation et de l’exécution des mouvements (bradykinésie).',
+  ],
+  // --- Lot 31
+  ['Troubles de la mémoire', 'Oublis des faits récents, difficulté à retenir de nouvelles informations.'],
+  ['Désorientation', 'Perte des repères dans le temps, l’espace ou vis-à-vis des personnes.'],
+  ['Hyperactivité', 'Agitation motrice excessive, incapacité à rester en place, impulsivité.'],
+  [
+    'Troubles des interactions sociales',
+    'Difficulté à communiquer et à établir des relations : peu de regard, isolement, jeu pauvre.',
+  ],
+  // --- Lot 32
+  ['Prise de poids', 'Augmentation du poids corporel.'],
+  ['Exophtalmie', 'Saillie anormale du globe oculaire hors de l’orbite.'],
+  ['Frilosité', 'Sensibilité excessive au froid.'],
 ];
 
 const molecules = [
@@ -1666,6 +1798,188 @@ const molecules = [
     effets_indesirables: 'Hypotension artérielle, céphalées, bouffées de chaleur, troubles digestifs.',
     precautions:
       'Surveiller la tension (fractionner en 30 mg toutes les 2 heures si hypotension) ; interactions avec les inducteurs enzymatiques (carbamazépine, phénobarbital, rifampicine).',
+  },
+  // --- Lot 29
+  {
+    dci: 'Immunoglobulines humaines polyvalentes (IgIV)',
+    slug: 'immunoglobulines-humaines-polyvalentes',
+    classe: 'Immunoglobulines humaines normales',
+    groupe: 'Immunologie',
+    mecanisme:
+      'Immunomodulation : neutralisation des auto-anticorps, blocage des récepteurs Fc, inhibition du complément.',
+    indications:
+      'Syndrome de Guillain-Barré, purpura thrombopénique immunologique, maladie de Kawasaki, déficits immunitaires primitifs.',
+    posologie: 'Guillain-Barré : 0,4 g/kg/j IV pendant 5 jours (total 2 g/kg).',
+    effets_indesirables:
+      'Céphalées, fièvre, frissons, réactions à la perfusion, insuffisance rénale, thromboses, méningite aseptique.',
+    precautions:
+      'Perfusion lente, hydratation ; prudence en cas d’insuffisance rénale, de risque thrombotique ou de déficit en IgA ; coût élevé et disponibilité limitée.',
+  },
+  // --- Lot 30
+  {
+    dci: 'Lithium',
+    slug: 'lithium',
+    classe: 'Thymorégulateurs',
+    groupe: 'Psychiatrie',
+    mecanisme:
+      'Action sur les voies de signalisation intracellulaires (inositol, GSK-3) : stabilisation de l’humeur, effet antisuicide.',
+    indications: 'Trouble bipolaire : traitement de l’épisode maniaque et prévention des rechutes.',
+    posologie: 'Adulte : 400 à 1 200 mg/j en 1 à 2 prises, adaptés à la lithémie (0,6–1,0 mmol/L).',
+    effets_indesirables:
+      'Tremblements, polyurie, prise de poids, hypothyroïdie, atteinte rénale ; intoxication (diarrhée, ataxie, confusion, convulsions).',
+    precautions:
+      'Lithémie, créatinine et TSH réguliers ; marge thérapeutique étroite ; interactions (AINS, diurétiques, IEC) ; éviter au 1er trimestre de la grossesse ; uniquement si surveillance biologique possible.',
+  },
+  {
+    dci: 'Sertraline',
+    slug: 'sertraline',
+    classe: 'Inhibiteurs sélectifs de la recapture de la sérotonine (ISRS)',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Inhibition de la recapture de la sérotonine.',
+    indications:
+      'Dépression, troubles anxieux, état de stress post-traumatique ; ISRS de choix pendant la grossesse et l’allaitement.',
+    posologie:
+      'Adulte : 50 mg/j, augmenter si besoin jusqu’à 200 mg/j ; poursuivre 6 à 12 mois après la rémission.',
+    effets_indesirables:
+      'Nausées, troubles digestifs, céphalées, insomnie, dysfonction sexuelle ; levée d’inhibition et idées suicidaires en début de traitement chez le sujet jeune.',
+    precautions:
+      'Surveillance du risque suicidaire en début de traitement ; virage maniaque chez le bipolaire ; arrêt progressif ; syndrome sérotoninergique avec d’autres sérotoninergiques.',
+  },
+  {
+    dci: 'Fluphénazine',
+    slug: 'fluphenazine',
+    classe: 'Antipsychotiques de première génération (phénothiazines)',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Antagonisme des récepteurs dopaminergiques D2.',
+    indications:
+      'Schizophrénie et troubles psychotiques chroniques : traitement d’entretien à action prolongée en cas de mauvaise observance.',
+    posologie:
+      'Décanoate : 12,5 à 25 mg IM toutes les 2 à 4 semaines (dose test de 12,5 mg), jusqu’à 100 mg selon la réponse.',
+    effets_indesirables:
+      'Syndromes extrapyramidaux (dystonie, parkinsonisme, akathisie), dyskinésies tardives, sédation, syndrome malin des neuroleptiques.',
+    precautions:
+      'Dose test initiale ; correcteur anticholinergique (trihexyphénidyle) si syndrome extrapyramidal ; prudence chez le sujet âgé et l’épileptique.',
+  },
+  {
+    dci: 'Dantrolène',
+    slug: 'dantrolene',
+    classe: 'Myorelaxants à action directe',
+    groupe: 'Anesthésie-réanimation',
+    mecanisme:
+      'Inhibition de la libération du calcium par le réticulum sarcoplasmique du muscle squelettique.',
+    indications: 'Hyperthermie maligne peranesthésique ; syndrome malin des neuroleptiques sévère.',
+    posologie: '1 à 2,5 mg/kg IV, à répéter jusqu’à 10 mg/kg/j selon la réponse.',
+    effets_indesirables: 'Faiblesse musculaire, hépatotoxicité, phlébite au point d’injection.',
+    precautions:
+      'Disponibilité limitée ; surveillance hépatique ; associer le refroidissement et la réanimation.',
+  },
+  // --- Lot 31
+  {
+    dci: 'Méthylphénidate',
+    slug: 'methylphenidate',
+    classe: 'Psychostimulants',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Inhibition de la recapture de la dopamine et de la noradrénaline.',
+    indications:
+      'Trouble déficit de l’attention avec hyperactivité (enfant ≥ 6 ans, adolescent, adulte), après échec ou en complément des mesures psychosociales.',
+    posologie:
+      'Enfant : 0,3 mg/kg/j en 1 à 2 prises (matin, midi), à augmenter progressivement, maximum 60 mg/j.',
+    effets_indesirables:
+      'Perte d’appétit, ralentissement de la croissance, insomnie, céphalées, douleurs abdominales, tachycardie, hypertension.',
+    precautions:
+      'Prescription et suivi spécialisés ; surveillance du poids, de la taille, de la tension ; risque de mésusage ; disponibilité limitée.',
+  },
+  {
+    dci: 'Fomépizole',
+    slug: 'fomepizole',
+    classe: 'Antidotes (inhibiteurs de l’alcool déshydrogénase)',
+    groupe: 'Toxicologie',
+    mecanisme:
+      'Inhibition de l’alcool déshydrogénase : bloque la transformation du méthanol et de l’éthylène glycol en métabolites toxiques.',
+    indications: 'Intoxication au méthanol (alcool frelaté) et à l’éthylène glycol.',
+    posologie:
+      'Dose de charge 15 mg/kg IV, puis 10 mg/kg toutes les 12 heures (augmenter pendant la dialyse).',
+    effets_indesirables: 'Céphalées, nausées, vertiges, réactions au point d’injection.',
+    precautions:
+      'Coût élevé, rarement disponible : l’éthanol per os ou IV est l’alternative ; associer hémodialyse et bicarbonate selon la gravité.',
+  },
+  {
+    dci: 'Donépézil',
+    slug: 'donepezil',
+    classe: 'Inhibiteurs de l’acétylcholinestérase',
+    groupe: 'Neurologie',
+    mecanisme: 'Augmentation de l’acétylcholine cérébrale par inhibition de sa dégradation.',
+    indications: 'Maladie d’Alzheimer légère à modérée (bénéfice symptomatique modeste).',
+    posologie: '5 mg le soir pendant 4 à 6 semaines, puis 10 mg/j si bien toléré.',
+    effets_indesirables: 'Nausées, diarrhée, bradycardie, syncopes, crampes, cauchemars.',
+    precautions: 'ECG si bradycardie ou troubles de conduction ; réévaluer régulièrement le bénéfice.',
+  },
+  {
+    dci: 'Naltrexone',
+    slug: 'naltrexone',
+    classe: 'Antagonistes des récepteurs opioïdes',
+    groupe: 'Addictologie',
+    mecanisme: 'Blocage des récepteurs opioïdes : réduction de l’envie et du plaisir lié à l’alcool.',
+    indications:
+      'Aide au maintien de l’abstinence ou à la réduction de la consommation dans la dépendance à l’alcool ; dépendance aux opioïdes après sevrage.',
+    posologie: '50 mg/j per os pendant 3 à 6 mois, avec un accompagnement psychosocial.',
+    effets_indesirables: 'Nausées, céphalées, vertiges, insomnie ; hépatotoxicité à forte dose.',
+    precautions:
+      'Contre-indiqué chez le patient sous opioïdes (sevrage brutal) et en cas d’hépatite aiguë ou d’insuffisance hépatique sévère.',
+  },
+  // --- Lot 32
+  {
+    dci: 'Carbimazole',
+    slug: 'carbimazole',
+    classe: 'Antithyroïdiens de synthèse',
+    groupe: 'Endocrinologie',
+    mecanisme:
+      'Prodrogue du thiamazole : inhibition de la thyroperoxydase et de la synthèse des hormones thyroïdiennes.',
+    indications:
+      'Hyperthyroïdie (maladie de Basedow, goitre multinodulaire toxique, adénome toxique), préparation à la chirurgie ou à l’iode radioactif.',
+    posologie:
+      'Attaque : 20 à 40 mg/j (0,5 mg/kg/j) pendant 4 à 6 semaines, puis dose dégressive 5 à 15 mg/j ; durée totale 12 à 18 mois dans la maladie de Basedow.',
+    effets_indesirables: 'Agranulocytose (rare, grave), éruptions, prurit, hépatite, arthralgies.',
+    precautions:
+      'Arrêt immédiat et NFS en cas de fièvre ou de mal de gorge ; éviter au 1er trimestre de la grossesse (préférer le propylthiouracile).',
+  },
+  {
+    dci: 'Propylthiouracile',
+    slug: 'propylthiouracile',
+    classe: 'Antithyroïdiens de synthèse',
+    groupe: 'Endocrinologie',
+    mecanisme: 'Inhibition de la thyroperoxydase et de la conversion périphérique de T4 en T3.',
+    indications: 'Hyperthyroïdie au 1er trimestre de la grossesse ; crise aiguë thyrotoxique.',
+    posologie: 'Adulte : 300 à 450 mg/j en 3 prises ; crise thyrotoxique : 200 mg toutes les 4 heures.',
+    effets_indesirables: 'Hépatotoxicité sévère, agranulocytose, éruptions.',
+    precautions: 'Surveillance hépatique et NFS ; relais par carbimazole après le 1er trimestre.',
+  },
+  {
+    dci: 'Fludrocortisone',
+    slug: 'fludrocortisone',
+    classe: 'Minéralocorticoïdes',
+    groupe: 'Endocrinologie',
+    mecanisme: 'Action minéralocorticoïde : rétention de sodium et excrétion de potassium.',
+    indications:
+      'Insuffisance surrénalienne primaire (maladie d’Addison), en association à l’hydrocortisone.',
+    posologie: '50 à 100 µg/j per os, adaptés à la tension et à la kaliémie.',
+    effets_indesirables: 'Œdèmes, HTA, hypokaliémie.',
+    precautions:
+      'Surveiller tension artérielle et kaliémie ; inutile en phase aiguë si hydrocortisone ≥ 50 mg/j.',
+  },
+  {
+    dci: 'Flumazénil',
+    slug: 'flumazenil',
+    classe: 'Antidotes (antagonistes des benzodiazépines)',
+    groupe: 'Toxicologie',
+    mecanisme: 'Antagonisme compétitif des récepteurs aux benzodiazépines.',
+    indications:
+      'Intoxication isolée aux benzodiazépines avec dépression respiratoire ; réversion d’une sédation.',
+    posologie:
+      '0,2 mg IV en 15 secondes, puis 0,1 mg par minute jusqu’à réveil (maximum 1 mg) ; durée d’action courte (re-sédation).',
+    effets_indesirables: 'Convulsions, agitation, syndrome de sevrage, troubles du rythme.',
+    precautions:
+      'Contre-indiqué en cas d’intoxication associée aux tricycliques, d’épilepsie traitée par benzodiazépines ou de dépendance ; surveillance prolongée.',
   },
 ];
 

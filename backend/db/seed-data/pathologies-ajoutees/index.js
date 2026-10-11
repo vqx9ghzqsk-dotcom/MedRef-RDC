@@ -66,6 +66,14 @@ const LOTS = [
   'lot-27-ophtalmologie',
   'lot-28-chirurgie',
   'lot-28-neurologie',
+  'lot-29-neurologie',
+  'lot-29-neuro-infectiologie',
+  'lot-30-psychiatrie-1',
+  'lot-30-psychiatrie-2',
+  'lot-31-enfant-addictologie',
+  'lot-31-demences-urgences',
+  'lot-32-psychotraumatologie',
+  'lot-32-cardio-endocrino',
 ];
 
 const fiches = LOTS.flatMap((lot) => require(`./${lot}`));

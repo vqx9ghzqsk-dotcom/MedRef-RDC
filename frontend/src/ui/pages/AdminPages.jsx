@@ -16,7 +16,7 @@ import {
   useUnsavedWarning,
 } from '../components/AdminForm.jsx';
 import { NumberField } from '../components/NumberField.jsx';
-import { PhotoProduit } from '../components/Produits.jsx';
+import { LienProduit, PhotoProduit } from '../components/Produits.jsx';
 import { SUGGESTIONS } from '../../core/saisie.js';
 import {
   CATEGORIES_EXAMEN,
@@ -934,7 +934,7 @@ function MoleculeEditor({ id, initial, onSaved }) {
   };
 
   const onSave = async () => {
-    const { id: _id, dci: _dci, slug: _slug, ...payload } = form;
+    const { id: _id, dci: _dci, slug: _slug, fiche_source: _source, ...payload } = form;
     const res = await run(payload);
     if (res) {
       setDirty(false);
@@ -1092,6 +1092,20 @@ function MoleculeEditor({ id, initial, onSaved }) {
 
       <section className="card">
         <h2>Fiche pharmacologique</h2>
+        {(initial.fiche_a_valider || initial.fiche_source) && (
+          <div className="field field-check">
+            <input
+              id="fiche-validee"
+              type="checkbox"
+              checked={!form.fiche_a_valider}
+              onChange={(e) => set({ fiche_a_valider: !e.target.checked })}
+            />
+            <label htmlFor="fiche-validee">
+              Fiche relue et validée par un médecin
+              {initial.fiche_source && <span className="row-sub">Importée : {initial.fiche_source}</span>}
+            </label>
+          </div>
+        )}
         {FICHE_PHARMACO.map(([k, label]) => (
           <TextArea
             key={k}
@@ -1656,6 +1670,7 @@ const LIAISONS = {
   partielle: 'Liaison partielle',
   auto: 'Liée automatiquement',
   verifiee: 'Liaison vérifiée',
+  sans_objet: 'Sans principe actif (cosmétique, dispositif)',
 };
 
 /** Créer une molécule absente : les produits du catalogue qui la contiennent sont liés aussitôt. */
@@ -1814,7 +1829,9 @@ function CatalogueAdmin() {
                           <PhotoProduit produit={p} />
                           <span>
                             <Link to={`/admin/medicaments/${p.id}`}>{p.nom_commercial}</Link>
-                            <span className="row-sub">{p.operateur}</span>
+                            <span className="row-sub">
+                              {p.operateur} · <LienProduit id={p.id}>fiche</LienProduit>
+                            </span>
                           </span>
                         </div>
                       </td>
@@ -1860,6 +1877,8 @@ function ProduitsMoleculeAdmin({ moleculeId, dci }) {
         <Link to={`/admin/medicaments/${p.id}`}>{p.nom_commercial}</Link>
         <span className="row-sub">
           {[p.operateur, p.dci, p.origine === 'auto' ? 'lien automatique' : null].filter(Boolean).join(' · ')}
+          {' · '}
+          <LienProduit id={p.id}>fiche</LienProduit>
         </span>
       </span>
       <button

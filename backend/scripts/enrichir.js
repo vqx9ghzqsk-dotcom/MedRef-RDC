@@ -3,16 +3,20 @@
 /**
  * Ajoute à une base en service le contenu nouveau des fichiers seed-data/ sans
  * rien écraser : formes cliniques des fiches qui n’en ont pas encore, syndromes et
- * termes du glossaire absents, signes d'alerte non renseignés.
+ * termes du glossaire absents, signes d'alerte non renseignés, produits des catalogues,
+ * répertoire des AMM de l'ACOREP et fiches des substances absentes.
  *   npm run db:enrichir
  * Une sauvegarde est faite avant toute écriture.
  */
 
 const config = require('../src/config');
-const { connect } = require('../db/connexion');
+const { connect, analyserTables } = require('../db/connexion');
 const { backup } = require('../db/sauvegarde');
 const { chargerSemiologie } = require('../db/semiologie');
 const { chargerCatalogues } = require('../db/catalogues');
+const { chargerAcorep } = require('../db/acorep');
+const { appliquerSelection } = require('../db/selection');
+const { chargerNouvellesFiches } = require('../db/fiches');
 const data = require('../db/seed-data');
 
 async function main() {
@@ -23,8 +27,12 @@ async function main() {
     await conn.beginTransaction();
     const semiologie = await chargerSemiologie(conn, data);
     const catalogues = await chargerCatalogues(conn, data.catalogues);
+    const acorep = await chargerAcorep(conn, data.acorep);
+    const selection = await appliquerSelection(conn, data.selection);
+    const fiches = await chargerNouvellesFiches(conn, data, data.ajouts);
     await conn.commit();
-    console.log('✔ Contenu ajouté', { semiologie, catalogues });
+    await analyserTables(conn);
+    console.log('✔ Contenu ajouté', { semiologie, catalogues, acorep, selection, fiches });
   } catch (err) {
     await conn.rollback().catch(() => {});
     throw err;

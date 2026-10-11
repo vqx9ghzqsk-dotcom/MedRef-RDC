@@ -25,6 +25,12 @@ const syndromes = require('./syndromes');
 const glossaire = require('./glossaire');
 const semiologie = require('./semiologie');
 const catalogues = require('./catalogues');
+// Répertoire des AMM de l'ACOREP + fiches des substances (scripts/catalogues/extraire_acorep.py)
+const acorep = require('./acorep.json');
+// Opérateurs affichés dans l'application et titulaires des marques
+const selection = require('./operateurs-retenus');
+// Fiches de pathologies ajoutées par lots (feuille de route)
+const ajouts = require('./pathologies-ajoutees');
 
 const pathologies = [
   ...require('./pathologies/infectiologie'),
@@ -54,4 +60,7 @@ module.exports = {
   glossaire,
   semiologie,
   catalogues,
+  acorep,
+  selection,
+  ajouts,
 };

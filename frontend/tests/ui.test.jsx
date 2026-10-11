@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { AppRoutes } from '../src/App.jsx';
@@ -193,6 +193,8 @@ function renderApp(path, apiOverrides = {}, user = null) {
     ]),
     pathologie: vi.fn(async () => fiche),
     me: vi.fn(async () => user),
+    suggestionsProduits: vi.fn(async () => ({ produits: [], molecules: [] })),
+    medicamentDomaines: vi.fn(async () => ({ groupes: [], formes: [], enfant: 0, firmes: [] })),
     ...apiOverrides,
   };
   const services = {
@@ -785,5 +787,295 @@ describe('Produits des firmes sur la fiche molécule', () => {
     expect(within(panneau).getByText('Adapté à l’enfant')).toBeInTheDocument();
     await user.click(within(panneau).getByRole('button', { name: 'Fermer' }));
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('fusionne identification, données du produit et fiche de la molécule, avec la provenance', async () => {
+    const medicament = vi.fn(async () => ({
+      ...produit(1, 'Amidol 500', 'Shalina Healthcare'),
+      dci: 'Paracétamol',
+      forme: 'Comprimé',
+      presentation: 'Boîte de 100',
+      indication: 'Douleurs et fièvre.',
+      contre_indications: 'Insuffisance hépatique sévère.',
+      composition: [
+        {
+          id: 1,
+          dci: 'Paracétamol',
+          slug: 'paracetamol',
+          dosage: '500 mg',
+          mecanisme: 'Inhibition centrale des COX.',
+          indications: 'Douleurs et fièvre.',
+          contre_indications: 'Hypersensibilité au paracétamol.',
+          posologies: [{ id: 9, population: 'adulte', dose_texte: '1 g toutes les 6 h', voie: 'Orale' }],
+          fiches_externes: [
+            {
+              source: 'ACOREP',
+              nom: 'Paracétamol',
+              mecanisme: 'Inhibition centrale des COX.',
+              precautions: 'Hépatotoxicité en cas de surdosage.',
+              a_valider: true,
+            },
+          ],
+        },
+      ],
+      amm: true,
+      autorisations: [
+        {
+          id: 1,
+          source: 'ACOREP',
+          marque: 'Amidol',
+          dosage: '500 mg',
+          forme: 'Co.',
+          provenance: 'Inde',
+          numero: 'MS 1234/2022',
+        },
+      ],
+      pathologies: [],
+      autres_produits: [],
+    }));
+    renderApp('/medicaments/1', { medicament });
+    await screen.findByRole('heading', { name: 'Amidol 500', level: 1 });
+    // Trois anciennes sections réunies en deux blocs d'une même fiche
+    expect(screen.getByRole('heading', { name: 'Identification' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Pharmacologie' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Utilisation de ce produit/ })).toBeNull();
+
+    const rubrique = (nom) => screen.getByRole('heading', { name: nom }).closest('.pharmaco-row');
+    // Texte identique du produit et de la molécule : affiché une seule fois
+    expect(within(rubrique('Indications')).getAllByText('Douleurs et fièvre.')).toHaveLength(1);
+    // Textes différents : les deux, avec leur provenance
+    const ci = rubrique('Contre-indications');
+    expect(ci).toHaveTextContent('Catalogue Shalina Healthcare');
+    expect(ci).toHaveTextContent('Insuffisance hépatique sévère.');
+    expect(ci).toHaveTextContent('Hypersensibilité au paracétamol.');
+    expect(rubrique('Mécanisme d’action')).toHaveTextContent('Inhibition centrale des COX.');
+    expect(within(rubrique('Posologie')).getByText('1 g toutes les 6 h')).toBeInTheDocument();
+    // Fiche ACOREP : seulement ce qu’elle apporte de nouveau, signalée « à valider »
+    expect(within(rubrique('Mécanisme d’action')).getAllByText('Inhibition centrale des COX.')).toHaveLength(
+      1,
+    );
+    expect(rubrique('Précautions')).toHaveTextContent('Fiche ACOREP — Paracétamol, à valider');
+    // Autorisation de mise sur le marché
+    expect(screen.getByText('AMM RDC')).toBeInTheDocument();
+    const amm = screen.getByRole('table');
+    expect(within(amm).getByText('MS 1234/2022')).toBeInTheDocument();
+    expect(within(amm).getByText('Inde')).toBeInTheDocument();
+  });
+
+  it('signale une fiche molécule importée à valider et affiche la fiche externe différente', async () => {
+    const molecule = vi.fn(async (slug) => ({
+      id: 5,
+      dci: slug === 'atropine' ? 'Atropine' : 'Paracétamol',
+      slug,
+      classe: 'Anticholinergiques',
+      groupe_therapeutique: 'Anesthésie et réanimation',
+      fiche_a_valider: slug === 'atropine',
+      fiche_source: slug === 'atropine' ? 'ACOREP — fiche rédigée par IA' : null,
+      mecanisme: 'Antagoniste muscarinique.',
+      precautions: 'Glaucome.',
+      fiches_externes: [
+        {
+          source: 'ACOREP',
+          nom: 'X',
+          mecanisme: slug === 'atropine' ? 'Antagoniste muscarinique.' : 'Autre texte.',
+          a_valider: true,
+        },
+      ],
+      posologies: [],
+      pathologies: [],
+      produits: [],
+    }));
+    renderApp('/molecules/atropine', { molecule });
+    await screen.findByRole('heading', { name: 'Atropine', level: 1 });
+    expect(screen.getByRole('note')).toHaveTextContent(/à relire et valider par un médecin/);
+    expect(screen.getByText('Glaucome.')).toBeInTheDocument();
+    // Même texte que la fiche : pas de doublon
+    expect(screen.queryByRole('heading', { name: 'Fiche ACOREP' })).toBeNull();
+  });
+});
+
+describe('Liste des médicaments', () => {
+  it('montre les médicaments autorisés en RDC, recherche par nom et invite à affiner', async () => {
+    const user = userEvent.setup();
+    const medicaments = vi.fn(async (filtres) => ({
+      data: [
+        {
+          id: 1,
+          nom_commercial: 'Amidol 500',
+          dci: 'Paracétamol',
+          nature: 'medicament',
+          amm: true,
+          pediatrique: true,
+          groupe: 'Antalgiques et anti-inflammatoires',
+        },
+      ],
+      total: filtres.q ? 1 : 3995,
+      limite: 300,
+    }));
+    const medicamentFiltres = vi.fn(async () => ({ operateurs: [], classes: [], molecules: [] }));
+    renderApp('/medicaments', { medicaments, medicamentFiltres });
+    expect(
+      await screen.findByText(
+        '3995 produits : les 300 premiers sont affichés, affinez avec la recherche ou les filtres',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/médicaments autorisés en RDC/)).toBeInTheDocument();
+    // Groupés par domaine thérapeutique ; plus de filtre « Nature » (médicaments seuls)
+    expect(screen.getByRole('heading', { name: 'Antalgiques et anti-inflammatoires' })).toBeInTheDocument();
+    expect(screen.getByText('Enfant', { selector: '.tag' })).toBeInTheDocument();
+    expect(screen.queryByLabelText('Nature')).toBeNull();
+
+    await user.type(screen.getByLabelText('Chercher un produit ou une molécule'), 'amidol{Enter}');
+    await waitFor(() =>
+      expect(medicaments).toHaveBeenLastCalledWith(expect.objectContaining({ q: 'amidol' })),
+    );
+    expect(await screen.findByText('1 produit')).toBeInTheDocument();
+  });
+
+  it('ouvre la fiche pharmacologique en panneau partout où un produit est mentionné', async () => {
+    const user = userEvent.setup();
+    const fiche = {
+      id: 7,
+      nom_commercial: 'Amidol 500',
+      dci: 'Paracétamol',
+      operateur: 'Shalina Healthcare',
+      composition: [{ id: 1, dci: 'Paracétamol', slug: 'paracetamol', indications: 'Fièvre et douleur.' }],
+      autres_produits: [],
+      pathologies: [],
+    };
+    const medicament = vi.fn(async () => fiche);
+    const medicaments = vi.fn(async () => ({
+      data: [{ id: 7, nom_commercial: 'Amidol 500', dci: 'Paracétamol', nature: 'medicament' }],
+      total: 1,
+      limite: 300,
+    }));
+    const medicamentFiltres = vi.fn(async () => ({ operateurs: [], classes: [], molecules: [] }));
+    const recherche = vi.fn(async () => ({
+      total: 1,
+      data: { medicaments: [{ id: 7, nom_commercial: 'Amidol 500', dci: 'Paracétamol' }] },
+    }));
+    renderApp('/medicaments', { medicament, medicaments, medicamentFiltres, recherche });
+
+    // Depuis la liste : un vrai lien vers la page, qui ouvre la fiche en panneau
+    const lien = await screen.findByRole('link', { name: /Amidol 500/ });
+    expect(lien).toHaveAttribute('href', '/medicaments/7');
+    await user.click(lien);
+    const panneau = await screen.findByRole('dialog', { name: 'Amidol 500' });
+    expect(within(panneau).getByText('Fièvre et douleur.')).toBeInTheDocument();
+    expect(medicament).toHaveBeenCalledWith(7);
+    await user.click(within(panneau).getByRole('button', { name: 'Fermer' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('ouvre aussi la fiche en panneau depuis les résultats de recherche', async () => {
+    const user = userEvent.setup();
+    const medicament = vi.fn(async () => ({
+      id: 7,
+      nom_commercial: 'Amidol 500',
+      dci: 'Paracétamol',
+      composition: [],
+      autres_produits: [],
+      pathologies: [],
+    }));
+    const recherche = vi.fn(async () => ({
+      total: 1,
+      data: { medicaments: [{ id: 7, nom_commercial: 'Amidol 500', dci: 'Paracétamol' }] },
+    }));
+    renderApp('/recherche?q=amidol', { medicament, recherche });
+    await user.click(await screen.findByRole('link', { name: /Paracétamol \(Amidol 500\)/ }));
+    expect(await screen.findByRole('dialog', { name: 'Amidol 500' })).toBeInTheDocument();
+  });
+});
+
+describe('Accès aux produits depuis le bouton Médicaments', () => {
+  it('l’accueil garde une seule barre de recherche, sans recherche de produits à part', async () => {
+    renderApp('/');
+    await screen.findByText('Accès rapides');
+    expect(screen.queryByRole('combobox')).toBeNull();
+  });
+
+  it('page Médicaments : suggère produits et molécules dès 2 lettres, au clavier, et ouvre la fiche', async () => {
+    const user = userEvent.setup();
+    const suggestionsProduits = vi.fn(async () => ({
+      produits: [
+        {
+          id: 9,
+          nom_commercial: 'Coartem',
+          dci: 'Artéméther + Luméfantrine',
+          forme_categorie: 'Comprimé',
+          operateur: 'Novartis',
+          amm: true,
+        },
+      ],
+      molecules: [
+        {
+          id: 3,
+          dci: 'Artéméther',
+          slug: 'artemether',
+          groupe_therapeutique: 'Antipaludiques',
+          nb_produits: 132,
+        },
+      ],
+    }));
+    const medicament = vi.fn(async () => ({
+      id: 9,
+      nom_commercial: 'Coartem',
+      dci: 'Artéméther + Luméfantrine',
+      composition: [],
+      autres_produits: [],
+      pathologies: [],
+    }));
+    const medicaments = vi.fn(async () => ({ data: [], total: 0, limite: 300 }));
+    const medicamentFiltres = vi.fn(async () => ({ operateurs: [], classes: [], molecules: [] }));
+    renderApp('/medicaments', { suggestionsProduits, medicament, medicaments, medicamentFiltres });
+    const champ = await screen.findByRole('combobox', { name: 'Chercher un produit ou une molécule' });
+    await user.type(champ, 'c');
+    expect(suggestionsProduits).not.toHaveBeenCalled();
+    await user.type(champ, 'oa');
+    const liste = await screen.findByRole('listbox', { name: 'Suggestions' });
+    expect(suggestionsProduits).toHaveBeenLastCalledWith('coa');
+    expect(within(liste).getAllByRole('option')).toHaveLength(2);
+    expect(within(liste).getByText('Molécule · Antipaludiques · 132 produits')).toBeInTheDocument();
+
+    await user.keyboard('{ArrowDown}');
+    expect(within(liste).getAllByRole('option')[0]).toHaveAttribute('aria-selected', 'true');
+    await user.keyboard('{Enter}');
+    expect(await screen.findByRole('dialog', { name: 'Coartem' })).toBeInTheDocument();
+    expect(medicament).toHaveBeenCalledWith(9);
+  });
+
+  it('propose des entrées par domaine, forme et firme qui filtrent la liste', async () => {
+    const user = userEvent.setup();
+    const medicaments = vi.fn(async () => ({ data: [], total: 0, limite: 300 }));
+    const medicamentDomaines = vi.fn(async () => ({
+      groupes: [{ nom: 'Antipaludiques', n: 272 }],
+      formes: [{ nom: 'Sirop, suspension, solution buvable', n: 855 }],
+      enfant: 1065,
+      firmes: [{ id: 5, nom: 'Shalina Healthcare', n: 258 }],
+    }));
+    const medicamentFiltres = vi.fn(async () => ({
+      operateurs: [{ id: 5, nom: 'Shalina Healthcare' }],
+      classes: [],
+      molecules: [],
+    }));
+    renderApp('/medicaments', { medicaments, medicamentDomaines, medicamentFiltres });
+    await user.click(await screen.findByRole('button', { name: /Antipaludiques\s*272/ }));
+    await waitFor(() =>
+      expect(medicaments).toHaveBeenLastCalledWith(expect.objectContaining({ groupe: 'Antipaludiques' })),
+    );
+    // Le filtre choisi apparaît en pastille, retirable
+    expect(screen.getByRole('button', { name: 'Retirer le filtre Antipaludiques' })).toBeInTheDocument();
+    // Le bloc des domaines se replie pour laisser voir les résultats ; on le rouvre
+    await user.click(screen.getByText('Changer de domaine, de forme ou de firme'));
+    await user.click(await screen.findByRole('button', { name: /Adaptés à l’enfant\s*1\s065/ }));
+    await waitFor(() =>
+      expect(medicaments).toHaveBeenLastCalledWith(
+        expect.objectContaining({ groupe: 'Antipaludiques', enfant: '1' }),
+      ),
+    );
+    await user.click(screen.getByRole('button', { name: 'Retirer le filtre Antipaludiques' }));
+    await waitFor(() =>
+      expect(medicaments).toHaveBeenLastCalledWith(expect.objectContaining({ groupe: '' })),
+    );
   });
 });

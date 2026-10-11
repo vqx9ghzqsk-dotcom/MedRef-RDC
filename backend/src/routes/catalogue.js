@@ -7,6 +7,7 @@
 const express = require('express');
 const db = require('../db');
 const { asyncHandler, notFound } = require('../utils/http');
+const { OPERATEUR_VISIBLE } = require('../utils/visibilite');
 
 const { chargerFormes, signesAlerte } = require('../services/formes');
 
@@ -156,12 +157,13 @@ router.get(
       // Produits (par opérateur) contenant chacune des molécules de la fiche
       db.query(
         `SELECT mm.molecule_id, m.id, m.nom_commercial, m.dci AS composition, m.forme, m.dosage,
-                m.disponible_rdc, m.photo_url, m.forme_categorie, m.pediatrique, o.nom AS operateur,
+                m.disponible_rdc, m.photo_url, m.forme_categorie, m.pediatrique, COALESCE(o.nom_affiche, o.nom) AS operateur,
                 COALESCE(m.nb_composants, (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id)) AS nb_molecules
            FROM medicament_molecules mm
            JOIN medicaments m ON m.id = mm.medicament_id
            LEFT JOIN operateurs o ON o.id = m.operateur_id
           WHERE mm.molecule_id IN (SELECT molecule_id FROM molecule_pathologies WHERE pathologie_id = ?)
+            AND ${OPERATEUR_VISIBLE}
           ORDER BY nb_molecules, o.nom, m.nom_commercial`,
         [p.id],
       ),

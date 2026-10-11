@@ -1,9 +1,9 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { createContext, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView } from './Status.jsx';
-import { RichText } from './RichText.jsx';
+import { FicheProduit } from './FicheProduit.jsx';
 
 const mini = (url) => (url && url.startsWith('/medias/') ? url.replace(/\.webp$/, '-mini.webp') : url);
 
@@ -38,17 +38,6 @@ export function PhotoProduit({ produit, grande = false }) {
       decoding="async"
       onError={() => setErreur(true)}
     />
-  );
-}
-
-/** Rubrique de la fiche produit (texte du catalogue ou saisi dans /admin). */
-function Rubrique({ titre, texte }) {
-  if (!texte) return null;
-  return (
-    <div className="panneau-rubrique">
-      <h3>{titre}</h3>
-      <RichText text={texte} headingLevel={4} vide={null} glossaire />
-    </div>
   );
 }
 
@@ -96,55 +85,13 @@ export function ProduitPanneau({ id, onClose, onOuvrir }) {
               </p>
               <div className="tag-row">
                 {p.forme_categorie && <span className="tag">{p.forme_categorie}</span>}
+                {p.amm && <span className="tag tag-amm">AMM RDC</span>}
                 {p.association && <span className="tag tag-assoc">Association</span>}
                 {p.pediatrique && <span className="tag tag-enfant">Adapté à l’enfant</span>}
                 {p.disponible_rdc && <span className="tag tag-ok">Circuit national RDC</span>}
               </div>
 
-              <dl className="panneau-identite">
-                {p.presentation && (
-                  <div>
-                    <dt>Présentation</dt>
-                    <dd>{p.presentation}</dd>
-                  </div>
-                )}
-                <div>
-                  <dt>DCI</dt>
-                  <dd>{p.dci}</dd>
-                </div>
-                {p.composition_texte && (
-                  <div>
-                    <dt>Composition</dt>
-                    <dd>{p.composition_texte}</dd>
-                  </div>
-                )}
-                {p.composition.length > 0 && (
-                  <div>
-                    <dt>Fiches molécules</dt>
-                    <dd>
-                      <ul className="chips">
-                        {p.composition.map((c) => (
-                          <li key={c.id}>
-                            <Link to={`/molecules/${c.slug}`} className="chip" onClick={onClose}>
-                              {c.dci}
-                              {c.dosage && <span className="chip-meta">{c.dosage}</span>}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </dd>
-                  </div>
-                )}
-              </dl>
-
-              <Rubrique titre="Mécanisme d’action" texte={p.mecanisme} />
-              <Rubrique titre="Indications" texte={p.indication} />
-              <Rubrique titre="Repère posologique" texte={p.posologie} />
-              <Rubrique titre="Contre-indications" texte={p.contre_indications} />
-              <Rubrique titre="Effets indésirables" texte={p.effets_indesirables} />
-              <Rubrique titre="Interactions" texte={p.interactions} />
-              <Rubrique titre="Conservation" texte={p.conservation} />
-              {p.sources_text && <p className="hint panneau-source">{p.sources_text}</p>}
+              <FicheProduit produit={p} headingLevel={3} onNavigate={onClose} />
 
               {p.autres_produits.length > 0 && (
                 <div className="panneau-rubrique">
@@ -174,13 +121,51 @@ export function ProduitPanneau({ id, onClose, onOuvrir }) {
   );
 }
 
-/** Ouvre la fiche d'un produit en panneau ; renvoie [ouvrir, panneau à rendre]. */
-export function usePanneauProduit() {
+const PanneauContext = createContext(null);
+
+/**
+ * Fiche produit en panneau, disponible dans toute l'application : partout où un produit
+ * est mentionné, son nom ouvre sa fiche pharmacologique (refermée au changement de page).
+ */
+export function PanneauProduitProvider({ children }) {
   const [id, setId] = useState(null);
-  const panneau = id ? (
-    <ProduitPanneau key={id} id={id} onClose={() => setId(null)} onOuvrir={setId} />
-  ) : null;
-  return [setId, panneau];
+  const { pathname } = useLocation();
+  const fermer = useCallback(() => setId(null), []);
+  useEffect(fermer, [pathname, fermer]);
+  return (
+    <PanneauContext.Provider value={setId}>
+      {children}
+      {id && <ProduitPanneau key={id} id={id} onClose={fermer} onOuvrir={setId} />}
+    </PanneauContext.Provider>
+  );
+}
+
+/** Ouvre la fiche d'un produit (sans panneau disponible : sa page). */
+export function useFicheProduit() {
+  const ouvrir = useContext(PanneauContext);
+  const navigate = useNavigate();
+  return ouvrir || ((id) => navigate(`/medicaments/${id}`));
+}
+
+/**
+ * Nom d'un produit : un vrai lien vers sa page (nouvel onglet, copie du lien), qui ouvre
+ * la fiche en panneau au clic simple.
+ */
+export function LienProduit({ id, className, children }) {
+  const ouvrir = useFicheProduit();
+  return (
+    <Link
+      to={`/medicaments/${id}`}
+      className={className}
+      onClick={(e) => {
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        ouvrir(id);
+      }}
+    >
+      {children}
+    </Link>
+  );
 }
 
 function CarteProduit({ produit: p, onOuvrir }) {
@@ -205,6 +190,7 @@ function CarteProduit({ produit: p, onOuvrir }) {
         </span>
         {p.association && <span className="carte-compo">{p.composition}</span>}
         <span className="tag-row">
+          {p.amm && <span className="tag tag-amm">AMM</span>}
           {p.pediatrique && <span className="tag tag-enfant">Enfant</span>}
           {p.disponible_rdc && <span className="tag tag-ok">RDC</span>}
         </span>
@@ -223,7 +209,7 @@ export function ProduitsGalerie({ produits, dci }) {
   const [forme, setForme] = useState(TOUS);
   const [firme, setFirme] = useState(TOUS);
   const [enfant, setEnfant] = useState(false);
-  const [ouvrir, panneau] = usePanneauProduit();
+  const ouvrir = useFicheProduit();
   const idForme = useId();
   const idFirme = useId();
 
@@ -329,14 +315,13 @@ export function ProduitsGalerie({ produits, dci }) {
         </section>
       )}
       {!filtres.length && <p className="muted">Aucun produit ne correspond à ces filtres.</p>}
-      {panneau}
     </div>
   );
 }
 
 /** Bande de vignettes (onglet Thérapeutique des pathologies) ; clic = fiche produit. */
 export function VignettesProduits({ produits, slug, max = 8 }) {
-  const [ouvrir, panneau] = usePanneauProduit();
+  const ouvrir = useFicheProduit();
   if (!produits.length) return null;
   // Produits avec photo d'abord, la molécule seule avant les associations
   const tries = [...produits].sort(
@@ -363,7 +348,6 @@ export function VignettesProduits({ produits, slug, max = 8 }) {
           Voir les {produits.length} produits
         </Link>
       )}
-      {panneau}
     </div>
   );
 }

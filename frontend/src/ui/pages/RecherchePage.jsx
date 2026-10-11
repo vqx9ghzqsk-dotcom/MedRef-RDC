@@ -3,6 +3,7 @@ import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
 import { SearchBar } from '../components/SearchBar.jsx';
+import { LienProduit } from '../components/Produits.jsx';
 import { CATEGORIES_URGENCE, TYPES_EXAMEN } from '../../core/labels.js';
 
 const GROUPS = [
@@ -24,6 +25,8 @@ const GROUPS = [
     key: 'medicaments',
     title: 'Médicaments',
     to: (r) => `/medicaments/${r.id}`,
+    // Un produit ouvre sa fiche pharmacologique en panneau
+    produit: true,
     label: (r) => `${r.dci} (${r.nom_commercial})`,
     sub: (r) => [r.forme, r.dosage].filter(Boolean).join(', '),
   },
@@ -90,12 +93,19 @@ export function RecherchePage() {
                     <ul className="list-links">
                       {res.data[g.key].map((r) => (
                         <li key={r.id}>
-                          <Link to={g.to(r)}>
-                            <span>
-                              {g.label(r)}
-                              {g.sub && g.sub(r) && <span className="row-sub">{g.sub(r)}</span>}
-                            </span>
-                          </Link>
+                          {(() => {
+                            const contenu = (
+                              <span>
+                                {g.label(r)}
+                                {g.sub && g.sub(r) && <span className="row-sub">{g.sub(r)}</span>}
+                              </span>
+                            );
+                            return g.produit ? (
+                              <LienProduit id={r.id}>{contenu}</LienProduit>
+                            ) : (
+                              <Link to={g.to(r)}>{contenu}</Link>
+                            );
+                          })()}
                         </li>
                       ))}
                     </ul>

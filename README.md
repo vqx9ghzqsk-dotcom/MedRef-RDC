@@ -443,6 +443,37 @@ Sur la fiche d'une molécule, la galerie « Produits disponibles chez les firmes
 association), filtrables par forme, firme et « adapté à l'enfant » ; un clic sur le nom ouvre la fiche du produit en
 panneau latéral. L'onglet Thérapeutique des pathologies montre les mêmes produits en vignettes.
 
+La fiche d'un produit fusionne, rubrique par rubrique, les données du produit (catalogue ou /admin), la fiche MedRef
+de chaque molécule et les fiches externes ; chaque texte indique sa provenance et un texte identique n'est affiché
+qu'une fois.
+
+**Répertoire des AMM de l'ACOREP.** Les documents tirés du répertoire des autorisations de mise sur le marché
+(« Produits des firmes pharmaceutiques autorisés en RDC », puis la version complète « Tous les produits des
+opérateurs pharmaceutiques autorisés en RDC » : 6 352 lignes, 1 081 opérateurs, 547 fiches de substances rédigées
+par IA) sont convertis puis importés de la même façon :
+
+```bash
+cd backend
+python scripts/catalogues/extraire_acorep.py "C:/chemin/Tous_produits_operateurs_RDC_ACOREP.docx"
+npm run db:enrichir
+```
+
+Le script lit les deux versions du document. Les lignes déjà importées sont reconnues (même opérateur, marque, dosage
+et n° AMM) et complétées, jamais dupliquées ; un second import ne change rien.
+
+- chaque ligne du répertoire (dosage ou conditionnement enregistré) est conservée dans `autorisations_amm` et
+  rattachée au produit de catalogue de la même firme et de la même marque, de forme compatible ; sinon un produit est
+  créé (un par marque + DCI). La fiche produit affiche le tableau des AMM et la mention « AMM RDC », qui ne coche
+  jamais d'office la disponibilité dans le circuit national ;
+- chaque fiche de substance est conservée intacte dans `molecule_fiches_externes`. Une substance absente de MedRef
+  devient une molécule marquée **à valider** (bandeau sur la fiche, case « Fiche relue et validée » dans /admin) ;
+  une molécule existante garde sa fiche MedRef et la fiche externe s'affiche à côté quand elle diffère ;
+- chaque produit a une **nature** (médicament, complément, dispositif, cosmétique, autre). Cosmétiques et
+  dispositifs n'ont pas de principe actif à lier : leur liaison est _sans objet_. La page Médicaments se filtre par
+  nature et par nom, et n'affiche que les 300 premiers résultats (avec le total) ;
+- la synthèse par firme (y compris les firmes sans AMM trouvée) et le tableau de tous les opérateurs (pays,
+  importateurs principaux) sont dans `repertoire_amm_firmes`.
+
 **Formes cliniques et sémiologie.** `seed-data/semiologie/` décrit, pour chaque fiche, ses formes cliniques (commune,
 grave, selon le terrain, topographique, évolutive, paraclinique, étiologique). Chaque forme a sa sémiologie
 systématisée (terrain, signes fonctionnels, généraux, physiques, paraclinique), ses syndromes, ses examens de

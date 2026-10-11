@@ -26,8 +26,11 @@ export function createMedRefApi(client) {
     symptome: (slug) => data(client.get(`/api/symptomes/${enc(slug)}`)),
     scores: () => data(client.get('/api/scores')),
     score: (slug) => data(client.get(`/api/scores/${enc(slug)}`)),
-    medicaments: (filtres) => data(client.get('/api/medicaments', filtres)),
+    // { data, total, limite } : la liste est limitée, le total permet d'inviter à affiner
+    medicaments: (filtres) => client.get('/api/medicaments', filtres),
     medicamentFiltres: () => data(client.get('/api/medicaments/filtres')),
+    medicamentDomaines: () => data(client.get('/api/medicaments/domaines')),
+    suggestionsProduits: (q) => data(client.get('/api/medicaments/suggestions', { q })),
     medicament: (id) => data(client.get(`/api/medicaments/${enc(id)}`)),
     molecules: () => data(client.get('/api/molecules')),
     molecule: (slug) => data(client.get(`/api/molecules/${enc(slug)}`)),

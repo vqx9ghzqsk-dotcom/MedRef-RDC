@@ -62,6 +62,15 @@ export const TYPES_SCORE = {
 };
 
 /** Rubriques de la fiche pharmacologique d'une molécule. */
+/** Nature d'un produit (le répertoire des AMM contient aussi cosmétiques et dispositifs). */
+export const NATURES_PRODUIT = {
+  medicament: 'Médicaments',
+  complement: 'Compléments alimentaires',
+  dispositif: 'Dispositifs médicaux',
+  cosmetique: 'Cosmétiques',
+  autre: 'Autres (désinfectants, solutés…)',
+};
+
 export const FICHE_PHARMACO = [
   ['mecanisme', 'Mécanisme d’action'],
   ['pharmacocinetique', 'Pharmacocinétique'],
@@ -69,6 +78,7 @@ export const FICHE_PHARMACO = [
   ['posologie', 'Posologie'],
   ['contre_indications', 'Contre-indications'],
   ['effets_indesirables', 'Effets indésirables'],
+  ['precautions', 'Précautions'],
   ['interactions', 'Interactions'],
   ['grossesse_allaitement', 'Grossesse et allaitement'],
   ['surveillance', 'Surveillance'],

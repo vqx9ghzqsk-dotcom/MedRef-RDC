@@ -84,7 +84,24 @@ const SELS = [
   'proxetil',
   'axetil',
   'disodique',
+  'monosodique',
+  'dipotassique',
+  'trihydratee',
+  'dihydratee',
+  'monohydratee',
+  'hemihydrate',
+  'hemihydratee',
+  'sesquihydrate',
+  'hydrate',
+  'hydratee',
+  'mononitrate',
+  'chlorure',
+  'micronise',
+  'micronisee',
 ];
+
+/** Contenu de parenthèses qui n'est pas un autre nom de la molécule (« Vitamines (association) »). */
+const PRECISIONS = new Set(['association', 'solute', 'faible dose', 'topique', 'injectable', 'orale', 'sel']);
 
 const FORMES =
   /\b(comprimes?|gelules?|sirop|suspension|solution|injectable|injection|poudre|creme|pommade|gel|collyre|ovules?|suppositoires?|sachets?|granules?|pediatriques?|buvable|dispersibles?|tablets?|capsules?|flacons?|ampoules?|pour|usage|oral|orale|iv|im)\b/g;
@@ -113,28 +130,64 @@ const sansSels = (n) =>
     .join(' ')
     .trim();
 
-/** Index des noms reconnus : nom normalisé → slug de molécule. */
+/** Orthographes équivalentes : « gentamycine » = « gentamicine », « sulphaméthoxazole » = « sulfaméthoxazole ». */
+const canon = (n) => n.replace(/ph/g, 'f').replace(/th/g, 't').replace(/y/g, 'i');
+
+/**
+ * Autres noms tirés des parenthèses du nom MedRef : « Vitamine C (acide ascorbique) » →
+ * « acide ascorbique » ; « Zinc (sulfate) » → « sulfate de zinc ».
+ */
+function nomsEntreParentheses(dci) {
+  const dedans = (String(dci).match(/\(([^)]*)\)/) || [])[1];
+  if (!dedans) return [];
+  const n = normaliser(dedans);
+  const dehors = normaliser(dci);
+  if (!n || PRECISIONS.has(n)) return [];
+  if (!sansSels(n)) return [`${n} de ${dehors}`];
+  return n.length >= 3 ? [n] : [];
+}
+
+/** Dose dans le nom d'une molécule (« Lévonorgestrel 1,5 mg ») : fiche d'une présentation précise. */
+const DOSE_NOM = /(\d+(?:[.,]\d+)?)\s*(?:mg|g|%|ui|µg|mcg)\b/i;
+
+/**
+ * Index des noms reconnus : nom normalisé → slug de molécule. `index.doses` garde la dose
+ * des molécules qui en portent une dans leur nom.
+ */
 function construireIndex(molecules) {
   const index = new Map();
+  index.doses = new Map();
+  const ajouter = (n, slug) => {
+    if (n && !index.has(n)) index.set(n, slug);
+  };
   for (const m of molecules) {
     if (EXCLUES.has(m.slug)) continue;
-    const noms = [m.dci, m.slug.replace(/-/g, ' '), ...(SYNONYMES[m.slug] || [])];
-    for (const nom of noms) {
-      const n = normaliser(nom);
-      if (n && !index.has(n)) index.set(n, m.slug);
-    }
+    const dose = String(m.dci).match(DOSE_NOM);
+    if (dose) index.doses.set(m.slug, dose[1].replace(',', '.'));
+    const noms = [m.dci, m.slug.replace(/-/g, ' '), ...(SYNONYMES[m.slug] || [])].map(normaliser);
+    for (const n of [...noms, ...nomsEntreParentheses(m.dci)]) ajouter(n, m.slug);
   }
+  // Orthographes équivalentes, sans écraser un nom exact
+  for (const [n, slug] of [...index]) ajouter(canon(n), slug);
   return index;
 }
 
-/** Variantes d'un nom anglais ou abrégé (« amoxicillin » → « amoxicilline »). */
+/** Variantes d'un nom anglais ou abrégé (« amoxicillin » → « amoxicilline », « méropénem » → « méropénème »). */
 function variantes(n) {
   const v = [n, sansSels(n)];
   for (const x of [...v]) {
-    if (/in$/.test(x)) v.push(`${x}e`);
-    if (/ine$/.test(x)) v.push(x.slice(0, -1));
+    // « phenoxymethylpenicillin e » (mot coupé), « vit a », « vitamines b1 »
+    v.push(
+      x.replace(/ ([a-z])$/, '$1'),
+      x.replace(/^vit /, 'vitamine '),
+      x.replace(/^vitamines /, 'vitamine '),
+    );
   }
-  return [...new Set(v.filter(Boolean))];
+  for (const x of [...v]) {
+    if (/[a-z]{4}[^aeiouy\s]$/.test(x)) v.push(`${x}e`);
+    if (/[a-z]{4}[^aeiouy\s]e$/.test(x)) v.push(x.slice(0, -1));
+  }
+  return [...new Set([...v, ...v.map(canon)].filter(Boolean))];
 }
 
 function trouver(composant, index) {
@@ -188,11 +241,29 @@ function composants(produit) {
  * Rapproche un produit des molécules connues.
  * → { molecules: [slug…], nbComposants, liaison: 'auto' | 'partielle' | 'aucune' }
  */
+/**
+ * Une molécule à dose précise (« Lévonorgestrel 1,5 mg ») ne convient qu'aux produits de
+ * cette dose : pas à une pilule combinée à 0,15 mg ni à un implant à 52 mg.
+ */
+function doseCompatible(produit, slug, index) {
+  const dose = index.doses?.get(slug);
+  if (!dose) return true;
+  const texte = `${produit.dci || ''} ${produit.composition || ''} ${produit.dosage || ''}`.replace(
+    /(\d),(\d)/g,
+    '$1.$2',
+  );
+  return new RegExp(`(^|[^0-9.])${dose.replace('.', '\\.')}(?![0-9])`).test(texte);
+}
+
 function rapprocher(produit, index) {
   const { noms, nb: nbLu } = composants(produit);
   const trouvees = [];
+  // « DHA » des oméga-3 (acide docosahexaénoïque) n'est pas la dihydroartémisinine
+  const omega3 = /om[ée]ga|\bEPA\b/i.test(`${produit.dci || ''} ${produit.composition || ''}`);
   for (const c of noms) {
     const slug = trouver(c, index);
+    if (omega3 && slug === 'dihydroartemisinine') continue;
+    if (slug && !doseCompatible(produit, slug, index)) continue;
     if (slug && !trouvees.includes(slug)) trouvees.push(slug);
   }
   // « Telmisartan (± Hydrochlorothiazide) » sans composition dosée : variante inconnue
@@ -203,4 +274,4 @@ function rapprocher(produit, index) {
   return { molecules: trouvees, nbComposants: nb, liaison };
 }
 
-module.exports = { normaliser, construireIndex, composants, rapprocher, EXCLUES };
+module.exports = { normaliser, construireIndex, composants, rapprocher, trouver, doseCompatible, EXCLUES };

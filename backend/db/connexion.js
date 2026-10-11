@@ -46,4 +46,16 @@ async function connect({ database = config.db.database, createIfMissing = false 
   return conn;
 }
 
-module.exports = { connect, isTestDatabase };
+/**
+ * Recalcule les statistiques des tables de produits après un gros chargement : sans elles,
+ * MySQL choisit de mauvais plans (requêtes de plusieurs dizaines de secondes au lieu de
+ * quelques centaines de millisecondes). Hors transaction : ANALYZE valide implicitement.
+ */
+async function analyserTables(conn) {
+  await conn.query(
+    `ANALYZE TABLE medicaments, medicament_molecules, molecules, autorisations_amm, operateurs,
+       molecule_fiches_externes, classes_pharmacologiques`,
+  );
+}
+
+module.exports = { connect, isTestDatabase, analyserTables };

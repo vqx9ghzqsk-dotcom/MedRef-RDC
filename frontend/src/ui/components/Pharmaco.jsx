@@ -117,9 +117,9 @@ export function Posologies({ posologies }) {
 }
 
 /** Fiche pharmacologique de référence d'une molécule. */
-export function FichePharmaco({ molecule, headingLevel = 3 }) {
+export function FichePharmaco({ molecule, headingLevel = 3, rubriques: liste = FICHE_PHARMACO }) {
   const H = `h${headingLevel}`;
-  const rubriques = FICHE_PHARMACO.filter(([key]) => molecule[key]);
+  const rubriques = liste.filter(([key]) => molecule[key]);
   if (!rubriques.length) return <p className="muted">Fiche pharmacologique à compléter.</p>;
   return (
     <dl className="pharmaco">

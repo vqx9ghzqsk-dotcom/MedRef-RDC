@@ -20,7 +20,7 @@ describeDb('Intégration MySQL', () => {
 
   beforeAll(async () => {
     const config = require('../src/config');
-    const { connect, isTestDatabase } = require('../db/connexion');
+    const { connect, isTestDatabase, analyserTables } = require('../db/connexion');
     const { createBaseline, migrate } = require('../db/migrations');
     const { seed } = require('../db/seed');
     if (!isTestDatabase(config.db.database)) {
@@ -29,13 +29,17 @@ describeDb('Intégration MySQL', () => {
     const conn = await connect({ createIfMissing: true });
     await createBaseline(conn);
     await migrate(conn);
+    // Une transaction : des milliers d’insertions (catalogues, AMM) sans validation disque à chacune
+    await conn.beginTransaction();
     await seed(conn);
+    await conn.commit();
+    await analyserTables(conn);
     await conn.end();
 
     request = require('supertest');
     app = require('../src/app').createApp();
     db = require('../src/db');
-  }, 60000);
+  }, 300000);
 
   afterAll(async () => {
     if (db) await db.close();
@@ -46,13 +50,21 @@ describeDb('Intégration MySQL', () => {
     expect(deps.body.data).toHaveLength(5);
     const mi = await request(app).get('/api/departements/medecine-interne');
     const infectio = mi.body.data.specialites.find((s) => s.nom === 'Infectiologie');
-    expect(infectio.nb_pathologies).toBe(5);
+    // 5 fiches de départ + 26 fiches des lots 1 à 3 (seed-data/pathologies-ajoutees)
+    expect(infectio.nb_pathologies).toBe(31);
     const sp = await request(app).get(`/api/specialites/${infectio.slug}`);
     expect(sp.body.data.pathologies.map((p) => p.slug)).toContain('paludisme-grave');
     const fiche = await request(app).get('/api/pathologies/paludisme-grave');
     expect(fiche.status).toBe(200);
     expect(fiche.body.data.molecules[0].dci).toBe('Artésunate');
     expect(fiche.body.data.symptomes[0].frequence).toBe('tres_frequent');
+    // Fiche ajoutée par lot : formes, molécules ACOREP et niveaux de soins résolus dans la base
+    const ebola = (await request(app).get('/api/pathologies/maladie-a-virus-ebola')).body.data;
+    expect(ebola.onglets.definition.formes.length).toBeGreaterThanOrEqual(2);
+    expect(ebola.onglets.therapeutique.molecules.map((m) => m.slug)).toEqual(
+      expect.arrayContaining(['ansuvimab', 'vaccin-ebola-zaire']),
+    );
+    expect(ebola.onglets.niveaux).toHaveLength(3);
   });
 
   it('fiche structurée : bilan, différentiels, principes, produits, complications', async () => {
@@ -87,6 +99,33 @@ describeDb('Intégration MySQL', () => {
     const anti = f.body.data.classes.find((c) => c.nom === 'Antipaludiques');
     const meds = await request(app).get(`/api/medicaments?classe=${anti.id}`);
     expect(meds.body.data.length).toBeGreaterThanOrEqual(3);
+    // Page Médicaments : médicaments autorisés en RDC seulement (AMM), liste limitée, total renvoyé
+    const tous = (await request(app).get('/api/medicaments')).body;
+    expect(tous.data).toHaveLength(tous.limite);
+    expect(tous.total).toBeGreaterThan(1000);
+    // Opérateurs retenus seulement (seed-data/operateurs-retenus.js) : Hetero, par exemple, est masqué
+    const filtresOps = (await request(app).get('/api/medicaments/filtres')).body.data.operateurs.map(
+      (o) => o.nom,
+    );
+    expect(filtresOps).toEqual(expect.arrayContaining(['Shalina Healthcare', 'Sanofi', 'Organon']));
+    expect(filtresOps).not.toContain('Hetero');
+    const organon = (await request(app).get('/api/medicaments/suggestions?q=Aerius')).body.data.produits;
+    expect(organon[0]).toMatchObject({ nom_commercial: 'Aerius', operateur: 'Organon', amm: true });
+    expect(organon[0].photo_url).toMatch(/organon/);
+    // Autorisés (AMM) ou présentés en photo par une firme, même sans AMM retrouvée
+    expect(tous.data.every((m) => m.nature === 'medicament' && (m.amm || m.photo_url))).toBe(true);
+    // … sauf les produits ajoutés par l'IA (catalogue Organon) : AMM obligatoire, photo ou non
+    const marvelon = (await request(app).get('/api/medicaments?q=Marvelon')).body.data;
+    expect(marvelon.filter((m) => m.operateur === 'Organon')).toEqual([]);
+    // Entrées par domaine et recherche instantanée dans le même périmètre
+    const domaines = (await request(app).get('/api/medicaments/domaines')).body.data;
+    const palu = domaines.groupes.find((g) => g.nom === 'Antipaludiques');
+    expect(palu.n).toBeGreaterThan(50);
+    const filtre = (await request(app).get('/api/medicaments?groupe=Antipaludiques')).body;
+    expect(filtre.total).toBe(palu.n);
+    const sugg = (await request(app).get('/api/medicaments/suggestions?q=savon')).body.data;
+    expect(sugg.produits.every((p) => p.nature === 'medicament' && (p.amm || p.photo_url))).toBe(true);
+    expect((await request(app).get('/api/medicaments/suggestions?q=a')).body.data.produits).toEqual([]);
     const src = await request(app).get('/api/sources?scope=global');
     expect(src.body.data.every((s) => s.departement === null)).toBe(true);
   });
@@ -347,17 +386,64 @@ describeDb('Intégration MySQL', () => {
 
     // Fiche du produit : rubriques du catalogue et molécules liées
     const fiche = (await request(app).get(`/api/medicaments/${assoc.id}`)).body.data;
-    expect(fiche).toMatchObject({ operateur: 'Denk Pharma', association: true, liaison: 'partielle' });
+    // Caféine : molécule venue des fiches ACOREP, l’association est désormais entièrement liée
+    expect(fiche).toMatchObject({ operateur: 'Denk Pharma', association: true, liaison: 'auto' });
     expect(fiche.mecanisme).toBeTruthy();
     expect(fiche.sources_text).toMatch(/à vérifier sur la notice/);
     expect(fiche.composition.map((c) => c.slug)).toEqual(
-      expect.arrayContaining(['paracetamol', 'ibuprofene']),
+      expect.arrayContaining(['paracetamol', 'ibuprofene', 'cafeine']),
     );
 
     // Onglet Thérapeutique d'une pathologie : produits avec photo sous chaque molécule
     const palu = (await request(app).get('/api/pathologies/paludisme-simple')).body.data;
     const produitsPalu = palu.onglets.therapeutique.molecules.flatMap((m) => m.produits);
     expect(produitsPalu.some((p) => p.photo_url && p.operateur === 'Shalina Healthcare')).toBe(true);
+  });
+
+  it('répertoire des AMM de l’ACOREP et fiches des substances (à valider)', async () => {
+    const [[{ n }]] = [await db.query('SELECT COUNT(*) AS n FROM autorisations_amm')];
+    expect(Number(n)).toBe(6352);
+
+    // Substance absente de MedRef : molécule créée, marquée à valider, avec « Précautions »
+    const atropine = (await request(app).get('/api/molecules/atropine')).body.data;
+    expect(atropine).toMatchObject({
+      fiche_a_valider: true,
+      groupe_therapeutique: 'Anesthésie et réanimation',
+    });
+    expect(atropine.precautions).toMatch(/glaucome/);
+    expect(atropine.produits.some((p) => p.amm)).toBe(true);
+
+    // Molécule existante : fiche MedRef intacte, fiche ACOREP conservée à côté
+    const para = (await request(app).get('/api/molecules/paracetamol')).body.data;
+    expect(para.fiche_a_valider).toBe(false);
+    expect(para.fiches_externes).toEqual([expect.objectContaining({ source: 'ACOREP', a_valider: true })]);
+
+    // Produit de catalogue complété par ses AMM ; disponibilité RDC jamais cochée d'office
+    const [produit] = await db.query(
+      `SELECT m.id FROM medicaments m JOIN autorisations_amm a ON a.medicament_id = m.id
+        WHERE m.photo_url IS NOT NULL LIMIT 1`,
+    );
+    const fiche = (await request(app).get(`/api/medicaments/${produit.id}`)).body.data;
+    expect(fiche.amm).toBe(true);
+    expect(fiche.autorisations[0]).toMatchObject({ source: 'ACOREP', numero: expect.any(String) });
+    expect(fiche.disponible_rdc).toBe(false);
+    expect(fiche.composition.every((c) => Array.isArray(c.fiches_externes))).toBe(true);
+
+    // Un médecin valide la fiche importée depuis /admin
+    const r = await request(app)
+      .post('/api/auth/register')
+      .send({ email: `acorep-${Date.now()}@medref.cd`, password: 'Quinine-2026', nom: 'Dr Acorep' });
+    await db.query("UPDATE users SET role = 'medecin' WHERE id = ?", [r.body.user.id]);
+    const headers = { Authorization: `Bearer ${r.body.token}` };
+    const edition = (await request(app).get(`/api/admin/molecules/${atropine.id}`).set(headers)).body.data;
+    expect(edition).toMatchObject({ fiche_a_valider: true, fiche_source: expect.stringMatching(/ACOREP/) });
+    const { historique: _h, id: _i, dci: _d, slug: _s, fiche_source: _f, ...payload } = edition;
+    const maj = await request(app)
+      .put(`/api/admin/molecules/${atropine.id}`)
+      .set(headers)
+      .send({ ...payload, fiche_a_valider: false });
+    expect(maj.status).toBe(200);
+    expect((await request(app).get('/api/molecules/atropine')).body.data.fiche_a_valider).toBe(false);
   });
 
   it('administration du catalogue : liaisons, création de molécule et rapprochement', async () => {
@@ -368,23 +454,28 @@ describeDb('Intégration MySQL', () => {
     const headers = { Authorization: `Bearer ${r.body.token}` };
 
     const cat = (await request(app).get('/api/admin/catalogue').set(headers)).body.data;
-    expect(cat.firmes).toHaveLength(6);
+    // Six catalogues de firmes + firmes du répertoire des AMM de l’ACOREP
+    expect(cat.firmes.map((f) => f.nom)).toEqual(
+      expect.arrayContaining(['Denk Pharma', 'Unique Pharma', 'Hetero']),
+    );
     expect(cat.compteurs.aucune).toBeGreaterThan(100);
     const avant = cat.compteurs.aucune;
 
-    // Créer la molécule clotrimazole relie automatiquement les produits qui en contiennent
+    // Créer la molécule finastéride (absente du référentiel) relie automatiquement les produits qui en contiennent
     const cree = await request(app)
       .post('/api/admin/molecules')
       .set(headers)
-      .send({ dci: 'Clotrimazole', classe: 'Antifongiques' });
+      .send({ dci: 'Finastéride', classe: 'Inhibiteurs de la 5-alpha-réductase' });
     expect(cree.status).toBe(201);
-    expect(cree.body.produits_lies).toBeGreaterThan(3);
+    expect(cree.body.produits_lies).toBeGreaterThanOrEqual(2);
     const apres = (await request(app).get('/api/admin/catalogue').set(headers)).body.data;
     expect(apres.compteurs.aucune).toBeLessThan(avant);
-    const clotri = (await request(app).get('/api/molecules/clotrimazole')).body.data;
-    expect(clotri.produits.length).toBe(cree.body.produits_lies);
+    const fina = (await request(app).get('/api/molecules/finasteride')).body.data;
+    // La fiche molécule ne montre que les produits des opérateurs retenus (les autres sont masqués)
+    expect(fina.produits.length).toBeGreaterThan(0);
+    expect(fina.produits.length).toBeLessThanOrEqual(cree.body.produits_lies);
     expect(
-      (await request(app).post('/api/admin/molecules').set(headers).send({ dci: 'Clotrimazole' })).status,
+      (await request(app).post('/api/admin/molecules').set(headers).send({ dci: 'Finastéride' })).status,
     ).toBe(409);
 
     // Lien manuel depuis la fiche molécule, puis retrait
@@ -395,8 +486,9 @@ describeDb('Intégration MySQL', () => {
       await request(app).get(`/api/admin/molecules/${para.id}/produits`).set(headers)
     ).body.data;
     expect(lies.length).toBeGreaterThan(20);
-    const libre = (await request(app).get('/api/admin/catalogue?liaison=aucune&q=Tramadol').set(headers)).body
-      .data.produits[0];
+    const libre = (
+      await request(app).get('/api/admin/catalogue?liaison=aucune&q=Oct%C3%A9nidine').set(headers)
+    ).body.data.produits[0];
     expect(
       (
         await request(app)

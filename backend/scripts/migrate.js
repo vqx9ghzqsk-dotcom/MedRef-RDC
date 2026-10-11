@@ -12,7 +12,7 @@
  */
 
 const config = require('../src/config');
-const { connect, isTestDatabase } = require('../db/connexion');
+const { connect, isTestDatabase, analyserTables } = require('../db/connexion');
 const { migrate, createBaseline, status } = require('../db/migrations');
 const { backup } = require('../db/sauvegarde');
 const { seed } = require('../db/seed');
@@ -52,6 +52,7 @@ async function reset(conn) {
   await migrate(conn, { log: console.log });
   if (args.includes('--seed')) {
     const counts = await seed(conn);
+    await analyserTables(conn);
     console.log('✔ Données insérées', counts);
   }
 }

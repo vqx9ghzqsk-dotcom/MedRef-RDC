@@ -9,6 +9,7 @@
 const express = require('express');
 const db = require('../db');
 const { asyncHandler, HttpError } = require('../utils/http');
+const { OPERATEUR_VISIBLE } = require('../utils/visibilite');
 
 const router = express.Router();
 const LIMIT = 10;
@@ -48,11 +49,11 @@ router.get(
                 MATCH(m.nom_commercial, m.dci, m.indication) AGAINST (? IN BOOLEAN MODE)
                   + (m.nom_commercial LIKE ? OR m.dci LIKE ?) * 10 AS score
            FROM medicaments m
-          WHERE MATCH(m.nom_commercial, m.dci, m.indication) AGAINST (? IN BOOLEAN MODE)
-             OR m.nom_commercial LIKE ? OR m.dci LIKE ?
+          WHERE (MATCH(m.nom_commercial, m.dci, m.indication) AGAINST (? IN BOOLEAN MODE)
+             OR m.nom_commercial LIKE ? OR m.dci LIKE ?) AND ${OPERATEUR_VISIBLE}
           ORDER BY score DESC, m.dci LIMIT ${LIMIT}`
       : `SELECT m.id, m.nom_commercial, m.dci, m.forme, m.dosage FROM medicaments m
-          WHERE m.nom_commercial LIKE ? OR m.dci LIKE ? ORDER BY m.dci LIMIT ${LIMIT}`;
+          WHERE (m.nom_commercial LIKE ? OR m.dci LIKE ?) AND ${OPERATEUR_VISIBLE} ORDER BY m.dci LIMIT ${LIMIT}`;
     const medicamentsParams = boolean ? [boolean, like, like, boolean, like, like] : [like, like];
 
     const [pathologies, medicaments, molecules, examens, urgences, symptomes, scores, syndromes, glossaire] =

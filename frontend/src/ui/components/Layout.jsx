@@ -5,6 +5,7 @@ import { useOnline } from '../hooks/useOnline.js';
 import { isEditor } from './AdminForm.jsx';
 import { ErrorBoundary } from './ErrorBoundary.jsx';
 import { GlossaireProvider } from '../context/glossaire.jsx';
+import { PanneauProduitProvider } from './Produits.jsx';
 
 export const QUICK_ACCESS = [
   { to: '/urgences', label: 'Urgences', hint: 'Conduite ABCDE, signes de gravité', tone: 'urgence' },
@@ -82,9 +83,11 @@ export function Layout() {
 
       <main id="contenu" className="content" tabIndex={-1}>
         <GlossaireProvider>
-          <ErrorBoundary>
-            <Outlet />
-          </ErrorBoundary>
+          <PanneauProduitProvider>
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
+          </PanneauProduitProvider>
         </GlossaireProvider>
       </main>
 

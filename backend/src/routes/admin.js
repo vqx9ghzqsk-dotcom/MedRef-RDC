@@ -72,6 +72,7 @@ const FICHE_PHARMACO = [
   'interactions',
   'grossesse_allaitement',
   'surveillance',
+  'precautions',
 ];
 const PATHOLOGIE_TEXTES = [
   'definition',
@@ -740,8 +741,11 @@ router.put(
 const nombreOuNull = (v) => (v === null || v === undefined ? null : Number(v));
 
 async function etatMolecule(q, id) {
-  const [mo] = await q(`SELECT ${FICHE_PHARMACO.join(', ')} FROM molecules WHERE id = ?`, [id]);
+  const [mo] = await q(`SELECT ${FICHE_PHARMACO.join(', ')}, fiche_a_valider FROM molecules WHERE id = ?`, [
+    id,
+  ]);
   if (!mo) return null;
+  mo.fiche_a_valider = Boolean(mo.fiche_a_valider);
   const posologies = await q(
     `SELECT population, indication, voie, dose_texte, dose_par_kg, dose_max, unite, frequence, duree,
             securite, remarque
@@ -763,7 +767,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const id = toInt(req.params.id);
     if (!id) throw notFound('Molécule');
-    const [meta] = await db.query('SELECT id, dci, slug FROM molecules WHERE id = ?', [id]);
+    const [meta] = await db.query('SELECT id, dci, slug, fiche_source FROM molecules WHERE id = ?', [id]);
     if (!meta) throw notFound('Molécule');
     const [etat, hist] = await Promise.all([etatMolecule(viaPool, id), historique('molecule', id)]);
     res.json({ data: { ...meta, ...etat, historique: hist } });
@@ -778,6 +782,9 @@ router.put(
     const body = req.body || {};
     const v = createValidator();
     const fiche = Object.fromEntries(FICHE_PHARMACO.map((c) => [c, v.text(body[c], LONG, c)]));
+    // Fiche importée (rédigée par IA) : décocher une fois relue par un médecin
+    if (body.fiche_a_valider !== undefined && typeof body.fiche_a_valider !== 'boolean')
+      v.errors.fiche_a_valider = 'Oui ou non attendu';
     const posologies = v.list(body.posologies, 'posologies', 60)?.map((p, i) => ({
       population: v.oneOf(p.population, POPULATIONS, `posologies[${i}].population`, { required: true }),
       indication: v.text(p.indication, 190, `posologies[${i}].indication`),
@@ -799,8 +806,13 @@ router.put(
       if (!current) throw notFound('Molécule');
       const avant = await etatMolecule(q, id);
       await conn.execute(
-        `UPDATE molecules SET ${FICHE_PHARMACO.map((c) => `${c} = ?`).join(', ')} WHERE id = ?`,
-        [...FICHE_PHARMACO.map((c) => fiche[c]), id],
+        `UPDATE molecules SET ${FICHE_PHARMACO.map((c) => `${c} = ?`).join(', ')},
+                fiche_a_valider = COALESCE(?, fiche_a_valider) WHERE id = ?`,
+        [
+          ...FICHE_PHARMACO.map((c) => fiche[c]),
+          typeof body.fiche_a_valider === 'boolean' ? Number(body.fiche_a_valider) : null,
+          id,
+        ],
       );
       if (posologies) {
         await conn.execute('DELETE FROM molecule_posologies WHERE molecule_id = ?', [id]);
@@ -1011,7 +1023,8 @@ router.put(
 
 // ---------------------------------------------------------------- Catalogues des firmes
 
-const LIAISONS = ['verifiee', 'auto', 'partielle', 'aucune'];
+// sans_objet : cosmétiques et dispositifs, sans principe actif à lier
+const LIAISONS = ['verifiee', 'auto', 'partielle', 'aucune', 'sans_objet'];
 
 /** Produits importés des catalogues, avec leur état de liaison aux molécules. */
 router.get(
@@ -1041,7 +1054,7 @@ router.get(
                   WHERE mm.medicament_id = m.id) AS molecules_liees
            FROM medicaments m LEFT JOIN operateurs o ON o.id = m.operateur_id
           WHERE ${where.join(' AND ')}
-          ORDER BY FIELD(m.liaison, 'aucune', 'partielle', 'auto', 'verifiee'), o.nom, m.nom_commercial
+          ORDER BY FIELD(m.liaison, 'aucune', 'partielle', 'auto', 'verifiee', 'sans_objet'), o.nom, m.nom_commercial
           LIMIT 300`,
         params,
       ),

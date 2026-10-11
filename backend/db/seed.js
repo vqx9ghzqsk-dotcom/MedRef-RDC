@@ -4,6 +4,9 @@ const data = require('./seed-data');
 const { slugify } = require('../src/utils/slugify');
 const { chargerSemiologie } = require('./semiologie');
 const { chargerCatalogues } = require('./catalogues');
+const { chargerAcorep } = require('./acorep');
+const { appliquerSelection } = require('./selection');
+const { chargerNouvellesFiches } = require('./fiches');
 
 /** Référence à une fiche par son slug (sinon : libellé libre). */
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -373,10 +376,19 @@ async function seed(conn) {
   const semiologie = await chargerSemiologie(conn, data);
   // Produits des catalogues de firmes (photos, fiches), liés aux molécules quand c'est sûr
   const catalogues = await chargerCatalogues(conn, data.catalogues);
+  // Répertoire des AMM de l'ACOREP et fiches des substances (à valider)
+  const acorep = await chargerAcorep(conn, data.acorep);
+  // Opérateurs affichés (les autres restent en base, masqués)
+  const selection = await appliquerSelection(conn, data.selection);
+  // Fiches ajoutées par lots (références résolues dans la base, molécules ACOREP comprises)
+  const fichesAjoutees = await chargerNouvellesFiches(conn, data, data.ajouts);
 
   return {
     semiologie,
     catalogues,
+    acorep,
+    selection,
+    fichesAjoutees,
     departements: data.departements.length,
     pathologies: data.pathologies.length,
     molecules: data.molecules.length,

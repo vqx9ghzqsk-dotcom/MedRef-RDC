@@ -26,7 +26,8 @@ export function MoleculesPage() {
         {(list) => {
           const groups = new Map();
           for (const m of list) {
-            const key = m.classe || 'Autres';
+            // Groupe thérapeutique (Antibiotiques, Cardiovasculaire…), sinon la classe
+            const key = m.groupe_therapeutique || m.classe || 'Autres';
             if (!groups.has(key)) groups.set(key, []);
             groups.get(key).push(m);
           }
@@ -39,7 +40,10 @@ export function MoleculesPage() {
                   {items.map((m) => (
                     <li key={m.id}>
                       <Link to={`/molecules/${m.slug}`}>
-                        <span>{m.dci}</span>
+                        <span>
+                          {m.dci}
+                          {m.fiche_a_valider && <span className="tag tag-warn tag-mini">à valider</span>}
+                        </span>
                         <span className="count">
                           {m.nb_produits} produit{m.nb_produits > 1 ? 's' : ''}
                         </span>
@@ -53,6 +57,35 @@ export function MoleculesPage() {
       </AsyncView>
     </>
   );
+}
+
+/** Rubriques des fiches publiées par des documents externes (ACOREP…). */
+const RUBRIQUES_EXTERNES = [
+  ['mecanisme', 'Mécanisme d’action'],
+  ['indications', 'Indications'],
+  ['posologie', 'Repère posologique'],
+  ['precautions', 'Précautions'],
+];
+
+/**
+ * Fiche d’une source externe, affichée à côté de la fiche MedRef quand elle apporte
+ * un texte différent (une molécule créée depuis cette source a déjà ce texte).
+ */
+function FichesExternes({ molecule }) {
+  const differentes = (molecule.fiches_externes || []).filter((fe) =>
+    RUBRIQUES_EXTERNES.some(([k]) => fe[k] && fe[k] !== molecule[k]),
+  );
+  return differentes.map((fe) => (
+    <section key={fe.source} className="card">
+      <h2>Fiche {fe.source}</h2>
+      <p className="hint">
+        {fe.nom}
+        {fe.classe ? ` — ${fe.classe}` : ''}. Rédigée par IA à partir de références usuelles
+        {fe.a_valider ? ' : à valider par un médecin.' : '.'}
+      </p>
+      <FichePharmaco molecule={fe} rubriques={RUBRIQUES_EXTERNES} headingLevel={3} />
+    </section>
+  ));
 }
 
 export function MoleculePage() {
@@ -81,7 +114,20 @@ export function MoleculePage() {
             />
             <header className="page-header">
               <h1>{m.dci}</h1>
-              {m.classe && <p className="lead">{m.classe}</p>}
+              {m.classe && (
+                <p className="lead">
+                  {m.classe}
+                  {m.groupe_therapeutique && m.groupe_therapeutique !== m.classe && (
+                    <span className="muted"> · {m.groupe_therapeutique}</span>
+                  )}
+                </p>
+              )}
+              {m.fiche_a_valider && (
+                <p className="validation validation-pending" role="note">
+                  Fiche importée{m.fiche_source ? ` (${m.fiche_source})` : ''} : à relire et valider par un
+                  médecin avant tout usage clinique.
+                </p>
+              )}
             </header>
 
             <div className="fiche-layout">
@@ -96,6 +142,7 @@ export function MoleculePage() {
                   <h2>Fiche pharmacologique</h2>
                   <FichePharmaco molecule={m} headingLevel={3} />
                 </section>
+                <FichesExternes molecule={m} />
               </div>
               <div className="fiche-side">
                 {m.produits.length > 0 && (

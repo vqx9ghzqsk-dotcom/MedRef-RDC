@@ -6,9 +6,12 @@
  *
  * Sans perte : un produit déjà importé (même `catalogue_ref`) n'est jamais modifié,
  * pour conserver les corrections faites dans /admin (photo, liens, disponibilité…).
+ *
+ * `firme.ajoute_par_ia` : catalogue constitué par l’IA (internet) et non fourni par la
+ * firme ; ses produits ne s’affichent qu’avec une AMM, même s’ils ont une photo.
  */
 
-const { construireIndex, rapprocher } = require('./correspondance');
+const { construireIndex, rapprocher, doseCompatible } = require('./correspondance');
 
 const AVERTISSEMENT = 'informations générales du catalogue, à vérifier sur la notice (RCP) du produit';
 const tronquer = (s, n) => (s && s.length > n ? `${s.slice(0, n - 1)}…` : s || null);
@@ -65,9 +68,9 @@ async function chargerCatalogues(conn, catalogues) {
       const r = rapprocher(p, index);
       const [ins] = await conn.execute(
         `INSERT INTO medicaments (nom_commercial, dci, operateur_id, forme, presentation, indication, posologie,
-           photo_url, disponible_rdc, sources_text, catalogue_ref, catalogue_classe, catalogue_sous_classe,
+           photo_url, ajoute_par_ia, disponible_rdc, sources_text, catalogue_ref, catalogue_classe, catalogue_sous_classe,
            composition_texte, mecanisme, forme_categorie, pediatrique, nb_composants, liaison)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           tronquer(p.nom, 190),
           tronquer(p.dci || p.composition || p.nom, 500),
@@ -77,6 +80,7 @@ async function chargerCatalogues(conn, catalogues) {
           p.indications || null,
           p.posologie || null,
           p.photo || null,
+          f.ajoute_par_ia ? 1 : 0,
           `Catalogue ${f.nom} — ${AVERTISSEMENT}.`,
           p.ref,
           tronquer(p.classe, 190),
@@ -107,7 +111,7 @@ async function chargerCatalogues(conn, catalogues) {
 async function relierAutomatiquement(conn) {
   const { index, ids } = await indexMolecules(conn);
   const [produits] = await conn.execute(
-    `SELECT m.id, m.dci, m.composition_texte AS composition,
+    `SELECT m.id, m.dci, m.composition_texte AS composition, m.dosage,
             (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id) AS nb_liens
        FROM medicaments m
       WHERE m.catalogue_ref IS NOT NULL AND m.liaison IN ('aucune', 'partielle')`,
@@ -127,7 +131,47 @@ async function relierAutomatiquement(conn) {
       [r.liaison, r.nbComposants, p.id],
     );
   }
-  return { examines: produits.length, completes: nouveaux };
+  return {
+    examines: produits.length,
+    completes: nouveaux,
+    retires: await retirerLiensIncompatibles(conn, index),
+  };
+}
+
+/**
+ * Retire les liens automatiques vers une molécule à dose précise (« Lévonorgestrel 1,5 mg »)
+ * quand le produit n'a pas cette dose ; les produits vérifiés dans /admin ne sont pas touchés.
+ */
+async function retirerLiensIncompatibles(conn, index) {
+  if (!index.doses.size) return 0;
+  const [liens] = await conn.query(
+    `SELECT mm.medicament_id, mm.molecule_id, mo.slug, m.dci, m.composition_texte AS composition, m.dosage
+       FROM medicament_molecules mm
+       JOIN molecules mo ON mo.id = mm.molecule_id
+       JOIN medicaments m ON m.id = mm.medicament_id
+      WHERE mm.origine = 'auto' AND m.liaison <> 'verifiee' AND mo.slug IN (?)`,
+    [[...index.doses.keys()]],
+  );
+  let retires = 0;
+  for (const l of liens) {
+    if (doseCompatible(l, l.slug, index)) continue;
+    await conn.execute('DELETE FROM medicament_molecules WHERE medicament_id = ? AND molecule_id = ?', [
+      l.medicament_id,
+      l.molecule_id,
+    ]);
+    await conn.execute(
+      `UPDATE medicaments m
+          SET m.liaison = CASE
+                WHEN (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id) = 0 THEN 'aucune'
+                WHEN (SELECT COUNT(*) FROM medicament_molecules x WHERE x.medicament_id = m.id)
+                     >= COALESCE(m.nb_composants, 1) THEN 'auto'
+                ELSE 'partielle' END
+        WHERE m.id = ?`,
+      [l.medicament_id],
+    );
+    retires += 1;
+  }
+  return retires;
 }
 
 module.exports = { chargerCatalogues, relierAutomatiquement };

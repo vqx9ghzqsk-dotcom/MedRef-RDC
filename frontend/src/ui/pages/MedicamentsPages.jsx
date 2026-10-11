@@ -3,11 +3,91 @@ import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
-import { RichText } from '../components/RichText.jsx';
-import { FichePharmaco, Posologies } from '../components/Pharmaco.jsx';
-import { LIGNES, formatPrixCdf } from '../../core/labels.js';
+import { FicheProduit } from '../components/FicheProduit.jsx';
+import { LienProduit } from '../components/Produits.jsx';
+import { RechercheProduit } from '../components/RechercheProduit.jsx';
+import { LIGNES, NATURES_PRODUIT } from '../../core/labels.js';
 
-const FILTER_KEYS = ['operateur', 'classe', 'molecule'];
+const FILTER_KEYS = ['q', 'groupe', 'forme', 'enfant', 'operateur', 'classe', 'molecule'];
+const fr = (n) => Number(n).toLocaleString('fr-FR');
+
+/**
+ * Entrées par domaine : groupes thérapeutiques, formes, produits pour l'enfant et
+ * principales firmes, chacun avec son nombre de produits. Un second clic désélectionne.
+ */
+function Domaines({ filtres, choisir }) {
+  const { api } = useServices();
+  const state = useAsync(() => api.medicamentDomaines(), [api]);
+  const d = state.data;
+  if (!d) return null;
+  const bascule = (cle, valeur) => choisir(cle, String(filtres[cle]) === String(valeur) ? '' : valeur);
+  return (
+    <>
+      <h2 id="domaines-titre" className="section-title">
+        Parcourir par domaine
+      </h2>
+      <ul className="domaines-grille" aria-labelledby="domaines-titre">
+        {d.groupes.map((g) => (
+          <li key={g.nom}>
+            <button
+              type="button"
+              className="domaine"
+              aria-pressed={filtres.groupe === g.nom}
+              onClick={() => bascule('groupe', g.nom)}
+            >
+              <span className="domaine-nom">{g.nom}</span>
+              <span className="domaine-n">{fr(g.n)}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="domaines-ligne">
+        <h3 id="formes-titre">Par forme</h3>
+        <ul className="chips" aria-labelledby="formes-titre">
+          <li>
+            <button
+              type="button"
+              className="chip chip-bouton"
+              aria-pressed={filtres.enfant === '1'}
+              onClick={() => bascule('enfant', '1')}
+            >
+              Adaptés à l’enfant <span className="chip-meta">{fr(d.enfant)}</span>
+            </button>
+          </li>
+          {d.formes.map((f) => (
+            <li key={f.nom}>
+              <button
+                type="button"
+                className="chip chip-bouton"
+                aria-pressed={filtres.forme === f.nom}
+                onClick={() => bascule('forme', f.nom)}
+              >
+                {f.nom} <span className="chip-meta">{fr(f.n)}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="domaines-ligne">
+        <h3 id="firmes-titre">Firmes</h3>
+        <ul className="chips" aria-labelledby="firmes-titre">
+          {d.firmes.map((f) => (
+            <li key={f.id}>
+              <button
+                type="button"
+                className="chip chip-bouton"
+                aria-pressed={filtres.operateur === String(f.id)}
+                onClick={() => bascule('operateur', String(f.id))}
+              >
+                {f.nom} <span className="chip-meta">{fr(f.n)}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+}
 
 export function MedicamentsPage() {
   const { api } = useServices();
@@ -16,7 +96,16 @@ export function MedicamentsPage() {
   const filtresState = useAsync(() => api.medicamentFiltres(), [api]);
   const listState = useAsync(
     () => api.medicaments(filtres),
-    [api, filtres.operateur, filtres.classe, filtres.molecule],
+    [
+      api,
+      filtres.q,
+      filtres.groupe,
+      filtres.forme,
+      filtres.enfant,
+      filtres.operateur,
+      filtres.classe,
+      filtres.molecule,
+    ],
   );
 
   const setFilter = (key, value) => {
@@ -28,6 +117,15 @@ export function MedicamentsPage() {
 
   const options = filtresState.data;
   const active = FILTER_KEYS.some((k) => filtres[k]);
+  // Filtres sans liste déroulante : affichés en pastilles qu'on peut retirer
+  const operateurNom = options?.operateurs.find((o) => String(o.id) === filtres.operateur)?.nom;
+  const pastilles = [
+    filtres.q && ['q', `« ${filtres.q} »`],
+    filtres.groupe && ['groupe', filtres.groupe],
+    filtres.forme && ['forme', filtres.forme],
+    filtres.enfant && ['enfant', 'Adaptés à l’enfant'],
+    filtres.operateur && operateurNom && ['operateur', operateurNom],
+  ].filter(Boolean);
 
   return (
     <>
@@ -35,10 +133,44 @@ export function MedicamentsPage() {
       <header className="page-header">
         <h1>Médicaments</h1>
         <p className="lead">
-          Par molécule (DCI), classe et opérateur : chaque produit, seul ou en association, a sa fiche
+          Les médicaments autorisés en RDC (AMM de l’ACOREP) et ceux présentés en photo par les firmes, par
+          domaine, molécule, forme et firme : chaque produit, seul ou en association, ouvre sa fiche
           pharmacologique. <Link to="/molecules">Parcourir par molécule</Link>
         </p>
       </header>
+
+      <RechercheProduit
+        key={filtres.q}
+        id="f-q"
+        valeurInitiale={filtres.q}
+        onRechercher={(texte) => setFilter('q', texte)}
+        grand
+      />
+
+      {/* Ouvert tant qu'aucun filtre n'est choisi ; ensuite replié pour laisser voir les résultats */}
+      <details key={active ? 'replie' : 'ouvert'} className="domaines" open={!active}>
+        <summary>
+          {active ? 'Changer de domaine, de forme ou de firme' : 'Domaines, formes et firmes'}
+        </summary>
+        <Domaines filtres={filtres} choisir={setFilter} />
+      </details>
+
+      {pastilles.length > 0 && (
+        <ul className="chips filtres-actifs" aria-label="Filtres actifs">
+          {pastilles.map(([cle, libelle]) => (
+            <li key={cle}>
+              <button
+                type="button"
+                className="chip chip-bouton"
+                onClick={() => setFilter(cle, '')}
+                aria-label={`Retirer le filtre ${libelle}`}
+              >
+                {libelle} <span aria-hidden="true">×</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <form className="filter-bar" onSubmit={(e) => e.preventDefault()} aria-label="Filtres">
         <div className="field">
@@ -90,61 +222,54 @@ export function MedicamentsPage() {
       </form>
 
       <AsyncView state={listState}>
-        {(list) => {
+        {({ data: list, total, limite }) => {
           if (!list.length) return <Empty>Aucun produit ne correspond à ces filtres.</Empty>;
           const groups = new Map();
           for (const m of list) {
-            const key = m.classe || 'Autres';
+            // Groupe thérapeutique de la molécule
+            const key = m.groupe || 'Molécule non encore reliée';
             if (!groups.has(key)) groups.set(key, []);
             groups.get(key).push(m);
           }
-          return [...groups.entries()].map(([classe, items]) => (
+          const sections = [...groups.entries()].map(([classe, items]) => (
             <section key={classe} className="section">
               <h2 className="section-title">{classe}</h2>
               <ul className="med-list">
                 {items.map((m) => (
                   <li key={m.id}>
-                    <Link to={`/medicaments/${m.id}`}>
+                    <LienProduit id={m.id}>
                       <span className="med-dci">{m.dci}</span>
                       <span className="med-brand">{m.nom_commercial}</span>
                       <span className="med-meta">
                         {[m.forme, m.dosage].filter(Boolean).join(', ')}
                         {m.operateur ? `. ${m.operateur}` : ''}
                       </span>
-                      {m.disponible_rdc && <span className="tag tag-ok med-rdc">RDC</span>}
-                    </Link>
+                      <span className="tag-row med-rdc">
+                        {m.disponible_rdc && <span className="tag tag-ok">RDC</span>}
+                        {m.amm && <span className="tag tag-amm">AMM</span>}
+                        {m.pediatrique && <span className="tag tag-enfant">Enfant</span>}
+                      </span>
+                    </LienProduit>
                   </li>
                 ))}
               </ul>
             </section>
           ));
+          return (
+            <>
+              <p className="muted" role="status">
+                {total} produit{total > 1 ? 's' : ''}
+                {total > list.length &&
+                  ` : les ${limite} premiers sont affichés, affinez avec la recherche ou les filtres`}
+              </p>
+              {sections}
+            </>
+          );
         }}
       </AsyncView>
     </>
   );
 }
-
-function Row({ label, children, hint }) {
-  if (!children) return null;
-  return (
-    <div className="dl-row">
-      <dt>{label}</dt>
-      <dd>
-        {typeof children === 'string' ? <RichText text={children} headingLevel={4} /> : children}
-        {hint && <span className="row-sub">{hint}</span>}
-      </dd>
-    </div>
-  );
-}
-
-/** Champs cliniques : propres au produit, sinon hérités de la molécule (produit mono-molécule). */
-const CLINIQUE = [
-  ['indication', 'indications', 'Indications'],
-  ['posologie', 'posologie', 'Posologie'],
-  ['contre_indications', 'contre_indications', 'Contre-indications'],
-  ['effets_indesirables', 'effets_indesirables', 'Effets indésirables'],
-  ['interactions', 'interactions', 'Interactions'],
-];
 
 export function MedicamentPage() {
   const { id } = useParams();
@@ -154,7 +279,6 @@ export function MedicamentPage() {
   return (
     <AsyncView state={state}>
       {(m) => {
-        const seule = m.composition.length === 1 ? m.composition[0] : null;
         return (
           <article>
             <Breadcrumb items={[{ label: 'Médicaments', to: '/medicaments' }, { label: m.nom_commercial }]} />
@@ -187,6 +311,10 @@ export function MedicamentPage() {
                   <span className={`tag ${m.disponible_rdc ? 'tag-ok' : 'tag-warn'}`}>
                     {m.disponible_rdc ? 'Circuit national RDC' : 'Disponibilité à confirmer en RDC'}
                   </span>
+                  {m.amm && <span className="tag tag-amm">AMM RDC</span>}
+                  {m.nature && m.nature !== 'medicament' && (
+                    <span className="tag">{NATURES_PRODUIT[m.nature]}</span>
+                  )}
                   {m.association && <span className="tag tag-assoc">Association à dose fixe</span>}
                   {m.pediatrique && <span className="tag tag-enfant">Adapté à l’enfant</span>}
                   {m.forme_categorie && <span className="tag">{m.forme_categorie}</span>}
@@ -194,89 +322,7 @@ export function MedicamentPage() {
               </div>
             </header>
 
-            <section className="section">
-              <h2 className="section-title">Identification du produit</h2>
-              <dl className="dl">
-                <Row label="Opérateur">
-                  {m.operateur && (
-                    <>
-                      {m.operateur}
-                      {m.operateur_pays ? ` (${m.operateur_pays})` : ''}
-                      {m.operateur_site && (
-                        <>
-                          {' — '}
-                          <a href={m.operateur_site} target="_blank" rel="noreferrer">
-                            site officiel
-                          </a>
-                        </>
-                      )}
-                    </>
-                  )}
-                </Row>
-                <Row label="Composition">
-                  {m.composition.length > 0 && (
-                    <ul className="compo-list">
-                      {m.composition.map((c) => (
-                        <li key={c.id}>
-                          <Link to={`/molecules/${c.slug}`}>{c.dci}</Link>
-                          {c.dosage && <span className="muted"> {c.dosage}</span>}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </Row>
-                <Row label="DCI (catalogue)">{m.catalogue_ref ? m.dci : null}</Row>
-                <Row label="Composition détaillée">{m.composition_texte}</Row>
-                <Row label="Forme">{m.forme}</Row>
-                <Row label="Dosage">{m.dosage}</Row>
-                <Row label="Présentation">{m.presentation}</Row>
-                <Row label="Conservation">{m.conservation}</Row>
-                <Row label="Prix indicatif">{formatPrixCdf(m.prix_indicatif_cdf)}</Row>
-              </dl>
-            </section>
-
-            <section className="section">
-              <h2 className="section-title">Utilisation de ce produit</h2>
-              <dl className="dl">
-                <Row label="Mécanisme d’action">{m.mecanisme}</Row>
-                {CLINIQUE.map(([champ, champMolecule, label]) => {
-                  const propre = m[champ];
-                  const herite = !propre && seule ? seule[champMolecule] : null;
-                  return (
-                    <Row key={champ} label={label} hint={herite ? 'D’après la fiche de la molécule' : null}>
-                      {propre || herite}
-                    </Row>
-                  );
-                })}
-                <Row label="Sources">{m.sources_text}</Row>
-              </dl>
-              {m.association && (
-                <p className="muted">
-                  Pour les rubriques non renseignées ci-dessus, se reporter à la fiche de chaque molécule.
-                </p>
-              )}
-            </section>
-
-            <section className="section">
-              <h2 className="section-title">
-                Fiche pharmacologique {m.association ? 'des molécules' : 'de la molécule'}
-              </h2>
-              {m.composition.map((c) => (
-                <article key={c.id} className="card">
-                  <h3>
-                    <Link to={`/molecules/${c.slug}`}>{c.dci}</Link>
-                    {c.dosage && <span className="muted"> — {c.dosage}</span>}
-                  </h3>
-                  {c.posologies?.length > 0 && (
-                    <section className="pharmaco-posologies" aria-label={`Posologies : ${c.dci}`}>
-                      <h4 className="pharmaco-label">Posologies par population</h4>
-                      <Posologies posologies={c.posologies} />
-                    </section>
-                  )}
-                  <FichePharmaco molecule={c} headingLevel={4} />
-                </article>
-              ))}
-            </section>
+            <FicheProduit produit={m} />
 
             {m.pathologies.length > 0 && (
               <section className="related">
@@ -297,7 +343,7 @@ export function MedicamentPage() {
                 <ul className="side-list">
                   {m.autres_produits.map((p) => (
                     <li key={p.id}>
-                      <Link to={`/medicaments/${p.id}`}>{p.nom_commercial}</Link>
+                      <LienProduit id={p.id}>{p.nom_commercial}</LienProduit>
                       {p.operateur && <span className="muted"> {p.operateur}</span>}
                     </li>
                   ))}

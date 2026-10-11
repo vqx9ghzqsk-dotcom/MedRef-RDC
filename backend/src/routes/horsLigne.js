@@ -9,6 +9,7 @@
 const express = require('express');
 const db = require('../db');
 const { asyncHandler } = require('../utils/http');
+const { OPERATEUR_VISIBLE } = require('../utils/visibilite');
 
 const router = express.Router();
 
@@ -35,7 +36,7 @@ router.get(
       db.query('SELECT slug FROM scores ORDER BY nom'),
       db.query('SELECT slug FROM examens ORDER BY nom'),
       db.query('SELECT slug FROM molecules ORDER BY dci'),
-      db.query('SELECT id FROM medicaments ORDER BY nom_commercial'),
+      db.query(`SELECT m.id FROM medicaments m WHERE ${OPERATEUR_VISIBLE} ORDER BY m.nom_commercial`),
       db.query('SELECT slug FROM syndromes ORDER BY nom'),
     ]);
     const enc = encodeURIComponent;

@@ -185,7 +185,7 @@ module.exports = [
       [
         'A — Antibiotiques',
         'Éliminer le réservoir.',
-        '- **Azithromycine** dose unique (20 mg/kg, max 1 g) : traitement individuel et **distribution de masse** annuelle en zone d’endémie (TF ≥ 10 % chez les 1–9 ans)\n- Alternative : **tétracycline pommade 1 %** 2 fois par jour pendant 6 semaines',
+        '- **Azithromycine** dose unique (20 mg/kg, max 1 g) : traitement individuel et **distribution de masse** annuelle en zone d’endémie (dès que TF ≥ 5 % chez les 1–9 ans ; nombre de tournées selon la prévalence)\n- Alternative : **tétracycline pommade 1 %** 2 fois par jour pendant 6 semaines',
       ],
       [
         'N et CE — Hygiène et environnement',

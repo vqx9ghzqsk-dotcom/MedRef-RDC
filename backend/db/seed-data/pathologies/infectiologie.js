@@ -999,7 +999,7 @@ module.exports = [
       {
         nom: 'Neuropathie périphérique',
         description: 'Liée à l’isoniazide (carence en B6).',
-        traitement: '- Pyridoxine à dose thérapeutique (50–75 mg/j)',
+        traitement: '- Pyridoxine à dose thérapeutique (50–100 mg/j)',
         clinique: '- Paresthésies, brûlures des pieds et des mains',
         paraclinique: '- Aucun examen indispensable',
       },

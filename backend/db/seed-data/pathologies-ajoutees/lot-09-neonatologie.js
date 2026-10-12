@@ -623,7 +623,7 @@ module.exports = [
       [
         'Antibiotiques',
         'Traiter une infection possible.',
-        '- **Ampicilline** 50 mg/kg toutes les 12 h + **gentamicine** 5 mg/kg/24 h, arrêt à 48–72 h si hémocultures négatives et enfant asymptomatique',
+        '- **Ampicilline** 50 mg/kg toutes les 12 h + **gentamicine** 5 mg/kg/24 h (3 mg/kg/24 h si faible poids de naissance la 1re semaine), arrêt à 48–72 h si hémocultures négatives et enfant asymptomatique',
       ],
       [
         'Soutien',

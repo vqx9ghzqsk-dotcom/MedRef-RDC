@@ -22,6 +22,7 @@ const crypto = require('node:crypto');
 const { construireIndex, rapprocher, normaliser, trouver } = require('./correspondance');
 const { relierAutomatiquement } = require('./catalogues');
 const { slugify } = require('../src/utils/slugify');
+const POSOLOGIES_CORRIGEES = require('./seed-data/posologies-corrigees');
 
 const SOURCE = 'ACOREP';
 const SOURCE_FICHE = 'ACOREP — fiche rédigée par IA (document du 7 octobre 2026)';
@@ -117,7 +118,7 @@ async function chargerSubstances(conn, substances, compte) {
           s.groupe,
           s.mecanisme,
           s.indications,
-          s.posologie,
+          POSOLOGIES_CORRIGEES[s.slug] ?? s.posologie,
           s.precautions,
           SOURCE_FICHE,
         ],

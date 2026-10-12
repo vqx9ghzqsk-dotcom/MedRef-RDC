@@ -345,7 +345,7 @@ module.exports = [
       [
         'Prévention des rechutes',
         'Stabiliser l’humeur.',
-        '- **Lithium** (lithémie 0,6–1,0 mmol/L) si la surveillance biologique est possible\n- **Valproate** 500–1 500 mg/j (**pas chez la femme en âge de procréer**), carbamazépine\n- Ou poursuite de l’antipsychotique efficace\n- Durée prolongée (souvent à vie)',
+        '- **Lithium** (lithémie 0,6–1,0 mmol/L) si la surveillance biologique est possible\n- **Valproate** 500 mg/j au début puis 1 000–2 000 mg/j (**pas chez la femme en âge de procréer**), carbamazépine\n- Ou poursuite de l’antipsychotique efficace\n- Durée prolongée (souvent à vie)',
       ],
       [
         'Épisode dépressif bipolaire',

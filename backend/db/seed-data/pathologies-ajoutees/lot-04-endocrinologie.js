@@ -204,7 +204,7 @@ module.exports = [
       [
         'Potassium',
         'Éviter l’hypokaliémie mortelle.',
-        '- K < 3,3 mmol/L : corriger avant l’insuline\n- K 3,3–5,3 : **KCl** 1 à 1,5 g par litre de soluté\n- K > 5,3 : pas de potassium, contrôle à 2 h\n- Sans ionogramme : potassium dès la diurèse reprise et l’ECG sans signe d’hyperkaliémie',
+        '- K < 3,3 mmol/L : corriger avant l’insuline\n- K 3,3–5,3 : **KCl** 1,5 à 2 g (20 à 30 mmol) par litre de soluté\n- K > 5,3 : pas de potassium, contrôle à 2 h\n- Sans ionogramme : potassium dès la diurèse reprise et l’ECG sans signe d’hyperkaliémie',
       ],
       [
         'Insuline',

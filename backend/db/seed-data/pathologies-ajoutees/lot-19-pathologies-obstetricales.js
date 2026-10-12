@@ -183,7 +183,7 @@ module.exports = [
       [
         'Évacuation utérine',
         'Accoucher en sécurité.',
-        '- Expectative possible quelques jours si état maternel stable et hémostase normale\n- **Déclenchement** : **misoprostol** (dose selon l’âge gestationnel : 25–50 µg vaginal toutes les 4 h au 3e trimestre ; 200–400 µg avant 28 SA), ± **mifépristone** 200 mg 24–48 h avant\n- Utérus cicatriciel : prudence (ballonnet, ocytocine, faibles doses)\n- Césarienne seulement pour une indication maternelle',
+        '- Expectative possible quelques jours si état maternel stable et hémostase normale\n- **Déclenchement** : **misoprostol** (dose selon l’âge gestationnel : ≥ 28 SA : 25 µg vaginal toutes les 6 h ou 25 µg per os toutes les 2 h ; 14–28 SA : 200 µg vaginal, sublingual ou buccal toutes les 4 à 6 h (FIGO 2017)), ± **mifépristone** 200 mg 24–48 h avant\n- Utérus cicatriciel : prudence (ballonnet, ocytocine, faibles doses)\n- Césarienne seulement pour une indication maternelle',
       ],
       [
         'Complications',

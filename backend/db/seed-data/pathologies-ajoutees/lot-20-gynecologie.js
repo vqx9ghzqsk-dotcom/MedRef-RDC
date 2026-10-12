@@ -41,7 +41,7 @@ module.exports = [
       [
         'Selon le syndrome',
         'Traiter.',
-        '- **Vaginose ou trichomonase** : **métronidazole** 500 mg 2 fois par jour 7 jours (ou 2 g dose unique pour la trichomonase) ; tinidazole, secnidazole\n- **Candidose** : **clotrimazole** ovule 500 mg dose unique (ou 200 mg 3 jours), ou **fluconazole** 150 mg per os dose unique (pas pendant la grossesse)\n- **Cervicite** (gonocoque + Chlamydia) : **ceftriaxone** 500 mg IM + **doxycycline** 100 mg 2 fois par jour 7 jours (azithromycine 1 g si grossesse)',
+        '- **Vaginose ou trichomonase** : **métronidazole** 500 mg 2 fois par jour 7 jours (ou 2 g dose unique pour la trichomonase) ; tinidazole, secnidazole\n- **Candidose** : **clotrimazole** ovule 500 mg dose unique (ou 200 mg 3 jours), ou **fluconazole** 150 mg per os dose unique (pas pendant la grossesse)\n- **Cervicite** (gonocoque + Chlamydia) : **ceftriaxone** 1 g IM (OMS 2024) + **doxycycline** 100 mg 2 fois par jour 7 jours (azithromycine 1 g si grossesse)',
       ],
       [
         'Partenaire et prévention',
@@ -185,7 +185,7 @@ module.exports = [
       [
         'Antibiothérapie',
         'Guérir et préserver la fertilité.',
-        '- Ambulatoire : **ceftriaxone** 500 mg IM dose unique + **doxycycline** 100 mg 2 fois par jour 14 jours + **métronidazole** 500 mg 2 fois par jour 14 jours\n- Hospitalisation si forme sévère, abcès, grossesse, échec à 72 h, vomissements : ceftriaxone IV + doxycycline + métronidazole\n- DIU : peut être laissé en place si amélioration',
+        '- Ambulatoire : **ceftriaxone** 1 g IM dose unique (OMS 2024) + **doxycycline** 100 mg 2 fois par jour 14 jours + **métronidazole** 500 mg 2 fois par jour 14 jours\n- Hospitalisation si forme sévère, abcès, grossesse, échec à 72 h, vomissements : ceftriaxone IV + doxycycline + métronidazole\n- DIU : peut être laissé en place si amélioration',
       ],
       [
         'Partenaire et prévention',
@@ -199,7 +199,7 @@ module.exports = [
       ],
     ],
     molecules: [
-      ['ceftriaxone', 'premiere', '500 mg IM'],
+      ['ceftriaxone', 'premiere', '1 g IM (OMS 2024)'],
       ['doxycycline', 'premiere', '14 jours'],
       ['metronidazole', 'premiere', '14 jours'],
       ['azithromycine', 'alternative', 'Grossesse, intolérance'],

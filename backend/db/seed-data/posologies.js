@@ -165,7 +165,7 @@ module.exports = {
       freq: '1 fois par jour, à jeun',
       duree: '3 jours',
     }),
-    r('enfant', '4 mg/kg/j (2,5 mg/kg/j si < 25 kg selon l’OMS)', {
+    r('enfant', '4 mg/kg/j (au minimum 2,5 mg/kg/j de DHA et 20 mg/kg/j de pipéraquine si < 25 kg, OMS)', {
       ind: 'Paludisme simple (DHA-pipéraquine)',
       voie: 'Orale',
       kg: 4,
@@ -297,7 +297,13 @@ module.exports = {
   ],
   metronidazole: [
     r('adulte', '500 mg', { voie: 'Orale ou IV', freq: 'Toutes les 8 h' }),
-    r('enfant', '7,5 mg/kg', { voie: 'Orale ou IV', kg: 7.5, max: 500, freq: 'Toutes les 8 h' }),
+    r('enfant', '7,5–10 mg/kg (maximum 500 mg par prise)', {
+      voie: 'Orale ou IV',
+      kg: 7.5,
+      max: 500,
+      freq: 'Toutes les 8 h',
+      rem: 'Le calcul utilise 7,5 mg/kg.',
+    }),
     r('grossesse', 'Posologie adulte', { sec: 'autorise', rem: 'Si nécessaire.' }),
   ],
   cotrimoxazole: [

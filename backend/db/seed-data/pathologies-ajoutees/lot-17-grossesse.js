@@ -320,7 +320,7 @@ module.exports = [
       [
         'Paludisme simple',
         'Traiter selon le trimestre.',
-        '- **1er trimestre** : **quinine** 10 mg/kg 3 fois par jour + **clindamycine** 7 jours ; l’OMS (2022) autorise aussi l’**artéméther-luméfantrine** au 1er trimestre\n- **2e et 3e trimestres** : **ACT** (artéméther-luméfantrine) 3 jours\n- Paracétamol, hydratation',
+        '- **1er trimestre** : **artéméther-luméfantrine** 3 jours (recommandation OMS 2022) ; à défaut **quinine** 10 mg/kg 3 fois par jour + **clindamycine** 7 jours\n- **2e et 3e trimestres** : **ACT** (artéméther-luméfantrine) 3 jours\n- Paracétamol, hydratation',
       ],
       [
         'Paludisme grave',

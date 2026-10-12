@@ -47,7 +47,7 @@ module.exports = [
       [
         'Aciclovir',
         'Formes à risque.',
-        '- Immunodéprimé, forme grave, nouveau-né, pneumopathie : **aciclovir** IV 10–20 mg/kg toutes les 8 h 7 à 10 jours\n- Forme modérée chez l’adolescent : aciclovir oral 20 mg/kg 4 fois par jour 5 jours (dans les 24 h)',
+        '- Immunodéprimé, forme grave, nouveau-né, pneumopathie : **aciclovir** IV 10–20 mg/kg toutes les 8 h 7 à 10 jours\n- Forme modérée chez l’adolescent : aciclovir oral 20 mg/kg (maximum 800 mg par prise) 4 fois par jour 5 jours (dans les 24 h)',
       ],
       [
         'Surinfection',

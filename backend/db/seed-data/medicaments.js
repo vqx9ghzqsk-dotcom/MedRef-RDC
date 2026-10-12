@@ -277,7 +277,7 @@ const molecules = [
     indications:
       '- Méningite bactérienne\n- Sepsis, pneumonie sévère, infections intra-abdominales (avec métronidazole)\n- Infection néonatale (alternative), fièvre typhoïde',
     posologie:
-      '- **Méningite** : adulte 2 g IV toutes les 12 h ; enfant 100 mg/kg/j (en 1 ou 2 injections, max 4 g/j)\n- **Autres infections** : adulte 1–2 g/j ; enfant 50–80 mg/kg/j',
+      '- **Méningite** : adulte 2 g IV toutes les 12 h ; enfant 100 mg/kg/j (en 1 ou 2 injections, max 4 g/j)\n- **Autres infections** : adulte 1–2 g/j ; enfant 50–80 mg/kg/j\n- **Gonococcie** : 1 g IM en dose unique (OMS 2024)',
     contre_indications:
       'Allergie aux céphalosporines (prudence si allergie grave aux pénicillines) ; nouveau-né ictérique ou prématuré ; ne jamais administrer avec du calcium IV chez le nouveau-né (précipités).',
     effets_indesirables:
@@ -329,7 +329,8 @@ const molecules = [
       'Biodisponibilité orale ≈ 100 % (la voie orale est aussi efficace que l’IV), métabolisme hépatique.',
     indications:
       'Infections à anaérobies (intra-abdominales, gynécologiques), amibiase, giardiase, trichomonose, vaginose.',
-    posologie: '- **Adulte** : 500 mg toutes les 8 h (IV ou per os)\n- **Enfant** : 7,5 mg/kg toutes les 8 h',
+    posologie:
+      '- **Adulte** : 500 mg toutes les 8 h (IV ou per os)\n- **Enfant** : 7,5–10 mg/kg toutes les 8 h (maximum 500 mg par prise)',
     contre_indications: 'Hypersensibilité aux nitro-imidazolés.',
     effets_indesirables: 'Goût métallique, nausées, effet antabuse ; neuropathie en traitement prolongé.',
     interactions: 'Alcool (effet antabuse), anticoagulants oraux (↑ INR), lithium.',

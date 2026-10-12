@@ -511,7 +511,7 @@ module.exports = [
       [
         'Dépistage préventif',
         'Éviter la méningite.',
-        '- CrAg sérique chez toute PVVIH avec CD4 < 200\n- CrAg positif sans méningite : fluconazole préemptif (1 200 mg/j 2 semaines, 800 mg/j 8 semaines, puis 200 mg/j)',
+        '- CrAg sérique chez toute PVVIH avec CD4 < 200\n- CrAg positif sans méningite : fluconazole préemptif (OMS : 800 mg/j 2 semaines, 400 mg/j 8 semaines, puis 200 mg/j ; certains protocoles nationaux : 1 200 puis 800 mg/j)',
       ],
     ],
     molecules: [

@@ -530,7 +530,7 @@ module.exports = [
       [
         'Prévention des IST et vaccinations',
         'Traiter présomptivement.',
-        '- **Ceftriaxone** 500 mg IM + **azithromycine** 1 g + **métronidazole** 2 g (après le 1er trimestre si enceinte)\n- **Vaccin hépatite B** (± immunoglobulines), **vaccin antitétanique** si plaies',
+        '- **Ceftriaxone** 1 g IM (OMS 2024) + **azithromycine** 1 g + **métronidazole** 2 g (après le 1er trimestre si enceinte)\n- **Vaccin hépatite B** (± immunoglobulines), **vaccin antitétanique** si plaies',
       ],
       [
         'Soins et accompagnement',

@@ -1697,11 +1697,7 @@
           "Paralysie périodique hypokaliémique",
           "Polymyosite et dermatomyosite"
         ],
-        "Sommeil+": [
-          "Narcolepsie",
-          "Parasomnies",
-          "Hypersomnies"
-        ]
+        "Sommeil+": ["Narcolepsie", "Parasomnies", "Hypersomnies"]
       }
     }
   },

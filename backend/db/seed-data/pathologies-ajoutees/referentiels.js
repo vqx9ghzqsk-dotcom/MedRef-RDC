@@ -1300,29 +1300,36 @@ const examens = [
     slug: 'nasofibroscopie',
     nom: 'Nasofibroscopie (endoscopie ORL)',
     type: 'exploration',
-    description: 'Examen endoscopique des fosses nasales, du cavum, du pharynx et du larynx : sinusites, polypes, tumeurs ORL (biopsies), mobilité des cordes vocales, corps étrangers.',
-    valeurs_normales: '- Muqueuses normales, cordes vocales mobiles\n- Réalisable en consultation sous anesthésie locale',
+    description:
+      'Examen endoscopique des fosses nasales, du cavum, du pharynx et du larynx : sinusites, polypes, tumeurs ORL (biopsies), mobilité des cordes vocales, corps étrangers.',
+    valeurs_normales:
+      '- Muqueuses normales, cordes vocales mobiles\n- Réalisable en consultation sous anesthésie locale',
   },
   {
     slug: 'test-fluoresceine',
     nom: 'Test à la fluorescéine (lampe à fente)',
     type: 'exploration',
-    description: 'Instillation de fluorescéine dans l’œil puis examen à la lumière bleue : mise en évidence des ulcérations et abrasions de la cornée (kératite, ulcère, dendrite herpétique, corps étranger).',
-    valeurs_normales: '- Pas de prise de fluorescéine\n- Zone verte : désépithélialisation ; aspect dendritique : herpès',
+    description:
+      'Instillation de fluorescéine dans l’œil puis examen à la lumière bleue : mise en évidence des ulcérations et abrasions de la cornée (kératite, ulcère, dendrite herpétique, corps étranger).',
+    valeurs_normales:
+      '- Pas de prise de fluorescéine\n- Zone verte : désépithélialisation ; aspect dendritique : herpès',
   },
   // --- Lot 66
   {
     slug: 'refraction',
     nom: 'Mesure de la réfraction (skiascopie, réfractomètre)',
     type: 'exploration',
-    description: 'Mesure objective (réfractomètre automatique, skiascopie, sous cycloplégie chez l’enfant) puis subjective (verres d’essai) de l’erreur de réfraction : myopie, hypermétropie, astigmatisme, presbytie ; prescription des lunettes.',
-    valeurs_normales: '- Emmétropie : pas de correction nécessaire\n- Résultat exprimé en dioptries (sphère, cylindre, axe)',
+    description:
+      'Mesure objective (réfractomètre automatique, skiascopie, sous cycloplégie chez l’enfant) puis subjective (verres d’essai) de l’erreur de réfraction : myopie, hypermétropie, astigmatisme, presbytie ; prescription des lunettes.',
+    valeurs_normales:
+      '- Emmétropie : pas de correction nécessaire\n- Résultat exprimé en dioptries (sphère, cylindre, axe)',
   },
   {
     slug: 'echographie-oculaire',
     nom: 'Échographie oculaire (mode B)',
     type: 'imagerie',
-    description: 'Échographie du globe et de l’orbite à travers les paupières : décollement de rétine, hémorragie du vitré, tumeur intraoculaire, corps étranger, lorsque le fond d’œil est impossible (cataracte, hémorragie).',
+    description:
+      'Échographie du globe et de l’orbite à travers les paupières : décollement de rétine, hémorragie du vitré, tumeur intraoculaire, corps étranger, lorsque le fond d’œil est impossible (cataracte, hémorragie).',
     valeurs_normales: '- Vitré vide d’échos, rétine à plat',
   },
   // --- Lot 67
@@ -1330,21 +1337,26 @@ const examens = [
     slug: 'holter-ecg',
     nom: 'Holter ECG (enregistrement de 24 à 72 h)',
     type: 'exploration',
-    description: 'Enregistrement continu de l’ECG en ambulatoire : recherche d’une fibrillation atriale paroxystique après un AVC ischémique ou un AIT, palpitations, syncopes.',
-    valeurs_normales: '- Rythme sinusal, pas de trouble du rythme significatif\n- Fibrillation atriale > 30 s : anticoagulation à discuter après un AVC',
+    description:
+      'Enregistrement continu de l’ECG en ambulatoire : recherche d’une fibrillation atriale paroxystique après un AVC ischémique ou un AIT, palpitations, syncopes.',
+    valeurs_normales:
+      '- Rythme sinusal, pas de trouble du rythme significatif\n- Fibrillation atriale > 30 s : anticoagulation à discuter après un AVC',
   },
   {
     slug: 'anca',
     nom: 'Anticorps anticytoplasme des polynucléaires (ANCA)',
     type: 'biologie',
-    description: 'Recherche par immunofluorescence et ELISA (anti-PR3, anti-MPO) : vascularites des petits vaisseaux (granulomatose avec polyangéite, polyangéite microscopique, granulomatose éosinophilique).',
-    valeurs_normales: '- Négatifs\n- c-ANCA anti-PR3 : granulomatose avec polyangéite ; p-ANCA anti-MPO : polyangéite microscopique',
+    description:
+      'Recherche par immunofluorescence et ELISA (anti-PR3, anti-MPO) : vascularites des petits vaisseaux (granulomatose avec polyangéite, polyangéite microscopique, granulomatose éosinophilique).',
+    valeurs_normales:
+      '- Négatifs\n- c-ANCA anti-PR3 : granulomatose avec polyangéite ; p-ANCA anti-MPO : polyangéite microscopique',
   },
   {
     slug: 'angioscanner-cerebral',
     nom: 'Angioscanner des vaisseaux cervico-encéphaliques',
     type: 'imagerie',
-    description: 'Scanner avec injection de produit de contraste iodé en phase artérielle et veineuse : sténoses et occlusions artérielles, dissections, anévrismes, vascularites, thromboses veineuses cérébrales (signe du delta vide).',
+    description:
+      'Scanner avec injection de produit de contraste iodé en phase artérielle et veineuse : sténoses et occlusions artérielles, dissections, anévrismes, vascularites, thromboses veineuses cérébrales (signe du delta vide).',
     valeurs_normales: '- Vaisseaux perméables, sans sténose\n- Sinus veineux opacifiés',
   },
   // --- Lot 68
@@ -1352,21 +1364,26 @@ const examens = [
     slug: 'anticorps-anti-rach',
     nom: 'Anticorps anti-récepteurs de l’acétylcholine (et anti-MuSK)',
     type: 'biologie',
-    description: 'Dosage sérique des anticorps dirigés contre les récepteurs de l’acétylcholine de la jonction neuromusculaire : diagnostic de la myasthénie auto-immune ; anticorps anti-MuSK si négatifs.',
-    valeurs_normales: '- Négatifs\n- Positifs dans 85 % des myasthénies généralisées et 50 % des formes oculaires',
+    description:
+      'Dosage sérique des anticorps dirigés contre les récepteurs de l’acétylcholine de la jonction neuromusculaire : diagnostic de la myasthénie auto-immune ; anticorps anti-MuSK si négatifs.',
+    valeurs_normales:
+      '- Négatifs\n- Positifs dans 85 % des myasthénies généralisées et 50 % des formes oculaires',
   },
   {
     slug: 'serologie-htlv-1',
     nom: 'Sérologie HTLV-1',
     type: 'biologie',
-    description: 'Recherche d’anticorps anti-HTLV-1 dans le sang (ELISA confirmé par Western blot) et dans le LCR : paraparésie spastique tropicale, leucémie-lymphome T de l’adulte.',
-    valeurs_normales: '- Négative\n- Positive dans le sang et le LCR : myélopathie associée au HTLV-1 probable',
+    description:
+      'Recherche d’anticorps anti-HTLV-1 dans le sang (ELISA confirmé par Western blot) et dans le LCR : paraparésie spastique tropicale, leucémie-lymphome T de l’adulte.',
+    valeurs_normales:
+      '- Négative\n- Positive dans le sang et le LCR : myélopathie associée au HTLV-1 probable',
   },
   {
     slug: 'epreuves-vestibulaires',
     nom: 'Épreuves vestibulaires (manœuvres et vidéonystagmographie)',
     type: 'exploration',
-    description: 'Examen du nystagmus et des fonctions vestibulaires : manœuvre de Dix-Hallpike (vertige positionnel paroxystique bénin), test d’impulsion céphalique, épreuves caloriques et vidéonystagmographie (névrite vestibulaire, maladie de Ménière).',
+    description:
+      'Examen du nystagmus et des fonctions vestibulaires : manœuvre de Dix-Hallpike (vertige positionnel paroxystique bénin), test d’impulsion céphalique, épreuves caloriques et vidéonystagmographie (névrite vestibulaire, maladie de Ménière).',
     valeurs_normales: '- Pas de nystagmus spontané ni provoqué\n- Réponses vestibulaires symétriques',
   },
   // --- Lot 69
@@ -1374,7 +1391,8 @@ const examens = [
     slug: 'anticorps-anti-aquaporine-4',
     nom: 'Anticorps anti-aquaporine 4 (et anti-MOG)',
     type: 'biologie',
-    description: 'Recherche sérique (test cellulaire) des anticorps anti-aquaporine 4, marqueurs de la neuromyélite optique ; anticorps anti-MOG si négatifs.',
+    description:
+      'Recherche sérique (test cellulaire) des anticorps anti-aquaporine 4, marqueurs de la neuromyélite optique ; anticorps anti-MOG si négatifs.',
     valeurs_normales: '- Négatifs\n- Positifs : neuromyélite optique (spécificité > 99 %)',
   },
   // --- Lot 70
@@ -1382,37 +1400,44 @@ const examens = [
     slug: 'pcr-hsv',
     nom: 'PCR herpès simplex (HSV-1 et HSV-2) dans le LCR',
     type: 'biologie',
-    description: 'Amplification génique du virus herpès simplex dans le liquide cérébrospinal : diagnostic de l’encéphalite herpétique (peut être négative les 72 premières heures) ; recherche associée de VZV, CMV, entérovirus.',
+    description:
+      'Amplification génique du virus herpès simplex dans le liquide cérébrospinal : diagnostic de l’encéphalite herpétique (peut être négative les 72 premières heures) ; recherche associée de VZV, CMV, entérovirus.',
     valeurs_normales: '- Négative\n- Positive : encéphalite herpétique (sensibilité > 95 % après le 3e jour)',
   },
   {
     slug: 'serologie-cysticercose',
     nom: 'Sérologie de la cysticercose (Western blot, EITB)',
     type: 'biologie',
-    description: 'Recherche d’anticorps anti-Taenia solium dans le sérum (immunoblot) ou le LCR : appui au diagnostic de la neurocysticercose, à interpréter avec l’imagerie.',
+    description:
+      'Recherche d’anticorps anti-Taenia solium dans le sérum (immunoblot) ou le LCR : appui au diagnostic de la neurocysticercose, à interpréter avec l’imagerie.',
     valeurs_normales: '- Négative\n- Moins sensible en cas de lésion unique ou calcifiée',
   },
   {
     slug: 'test-monofilament',
     nom: 'Test au monofilament et examen neurologique du pied',
     type: 'exploration',
-    description: 'Évaluation de la sensibilité protectrice de la plante du pied avec un monofilament de 10 g, associée à la sensibilité vibratoire (diapason) et aux réflexes : dépistage de la neuropathie diabétique et lépreuse, risque de plaie.',
-    valeurs_normales: '- Perception du monofilament en tous les points testés\n- Non-perception d’un point ou plus : pied à risque',
+    description:
+      'Évaluation de la sensibilité protectrice de la plante du pied avec un monofilament de 10 g, associée à la sensibilité vibratoire (diapason) et aux réflexes : dépistage de la neuropathie diabétique et lépreuse, risque de plaie.',
+    valeurs_normales:
+      '- Perception du monofilament en tous les points testés\n- Non-perception d’un point ou plus : pied à risque',
   },
   // --- Lot 71
   {
     slug: 'ceruloplasmine-cuivre',
     nom: 'Céruloplasmine et cuivre (sérique et urinaire des 24 h)',
     type: 'biologie',
-    description: 'Dosage de la céruloplasmine sérique, du cuivre sérique et de la cuprurie des 24 heures : dépistage de la maladie de Wilson devant des mouvements anormaux, une hépatopathie ou des troubles psychiatriques avant 40 ans.',
-    valeurs_normales: '- Céruloplasmine 0,2–0,4 g/L\n- Cuprurie < 40 µg/24 h\n- Maladie de Wilson : céruloplasmine basse, cuprurie > 100 µg/24 h',
+    description:
+      'Dosage de la céruloplasmine sérique, du cuivre sérique et de la cuprurie des 24 heures : dépistage de la maladie de Wilson devant des mouvements anormaux, une hépatopathie ou des troubles psychiatriques avant 40 ans.',
+    valeurs_normales:
+      '- Céruloplasmine 0,2–0,4 g/L\n- Cuprurie < 40 µg/24 h\n- Maladie de Wilson : céruloplasmine basse, cuprurie > 100 µg/24 h',
   },
   // --- Lot 73
   {
     slug: 'testosteronemie',
     nom: 'Testostérone totale (dosage matinal)',
     type: 'biologie',
-    description: 'Dosage sanguin de la testostérone totale, prélevé le matin à jeun, à contrôler si bas : hypogonadisme masculin (baisse de la libido, troubles de l’érection, infertilité), hyperandrogénie féminine.',
+    description:
+      'Dosage sanguin de la testostérone totale, prélevé le matin à jeun, à contrôler si bas : hypogonadisme masculin (baisse de la libido, troubles de l’érection, infertilité), hyperandrogénie féminine.',
     valeurs_normales: '- Homme adulte : 3–10 ng/mL (10–35 nmol/L)\n- Femme : < 0,7 ng/mL',
   },
   // --- Lot 74
@@ -1420,31 +1445,39 @@ const examens = [
     slug: 'depistage-urinaire-drogues',
     nom: 'Dépistage urinaire des drogues (tests rapides)',
     type: 'biologie',
-    description: 'Tests immunochromatographiques rapides sur urine : cannabis (THC), opiacés et opioïdes (morphine, tramadol selon le test), cocaïne, amphétamines, benzodiazépines ; orientation diagnostique devant une intoxication, un trouble psychiatrique aigu ou le suivi d’un traitement de substitution.',
-    valeurs_normales: '- Négatif\n- Cannabis détectable plusieurs jours (jusqu’à plusieurs semaines chez le consommateur régulier)\n- Résultat positif à confirmer si enjeu médico-légal',
+    description:
+      'Tests immunochromatographiques rapides sur urine : cannabis (THC), opiacés et opioïdes (morphine, tramadol selon le test), cocaïne, amphétamines, benzodiazépines ; orientation diagnostique devant une intoxication, un trouble psychiatrique aigu ou le suivi d’un traitement de substitution.',
+    valeurs_normales:
+      '- Négatif\n- Cannabis détectable plusieurs jours (jusqu’à plusieurs semaines chez le consommateur régulier)\n- Résultat positif à confirmer si enjeu médico-légal',
   },
   // --- Lot 75
   {
     slug: 'evaluation-cognitive',
     nom: 'Évaluation cognitive (MoCA, MMSE, test de l’horloge)',
     type: 'exploration',
-    description: 'Tests de dépistage des troubles cognitifs au cabinet : mémoire, orientation, attention, langage, fonctions exécutives et visuo-spatiales ; à adapter au niveau d’instruction et à la langue ; suivi de l’évolution.',
-    valeurs_normales: '- MoCA ≥ 26/30 (ajouter 1 point si ≤ 12 ans de scolarité)\n- MMSE ≥ 24/30 (seuils à adapter au niveau d’études)',
+    description:
+      'Tests de dépistage des troubles cognitifs au cabinet : mémoire, orientation, attention, langage, fonctions exécutives et visuo-spatiales ; à adapter au niveau d’instruction et à la langue ; suivi de l’évolution.',
+    valeurs_normales:
+      '- MoCA ≥ 26/30 (ajouter 1 point si ≤ 12 ans de scolarité)\n- MMSE ≥ 24/30 (seuils à adapter au niveau d’études)',
   },
   // --- Lot 76
   {
     slug: 'anticorps-myosites',
     nom: 'Anticorps des myosites (anti-Jo-1, anti-Mi-2, anti-TIF1-γ, anti-HMGCR)',
     type: 'biologie',
-    description: 'Recherche d’autoanticorps spécifiques ou associés aux myosites inflammatoires : orientation vers une dermatomyosite (anti-Mi-2, anti-TIF1-γ associé aux cancers), un syndrome des antisynthétases (anti-Jo-1, pneumopathie interstitielle) ou une myopathie nécrosante (anti-HMGCR, statines).',
-    valeurs_normales: '- Négatifs\n- Interprétation avec la clinique, les CPK, l’EMG et la biopsie musculaire',
+    description:
+      'Recherche d’autoanticorps spécifiques ou associés aux myosites inflammatoires : orientation vers une dermatomyosite (anti-Mi-2, anti-TIF1-γ associé aux cancers), un syndrome des antisynthétases (anti-Jo-1, pneumopathie interstitielle) ou une myopathie nécrosante (anti-HMGCR, statines).',
+    valeurs_normales:
+      '- Négatifs\n- Interprétation avec la clinique, les CPK, l’EMG et la biopsie musculaire',
   },
   {
     slug: 'polysomnographie',
     nom: 'Polysomnographie et tests itératifs de latence d’endormissement',
     type: 'exploration',
-    description: 'Enregistrement nocturne du sommeil (EEG, mouvements oculaires, tonus musculaire, respiration, oxymétrie) et, le lendemain, mesures répétées du délai d’endormissement : apnées du sommeil, narcolepsie, hypersomnies, parasomnies atypiques (centre spécialisé).',
-    valeurs_normales: '- Index d’apnées-hypopnées < 5/h\n- Latence moyenne d’endormissement > 8 min, pas d’endormissement en sommeil paradoxal\n- Narcolepsie : latence ≤ 8 min et au moins 2 endormissements en sommeil paradoxal',
+    description:
+      'Enregistrement nocturne du sommeil (EEG, mouvements oculaires, tonus musculaire, respiration, oxymétrie) et, le lendemain, mesures répétées du délai d’endormissement : apnées du sommeil, narcolepsie, hypersomnies, parasomnies atypiques (centre spécialisé).',
+    valeurs_normales:
+      '- Index d’apnées-hypopnées < 5/h\n- Latence moyenne d’endormissement > 8 min, pas d’endormissement en sommeil paradoxal\n- Narcolepsie : latence ≤ 8 min et au moins 2 endormissements en sommeil paradoxal',
   },
 ];
 
@@ -1843,61 +1876,187 @@ const symptomes = [
     'Cicatrice épaisse qui se raccourcit et limite les mouvements d’une articulation (brides après brûlure).',
   ],
   // --- Lot 65
-  ['Acouphènes', 'Perception d’un bruit (sifflement, bourdonnement) sans source extérieure, souvent associée à une baisse de l’audition.'],
+  [
+    'Acouphènes',
+    'Perception d’un bruit (sifflement, bourdonnement) sans source extérieure, souvent associée à une baisse de l’audition.',
+  ],
   // --- Lot 66
-  ['Douleur dentaire', 'Douleur d’une dent, provoquée (froid, sucre, mastication) ou spontanée et pulsatile (carie profonde, abcès).'],
-  ['Saignement des gencives', 'Gingivorragies au brossage ou spontanées (gingivite, parodontite, troubles de l’hémostase, scorbut, leucémie).'],
-  ['Ulcérations buccales', 'Aphtes, ulcérations ou érosions de la muqueuse de la bouche, souvent douloureuses.'],
-  ['Larmoiement', 'Écoulement excessif de larmes (irritation, corps étranger, kératite, obstruction des voies lacrymales).'],
-  ['Malocclusion dentaire', 'Mauvais engrènement des dents à la fermeture de la bouche (fracture de la mâchoire, luxation, tumeur).'],
+  [
+    'Douleur dentaire',
+    'Douleur d’une dent, provoquée (froid, sucre, mastication) ou spontanée et pulsatile (carie profonde, abcès).',
+  ],
+  [
+    'Saignement des gencives',
+    'Gingivorragies au brossage ou spontanées (gingivite, parodontite, troubles de l’hémostase, scorbut, leucémie).',
+  ],
+  [
+    'Ulcérations buccales',
+    'Aphtes, ulcérations ou érosions de la muqueuse de la bouche, souvent douloureuses.',
+  ],
+  [
+    'Larmoiement',
+    'Écoulement excessif de larmes (irritation, corps étranger, kératite, obstruction des voies lacrymales).',
+  ],
+  [
+    'Malocclusion dentaire',
+    'Mauvais engrènement des dents à la fermeture de la bouche (fracture de la mâchoire, luxation, tumeur).',
+  ],
   // --- Lot 67
-  ['Aphasie', 'Trouble du langage acquis par lésion cérébrale : difficulté à parler, à trouver les mots ou à comprendre (AVC de l’hémisphère gauche).'],
-  ['Douleur de la plaie opératoire', 'Douleur au niveau de l’incision chirurgicale, attendue dans les premiers jours ; son aggravation fait rechercher une complication.'],
+  [
+    'Aphasie',
+    'Trouble du langage acquis par lésion cérébrale : difficulté à parler, à trouver les mots ou à comprendre (AVC de l’hémisphère gauche).',
+  ],
+  [
+    'Douleur de la plaie opératoire',
+    'Douleur au niveau de l’incision chirurgicale, attendue dans les premiers jours ; son aggravation fait rechercher une complication.',
+  ],
   // --- Lot 68
-  ['Absences', 'Brèves suspensions de la conscience (quelques secondes) avec regard fixe et arrêt de l’activité, souvent pluriquotidiennes chez l’enfant.'],
-  ['Diplopie', 'Vision double d’un objet unique (atteinte des muscles ou des nerfs oculomoteurs, myasthénie, hypertension intracrânienne).'],
-  ['Paresthésies', 'Sensations anormales non douloureuses (fourmillements, picotements, engourdissement), souvent aux pieds et aux mains dans les neuropathies.'],
+  [
+    'Absences',
+    'Brèves suspensions de la conscience (quelques secondes) avec regard fixe et arrêt de l’activité, souvent pluriquotidiennes chez l’enfant.',
+  ],
+  [
+    'Diplopie',
+    'Vision double d’un objet unique (atteinte des muscles ou des nerfs oculomoteurs, myasthénie, hypertension intracrânienne).',
+  ],
+  [
+    'Paresthésies',
+    'Sensations anormales non douloureuses (fourmillements, picotements, engourdissement), souvent aux pieds et aux mains dans les neuropathies.',
+  ],
   // --- Lot 69
-  ['Douleur faciale', 'Douleur du visage, en éclairs (névralgie du trijumeau), continue (sinusite, dent, zona) ou à la mastication.'],
-  ['Crampes musculaires', 'Contractions involontaires, douloureuses et transitoires d’un muscle (neuropathies, SLA, troubles ioniques, effort).'],
-  ['Dysarthrie', 'Trouble de l’articulation de la parole (voix pâteuse, mal articulée) par atteinte neurologique ou musculaire.'],
-  ['Douleur radiculaire', 'Douleur suivant le trajet d’une racine nerveuse (sciatique, cruralgie, névralgie cervico-brachiale), souvent majorée par la toux et l’effort.'],
+  [
+    'Douleur faciale',
+    'Douleur du visage, en éclairs (névralgie du trijumeau), continue (sinusite, dent, zona) ou à la mastication.',
+  ],
+  [
+    'Crampes musculaires',
+    'Contractions involontaires, douloureuses et transitoires d’un muscle (neuropathies, SLA, troubles ioniques, effort).',
+  ],
+  [
+    'Dysarthrie',
+    'Trouble de l’articulation de la parole (voix pâteuse, mal articulée) par atteinte neurologique ou musculaire.',
+  ],
+  [
+    'Douleur radiculaire',
+    'Douleur suivant le trajet d’une racine nerveuse (sciatique, cruralgie, névralgie cervico-brachiale), souvent majorée par la toux et l’effort.',
+  ],
   // --- Lot 70
-  ['Atrophie musculaire', 'Diminution visible du volume d’un muscle ou d’un groupe musculaire (atteinte du nerf, de la corne antérieure ou du muscle, immobilisation).'],
-  ['Mains en griffe', 'Déformation des doigts en flexion par paralysie des muscles intrinsèques de la main (lèpre, lésion du nerf ulnaire ou médian).'],
+  [
+    'Atrophie musculaire',
+    'Diminution visible du volume d’un muscle ou d’un groupe musculaire (atteinte du nerf, de la corne antérieure ou du muscle, immobilisation).',
+  ],
+  [
+    'Mains en griffe',
+    'Déformation des doigts en flexion par paralysie des muscles intrinsèques de la main (lèpre, lésion du nerf ulnaire ou médian).',
+  ],
   // --- Lot 71
-  ['Postures anormales', 'Contractions musculaires prolongées entraînant des torsions ou des positions anormales du cou, du tronc ou des membres (dystonies).'],
-  ['Impatiences des jambes', 'Besoin irrésistible de bouger les jambes, avec sensations désagréables, au repos et le soir, soulagé par le mouvement.'],
-  ['Troubles de la concentration', 'Difficulté à maintenir l’attention sur une tâche, distractibilité, lenteur intellectuelle.'],
-  ['Irritabilité', 'Tendance excessive à la colère, à l’agacement ou à l’impatience, inhabituelle pour la personne.'],
-  ['Amnésie', 'Perte de la mémoire d’une période (autour d’un traumatisme, d’une crise) ou difficulté à mémoriser de nouvelles informations.'],
+  [
+    'Postures anormales',
+    'Contractions musculaires prolongées entraînant des torsions ou des positions anormales du cou, du tronc ou des membres (dystonies).',
+  ],
+  [
+    'Impatiences des jambes',
+    'Besoin irrésistible de bouger les jambes, avec sensations désagréables, au repos et le soir, soulagé par le mouvement.',
+  ],
+  [
+    'Troubles de la concentration',
+    'Difficulté à maintenir l’attention sur une tâche, distractibilité, lenteur intellectuelle.',
+  ],
+  [
+    'Irritabilité',
+    'Tendance excessive à la colère, à l’agacement ou à l’impatience, inhabituelle pour la personne.',
+  ],
+  [
+    'Amnésie',
+    'Perte de la mémoire d’une période (autour d’un traumatisme, d’une crise) ou difficulté à mémoriser de nouvelles informations.',
+  ],
   // --- Lot 72
-  ['Obsessions et compulsions', 'Pensées intrusives répétées et angoissantes (obsessions) et comportements ou rituels répétitifs destinés à les neutraliser (compulsions : lavage, vérification, comptage).'],
-  ['Peurs excessives', 'Peur intense et disproportionnée d’un objet, d’une situation ou d’un lieu, entraînant un évitement.'],
-  ['Plaintes somatiques multiples', 'Symptômes physiques nombreux et variés (douleurs, fatigue, troubles digestifs) sans explication médicale suffisante, source de détresse et de consultations répétées.'],
-  ['Restriction alimentaire', 'Limitation volontaire et marquée des apports alimentaires, souvent liée à une peur de grossir ou à une perception déformée du corps.'],
-  ['Crises de boulimie', 'Épisodes d’ingestion rapide de grandes quantités de nourriture avec sentiment de perte de contrôle, parfois suivis de vomissements provoqués.'],
+  [
+    'Obsessions et compulsions',
+    'Pensées intrusives répétées et angoissantes (obsessions) et comportements ou rituels répétitifs destinés à les neutraliser (compulsions : lavage, vérification, comptage).',
+  ],
+  [
+    'Peurs excessives',
+    'Peur intense et disproportionnée d’un objet, d’une situation ou d’un lieu, entraînant un évitement.',
+  ],
+  [
+    'Plaintes somatiques multiples',
+    'Symptômes physiques nombreux et variés (douleurs, fatigue, troubles digestifs) sans explication médicale suffisante, source de détresse et de consultations répétées.',
+  ],
+  [
+    'Restriction alimentaire',
+    'Limitation volontaire et marquée des apports alimentaires, souvent liée à une peur de grossir ou à une perception déformée du corps.',
+  ],
+  [
+    'Crises de boulimie',
+    'Épisodes d’ingestion rapide de grandes quantités de nourriture avec sentiment de perte de contrôle, parfois suivis de vomissements provoqués.',
+  ],
   // --- Lot 73
-  ['Troubles de l’érection', 'Difficulté persistante à obtenir ou maintenir une érection suffisante pour un rapport sexuel satisfaisant.'],
+  [
+    'Troubles de l’érection',
+    'Difficulté persistante à obtenir ou maintenir une érection suffisante pour un rapport sexuel satisfaisant.',
+  ],
   ['Baisse de la libido', 'Diminution persistante du désir et de l’intérêt sexuels.'],
-  ['Difficultés scolaires', 'Résultats scolaires insuffisants, redoublements, difficultés à lire, écrire ou calculer, absentéisme.'],
-  ['Repli sur soi', 'Retrait des relations sociales et familiales, isolement, perte d’intérêt pour les activités habituelles.'],
-  ['Automutilations', 'Lésions volontaires infligées à son propre corps (coupures, brûlures, coups), souvent pour soulager une détresse émotionnelle.'],
-  ['États de transe ou de possession', 'Épisodes d’altération de la conscience et de l’identité, vécus comme une prise de contrôle par un esprit ou une force extérieure.'],
+  [
+    'Difficultés scolaires',
+    'Résultats scolaires insuffisants, redoublements, difficultés à lire, écrire ou calculer, absentéisme.',
+  ],
+  [
+    'Repli sur soi',
+    'Retrait des relations sociales et familiales, isolement, perte d’intérêt pour les activités habituelles.',
+  ],
+  [
+    'Automutilations',
+    'Lésions volontaires infligées à son propre corps (coupures, brûlures, coups), souvent pour soulager une détresse émotionnelle.',
+  ],
+  [
+    'États de transe ou de possession',
+    'Épisodes d’altération de la conscience et de l’identité, vécus comme une prise de contrôle par un esprit ou une force extérieure.',
+  ],
   // --- Lot 74
-  ['Incontinence fécale', 'Émission involontaire de selles dans les vêtements ou en des lieux inappropriés, au-delà de l’âge de la propreté (encoprésie).'],
-  ['Mutisme', 'Absence de parole chez une personne capable de parler, généralisée ou limitée à certaines situations.'],
-  ['Angoisse de séparation', 'Anxiété excessive lors de la séparation d’avec les parents ou le domicile (pleurs, plaintes, refus de dormir seul ou d’aller à l’école).'],
-  ['Comportements agressifs', 'Agressions physiques ou verbales répétées envers les personnes ou les animaux, destructions, colères violentes.'],
-  ['Cauchemars et terreurs nocturnes', 'Rêves effrayants réveillant l’enfant (cauchemars) ou épisodes de cris et d’agitation en début de nuit sans réveil complet ni souvenir (terreurs nocturnes).'],
+  [
+    'Incontinence fécale',
+    'Émission involontaire de selles dans les vêtements ou en des lieux inappropriés, au-delà de l’âge de la propreté (encoprésie).',
+  ],
+  [
+    'Mutisme',
+    'Absence de parole chez une personne capable de parler, généralisée ou limitée à certaines situations.',
+  ],
+  [
+    'Angoisse de séparation',
+    'Anxiété excessive lors de la séparation d’avec les parents ou le domicile (pleurs, plaintes, refus de dormir seul ou d’aller à l’école).',
+  ],
+  [
+    'Comportements agressifs',
+    'Agressions physiques ou verbales répétées envers les personnes ou les animaux, destructions, colères violentes.',
+  ],
+  [
+    'Cauchemars et terreurs nocturnes',
+    'Rêves effrayants réveillant l’enfant (cauchemars) ou épisodes de cris et d’agitation en début de nuit sans réveil complet ni souvenir (terreurs nocturnes).',
+  ],
   ['Somnolence', 'Tendance anormale à s’endormir ou difficulté à rester éveillé pendant la journée.'],
   // --- Lot 75
-  ['Euphorie', 'Sentiment intense et inapproprié de bien-être, d’excitation ou de toute-puissance (intoxication, manie).'],
-  ['Désinhibition', 'Perte du contrôle des comportements sociaux : propos ou gestes inadaptés, familiarité excessive, impulsivité.'],
-  ['Apathie', 'Perte de motivation et d’initiative, indifférence affective, réduction des activités spontanées.'],
-  ['Stupeur', 'État d’immobilité et d’absence de réaction aux stimulations, sans perte de conscience vraie (catatonie, dépression sévère).'],
+  [
+    'Euphorie',
+    'Sentiment intense et inapproprié de bien-être, d’excitation ou de toute-puissance (intoxication, manie).',
+  ],
+  [
+    'Désinhibition',
+    'Perte du contrôle des comportements sociaux : propos ou gestes inadaptés, familiarité excessive, impulsivité.',
+  ],
+  [
+    'Apathie',
+    'Perte de motivation et d’initiative, indifférence affective, réduction des activités spontanées.',
+  ],
+  [
+    'Stupeur',
+    'État d’immobilité et d’absence de réaction aux stimulations, sans perte de conscience vraie (catatonie, dépression sévère).',
+  ],
   // --- Lot 76
-  ['Cataplexie', 'Perte brutale et brève du tonus musculaire, conscience conservée, déclenchée par une émotion (rire, surprise, colère), évocatrice de narcolepsie.'],
+  [
+    'Cataplexie',
+    'Perte brutale et brève du tonus musculaire, conscience conservée, déclenchée par une émotion (rire, surprise, colère), évocatrice de narcolepsie.',
+  ],
 ];
 
 const molecules = [
@@ -3344,33 +3503,45 @@ const molecules = [
     slug: 'suxamethonium',
     classe: 'Curare dépolarisant',
     groupe: 'Anesthésie et réanimation',
-    mecanisme: 'Agoniste des récepteurs nicotiniques de la plaque motrice, entraînant une dépolarisation prolongée (fasciculations) puis une paralysie musculaire brève.',
-    indications: 'Intubation en séquence rapide (estomac plein, urgence, césarienne) : délai d’action de 60 s et durée de 5–10 min.',
+    mecanisme:
+      'Agoniste des récepteurs nicotiniques de la plaque motrice, entraînant une dépolarisation prolongée (fasciculations) puis une paralysie musculaire brève.',
+    indications:
+      'Intubation en séquence rapide (estomac plein, urgence, césarienne) : délai d’action de 60 s et durée de 5–10 min.',
     posologie: '1 mg/kg IV (1–1,5 mg/kg) après l’hypnotique ; enfant 1–2 mg/kg.',
-    effets_indesirables: 'Hyperkaliémie, bradycardie, myalgies, hypertension intraoculaire, hyperthermie maligne, curarisation prolongée (déficit en pseudocholinestérase), anaphylaxie.',
-    precautions: 'Contre-indiqué en cas d’hyperkaliémie, de brûlures ou de traumatismes étendus après 48 h, de myopathies, d’antécédent d’hyperthermie maligne ; conservation au froid.',
+    effets_indesirables:
+      'Hyperkaliémie, bradycardie, myalgies, hypertension intraoculaire, hyperthermie maligne, curarisation prolongée (déficit en pseudocholinestérase), anaphylaxie.',
+    precautions:
+      'Contre-indiqué en cas d’hyperkaliémie, de brûlures ou de traumatismes étendus après 48 h, de myopathies, d’antécédent d’hyperthermie maligne ; conservation au froid.',
   },
   {
     dci: 'Rocuronium',
     slug: 'rocuronium',
     classe: 'Curare non dépolarisant (aminostéroïde)',
     groupe: 'Anesthésie et réanimation',
-    mecanisme: 'Antagoniste compétitif de l’acétylcholine au niveau des récepteurs nicotiniques de la plaque motrice.',
-    indications: 'Curarisation pour l’intubation et la chirurgie ; alternative au suxaméthonium pour l’intubation en séquence rapide (1,2 mg/kg).',
-    posologie: 'Intubation : 0,6 mg/kg IV (1–1,2 mg/kg en séquence rapide) ; entretien 0,1–0,2 mg/kg selon la surveillance.',
+    mecanisme:
+      'Antagoniste compétitif de l’acétylcholine au niveau des récepteurs nicotiniques de la plaque motrice.',
+    indications:
+      'Curarisation pour l’intubation et la chirurgie ; alternative au suxaméthonium pour l’intubation en séquence rapide (1,2 mg/kg).',
+    posologie:
+      'Intubation : 0,6 mg/kg IV (1–1,2 mg/kg en séquence rapide) ; entretien 0,1–0,2 mg/kg selon la surveillance.',
     effets_indesirables: 'Anaphylaxie, curarisation résiduelle, douleur à l’injection.',
-    precautions: 'Ventilation obligatoire ; décurarisation par néostigmine (+ atropine) ou sugammadex ; surveillance de la curarisation.',
+    precautions:
+      'Ventilation obligatoire ; décurarisation par néostigmine (+ atropine) ou sugammadex ; surveillance de la curarisation.',
   },
   {
     dci: 'Atracurium',
     slug: 'atracurium',
     classe: 'Curare non dépolarisant (benzylisoquinoléine)',
     groupe: 'Anesthésie et réanimation',
-    mecanisme: 'Antagoniste compétitif de l’acétylcholine à la plaque motrice ; élimination indépendante du foie et du rein (voie de Hofmann).',
-    indications: 'Curarisation au cours de l’anesthésie générale, notamment en cas d’insuffisance rénale ou hépatique.',
+    mecanisme:
+      'Antagoniste compétitif de l’acétylcholine à la plaque motrice ; élimination indépendante du foie et du rein (voie de Hofmann).',
+    indications:
+      'Curarisation au cours de l’anesthésie générale, notamment en cas d’insuffisance rénale ou hépatique.',
     posologie: '0,5 mg/kg IV pour l’intubation, puis 0,1–0,2 mg/kg selon la surveillance.',
-    effets_indesirables: 'Libération d’histamine (rougeur, hypotension, bronchospasme), anaphylaxie, curarisation résiduelle.',
-    precautions: 'Ventilation obligatoire ; conservation au froid ; décurarisation par néostigmine et atropine.',
+    effets_indesirables:
+      'Libération d’histamine (rougeur, hypotension, bronchospasme), anaphylaxie, curarisation résiduelle.',
+    precautions:
+      'Ventilation obligatoire ; conservation au froid ; décurarisation par néostigmine et atropine.',
   },
   // --- Lot 68
   {
@@ -3378,21 +3549,28 @@ const molecules = [
     slug: 'pyridostigmine',
     classe: 'Anticholinestérasique',
     groupe: 'Neurologie',
-    mecanisme: 'Inhibition réversible de l’acétylcholinestérase augmentant l’acétylcholine disponible à la jonction neuromusculaire.',
+    mecanisme:
+      'Inhibition réversible de l’acétylcholinestérase augmentant l’acétylcholine disponible à la jonction neuromusculaire.',
     indications: 'Traitement symptomatique de la myasthénie.',
-    posologie: 'Adulte : 30–60 mg per os 3 à 4 fois par jour, à adapter (maximum habituel 360 mg/j) ; enfant 1 mg/kg par prise.',
-    effets_indesirables: 'Crampes abdominales, diarrhée, hypersalivation, sueurs, fasciculations, bradycardie ; surdosage : crise cholinergique (faiblesse aggravée).',
-    precautions: 'Prudence en cas d’asthme et de troubles du rythme ; distinguer crise myasthénique et crise cholinergique.',
+    posologie:
+      'Adulte : 30–60 mg per os 3 à 4 fois par jour, à adapter (maximum habituel 360 mg/j) ; enfant 1 mg/kg par prise.',
+    effets_indesirables:
+      'Crampes abdominales, diarrhée, hypersalivation, sueurs, fasciculations, bradycardie ; surdosage : crise cholinergique (faiblesse aggravée).',
+    precautions:
+      'Prudence en cas d’asthme et de troubles du rythme ; distinguer crise myasthénique et crise cholinergique.',
   },
   {
     dci: 'Éthosuximide',
     slug: 'ethosuximide',
     classe: 'Antiépileptique (succinimide)',
     groupe: 'Neurologie',
-    mecanisme: 'Blocage des canaux calciques de type T des neurones thalamiques, responsables des décharges des absences.',
+    mecanisme:
+      'Blocage des canaux calciques de type T des neurones thalamiques, responsables des décharges des absences.',
     indications: 'Épilepsie-absences de l’enfant (traitement de première intention avec le valproate).',
-    posologie: 'Enfant : 10–15 mg/kg/j en 2 prises, augmenté progressivement jusqu’à 20–40 mg/kg/j (maximum 1,5 g/j).',
-    effets_indesirables: 'Troubles digestifs, somnolence, céphalées, hoquet, rares troubles hématologiques et réactions cutanées.',
+    posologie:
+      'Enfant : 10–15 mg/kg/j en 2 prises, augmenté progressivement jusqu’à 20–40 mg/kg/j (maximum 1,5 g/j).',
+    effets_indesirables:
+      'Troubles digestifs, somnolence, céphalées, hoquet, rares troubles hématologiques et réactions cutanées.',
     precautions: 'Inefficace sur les crises généralisées tonico-cloniques ; surveillance de la NFS.',
   },
   {
@@ -3400,11 +3578,16 @@ const molecules = [
     slug: 'topiramate',
     classe: 'Antiépileptique',
     groupe: 'Neurologie',
-    mecanisme: 'Blocage des canaux sodiques, potentialisation du GABA, antagonisme des récepteurs AMPA du glutamate.',
-    indications: 'Épilepsies focales et généralisées (en association, épilepsies pharmacorésistantes, syndrome de Lennox-Gastaut) ; prévention de la migraine.',
-    posologie: 'Adulte : débuter à 25 mg/j, augmenter de 25–50 mg par semaine jusqu’à 100–200 mg/j en 2 prises ; enfant 5–9 mg/kg/j.',
-    effets_indesirables: 'Troubles cognitifs et du langage, paresthésies, perte de poids, lithiase rénale, glaucome aigu, acidose métabolique.',
-    precautions: 'Tératogène (fentes labio-palatines) ; diminue l’efficacité de la contraception orale ; hydratation suffisante.',
+    mecanisme:
+      'Blocage des canaux sodiques, potentialisation du GABA, antagonisme des récepteurs AMPA du glutamate.',
+    indications:
+      'Épilepsies focales et généralisées (en association, épilepsies pharmacorésistantes, syndrome de Lennox-Gastaut) ; prévention de la migraine.',
+    posologie:
+      'Adulte : débuter à 25 mg/j, augmenter de 25–50 mg par semaine jusqu’à 100–200 mg/j en 2 prises ; enfant 5–9 mg/kg/j.',
+    effets_indesirables:
+      'Troubles cognitifs et du langage, paresthésies, perte de poids, lithiase rénale, glaucome aigu, acidose métabolique.',
+    precautions:
+      'Tératogène (fentes labio-palatines) ; diminue l’efficacité de la contraception orale ; hydratation suffisante.',
   },
   // --- Lot 69
   {
@@ -3412,33 +3595,44 @@ const molecules = [
     slug: 'oxcarbazepine',
     classe: 'Antiépileptique (carboxamide)',
     groupe: 'Neurologie',
-    mecanisme: 'Blocage des canaux sodiques voltage-dépendants, stabilisant les membranes neuronales hyperexcitables.',
-    indications: 'Névralgie du trijumeau (alternative à la carbamazépine, mieux tolérée) ; épilepsies focales.',
-    posologie: 'Adulte : débuter à 150–300 mg 2 fois par jour, augmenter jusqu’à 600–1 200 mg/j (maximum 2 400 mg/j).',
-    effets_indesirables: 'Hyponatrémie (fréquente), somnolence, vertiges, diplopie, éruptions cutanées (rares toxidermies graves).',
-    precautions: 'Surveiller la natrémie (sujet âgé, diurétiques) ; inducteur enzymatique modéré (contraception orale, antirétroviraux).',
+    mecanisme:
+      'Blocage des canaux sodiques voltage-dépendants, stabilisant les membranes neuronales hyperexcitables.',
+    indications:
+      'Névralgie du trijumeau (alternative à la carbamazépine, mieux tolérée) ; épilepsies focales.',
+    posologie:
+      'Adulte : débuter à 150–300 mg 2 fois par jour, augmenter jusqu’à 600–1 200 mg/j (maximum 2 400 mg/j).',
+    effets_indesirables:
+      'Hyponatrémie (fréquente), somnolence, vertiges, diplopie, éruptions cutanées (rares toxidermies graves).',
+    precautions:
+      'Surveiller la natrémie (sujet âgé, diurétiques) ; inducteur enzymatique modéré (contraception orale, antirétroviraux).',
   },
   {
     dci: 'Riluzole',
     slug: 'riluzole',
     classe: 'Antiglutamatergique',
     groupe: 'Neurologie',
-    mecanisme: 'Inhibition de la libération du glutamate et blocage des canaux sodiques, ralentissant la dégénérescence des motoneurones.',
+    mecanisme:
+      'Inhibition de la libération du glutamate et blocage des canaux sodiques, ralentissant la dégénérescence des motoneurones.',
     indications: 'Sclérose latérale amyotrophique (allongement modeste de la survie).',
     posologie: '50 mg per os 2 fois par jour, à distance des repas.',
     effets_indesirables: 'Élévation des transaminases, nausées, asthénie, neutropénie rare.',
-    precautions: 'Surveillance des transaminases (mensuelle les 3 premiers mois) et de la NFS ; contre-indiqué en cas d’insuffisance hépatique.',
+    precautions:
+      'Surveillance des transaminases (mensuelle les 3 premiers mois) et de la NFS ; contre-indiqué en cas d’insuffisance hépatique.',
   },
   {
     dci: 'Antitoxine botulique',
     slug: 'antitoxine-botulique',
     classe: 'Immunsérum (antitoxine équine)',
     groupe: 'Vaccins et sérums',
-    mecanisme: 'Neutralisation de la toxine botulique circulante non encore fixée aux terminaisons nerveuses.',
-    indications: 'Botulisme alimentaire ou par blessure, le plus tôt possible après le diagnostic clinique (sans attendre la confirmation).',
-    posologie: 'Selon le produit (antitoxine heptavalente) : un flacon IV, en perfusion lente, après test de tolérance selon le fabricant.',
+    mecanisme:
+      'Neutralisation de la toxine botulique circulante non encore fixée aux terminaisons nerveuses.',
+    indications:
+      'Botulisme alimentaire ou par blessure, le plus tôt possible après le diagnostic clinique (sans attendre la confirmation).',
+    posologie:
+      'Selon le produit (antitoxine heptavalente) : un flacon IV, en perfusion lente, après test de tolérance selon le fabricant.',
     effets_indesirables: 'Réactions d’hypersensibilité immédiate (anaphylaxie), maladie sérique.',
-    precautions: 'Disponibilité très limitée (stocks nationaux ou internationaux) ; adrénaline prête ; ne régresse pas une paralysie déjà installée.',
+    precautions:
+      'Disponibilité très limitée (stocks nationaux ou internationaux) ; adrénaline prête ; ne régresse pas une paralysie déjà installée.',
   },
   // --- Lot 70
   {
@@ -3446,22 +3640,31 @@ const molecules = [
     slug: 'sumatriptan',
     classe: 'Triptan (agoniste des récepteurs 5-HT1B/1D)',
     groupe: 'Neurologie',
-    mecanisme: 'Vasoconstriction des vaisseaux méningés et inhibition de la libération des neuropeptides de l’inflammation neurogène.',
+    mecanisme:
+      'Vasoconstriction des vaisseaux méningés et inhibition de la libération des neuropeptides de l’inflammation neurogène.',
     indications: 'Crise de migraine ; crise d’algie vasculaire de la face (voie sous-cutanée ou nasale).',
-    posologie: 'Migraine : 50–100 mg per os, renouvelable après 2 h (maximum 300 mg/j). Algie vasculaire : 6 mg en sous-cutané (maximum 2 injections par 24 h).',
-    effets_indesirables: 'Sensations de chaleur, d’oppression thoracique, paresthésies, vertiges, somnolence.',
-    precautions: 'Contre-indiqué en cas de coronaropathie, d’AVC, d’HTA non contrôlée, d’artériopathie ; ne pas associer aux dérivés de l’ergot.',
+    posologie:
+      'Migraine : 50–100 mg per os, renouvelable après 2 h (maximum 300 mg/j). Algie vasculaire : 6 mg en sous-cutané (maximum 2 injections par 24 h).',
+    effets_indesirables:
+      'Sensations de chaleur, d’oppression thoracique, paresthésies, vertiges, somnolence.',
+    precautions:
+      'Contre-indiqué en cas de coronaropathie, d’AVC, d’HTA non contrôlée, d’artériopathie ; ne pas associer aux dérivés de l’ergot.',
   },
   {
     dci: 'Vérapamil',
     slug: 'verapamil',
     classe: 'Inhibiteur calcique non dihydropyridinique',
     groupe: 'Cardiovasculaire',
-    mecanisme: 'Blocage des canaux calciques de type L du myocarde, du tissu nodal et des muscles lisses vasculaires.',
-    indications: 'Traitement de fond de l’algie vasculaire de la face ; tachycardies supraventriculaires ; angor ; HTA.',
-    posologie: 'Algie vasculaire : 240 mg/j, augmentés progressivement par paliers (jusqu’à 480–720 mg/j) sous surveillance ECG.',
-    effets_indesirables: 'Constipation, bradycardie, blocs auriculo-ventriculaires, hypotension, œdèmes des chevilles.',
-    precautions: 'ECG avant et à chaque palier ; contre-indiqué en cas de bloc AV, d’insuffisance cardiaque ; prudence avec les bêtabloquants.',
+    mecanisme:
+      'Blocage des canaux calciques de type L du myocarde, du tissu nodal et des muscles lisses vasculaires.',
+    indications:
+      'Traitement de fond de l’algie vasculaire de la face ; tachycardies supraventriculaires ; angor ; HTA.',
+    posologie:
+      'Algie vasculaire : 240 mg/j, augmentés progressivement par paliers (jusqu’à 480–720 mg/j) sous surveillance ECG.',
+    effets_indesirables:
+      'Constipation, bradycardie, blocs auriculo-ventriculaires, hypotension, œdèmes des chevilles.',
+    precautions:
+      'ECG avant et à chaque palier ; contre-indiqué en cas de bloc AV, d’insuffisance cardiaque ; prudence avec les bêtabloquants.',
   },
   // --- Lot 71
   {
@@ -3469,11 +3672,15 @@ const molecules = [
     slug: 'biperidene',
     classe: 'Anticholinergique antiparkinsonien',
     groupe: 'Neurologie',
-    mecanisme: 'Antagonisme des récepteurs muscariniques centraux, rétablissant l’équilibre dopamine-acétylcholine dans les noyaux gris centraux.',
-    indications: 'Dystonie aiguë et syndromes parkinsoniens induits par les neuroleptiques (forme injectable en urgence) ; maladie de Parkinson.',
+    mecanisme:
+      'Antagonisme des récepteurs muscariniques centraux, rétablissant l’équilibre dopamine-acétylcholine dans les noyaux gris centraux.',
+    indications:
+      'Dystonie aiguë et syndromes parkinsoniens induits par les neuroleptiques (forme injectable en urgence) ; maladie de Parkinson.',
     posologie: 'Dystonie aiguë : 2,5–5 mg IM ou IV lente, renouvelable après 30 min ; relais oral 2–6 mg/j.',
-    effets_indesirables: 'Sécheresse buccale, constipation, rétention urinaire, flou visuel, confusion et hallucinations (sujet âgé).',
-    precautions: 'Contre-indiqué en cas de glaucome par fermeture de l’angle, d’adénome prostatique avec rétention ; éviter chez le sujet âgé (troubles cognitifs).',
+    effets_indesirables:
+      'Sécheresse buccale, constipation, rétention urinaire, flou visuel, confusion et hallucinations (sujet âgé).',
+    precautions:
+      'Contre-indiqué en cas de glaucome par fermeture de l’angle, d’adénome prostatique avec rétention ; éviter chez le sujet âgé (troubles cognitifs).',
   },
   {
     dci: 'Tétrabénazine',
@@ -3482,20 +3689,25 @@ const molecules = [
     groupe: 'Neurologie',
     mecanisme: 'Déplétion présynaptique en dopamine, réduisant les mouvements hyperkinétiques.',
     indications: 'Chorées (maladie de Huntington, chorées sévères), dyskinésies tardives, tics sévères.',
-    posologie: '12,5 mg/j, augmentés progressivement par paliers de 12,5 mg jusqu’à 25–75 mg/j en 2–3 prises.',
-    effets_indesirables: 'Dépression et idées suicidaires, somnolence, syndrome parkinsonien, akathisie, syndrome malin.',
-    precautions: 'Contre-indiquée en cas de dépression non traitée ou d’idées suicidaires ; surveillance de l’humeur ; disponibilité limitée.',
+    posologie:
+      '12,5 mg/j, augmentés progressivement par paliers de 12,5 mg jusqu’à 25–75 mg/j en 2–3 prises.',
+    effets_indesirables:
+      'Dépression et idées suicidaires, somnolence, syndrome parkinsonien, akathisie, syndrome malin.',
+    precautions:
+      'Contre-indiquée en cas de dépression non traitée ou d’idées suicidaires ; surveillance de l’humeur ; disponibilité limitée.',
   },
   {
     dci: 'Primidone',
     slug: 'primidone',
     classe: 'Antiépileptique (désoxybarbiturique)',
     groupe: 'Neurologie',
-    mecanisme: 'Métabolisée en phénobarbital et phényléthylmalonamide ; réduit l’oscillation des circuits du tremblement.',
+    mecanisme:
+      'Métabolisée en phénobarbital et phényléthylmalonamide ; réduit l’oscillation des circuits du tremblement.',
     indications: 'Tremblement essentiel (traitement de première intention avec le propranolol) ; épilepsies.',
     posologie: 'Tremblement : débuter à 25 mg le soir, augmenter lentement jusqu’à 50–250 mg/j.',
     effets_indesirables: 'Somnolence, vertiges, nausées et ataxie surtout au début, dépendance.',
-    precautions: 'Débuter à très faible dose ; inducteur enzymatique (interactions, contraception orale, antirétroviraux) ; éviter chez la femme enceinte.',
+    precautions:
+      'Débuter à très faible dose ; inducteur enzymatique (interactions, contraception orale, antirétroviraux) ; éviter chez la femme enceinte.',
   },
   {
     dci: 'Pramipexole',
@@ -3504,20 +3716,28 @@ const molecules = [
     groupe: 'Neurologie',
     mecanisme: 'Stimulation directe des récepteurs dopaminergiques D2 et D3.',
     indications: 'Syndrome des jambes sans repos modéré à sévère ; maladie de Parkinson.',
-    posologie: 'Jambes sans repos : 0,088 mg (sel 0,125 mg) 2–3 h avant le coucher, augmenté si besoin jusqu’à 0,54 mg/j.',
-    effets_indesirables: 'Nausées, somnolence et endormissements brutaux, hypotension orthostatique, troubles du contrôle des impulsions, phénomène d’augmentation.',
-    precautions: 'Informer du risque d’accès de sommeil (conduite) et des troubles du comportement (jeu, achats) ; adapter à la fonction rénale.',
+    posologie:
+      'Jambes sans repos : 0,088 mg (sel 0,125 mg) 2–3 h avant le coucher, augmenté si besoin jusqu’à 0,54 mg/j.',
+    effets_indesirables:
+      'Nausées, somnolence et endormissements brutaux, hypotension orthostatique, troubles du contrôle des impulsions, phénomène d’augmentation.',
+    precautions:
+      'Informer du risque d’accès de sommeil (conduite) et des troubles du comportement (jeu, achats) ; adapter à la fonction rénale.',
   },
   {
     dci: 'Toxine botulinique de type A',
     slug: 'toxine-botulinique-type-a',
     classe: 'Neurotoxine thérapeutique',
     groupe: 'Neurologie',
-    mecanisme: 'Blocage de la libération d’acétylcholine à la jonction neuromusculaire, entraînant une paralysie locale et réversible du muscle injecté.',
-    indications: 'Dystonies focales (torticolis spasmodique, blépharospasme), spasticité focale (après AVC, paralysie cérébrale), hypersialorrhée.',
-    posologie: 'Injections intramusculaires ciblées selon le muscle et le produit, renouvelées tous les 3–4 mois, par un praticien formé.',
-    effets_indesirables: 'Faiblesse excessive des muscles voisins, dysphagie (injections cervicales), ptosis, douleur au point d’injection.',
-    precautions: 'Réservée aux centres spécialisés ; unités non interchangeables entre les produits ; contre-indiquée en cas de myasthénie.',
+    mecanisme:
+      'Blocage de la libération d’acétylcholine à la jonction neuromusculaire, entraînant une paralysie locale et réversible du muscle injecté.',
+    indications:
+      'Dystonies focales (torticolis spasmodique, blépharospasme), spasticité focale (après AVC, paralysie cérébrale), hypersialorrhée.',
+    posologie:
+      'Injections intramusculaires ciblées selon le muscle et le produit, renouvelées tous les 3–4 mois, par un praticien formé.',
+    effets_indesirables:
+      'Faiblesse excessive des muscles voisins, dysphagie (injections cervicales), ptosis, douleur au point d’injection.',
+    precautions:
+      'Réservée aux centres spécialisés ; unités non interchangeables entre les produits ; contre-indiquée en cas de myasthénie.',
   },
   // --- Lot 72
   {
@@ -3525,11 +3745,14 @@ const molecules = [
     slug: 'hydroxyzine',
     classe: 'Antihistaminique H1 sédatif (anxiolytique)',
     groupe: 'Psychiatrie',
-    mecanisme: 'Antagonisme des récepteurs H1 centraux, effet sédatif et anxiolytique sans dépendance notable.',
+    mecanisme:
+      'Antagonisme des récepteurs H1 centraux, effet sédatif et anxiolytique sans dépendance notable.',
     indications: 'Anxiété (traitement d’appoint de courte durée), prurit, prémédication.',
     posologie: 'Adulte : 25–50 mg jusqu’à 3 fois par jour (maximum 100 mg/j ; 50 mg/j chez le sujet âgé).',
-    effets_indesirables: 'Somnolence, sécheresse buccale, effets anticholinergiques, allongement de l’intervalle QT.',
-    precautions: 'Éviter chez le sujet âgé, en cas d’allongement du QT, de glaucome ou d’adénome prostatique ; pas d’alcool ni de conduite.',
+    effets_indesirables:
+      'Somnolence, sécheresse buccale, effets anticholinergiques, allongement de l’intervalle QT.',
+    precautions:
+      'Éviter chez le sujet âgé, en cas d’allongement du QT, de glaucome ou d’adénome prostatique ; pas d’alcool ni de conduite.',
   },
   {
     dci: 'Clomipramine',
@@ -3537,10 +3760,13 @@ const molecules = [
     classe: 'Antidépresseur tricyclique',
     groupe: 'Psychiatrie',
     mecanisme: 'Inhibition puissante de la recapture de la sérotonine et de la noradrénaline.',
-    indications: 'Trouble obsessionnel compulsif (en cas d’échec des ISRS), dépression sévère, trouble panique.',
+    indications:
+      'Trouble obsessionnel compulsif (en cas d’échec des ISRS), dépression sévère, trouble panique.',
     posologie: 'Débuter à 25 mg/j, augmenter progressivement jusqu’à 100–250 mg/j selon la tolérance.',
-    effets_indesirables: 'Effets anticholinergiques (sécheresse buccale, constipation, rétention, flou visuel), hypotension orthostatique, prise de poids, troubles du rythme, convulsions.',
-    precautions: 'ECG chez le sujet de plus de 50 ans ou cardiaque ; toxicité grave en cas de surdosage (risque suicidaire : délivrance limitée) ; contre-indiqué après un infarctus récent.',
+    effets_indesirables:
+      'Effets anticholinergiques (sécheresse buccale, constipation, rétention, flou visuel), hypotension orthostatique, prise de poids, troubles du rythme, convulsions.',
+    precautions:
+      'ECG chez le sujet de plus de 50 ans ou cardiaque ; toxicité grave en cas de surdosage (risque suicidaire : délivrance limitée) ; contre-indiqué après un infarctus récent.',
   },
   {
     dci: 'Zopiclone',
@@ -3550,30 +3776,40 @@ const molecules = [
     mecanisme: 'Modulation positive des récepteurs GABA-A, raccourcissant le délai d’endormissement.',
     indications: 'Insomnie occasionnelle ou transitoire sévère, sur une courte durée.',
     posologie: '3,75–7,5 mg au coucher (3,75 mg chez le sujet âgé), pendant 2–4 semaines au maximum.',
-    effets_indesirables: 'Goût amer, somnolence résiduelle, troubles de la mémoire, comportements complexes pendant le sommeil, dépendance.',
-    precautions: 'Durée la plus courte possible ; prudence chez le sujet âgé (chutes), en cas d’apnée du sommeil, d’insuffisance respiratoire ; pas d’alcool.',
+    effets_indesirables:
+      'Goût amer, somnolence résiduelle, troubles de la mémoire, comportements complexes pendant le sommeil, dépendance.',
+    precautions:
+      'Durée la plus courte possible ; prudence chez le sujet âgé (chutes), en cas d’apnée du sommeil, d’insuffisance respiratoire ; pas d’alcool.',
   },
   {
     dci: 'Quétiapine',
     slug: 'quetiapine',
     classe: 'Antipsychotique atypique',
     groupe: 'Psychiatrie',
-    mecanisme: 'Antagonisme des récepteurs dopaminergiques D2 (faible) et sérotoninergiques 5-HT2A, effet antihistaminique sédatif.',
-    indications: 'Schizophrénie, trouble bipolaire (manie, dépression bipolaire) ; psychose chez le patient parkinsonien.',
-    posologie: 'Schizophrénie : 50 mg/j le premier jour, augmentation progressive jusqu’à 300–750 mg/j ; doses plus faibles chez le sujet âgé.',
-    effets_indesirables: 'Sédation, hypotension orthostatique, prise de poids, troubles métaboliques, allongement du QT ; peu d’effets extrapyramidaux.',
-    precautions: 'Surveillance du poids, de la glycémie et des lipides ; prudence chez le sujet âgé dément (mortalité accrue).',
+    mecanisme:
+      'Antagonisme des récepteurs dopaminergiques D2 (faible) et sérotoninergiques 5-HT2A, effet antihistaminique sédatif.',
+    indications:
+      'Schizophrénie, trouble bipolaire (manie, dépression bipolaire) ; psychose chez le patient parkinsonien.',
+    posologie:
+      'Schizophrénie : 50 mg/j le premier jour, augmentation progressive jusqu’à 300–750 mg/j ; doses plus faibles chez le sujet âgé.',
+    effets_indesirables:
+      'Sédation, hypotension orthostatique, prise de poids, troubles métaboliques, allongement du QT ; peu d’effets extrapyramidaux.',
+    precautions:
+      'Surveillance du poids, de la glycémie et des lipides ; prudence chez le sujet âgé dément (mortalité accrue).',
   },
   {
     dci: 'Mirtazapine',
     slug: 'mirtazapine',
     classe: 'Antidépresseur noradrénergique et sérotoninergique spécifique',
     groupe: 'Psychiatrie',
-    mecanisme: 'Antagonisme des récepteurs α2 présynaptiques, 5-HT2, 5-HT3 et H1, augmentant la transmission noradrénergique et sérotoninergique.',
+    mecanisme:
+      'Antagonisme des récepteurs α2 présynaptiques, 5-HT2, 5-HT3 et H1, augmentant la transmission noradrénergique et sérotoninergique.',
     indications: 'Dépression, notamment avec insomnie, anorexie ou amaigrissement ; dépression du sujet âgé.',
     posologie: '15 mg au coucher, augmentés à 30–45 mg/j.',
-    effets_indesirables: 'Somnolence, augmentation de l’appétit et du poids, sécheresse buccale ; rares neutropénies.',
-    precautions: 'Peu d’interactions et peu d’effets sexuels ; surveillance du poids ; NFS en cas de fièvre ou d’angine.',
+    effets_indesirables:
+      'Somnolence, augmentation de l’appétit et du poids, sécheresse buccale ; rares neutropénies.',
+    precautions:
+      'Peu d’interactions et peu d’effets sexuels ; surveillance du poids ; NFS en cas de fièvre ou d’angine.',
   },
   // --- Lot 74
   {
@@ -3581,20 +3817,26 @@ const molecules = [
     slug: 'nicotine',
     classe: 'Substitut nicotinique',
     groupe: 'Addictologie',
-    mecanisme: 'Apport de nicotine sans les produits toxiques de la fumée, réduisant les symptômes de sevrage et l’envie de fumer.',
+    mecanisme:
+      'Apport de nicotine sans les produits toxiques de la fumée, réduisant les symptômes de sevrage et l’envie de fumer.',
     indications: 'Aide à l’arrêt du tabac (timbres transdermiques, gommes, pastilles, inhaleur).',
-    posologie: 'Timbre 21 mg/24 h si plus de 20 cigarettes par jour (14 mg si 10–20), associé à des formes orales à la demande ; dégression sur 8–12 semaines.',
-    effets_indesirables: 'Irritation cutanée (timbre), troubles du sommeil, nausées, hoquet, palpitations en cas de surdosage.',
-    precautions: 'Utilisable chez le coronarien stable et la femme enceinte (préférable au tabac) ; adapter la dose aux signes de sous- ou surdosage.',
+    posologie:
+      'Timbre 21 mg/24 h si plus de 20 cigarettes par jour (14 mg si 10–20), associé à des formes orales à la demande ; dégression sur 8–12 semaines.',
+    effets_indesirables:
+      'Irritation cutanée (timbre), troubles du sommeil, nausées, hoquet, palpitations en cas de surdosage.',
+    precautions:
+      'Utilisable chez le coronarien stable et la femme enceinte (préférable au tabac) ; adapter la dose aux signes de sous- ou surdosage.',
   },
   {
     dci: 'Varénicline',
     slug: 'varenicline',
     classe: 'Agoniste partiel des récepteurs nicotiniques α4β2',
     groupe: 'Addictologie',
-    mecanisme: 'Stimulation partielle des récepteurs nicotiniques réduisant le manque, et blocage de l’effet de récompense de la nicotine.',
+    mecanisme:
+      'Stimulation partielle des récepteurs nicotiniques réduisant le manque, et blocage de l’effet de récompense de la nicotine.',
     indications: 'Aide à l’arrêt du tabac chez l’adulte (traitement le plus efficace en monothérapie).',
-    posologie: '0,5 mg/j pendant 3 jours, puis 0,5 mg 2 fois par jour jusqu’au jour 7, puis 1 mg 2 fois par jour pendant 12 semaines ; arrêt du tabac entre le 8e et le 14e jour.',
+    posologie:
+      '0,5 mg/j pendant 3 jours, puis 0,5 mg 2 fois par jour jusqu’au jour 7, puis 1 mg 2 fois par jour pendant 12 semaines ; arrêt du tabac entre le 8e et le 14e jour.',
     effets_indesirables: 'Nausées (fréquentes), rêves anormaux, insomnie, céphalées.',
     precautions: 'Surveiller l’humeur ; adapter à la fonction rénale ; disponibilité limitée.',
   },
@@ -3603,22 +3845,30 @@ const molecules = [
     slug: 'methadone',
     classe: 'Agoniste opioïde de longue durée d’action',
     groupe: 'Addictologie',
-    mecanisme: 'Agoniste des récepteurs μ de longue demi-vie, supprimant le manque et le besoin de consommer sans effet euphorique marqué aux doses stables.',
+    mecanisme:
+      'Agoniste des récepteurs μ de longue demi-vie, supprimant le manque et le besoin de consommer sans effet euphorique marqué aux doses stables.',
     indications: 'Traitement de substitution de la dépendance aux opioïdes (héroïne, tramadol, codéine).',
-    posologie: 'Début 10–30 mg/j, augmentation prudente par paliers de 5–10 mg tous les 3–5 jours ; dose d’entretien habituelle 60–120 mg/j, prise supervisée au début.',
-    effets_indesirables: 'Dépression respiratoire (surtout à l’induction et en association aux benzodiazépines ou à l’alcool), constipation, sueurs, allongement du QT.',
-    precautions: 'Programme encadré, délivrance contrôlée ; ECG si doses élevées ou facteurs de risque ; naloxone disponible ; interactions (rifampicine, efavirenz diminuent les taux).',
+    posologie:
+      'Début 10–30 mg/j, augmentation prudente par paliers de 5–10 mg tous les 3–5 jours ; dose d’entretien habituelle 60–120 mg/j, prise supervisée au début.',
+    effets_indesirables:
+      'Dépression respiratoire (surtout à l’induction et en association aux benzodiazépines ou à l’alcool), constipation, sueurs, allongement du QT.',
+    precautions:
+      'Programme encadré, délivrance contrôlée ; ECG si doses élevées ou facteurs de risque ; naloxone disponible ; interactions (rifampicine, efavirenz diminuent les taux).',
   },
   {
     dci: 'Buprénorphine',
     slug: 'buprenorphine',
     classe: 'Agoniste partiel opioïde',
     groupe: 'Addictologie',
-    mecanisme: 'Agoniste partiel des récepteurs μ à forte affinité avec effet plafond sur la dépression respiratoire.',
+    mecanisme:
+      'Agoniste partiel des récepteurs μ à forte affinité avec effet plafond sur la dépression respiratoire.',
     indications: 'Traitement de substitution de la dépendance aux opioïdes.',
-    posologie: 'Induction sublinguale 2–4 mg au moins 12–24 h après le dernier opioïde (signes de manque présents), puis 8–16 mg/j (maximum 24 mg/j).',
-    effets_indesirables: 'Syndrome de manque précipité si induction trop précoce, constipation, céphalées, hépatotoxicité.',
-    precautions: 'Plus sûre que la méthadone en cas de surdosage ; prudence avec benzodiazépines et alcool ; surveillance hépatique.',
+    posologie:
+      'Induction sublinguale 2–4 mg au moins 12–24 h après le dernier opioïde (signes de manque présents), puis 8–16 mg/j (maximum 24 mg/j).',
+    effets_indesirables:
+      'Syndrome de manque précipité si induction trop précoce, constipation, céphalées, hépatotoxicité.',
+    precautions:
+      'Plus sûre que la méthadone en cas de surdosage ; prudence avec benzodiazépines et alcool ; surveillance hépatique.',
   },
   // --- Lot 75
   {
@@ -3626,11 +3876,16 @@ const molecules = [
     slug: 'lorazepam',
     classe: 'Benzodiazépine de demi-vie intermédiaire',
     groupe: 'Psychiatrie',
-    mecanisme: 'Modulation positive des récepteurs GABA-A (anxiolytique, sédatif, anticonvulsivant, myorelaxant).',
-    indications: 'Catatonie (traitement de première intention et test diagnostique), état de mal épileptique, anxiété aiguë, agitation, sevrage alcoolique chez l’insuffisant hépatique.',
-    posologie: 'Catatonie : 1–2 mg IV, IM ou per os, renouvelé toutes les 4–8 h (jusqu’à 8–24 mg/j) ; état de mal : 0,1 mg/kg IV (maximum 4 mg par dose).',
-    effets_indesirables: 'Sédation, dépression respiratoire (surtout associé aux opioïdes ou à l’alcool), confusion chez le sujet âgé, dépendance.',
-    precautions: 'Surveillance respiratoire, flumazénil disponible ; durée limitée hors catatonie ; conservation au froid de la forme injectable.',
+    mecanisme:
+      'Modulation positive des récepteurs GABA-A (anxiolytique, sédatif, anticonvulsivant, myorelaxant).',
+    indications:
+      'Catatonie (traitement de première intention et test diagnostique), état de mal épileptique, anxiété aiguë, agitation, sevrage alcoolique chez l’insuffisant hépatique.',
+    posologie:
+      'Catatonie : 1–2 mg IV, IM ou per os, renouvelé toutes les 4–8 h (jusqu’à 8–24 mg/j) ; état de mal : 0,1 mg/kg IV (maximum 4 mg par dose).',
+    effets_indesirables:
+      'Sédation, dépression respiratoire (surtout associé aux opioïdes ou à l’alcool), confusion chez le sujet âgé, dépendance.',
+    precautions:
+      'Surveillance respiratoire, flumazénil disponible ; durée limitée hors catatonie ; conservation au froid de la forme injectable.',
   },
   {
     dci: 'Mémantine',
@@ -3638,8 +3893,10 @@ const molecules = [
     classe: 'Antagoniste des récepteurs NMDA',
     groupe: 'Neurologie',
     mecanisme: 'Antagonisme non compétitif des récepteurs NMDA, limitant l’excitotoxicité glutamatergique.',
-    indications: 'Démence de type Alzheimer modérée à sévère, seule ou associée à un inhibiteur de la cholinestérase.',
-    posologie: '5 mg/j, augmentés de 5 mg par semaine jusqu’à 20 mg/j (10 mg/j si insuffisance rénale sévère).',
+    indications:
+      'Démence de type Alzheimer modérée à sévère, seule ou associée à un inhibiteur de la cholinestérase.',
+    posologie:
+      '5 mg/j, augmentés de 5 mg par semaine jusqu’à 20 mg/j (10 mg/j si insuffisance rénale sévère).',
     effets_indesirables: 'Vertiges, céphalées, somnolence, constipation, confusion, hypertension.',
     precautions: 'Adapter à la fonction rénale ; bénéfice modeste à réévaluer ; disponibilité limitée.',
   },
@@ -3648,11 +3905,16 @@ const molecules = [
     slug: 'rivastigmine',
     classe: 'Inhibiteur de la cholinestérase',
     groupe: 'Neurologie',
-    mecanisme: 'Inhibition de l’acétylcholinestérase et de la butyrylcholinestérase, augmentant l’acétylcholine cérébrale.',
-    indications: 'Démence de la maladie d’Alzheimer légère à modérée, démence à corps de Lewy et démence de la maladie de Parkinson.',
-    posologie: 'Gélules : 1,5 mg 2 fois par jour, augmentés toutes les 2–4 semaines jusqu’à 3–6 mg 2 fois par jour ; timbre 4,6 puis 9,5 mg/24 h.',
-    effets_indesirables: 'Nausées, vomissements, perte de poids, diarrhée, bradycardie, syncope, aggravation du tremblement.',
-    precautions: 'Prudence en cas de bradycardie, de troubles de conduction, d’asthme, d’ulcère ; prise au cours des repas.',
+    mecanisme:
+      'Inhibition de l’acétylcholinestérase et de la butyrylcholinestérase, augmentant l’acétylcholine cérébrale.',
+    indications:
+      'Démence de la maladie d’Alzheimer légère à modérée, démence à corps de Lewy et démence de la maladie de Parkinson.',
+    posologie:
+      'Gélules : 1,5 mg 2 fois par jour, augmentés toutes les 2–4 semaines jusqu’à 3–6 mg 2 fois par jour ; timbre 4,6 puis 9,5 mg/24 h.',
+    effets_indesirables:
+      'Nausées, vomissements, perte de poids, diarrhée, bradycardie, syncope, aggravation du tremblement.',
+    precautions:
+      'Prudence en cas de bradycardie, de troubles de conduction, d’asthme, d’ulcère ; prise au cours des repas.',
   },
   // --- Lot 76
   {
@@ -3660,11 +3922,14 @@ const molecules = [
     slug: 'modafinil',
     classe: 'Psychostimulant non amphétaminique (éveillant)',
     groupe: 'Neurologie',
-    mecanisme: 'Inhibition de la recapture de la dopamine et activation des systèmes d’éveil (histamine, orexine), favorisant la vigilance.',
+    mecanisme:
+      'Inhibition de la recapture de la dopamine et activation des systèmes d’éveil (histamine, orexine), favorisant la vigilance.',
     indications: 'Somnolence diurne excessive de la narcolepsie et des hypersomnies centrales.',
     posologie: '100–200 mg le matin, éventuellement 100 mg supplémentaires à midi (maximum 400 mg/j).',
-    effets_indesirables: 'Céphalées, nervosité, insomnie, palpitations, perte d’appétit ; rares réactions cutanées graves.',
-    precautions: 'Inducteur enzymatique (diminue l’efficacité de la contraception orale) ; contre-indiqué en cas d’HTA sévère ou d’arythmie ; prescription spécialisée.',
+    effets_indesirables:
+      'Céphalées, nervosité, insomnie, palpitations, perte d’appétit ; rares réactions cutanées graves.',
+    precautions:
+      'Inducteur enzymatique (diminue l’efficacité de la contraception orale) ; contre-indiqué en cas d’HTA sévère ou d’arythmie ; prescription spécialisée.',
   },
 ];
 

@@ -165,3 +165,77 @@ export const RUBRIQUES_SEMIOLOGIE = [
   ['signes_physiques', 'Signes physiques'],
   ['paraclinique', 'Signes paracliniques évocateurs'],
 ];
+
+// ------------------------------------------------------------------ Comptes (lot A)
+
+/** Profils professionnels (le profil décrit le métier ; le rôle donne les droits). */
+export const PROFILS = {
+  medecin_generaliste: 'Médecin généraliste',
+  medecin_specialiste: 'Médecin spécialiste',
+  infirmier: 'Infirmier(ère)',
+  sage_femme: 'Sage-femme',
+  pharmacien: 'Pharmacien(ne)',
+  etudiant: 'Étudiant(e) / interne',
+};
+
+export const STRUCTURES = {
+  centre_sante: 'Centre de santé',
+  hopital_general: 'Hôpital général de référence',
+  hopital_tertiaire: 'Hôpital tertiaire / universitaire',
+  clinique_privee: 'Clinique privée',
+  pharmacie: 'Pharmacie',
+  universite: 'Université / institut',
+  autre: 'Autre',
+};
+
+export const ORDRES = {
+  medecins: 'Ordre des médecins',
+  pharmaciens: 'Ordre des pharmaciens',
+  infirmiers: 'Ordre des infirmiers',
+  sages_femmes: 'Ordre des sages-femmes',
+};
+
+/** Ordre attendu selon le profil (l'étudiant n'en a pas). */
+export const ORDRE_DU_PROFIL = {
+  medecin_generaliste: 'medecins',
+  medecin_specialiste: 'medecins',
+  infirmier: 'infirmiers',
+  sage_femme: 'sages_femmes',
+  pharmacien: 'pharmaciens',
+};
+
+export const VERIFICATIONS = {
+  non_demandee: 'Non vérifié',
+  en_attente: 'Vérification en attente',
+  verifie: 'Compte vérifié',
+  refuse: 'Vérification refusée',
+};
+
+export const PROVINCES = [
+  'Bas-Uélé',
+  'Équateur',
+  'Haut-Katanga',
+  'Haut-Lomami',
+  'Haut-Uélé',
+  'Ituri',
+  'Kasaï',
+  'Kasaï-Central',
+  'Kasaï-Oriental',
+  'Kinshasa',
+  'Kongo-Central',
+  'Kwango',
+  'Kwilu',
+  'Lomami',
+  'Lualaba',
+  'Mai-Ndombe',
+  'Maniema',
+  'Mongala',
+  'Nord-Kivu',
+  'Nord-Ubangi',
+  'Sankuru',
+  'Sud-Kivu',
+  'Sud-Ubangi',
+  'Tanganyika',
+  'Tshopo',
+  'Tshuapa',
+];

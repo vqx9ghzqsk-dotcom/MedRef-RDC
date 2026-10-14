@@ -12,6 +12,11 @@ export function createMedRefApi(client) {
     login: (payload) => client.post('/api/auth/login', payload),
     me: () => client.get('/api/auth/me').then((r) => r.user),
     changePassword: (payload) => client.post('/api/auth/password', payload),
+    updateProfil: (payload) => client.put('/api/auth/profil', payload).then((r) => r.user),
+    demanderVerification: (payload) => client.post('/api/auth/verification', payload).then((r) => r.user),
+    motDePasseOublie: (email) => client.post('/api/auth/mot-de-passe-oublie', { email }),
+    reinitialiserMotDePasse: (jeton, nouveau) =>
+      client.post('/api/auth/reinitialiser-mot-de-passe', { jeton, nouveau }),
 
     // Catalogue
     departements: () => data(client.get('/api/departements')),
@@ -54,6 +59,10 @@ export function createMedRefApi(client) {
     adminSaveMolecule: (id, payload) => client.put(`/api/admin/molecules/${enc(id)}`, payload),
     adminMedicament: (id) => data(client.get(`/api/admin/medicaments/${enc(id)}`)),
     adminSaveMedicament: (id, payload) => client.put(`/api/admin/medicaments/${enc(id)}`, payload),
+    adminComptes: () => data(client.get('/api/admin/comptes')),
+    adminDecisionVerification: (id, decision, motif) =>
+      client.post(`/api/admin/comptes/${enc(id)}/verification`, { decision, motif }),
+    adminLienReinitialisation: (id) => client.post(`/api/admin/comptes/${enc(id)}/lien-reinitialisation`, {}),
     adminVersion: (id) => data(client.get(`/api/admin/modifications/${enc(id)}`)),
     adminSemiologie: () => data(client.get('/api/admin/semiologie')),
     adminCatalogue: (filtres) => data(client.get('/api/admin/catalogue', filtres)),

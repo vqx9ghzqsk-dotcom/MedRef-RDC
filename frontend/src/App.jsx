@@ -1,7 +1,12 @@
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from './ui/components/Layout.jsx';
 import { HomePage } from './ui/pages/HomePage.jsx';
-import { LoginPage, RegisterPage } from './ui/pages/AuthPages.jsx';
+import {
+  LoginPage,
+  MotDePasseOubliePage,
+  RegisterPage,
+  ReinitialiserMotDePassePage,
+} from './ui/pages/AuthPages.jsx';
 import { DepartementPage, SpecialitePage } from './ui/pages/CataloguePages.jsx';
 import { PathologiePage } from './ui/pages/PathologiePage.jsx';
 import { UrgencePage, UrgencesPage } from './ui/pages/UrgencesPages.jsx';
@@ -33,6 +38,8 @@ export function AppRoutes() {
         <Route index element={<HomePage />} />
         <Route path="connexion" element={<LoginPage />} />
         <Route path="inscription" element={<RegisterPage />} />
+        <Route path="mot-de-passe-oublie" element={<MotDePasseOubliePage />} />
+        <Route path="reinitialiser-mot-de-passe" element={<ReinitialiserMotDePassePage />} />
         <Route path="departements/:slug" element={<DepartementPage />} />
         <Route path="specialites/:slug" element={<SpecialitePage />} />
         <Route path="pathologies/:slug" element={<PathologiePage />} />

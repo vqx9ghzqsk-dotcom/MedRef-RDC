@@ -38,23 +38,37 @@ describe('POST /api/auth/register', () => {
 
   it('crée un compte avec le rôle user et renvoie un JWT', async () => {
     db.query.mockResolvedValueOnce([]).mockResolvedValueOnce({ insertId: 42 });
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({ email: 'Dr.Test@Example.com ', password: 'Quinine-2026', nom: 'Dr Test', role: 'admin' });
+    const res = await request(app).post('/api/auth/register').send({
+      email: 'Dr.Test@Example.com ',
+      password: 'Quinine-2026',
+      nom: 'Dr Test',
+      role: 'admin',
+      profil: 'medecin_generaliste',
+      province: 'Kinshasa',
+    });
     expect(res.status).toBe(201);
     expect(res.body.token).toEqual(expect.any(String));
-    expect(res.body.user).toEqual({ id: 42, email: 'dr.test@example.com', nom: 'Dr Test', role: 'user' });
+    expect(res.body.user).toMatchObject({
+      id: 42,
+      email: 'dr.test@example.com',
+      nom: 'Dr Test',
+      role: 'user',
+      profil: 'medecin_generaliste',
+      province: 'Kinshasa',
+      verification: 'non_demandee',
+    });
     const [, params] = db.query.mock.calls[1];
     expect(params[0]).toBe('dr.test@example.com');
     expect(params[1]).not.toBe('Quinine-2026'); // mot de passe haché
-    expect(params[3]).toBe('user'); // le rôle envoyé par le client est ignoré
+    expect(db.query.mock.calls[1][0]).toContain("VALUES (?, ?, ?, 'user'"); // le rôle envoyé par le client est ignoré
+    expect(params[3]).toBe('medecin_generaliste');
   });
 
   it('renvoie 409 si l’e-mail existe déjà', async () => {
     db.query.mockResolvedValueOnce([{ id: 1 }]);
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: 'a@b.cd', password: 'Quinine-2026', nom: 'Ab' });
+      .send({ email: 'a@b.cd', password: 'Quinine-2026', nom: 'Ab', profil: 'pharmacien' });
     expect(res.status).toBe(409);
   });
 });
@@ -69,7 +83,7 @@ describe('POST /api/auth/login', () => {
       .post('/api/auth/login')
       .send({ email: 'a@b.cd', password: 'motdepasse123' });
     expect(res.status).toBe(200);
-    expect(res.body.user).toEqual({ id: 7, email: 'a@b.cd', nom: 'Ab', role: 'user' });
+    expect(res.body.user).toMatchObject({ id: 7, email: 'a@b.cd', nom: 'Ab', role: 'user' });
     expect(res.body.user.password_hash).toBeUndefined();
   });
 
@@ -227,5 +241,149 @@ describe('Sécurité des comptes', () => {
     ).not.toThrow();
     if (avant === undefined) delete process.env.DB_PASSWORD;
     else process.env.DB_PASSWORD = avant;
+  });
+});
+
+describe('Profil professionnel et vérification (lot A)', () => {
+  const ancien = () => ({ Authorization: `Bearer ${tokenFor(7)}` });
+  const compte = (patch = {}) => ({
+    id: 7,
+    email: 'a@b.cd',
+    nom: 'Dr Ab',
+    role: 'user',
+    token_version: 0,
+    profil: 'medecin_generaliste',
+    verification: 'non_demandee',
+    ...patch,
+  });
+
+  it('exige un profil à l’inscription et une spécialité pour le spécialiste', async () => {
+    let res = await request(app)
+      .post('/api/auth/register')
+      .send({ email: 'a@b.cd', password: 'Quinine-2026', nom: 'Ab' });
+    expect(res.status).toBe(400);
+    expect(res.body.details.profil).toBeDefined();
+    res = await request(app).post('/api/auth/register').send({
+      email: 'a@b.cd',
+      password: 'Quinine-2026',
+      nom: 'Ab',
+      profil: 'medecin_specialiste',
+      province: 'Atlantide',
+    });
+    expect(res.body.details).toMatchObject({
+      specialite_exercee: expect.any(String),
+      province: 'Province inconnue',
+    });
+    expect(db.query).not.toHaveBeenCalled();
+  });
+
+  it('met à jour le profil ; changer de profil annule la vérification', async () => {
+    db.query
+      .mockResolvedValueOnce([compte({ verification: 'verifie' })])
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce([compte({ profil: 'pharmacien', verification: 'non_demandee' })]);
+    const res = await request(app)
+      .put('/api/auth/profil')
+      .set(ancien())
+      .send({ nom: 'Dr Ab', profil: 'pharmacien', structure_type: 'pharmacie', province: 'Kinshasa' });
+    expect(res.status).toBe(200);
+    expect(db.query.mock.calls[1][0]).toMatch(/verification = 'non_demandee'/);
+    expect(res.body.user.profil).toBe('pharmacien');
+  });
+
+  it('enregistre une demande de vérification cohérente avec le profil', async () => {
+    db.query.mockResolvedValueOnce([compte()]);
+    let res = await request(app)
+      .post('/api/auth/verification')
+      .set(ancien())
+      .send({ ordre_professionnel: 'pharmaciens', numero_ordre: '12345' });
+    expect(res.status).toBe(400);
+    expect(res.body.details.ordre_professionnel).toMatch(/ne correspond pas/);
+
+    db.query
+      .mockResolvedValueOnce([compte()])
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce([compte({ verification: 'en_attente', numero_ordre: 'CNOM/12345' })]);
+    res = await request(app)
+      .post('/api/auth/verification')
+      .set(ancien())
+      .send({ ordre_professionnel: 'medecins', numero_ordre: 'CNOM/12345' });
+    expect(res.status).toBe(200);
+    expect(db.query.mock.calls.at(-2)[0]).toMatch(/verification = 'en_attente'/);
+    expect(res.body.user.verification).toBe('en_attente');
+
+    db.query.mockResolvedValueOnce([compte({ profil: 'etudiant' })]);
+    res = await request(app)
+      .post('/api/auth/verification')
+      .set(ancien())
+      .send({ ordre_professionnel: 'medecins', numero_ordre: '1' });
+    expect(res.status).toBe(409);
+  });
+});
+
+describe('Mot de passe oublié (lot A)', () => {
+  const config = require('../src/config');
+  const crypto = require('crypto');
+
+  it('répond de la même façon que le compte existe ou non, et enregistre une demande sans e-mail', async () => {
+    db.query.mockResolvedValueOnce([]);
+    const inconnu = await request(app).post('/api/auth/mot-de-passe-oublie').send({ email: 'x@y.zz' });
+    db.query
+      .mockResolvedValueOnce([{ id: 7, email: 'a@b.cd', nom: 'Ab' }])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce({});
+    const connu = await request(app).post('/api/auth/mot-de-passe-oublie').send({ email: 'a@b.cd' });
+    expect(inconnu.status).toBe(200);
+    expect(connu.body).toEqual(inconnu.body);
+    expect(db.query.mock.calls.at(-1)[0]).toMatch(/canal\) VALUES \(\?, 'demande'\)/);
+  });
+
+  it('envoie un lien par e-mail quand le SMTP est configuré', async () => {
+    const courriel = require('../src/services/courriel');
+    const envoi = jest.spyOn(courriel, 'envoyerCourriel').mockResolvedValue();
+    const avant = config.smtp.host;
+    config.smtp.host = 'smtp.test';
+    try {
+      db.query.mockResolvedValueOnce([{ id: 7, email: 'a@b.cd', nom: 'Ab' }]).mockResolvedValueOnce({});
+      const res = await request(app).post('/api/auth/mot-de-passe-oublie').send({ email: 'a@b.cd' });
+      expect(res.status).toBe(200);
+      const [sql, params] = db.query.mock.calls[1];
+      expect(sql).toMatch(/INSERT INTO reinitialisations_mot_de_passe/);
+      expect(params[2]).toBe('email');
+      expect(envoi).toHaveBeenCalledWith(expect.objectContaining({ a: 'a@b.cd' }));
+      const jeton = envoi.mock.calls[0][0].texte.match(/jeton=([\w-]+)/)[1];
+      // Seul le hachage du jeton est stocké
+      expect(params[1]).toBe(crypto.createHash('sha256').update(jeton).digest('hex'));
+    } finally {
+      config.smtp.host = avant;
+      envoi.mockRestore();
+    }
+  });
+
+  it('réinitialise avec un lien valide et refuse un lien déjà utilisé', async () => {
+    const executions = [];
+    const lienValide = { id: 1, user_id: 7, valide: 1, utilise_le: null, email: 'a@b.cd', nom: 'Ab' };
+    db.transaction.mockImplementation(async (fn) =>
+      fn({
+        execute: jest.fn(async (sql, params) => {
+          executions.push([sql, params]);
+          if (sql.includes('FOR UPDATE')) return [[lienValide]];
+          return [{ affectedRows: 1 }];
+        }),
+      }),
+    );
+    const res = await request(app)
+      .post('/api/auth/reinitialiser-mot-de-passe')
+      .send({ jeton: 'abc', nouveau: 'Artesunate-2026' });
+    expect(res.status).toBe(200);
+    expect(executions[1][0]).toMatch(/token_version = token_version \+ 1/);
+    expect(executions[2][0]).toMatch(/utilise_le = NOW\(\)/);
+
+    lienValide.utilise_le = '2026-10-10';
+    const deja = await request(app)
+      .post('/api/auth/reinitialiser-mot-de-passe')
+      .send({ jeton: 'abc', nouveau: 'Artesunate-2026' });
+    expect(deja.status).toBe(400);
+    expect(deja.body.error).toMatch(/invalide, expiré ou déjà utilisé/);
   });
 });

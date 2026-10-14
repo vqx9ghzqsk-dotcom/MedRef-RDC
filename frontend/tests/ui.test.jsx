@@ -1127,3 +1127,132 @@ describe('Accès aux produits depuis le bouton Médicaments', () => {
     );
   });
 });
+describe('Comptes : profils, vérification, mot de passe oublié (lot A)', () => {
+  it('inscription : le profil est demandé, la spécialité seulement pour le spécialiste', async () => {
+    const user = userEvent.setup();
+    const register = vi.fn(async () => ({
+      token: 'jeton',
+      user: { id: 9, nom: 'Dr Kabila', email: 'k@x.cd', role: 'user', profil: 'medecin_specialiste' },
+    }));
+    renderApp('/inscription', { register });
+    await user.type(await screen.findByLabelText('Nom complet'), 'Dr Kabila');
+    await user.type(screen.getByLabelText('Adresse e-mail'), 'k@x.cd');
+    await user.type(screen.getByLabelText('Mot de passe'), 'Artesunate-2026');
+    expect(screen.queryByLabelText('Spécialité')).toBeNull();
+    await user.selectOptions(screen.getByLabelText('Profil professionnel'), 'medecin_specialiste');
+    await user.type(screen.getByLabelText('Spécialité'), 'Pédiatrie');
+    await user.click(screen.getByRole('button', { name: 'Créer mon compte' }));
+    expect(register).toHaveBeenCalledWith(
+      expect.objectContaining({ profil: 'medecin_specialiste', specialite_exercee: 'Pédiatrie' }),
+    );
+  });
+
+  it('mot de passe oublié : lien depuis la connexion et message neutre', async () => {
+    const user = userEvent.setup();
+    const motDePasseOublie = vi.fn(async () => ({
+      ok: true,
+      message: 'Si un compte existe pour cette adresse…',
+    }));
+    renderApp('/connexion', { motDePasseOublie });
+    await user.click(await screen.findByRole('link', { name: 'Mot de passe oublié ?' }));
+    await user.type(await screen.findByLabelText('Adresse e-mail'), 'a@b.cd');
+    await user.click(screen.getByRole('button', { name: 'Demander un lien' }));
+    expect(motDePasseOublie).toHaveBeenCalledWith('a@b.cd');
+    expect(await screen.findByRole('status')).toHaveTextContent('Si un compte existe');
+  });
+
+  it('réinitialisation : vérifie la confirmation puis envoie le jeton du lien', async () => {
+    const user = userEvent.setup();
+    const reinitialiserMotDePasse = vi.fn(async () => ({ ok: true }));
+    renderApp('/reinitialiser-mot-de-passe?jeton=abc123', { reinitialiserMotDePasse });
+    await user.type(await screen.findByLabelText('Nouveau mot de passe'), 'Artesunate-2026');
+    await user.type(screen.getByLabelText('Confirmer le mot de passe'), 'Autre-2026x');
+    await user.click(screen.getByRole('button', { name: 'Enregistrer le mot de passe' }));
+    expect(await screen.findByText('Les deux saisies diffèrent')).toBeInTheDocument();
+    expect(reinitialiserMotDePasse).not.toHaveBeenCalled();
+    await user.clear(screen.getByLabelText('Confirmer le mot de passe'));
+    await user.type(screen.getByLabelText('Confirmer le mot de passe'), 'Artesunate-2026');
+    await user.click(screen.getByRole('button', { name: 'Enregistrer le mot de passe' }));
+    expect(reinitialiserMotDePasse).toHaveBeenCalledWith('abc123', 'Artesunate-2026');
+    expect(await screen.findByRole('status')).toHaveTextContent('Mot de passe modifié');
+  });
+
+  it('« Mon compte » : demande de vérification avec l’ordre déduit du profil', async () => {
+    const user = userEvent.setup();
+    const medecin = {
+      id: 7,
+      nom: 'Dr Test',
+      email: 'dr@test.cd',
+      role: 'user',
+      profil: 'medecin_generaliste',
+      verification: 'non_demandee',
+    };
+    const demanderVerification = vi.fn(async (payload) => ({
+      ...medecin,
+      ...payload,
+      verification: 'en_attente',
+    }));
+    renderApp('/compte', { demanderVerification }, medecin);
+    expect(await screen.findByLabelText('Ordre professionnel')).toHaveValue('Ordre des médecins');
+    await user.type(screen.getByLabelText('Numéro d’inscription à l’ordre'), 'CNOM/12345');
+    await user.click(screen.getByRole('button', { name: 'Demander la vérification' }));
+    expect(demanderVerification).toHaveBeenCalledWith({
+      ordre_professionnel: 'medecins',
+      numero_ordre: 'CNOM/12345',
+    });
+    expect(await screen.findByText(/Demande en attente de vérification/)).toBeInTheDocument();
+  });
+
+  it('administration : l’onglet Comptes est réservé aux administrateurs et vérifie un compte', async () => {
+    const user = userEvent.setup();
+    const resume = {
+      statuts: { brouillon: 0, a_valider: 0, valide: 0 },
+      pathologies: [],
+      molecules: [],
+      medicaments: [],
+      modifications: [],
+    };
+    const adminComptes = vi.fn(async () => ({
+      comptes: [
+        {
+          id: 3,
+          nom: 'Dr B',
+          email: 'b@c.cd',
+          profil: 'pharmacien',
+          ordre_professionnel: 'pharmaciens',
+          numero_ordre: 'P-77',
+          verification: 'en_attente',
+          created_at: '2026-10-10 10:00:00',
+        },
+      ],
+      demandes_reinitialisation: [],
+    }));
+    const adminDecisionVerification = vi.fn(async () => ({ ok: true }));
+    renderApp(
+      '/admin',
+      { adminResume: vi.fn(async () => resume), adminComptes, adminDecisionVerification },
+      { id: 1, nom: 'Admin', email: 'a@x.cd', role: 'admin' },
+    );
+    await user.click(await screen.findByRole('button', { name: 'Comptes' }));
+    expect(await screen.findByText('n° P-77')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Vérifier' }));
+    expect(adminDecisionVerification).toHaveBeenCalledWith(3, 'verifie', '');
+  });
+
+  it('administration : pas d’onglet Comptes pour un relecteur « medecin »', async () => {
+    const resume = {
+      statuts: { brouillon: 0, a_valider: 0, valide: 0 },
+      pathologies: [],
+      molecules: [],
+      medicaments: [],
+      modifications: [],
+    };
+    renderApp(
+      '/admin',
+      { adminResume: vi.fn(async () => resume) },
+      { id: 2, nom: 'Dr R', email: 'r@x.cd', role: 'medecin' },
+    );
+    expect(await screen.findByRole('button', { name: 'Historique' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Comptes' })).toBeNull();
+  });
+});

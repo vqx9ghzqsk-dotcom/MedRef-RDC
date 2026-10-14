@@ -37,6 +37,19 @@ const config = {
   securite: {
     maxEchecs: Number(process.env.CONNEXION_MAX_ECHECS) || 5,
     blocageMinutes: Number(process.env.CONNEXION_BLOCAGE_MINUTES) || 15,
+    // Durée de validité d'un lien de réinitialisation du mot de passe
+    reinitialisationHeures: Number(process.env.REINITIALISATION_HEURES) || 24,
+  },
+  // Adresse de l'application (liens envoyés : réinitialisation du mot de passe)
+  appUrl: (process.env.APP_URL || 'http://localhost:5173').replace(/\/+$/, ''),
+  // Envoi d'e-mails : facultatif ; sans SMTP_HOST, un administrateur génère les liens
+  smtp: {
+    host: process.env.SMTP_HOST || '',
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === '1',
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.SMTP_FROM || 'MedRef RDC <no-reply@medref.cd>',
   },
   logDir: path.resolve(process.env.LOG_DIR || path.join(__dirname, '..', 'logs')),
   jwt: {

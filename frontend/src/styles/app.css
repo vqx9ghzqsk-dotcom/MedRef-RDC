@@ -2831,3 +2831,29 @@ details.forme {
 .accueil-medicaments .hint {
   margin-top: -0.4rem;
 }
+.tag.verification-verifie {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.tag.verification-en_attente {
+  background: var(--warn-bg);
+  color: var(--pending-ink);
+}
+.tag.verification-refuse {
+  background: var(--urgence-bg);
+  color: var(--urgence);
+}
+.actions-compte {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.actions-compte input {
+  min-width: 10rem;
+}
+.lien-reinitialisation {
+  flex: 1 1 18rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+}

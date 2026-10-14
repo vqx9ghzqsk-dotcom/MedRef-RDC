@@ -134,7 +134,7 @@ describeDb('Intégration MySQL', () => {
     const email = `test-${Date.now()}@medref.cd`;
     const reg = await request(app)
       .post('/api/auth/register')
-      .send({ email, password: 'Quinine-2026', nom: 'Test' });
+      .send({ email, password: 'Quinine-2026', nom: 'Test', profil: 'medecin_generaliste' });
     expect(reg.status).toBe(201);
     const auth = { Authorization: `Bearer ${reg.body.token}` };
     const body = {
@@ -163,7 +163,12 @@ describeDb('Intégration MySQL', () => {
     const inscrire = async (prefix) => {
       const r = await request(app)
         .post('/api/auth/register')
-        .send({ email: `${prefix}-${Date.now()}@medref.cd`, password: 'Quinine-2026', nom: `Dr ${prefix}` });
+        .send({
+          email: `${prefix}-${Date.now()}@medref.cd`,
+          password: 'Quinine-2026',
+          nom: `Dr ${prefix}`,
+          profil: 'medecin_generaliste',
+        });
       return { id: r.body.user.id, headers: { Authorization: `Bearer ${r.body.token}` } };
     };
     const simple = await inscrire('lecteur');
@@ -298,7 +303,12 @@ describeDb('Intégration MySQL', () => {
   it('administration des formes, des signes d’alerte, du glossaire et des syndromes', async () => {
     const r = await request(app)
       .post('/api/auth/register')
-      .send({ email: `semio-${Date.now()}@medref.cd`, password: 'Quinine-2026', nom: 'Dr Sémiologie' });
+      .send({
+        email: `semio-${Date.now()}@medref.cd`,
+        password: 'Quinine-2026',
+        nom: 'Dr Sémiologie',
+        profil: 'medecin_generaliste',
+      });
     await db.query("UPDATE users SET role = 'admin' WHERE id = ?", [r.body.user.id]);
     const headers = { Authorization: `Bearer ${r.body.token}` };
     const resume = (await request(app).get('/api/admin/resume').set(headers)).body.data;
@@ -432,7 +442,12 @@ describeDb('Intégration MySQL', () => {
     // Un médecin valide la fiche importée depuis /admin
     const r = await request(app)
       .post('/api/auth/register')
-      .send({ email: `acorep-${Date.now()}@medref.cd`, password: 'Quinine-2026', nom: 'Dr Acorep' });
+      .send({
+        email: `acorep-${Date.now()}@medref.cd`,
+        password: 'Quinine-2026',
+        nom: 'Dr Acorep',
+        profil: 'medecin_generaliste',
+      });
     await db.query("UPDATE users SET role = 'medecin' WHERE id = ?", [r.body.user.id]);
     const headers = { Authorization: `Bearer ${r.body.token}` };
     const edition = (await request(app).get(`/api/admin/molecules/${atropine.id}`).set(headers)).body.data;
@@ -449,7 +464,12 @@ describeDb('Intégration MySQL', () => {
   it('administration du catalogue : liaisons, création de molécule et rapprochement', async () => {
     const r = await request(app)
       .post('/api/auth/register')
-      .send({ email: `catalogue-${Date.now()}@medref.cd`, password: 'Quinine-2026', nom: 'Dr Catalogue' });
+      .send({
+        email: `catalogue-${Date.now()}@medref.cd`,
+        password: 'Quinine-2026',
+        nom: 'Dr Catalogue',
+        profil: 'medecin_generaliste',
+      });
     await db.query("UPDATE users SET role = 'admin' WHERE id = ?", [r.body.user.id]);
     const headers = { Authorization: `Bearer ${r.body.token}` };
 

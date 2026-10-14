@@ -51,9 +51,14 @@ export function AuthProvider({ children }) {
       register: (payload) => authenticate('register', payload),
       // Nouveau jeton : les autres sessions du compte sont déconnectées
       changePassword: (payload) => authenticate('changePassword', payload),
+      // Profil modifié côté serveur (même jeton) : met à jour l'utilisateur en cache
+      updateUser: (u) => {
+        tokenStore.setUser(u);
+        setUser(u);
+      },
       logout,
     }),
-    [user, authenticate, logout],
+    [user, authenticate, logout, tokenStore],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

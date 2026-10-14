@@ -440,3 +440,60 @@ describe('Molécules et produits', () => {
     expect(params.slice(-5)).toEqual([null, 1, 12500, null, 4]);
   });
 });
+
+describe('Comptes : vérification et liens de réinitialisation (lot A)', () => {
+  const role = (r = 'admin') => db.query.mockResolvedValueOnce([{ id: 7, nom: 'Admin', role: r }]);
+
+  it('réservé au rôle admin (pas aux relecteurs « medecin »)', async () => {
+    role('medecin');
+    const res = await request(app).get('/api/admin/comptes').set(auth('medecin'));
+    expect(res.status).toBe(403);
+  });
+
+  it('liste les comptes et les demandes de réinitialisation', async () => {
+    role();
+    db.query
+      .mockResolvedValueOnce([{ id: 3, nom: 'Dr B', verification: 'en_attente' }])
+      .mockResolvedValueOnce([{ id: 1, user_id: 3, nom: 'Dr B' }]);
+    const res = await request(app).get('/api/admin/comptes').set(auth());
+    expect(res.status).toBe(200);
+    expect(res.body.data.comptes).toHaveLength(1);
+    expect(res.body.data.demandes_reinitialisation).toHaveLength(1);
+  });
+
+  it('vérifie ou refuse (motif obligatoire) une demande de vérification', async () => {
+    role();
+    let res = await request(app)
+      .post('/api/admin/comptes/3/verification')
+      .set(auth())
+      .send({ decision: 'refuse' });
+    expect(res.status).toBe(400);
+    expect(res.body.details.motif).toBeDefined();
+
+    role();
+    db.query
+      .mockResolvedValueOnce([{ id: 3, verification: 'en_attente', numero_ordre: 'CNOM/1' }])
+      .mockResolvedValueOnce({});
+    res = await request(app)
+      .post('/api/admin/comptes/3/verification')
+      .set(auth())
+      .send({ decision: 'verifie' });
+    expect(res.status).toBe(200);
+    const [sql, params] = db.query.mock.calls.at(-1);
+    expect(sql).toMatch(/verifie_le = NOW\(\)/);
+    expect(params).toEqual(['verifie', 7, null, 3]);
+  });
+
+  it('génère un lien de réinitialisation et clôt les demandes en attente', async () => {
+    role();
+    db.query
+      .mockResolvedValueOnce([{ id: 3, nom: 'Dr B', email: 'b@c.cd' }])
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({});
+    const res = await request(app).post('/api/admin/comptes/3/lien-reinitialisation').set(auth());
+    expect(res.status).toBe(200);
+    expect(res.body.lien).toMatch(/\/reinitialiser-mot-de-passe\?jeton=[\w-]{20,}/);
+    expect(db.query.mock.calls[2][1][2]).toBe('admin');
+    expect(db.query.mock.calls[3][0]).toMatch(/traite_le = NOW\(\)/);
+  });
+});

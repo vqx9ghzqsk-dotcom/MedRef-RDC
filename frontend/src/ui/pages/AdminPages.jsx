@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
+import { useAuth } from '../context/auth.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
@@ -26,7 +27,11 @@ import {
   POPULATIONS,
   SECURITES,
   RUBRIQUES_SEMIOLOGIE,
+  ORDRES,
+  PROFILS,
   STATUTS_FICHE,
+  STRUCTURES,
+  VERIFICATIONS,
   TYPES_EXAMEN,
   TYPES_FORME,
   formatPrixCdf,
@@ -67,6 +72,7 @@ const ONGLETS_ADMIN = [
   ['catalogue', 'Catalogue des firmes'],
   ['semiologie', 'Glossaire et syndromes'],
   ['historique', 'Historique'],
+  ['comptes', 'Comptes', 'admin'],
 ];
 
 export function AdminHomePage() {
@@ -79,6 +85,7 @@ export function AdminHomePage() {
 
 function AdminHome() {
   const { api } = useServices();
+  const { user } = useAuth();
   const state = useAsync(() => api.adminResume(), [api]);
   const [onglet, setOnglet] = useState('fiches');
   const [statut, setStatut] = useState('');
@@ -118,7 +125,7 @@ function AdminHome() {
               </p>
 
               <div className="segmented" role="group" aria-label="Section">
-                {ONGLETS_ADMIN.map(([k, label]) => (
+                {ONGLETS_ADMIN.filter(([, , role]) => !role || user?.role === role).map(([k, label]) => (
                   <button
                     key={k}
                     type="button"
@@ -131,7 +138,7 @@ function AdminHome() {
                 ))}
               </div>
 
-              {onglet !== 'historique' && onglet !== 'catalogue' && (
+              {!['historique', 'catalogue', 'comptes'].includes(onglet) && (
                 <form className="filter-bar" onSubmit={(e) => e.preventDefault()} aria-label="Filtres">
                   <div className="field">
                     <label htmlFor="admin-q">Rechercher</label>
@@ -242,6 +249,7 @@ function AdminHome() {
 
               {onglet === 'semiologie' && <SemiologieAdmin filtre={filtre} />}
               {onglet === 'catalogue' && <CatalogueAdmin />}
+              {onglet === 'comptes' && user?.role === 'admin' && <ComptesAdmin />}
 
               {onglet === 'historique' &&
                 (d.modifications.length ? (
@@ -274,6 +282,209 @@ function AdminHome() {
 const AIDE_PUCES = 'Une ligne par signe, commençant par « - ». **gras** pour l’essentiel.';
 
 /** Syndromes d'une forme : puces retirables + liste déroulante pour en ajouter. */
+/**
+ * Comptes (administrateurs) : vérification du statut professionnel et liens de
+ * réinitialisation du mot de passe pour les demandes reçues sans serveur d'e-mail.
+ */
+function ComptesAdmin() {
+  const { api } = useServices();
+  const [version, setVersion] = useState(0);
+  const state = useAsync(() => api.adminComptes(), [api, version]);
+  const [filtre, setFiltre] = useState('en_attente');
+  const [motifs, setMotifs] = useState({});
+  const [lien, setLien] = useState(null);
+  const [erreur, setErreur] = useState(null);
+  const [copie, setCopie] = useState(false);
+
+  const agir = async (action) => {
+    setErreur(null);
+    try {
+      await action();
+      setVersion((v) => v + 1);
+    } catch (err) {
+      setErreur(err.details ? Object.values(err.details).join(' ') : err.message);
+    }
+  };
+  const decider = (id, decision) => agir(() => api.adminDecisionVerification(id, decision, motifs[id] || ''));
+  const genererLien = (id) =>
+    agir(async () => {
+      setCopie(false);
+      setLien(await api.adminLienReinitialisation(id));
+    });
+  const copier = async () => {
+    try {
+      await navigator.clipboard.writeText(lien.lien);
+      setCopie(true);
+    } catch {
+      setCopie(false);
+    }
+  };
+
+  return (
+    <AsyncView state={state}>
+      {(d) => {
+        const comptes = d.comptes.filter((c) => !filtre || c.verification === filtre);
+        return (
+          <div className="admin-comptes">
+            {erreur && (
+              <p className="form-error" role="alert">
+                {erreur}
+              </p>
+            )}
+            {lien && (
+              <div className="validation-confirmation" role="status">
+                <p>
+                  Lien pour <strong>{lien.nom}</strong> ({lien.email}), valable {lien.valide_heures} h et
+                  utilisable une seule fois. Transmettez-le à la personne elle-même (WhatsApp, SMS…) ; il ne
+                  sera plus affiché.
+                </p>
+                <input
+                  className="lien-reinitialisation"
+                  value={lien.lien}
+                  readOnly
+                  aria-label="Lien de réinitialisation"
+                />
+                <button type="button" className="btn btn-secondary btn-small" onClick={copier}>
+                  {copie ? 'Copié' : 'Copier le lien'}
+                </button>
+                <button type="button" className="btn-link" onClick={() => setLien(null)}>
+                  Masquer
+                </button>
+              </div>
+            )}
+
+            <h2>Demandes de mot de passe oublié</h2>
+            {d.demandes_reinitialisation.length ? (
+              <ul className="historique card">
+                {d.demandes_reinitialisation.map((r) => (
+                  <li key={r.id}>
+                    <strong>{r.nom}</strong> ({r.email}) — demandé le {formatDateTime(r.created_at)}{' '}
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-small"
+                      onClick={() => genererLien(r.user_id)}
+                    >
+                      Générer un lien
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Empty>Aucune demande en attente.</Empty>
+            )}
+
+            <h2>Comptes</h2>
+            <div className="field">
+              <label htmlFor="comptes-filtre">Vérification</label>
+              <select id="comptes-filtre" value={filtre} onChange={(e) => setFiltre(e.target.value)}>
+                <option value="">Tous les comptes</option>
+                {Object.entries(VERIFICATIONS).map(([k, l]) => (
+                  <option key={k} value={k}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Compte</th>
+                    <th scope="col">Profil et lieu</th>
+                    <th scope="col">Ordre</th>
+                    <th scope="col">Vérification</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comptes.map((c) => (
+                    <tr key={c.id}>
+                      <td>
+                        <strong>{c.nom}</strong>
+                        <span className="row-sub">{c.email}</span>
+                        <span className="row-sub">Inscrit le {formatDateTime(c.created_at)}</span>
+                      </td>
+                      <td>
+                        {PROFILS[c.profil] || 'Profil non renseigné'}
+                        {c.specialite_exercee && <span className="row-sub">{c.specialite_exercee}</span>}
+                        <span className="row-sub">
+                          {[STRUCTURES[c.structure_type], c.structure_nom, c.province]
+                            .filter(Boolean)
+                            .join(' — ')}
+                        </span>
+                      </td>
+                      <td>
+                        {c.numero_ordre ? (
+                          <>
+                            {ORDRES[c.ordre_professionnel]}
+                            <span className="row-sub">n° {c.numero_ordre}</span>
+                          </>
+                        ) : (
+                          '—'
+                        )}
+                      </td>
+                      <td>
+                        <span className={`tag verification-${c.verification}`}>
+                          {VERIFICATIONS[c.verification]}
+                        </span>
+                        {c.verifie_le && (
+                          <span className="row-sub">
+                            {c.verifie_par || '—'}, {formatDateTime(c.verifie_le)}
+                          </span>
+                        )}
+                        {c.verification_motif && (
+                          <span className="row-sub">Motif : {c.verification_motif}</span>
+                        )}
+                      </td>
+                      <td>
+                        {c.numero_ordre && c.verification !== 'non_demandee' && (
+                          <div className="actions-compte">
+                            {c.verification !== 'verifie' && (
+                              <button
+                                type="button"
+                                className="btn btn-primary btn-small"
+                                onClick={() => decider(c.id, 'verifie')}
+                              >
+                                Vérifier
+                              </button>
+                            )}
+                            {c.verification !== 'refuse' && (
+                              <>
+                                <input
+                                  aria-label={`Motif du refus pour ${c.nom}`}
+                                  placeholder="Motif du refus"
+                                  maxLength={300}
+                                  value={motifs[c.id] || ''}
+                                  onChange={(e) => setMotifs((m) => ({ ...m, [c.id]: e.target.value }))}
+                                />
+                                <button
+                                  type="button"
+                                  className="btn btn-danger btn-small"
+                                  onClick={() => decider(c.id, 'refuse')}
+                                >
+                                  Refuser
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        )}
+                        <button type="button" className="btn-link" onClick={() => genererLien(c.id)}>
+                          Lien de réinitialisation
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!comptes.length && <Empty>Aucun compte dans cette catégorie.</Empty>}
+            </div>
+          </div>
+        );
+      }}
+    </AsyncView>
+  );
+}
+
 /**
  * Liste des fiches avec validation groupée : seules les fiches « à valider »
  * sont sélectionnables ; la validation exige une confirmation explicite de relecture.

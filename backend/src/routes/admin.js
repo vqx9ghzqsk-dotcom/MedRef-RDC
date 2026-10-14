@@ -812,6 +812,92 @@ router.post(
   }),
 );
 
+// ---------------------------------------------------------------- Comptes (administrateurs seulement)
+
+/** Gestion des comptes : réservée au rôle « admin » (les relecteurs « medecin » n'y ont pas accès). */
+const requireAdmin = (req, _res, next) =>
+  req.editor.role === 'admin' ? next() : next(new HttpError(403, 'Accès réservé aux administrateurs'));
+
+router.get(
+  '/admin/comptes',
+  requireAdmin,
+  asyncHandler(async (_req, res) => {
+    const [comptes, demandes] = await Promise.all([
+      db.query(
+        `SELECT u.id, u.nom, u.email, u.role, u.profil, u.specialite_exercee, u.structure_type, u.structure_nom,
+                u.province, u.ordre_professionnel, u.numero_ordre, u.verification, u.verification_demandee_le,
+                u.verifie_le, v.nom AS verifie_par, u.verification_motif, u.created_at
+           FROM users u LEFT JOIN users v ON v.id = u.verifie_par
+          ORDER BY FIELD(u.verification, 'en_attente') DESC, u.verification_demandee_le, u.nom`,
+      ),
+      db.query(
+        `SELECT r.id, r.user_id, u.nom, u.email, r.created_at
+           FROM reinitialisations_mot_de_passe r JOIN users u ON u.id = r.user_id
+          WHERE r.canal = 'demande' AND r.traite_le IS NULL
+          ORDER BY r.created_at`,
+      ),
+    ]);
+    res.json({ data: { comptes, demandes_reinitialisation: demandes } });
+  }),
+);
+
+/** Décision sur une demande de vérification : « verifie » ou « refuse » (motif obligatoire). */
+router.post(
+  '/admin/comptes/:id/verification',
+  requireAdmin,
+  asyncHandler(async (req, res) => {
+    const id = toInt(req.params.id);
+    if (!id) throw notFound('Compte');
+    const body = req.body || {};
+    const errors = {};
+    if (!['verifie', 'refuse'].includes(body.decision))
+      errors.decision = 'Décision attendue : verifie ou refuse';
+    const motif = typeof body.motif === 'string' ? body.motif.trim().slice(0, 300) : '';
+    if (body.decision === 'refuse' && !motif) errors.motif = 'Indiquez le motif du refus';
+    if (Object.keys(errors).length) throw new HttpError(400, 'Données invalides', errors);
+    const [compte] = await db.query('SELECT id, verification, numero_ordre FROM users WHERE id = ?', [id]);
+    if (!compte) throw notFound('Compte');
+    if (!compte.numero_ordre || compte.verification === 'non_demandee') {
+      throw new HttpError(409, 'Aucune demande de vérification pour ce compte');
+    }
+    await db.query(
+      `UPDATE users SET verification = ?, verifie_par = ?, verifie_le = NOW(), verification_motif = ?
+        WHERE id = ?`,
+      [body.decision, req.editor.id, motif || null, id],
+    );
+    res.json({ ok: true, verification: body.decision });
+  }),
+);
+
+/**
+ * Lien de réinitialisation du mot de passe généré par un administrateur (sans serveur
+ * d'e-mail) : renvoyé une seule fois, à transmettre à la personne par un canal sûr.
+ */
+router.post(
+  '/admin/comptes/:id/lien-reinitialisation',
+  requireAdmin,
+  asyncHandler(async (req, res) => {
+    const id = toInt(req.params.id);
+    if (!id) throw notFound('Compte');
+    const [compte] = await db.query('SELECT id, nom, email FROM users WHERE id = ?', [id]);
+    if (!compte) throw notFound('Compte');
+    const { creerLienReinitialisation } = require('./auth');
+    const lien = await creerLienReinitialisation(id, { canal: 'admin', creePar: req.editor.id });
+    await db.query(
+      `UPDATE reinitialisations_mot_de_passe SET traite_le = NOW(), cree_par = ?
+        WHERE user_id = ? AND canal = 'demande' AND traite_le IS NULL`,
+      [req.editor.id, id],
+    );
+    res.json({
+      ok: true,
+      lien,
+      nom: compte.nom,
+      email: compte.email,
+      valide_heures: config.securite.reinitialisationHeures,
+    });
+  }),
+);
+
 // ---------------------------------------------------------------- Molécules
 
 const nombreOuNull = (v) => (v === null || v === undefined ? null : Number(v));

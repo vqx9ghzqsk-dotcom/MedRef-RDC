@@ -14,14 +14,39 @@ const router = express.Router();
 
 const LIGNE_RANK = { premiere: 1, deuxieme: 2, alternative: 3, adjuvant: 4 };
 const POSOLOGIE_COLS = `pos.id, pos.molecule_id, pos.population, pos.indication, pos.voie, pos.dose_texte,
-  pos.dose_par_kg, pos.dose_max, pos.unite, pos.frequence, pos.duree, pos.securite, pos.remarque`;
+  pos.dose_par_kg, pos.dose_max, pos.dose_base, pos.unite, pos.frequence, pos.frequence_type, pos.prises_par_jour,
+  pos.intervalle_heures, pos.duree, pos.durees, pos.securite, pos.remarque, pos.structure_a_valider`;
 const POSOLOGIE_ORDER = "FIELD(pos.population, 'adulte', 'enfant', 'nouveau_ne', 'grossesse'), pos.ordre";
 
+const nombreOuNull = (v) => (v === null || v === undefined ? null : Number(v));
+
 /** DECIMAL arrive en chaîne depuis mysql2 : on renvoie des nombres (ou null). */
-const toPosologie = ({ molecule_id: _m, dose_par_kg: kg, dose_max: max, ...p }) => ({
+const toPosologie = ({
+  molecule_id: _m,
+  dose_par_kg: kg,
+  dose_max: max,
+  intervalle_heures: h,
+  durees,
+  ...p
+}) => ({
   ...p,
-  dose_par_kg: kg === null ? null : Number(kg),
-  dose_max: max === null ? null : Number(max),
+  dose_par_kg: nombreOuNull(kg),
+  dose_max: nombreOuNull(max),
+  intervalle_heures: nombreOuNull(h),
+  durees: (typeof durees === 'string' ? JSON.parse(durees) : durees) || [],
+  structure_a_valider: Boolean(p.structure_a_valider),
+});
+
+/** Présentations standard d'une molécule (lot B) : conversion d'une dose en comprimés ou en mL. */
+const PRESENTATION_COLS = `id, forme, voie, quantite, unite, par_quantite, par_unite, secable,
+  conditionnement_quantite, conditionnement_unite, libelle, a_valider`;
+const toPresentation = (pr) => ({
+  ...pr,
+  quantite: Number(pr.quantite),
+  par_quantite: Number(pr.par_quantite),
+  conditionnement_quantite: nombreOuNull(pr.conditionnement_quantite),
+  secable: Boolean(pr.secable),
+  a_valider: Boolean(pr.a_valider),
 });
 
 const FICHE_COLS = `mo.mecanisme, mo.pharmacocinetique, mo.indications, mo.posologie, mo.contre_indications,
@@ -339,7 +364,7 @@ router.get(
       [req.params.slug],
     );
     if (!mo) throw notFound('Molécule');
-    const [produits, pathologies, posologies, externes] = await Promise.all([
+    const [produits, pathologies, posologies, externes, presentations] = await Promise.all([
       db.query(
         `SELECT m.id, m.nom_commercial, m.dci AS composition, m.forme, m.dosage, m.disponible_rdc,
                 m.photo_url, m.presentation, m.forme_categorie, m.pediatrique, m.catalogue_classe, ${AMM_EXISTE} AS amm,
@@ -363,12 +388,17 @@ router.get(
         [mo.id],
       ),
       db.query(`SELECT ${EXTERNES_COLS} FROM molecule_fiches_externes fe WHERE fe.molecule_id = ?`, [mo.id]),
+      db.query(
+        `SELECT ${PRESENTATION_COLS} FROM molecule_presentations WHERE molecule_id = ? ORDER BY ordre, id`,
+        [mo.id],
+      ),
     ]);
     res.json({
       data: {
         ...versFiche(mo),
         fiches_externes: (externes || []).map(versExterne),
         posologies: (posologies || []).map(toPosologie),
+        presentations: (presentations || []).map(toPresentation),
         produits: produits.map(({ nb_molecules: nb, disponible_rdc: rdc, pediatrique, amm, ...p }) => ({
           ...p,
           amm: Boolean(amm),

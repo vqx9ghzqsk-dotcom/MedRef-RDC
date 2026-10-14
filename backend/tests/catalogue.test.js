@@ -398,7 +398,14 @@ describe('Médicaments et sources', () => {
     expect(res.body.data.produits[0]).not.toHaveProperty('nb_molecules');
     expect(res.body.data.pathologies).toHaveLength(1);
     expect(res.body.data.posologies).toEqual([
-      { id: 5, population: 'enfant', dose_texte: '3 mg/kg', dose_par_kg: 3, dose_max: null },
+      expect.objectContaining({
+        id: 5,
+        population: 'enfant',
+        dose_texte: '3 mg/kg',
+        dose_par_kg: 3,
+        dose_max: null,
+        durees: [],
+      }),
     ]);
   });
 

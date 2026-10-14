@@ -22,7 +22,8 @@
     "lint": "eslint src tests scripts",
     "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
     "user:role": "node scripts/role.js",
-    "user:password": "node scripts/password.js"
+    "user:password": "node scripts/password.js",
+    "posologies:structurer": "node scripts/structurer-posologies.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

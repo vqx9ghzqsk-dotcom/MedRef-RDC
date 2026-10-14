@@ -395,8 +395,84 @@ describe('Molécules et produits', () => {
       sql.includes('INSERT INTO molecule_posologies'),
     );
     expect(inserts).toHaveLength(2);
-    // dose_par_kg converti en nombre, dose_max vide → NULL, unité par défaut « mg »
-    expect(inserts[0][1].slice(5, 8)).toEqual([3, null, 'mg']);
+    // dose_par_kg converti en nombre, dose_max vide → NULL, base non précisée, unité par défaut « mg »
+    expect(inserts[0][1].slice(5, 9)).toEqual([3, null, null, 'mg']);
+  });
+
+  it('enregistre la structure des posologies et les présentations (lot B)', async () => {
+    db.query.mockResolvedValueOnce([{ id: 7, nom: 'Dr Test', role: 'admin' }]);
+    const conn = fakeTransaction();
+    const res = await request(app)
+      .put('/api/admin/molecules/3')
+      .set(auth())
+      .send({
+        posologies: [
+          {
+            population: 'enfant',
+            dose_texte: '15 mg/kg toutes les 6 h',
+            dose_par_kg: 15,
+            dose_max: 1000,
+            dose_base: 'par_prise',
+            frequence: 'Toutes les 6 h',
+            frequence_type: 'intervalle',
+            prises_par_jour: 4,
+            intervalle_heures: 6,
+            durees: [{ min: 3, max: 5, unite: 'jours', defaut: true }],
+          },
+        ],
+        presentations: [
+          { forme: 'comprime', quantite: 500, unite: 'mg', par_unite: 'comprime', secable: true },
+          { forme: 'suspension_buvable', quantite: 120, unite: 'mg', par_quantite: 5, par_unite: 'ml' },
+        ],
+      });
+    expect(res.status).toBe(200);
+    const pos = conn.execute.mock.calls.find(([sql]) => sql.includes('INSERT INTO molecule_posologies'));
+    expect(pos[1]).toEqual(
+      expect.arrayContaining([
+        'par_prise',
+        'intervalle',
+        4,
+        6,
+        JSON.stringify([{ min: 3, max: 5, unite: 'jours', contexte: null, defaut: true }]),
+      ]),
+    );
+    const pres = conn.execute.mock.calls.filter(([sql]) =>
+      sql.includes('INSERT INTO molecule_presentations'),
+    );
+    expect(pres).toHaveLength(2);
+    expect(pres[0][1].slice(1, 9)).toEqual(['comprime', null, 500, 'mg', 1, 'comprime', 1, null]);
+  });
+
+  it('valide la structure : prises requises, durées cohérentes, présentation complète', async () => {
+    db.query.mockResolvedValueOnce([{ id: 7, nom: 'Dr Test', role: 'admin' }]);
+    const res = await request(app)
+      .put('/api/admin/molecules/3')
+      .set(auth())
+      .send({
+        posologies: [
+          {
+            population: 'adulte',
+            dose_texte: '1 g',
+            frequence_type: 'prises_par_jour',
+            durees: [
+              { min: 7, max: 5, unite: 'jours', defaut: true },
+              { min: 3, unite: 'lunes', defaut: true },
+            ],
+          },
+        ],
+        presentations: [{ forme: 'comprime', unite: 'mg', par_unite: 'boite' }],
+      });
+    expect(res.status).toBe(400);
+    expect(Object.keys(res.body.details)).toEqual(
+      expect.arrayContaining([
+        'posologies[0].prises_par_jour',
+        'posologies[0].durees[0].max',
+        'posologies[0].durees[1].unite',
+        'posologies[0].durees',
+        'presentations[0].quantite',
+        'presentations[0].par_unite',
+      ]),
+    );
   });
 
   it('valide la population et la dose des posologies', async () => {

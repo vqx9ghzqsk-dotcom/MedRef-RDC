@@ -2857,3 +2857,26 @@ details.forme {
   font-family: monospace;
   font-size: 0.85rem;
 }
+
+/* Lot B : posologies structurées et présentations */
+@media (min-width: 720px) {
+  .form-grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.structure-posologie {
+  margin-top: 0.8rem;
+  padding: 0.6rem 0.9rem 0.8rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-small);
+}
+.structure-posologie legend {
+  font-weight: 650;
+  padding: 0 0.3rem;
+}
+.duree-ligne {
+  align-items: end;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0.4rem;
+}

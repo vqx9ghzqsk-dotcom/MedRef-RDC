@@ -27,8 +27,13 @@ import {
   POPULATIONS,
   SECURITES,
   RUBRIQUES_SEMIOLOGIE,
+  DOSE_BASES,
+  FORMES_PRESENTATION,
+  FREQUENCE_TYPES,
   ORDRES,
+  PAR_UNITES,
   PROFILS,
+  UNITES_DUREE,
   STATUTS_FICHE,
   STRUCTURES,
   VERIFICATIONS,
@@ -1256,6 +1261,286 @@ export function AdminMoleculePage() {
   );
 }
 
+/** Case à cocher « relu et validé » d'un élément produit automatiquement (lot B). */
+function CaseValidation({ id, aValider, onChange, label }) {
+  return (
+    <div className="field field-check">
+      <input id={id} type="checkbox" checked={!aValider} onChange={(e) => onChange(!e.target.checked)} />
+      <label htmlFor={id}>
+        {label}
+        {aValider && <span className="tag tag-warn"> À valider</span>}
+      </label>
+    </div>
+  );
+}
+
+/**
+ * Structure d'une posologie (lot B) : base de la dose, fréquence et durées proposées,
+ * utilisées par le calcul automatique de la fiche de prescription.
+ */
+function StructurePosologie({ p, update, i, err }) {
+  const durees = p.durees || [];
+  const setDuree = (j, patch) => update({ durees: durees.map((d, k) => (k === j ? { ...d, ...patch } : d)) });
+  const champ = (k) => `posologies[${i}].${k}`;
+  return (
+    <fieldset className="structure-posologie">
+      <legend>Calcul automatique (fiche de prescription)</legend>
+      <div className="form-grid form-grid-3">
+        <SelectField
+          label="La dose par kg et la dose maximale s’entendent"
+          value={p.dose_base}
+          onChange={(dose_base) => update({ dose_base })}
+          options={entries(DOSE_BASES)}
+          emptyLabel="— Non précisé —"
+          error={err(champ('dose_base'))}
+        />
+        <SelectField
+          label="Fréquence structurée"
+          value={p.frequence_type}
+          onChange={(frequence_type) => update({ frequence_type })}
+          options={entries(FREQUENCE_TYPES)}
+          emptyLabel="— Non structurée —"
+          error={err(champ('frequence_type'))}
+        />
+        {p.frequence_type === 'prises_par_jour' && (
+          <NumberField
+            label="Prises par jour"
+            name="prises_par_jour"
+            min={1}
+            max={24}
+            value={p.prises_par_jour ?? ''}
+            onChange={(v) => update({ prises_par_jour: v === '' ? null : v })}
+            error={err(champ('prises_par_jour'))}
+          />
+        )}
+        {p.frequence_type === 'intervalle' && (
+          <NumberField
+            label="Intervalle entre les prises"
+            name="intervalle_heures"
+            unit="h"
+            min={0.25}
+            max={168}
+            value={p.intervalle_heures ?? ''}
+            onChange={(v) => {
+              const h = Number(String(v).replace(',', '.'));
+              const prises = h > 0 && Number.isInteger(24 / h) ? 24 / h : null;
+              update({ intervalle_heures: v === '' ? null : v, prises_par_jour: prises });
+            }}
+            error={err(champ('intervalle_heures'))}
+          />
+        )}
+      </div>
+      <div className="durees">
+        <p className="field-label">Durées proposées au prescripteur</p>
+        {err(champ('durees')) && <p className="field-error">{err(champ('durees'))}</p>}
+        {durees.map((d, j) => (
+          <div key={j} className="form-grid form-grid-4 duree-ligne">
+            <NumberField
+              label="De"
+              name={`duree-min-${i}-${j}`}
+              min={0.01}
+              max={1000}
+              value={d.min ?? ''}
+              onChange={(v) => setDuree(j, { min: v === '' ? null : v })}
+              error={err(`posologies[${i}].durees[${j}].min`)}
+            />
+            <NumberField
+              label="À (facultatif)"
+              name={`duree-max-${i}-${j}`}
+              min={0.01}
+              max={1000}
+              value={d.max ?? ''}
+              onChange={(v) => setDuree(j, { max: v === '' ? null : v })}
+              error={err(`posologies[${i}].durees[${j}].max`)}
+            />
+            <SelectField
+              label="Unité"
+              value={d.unite}
+              onChange={(unite) => setDuree(j, { unite })}
+              options={entries(UNITES_DUREE)}
+              error={err(`posologies[${i}].durees[${j}].unite`)}
+              required
+            />
+            <TextField
+              label="Contexte"
+              value={d.contexte}
+              onChange={(contexte) => setDuree(j, { contexte })}
+              placeholder="ex. Forme non compliquée"
+              maxLength={190}
+            />
+            <div className="field field-check">
+              <input
+                id={`duree-defaut-${i}-${j}`}
+                type="radio"
+                name={`duree-defaut-${i}`}
+                checked={Boolean(d.defaut)}
+                onChange={() => update({ durees: durees.map((x, k) => ({ ...x, defaut: k === j })) })}
+              />
+              <label htmlFor={`duree-defaut-${i}-${j}`}>Par défaut</label>
+            </div>
+            <button
+              type="button"
+              className="btn btn-ghost btn-small"
+              onClick={() => update({ durees: durees.filter((_, k) => k !== j) })}
+              aria-label={`Retirer la durée ${j + 1}`}
+            >
+              Retirer
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          className="btn btn-secondary btn-small"
+          onClick={() =>
+            update({
+              durees: [
+                ...durees,
+                { min: null, max: null, unite: 'jours', contexte: '', defaut: !durees.length },
+              ],
+            })
+          }
+        >
+          Ajouter une durée
+        </button>
+      </div>
+      {(p.structure_a_valider || p.frequence_type || p.dose_base || durees.length > 0) && (
+        <CaseValidation
+          id={`structure-validee-${i}`}
+          aValider={p.structure_a_valider}
+          onChange={(structure_a_valider) => update({ structure_a_valider })}
+          label="Structure relue et validée par un médecin"
+        />
+      )}
+    </fieldset>
+  );
+}
+
+/** Présentations standard de la molécule (lot B) : conversion de la dose en comprimés ou en mL. */
+function PresentationsEditor({ items, onChange, err }) {
+  return (
+    <ListEditor
+      title="Présentations"
+      items={items}
+      onChange={onChange}
+      newItem={() => ({
+        forme: 'comprime',
+        voie: 'orale',
+        quantite: null,
+        unite: 'mg',
+        par_quantite: 1,
+        par_unite: 'comprime',
+        secable: false,
+        conditionnement_quantite: null,
+        conditionnement_unite: '',
+        libelle: '',
+        source: 'Saisie manuelle',
+        a_valider: false,
+      })}
+      itemLabel={(pr) =>
+        pr.libelle ||
+        [FORMES_PRESENTATION[pr.forme], pr.quantite && `${pr.quantite} ${pr.unite}`].filter(Boolean).join(' ')
+      }
+      addLabel="Ajouter une présentation"
+      renderItem={(pr, update, i) => (
+        <>
+          <div className="form-grid form-grid-3">
+            <SelectField
+              label="Forme"
+              value={pr.forme}
+              onChange={(forme) => update({ forme })}
+              options={entries(FORMES_PRESENTATION)}
+              error={err(`presentations[${i}].forme`)}
+              required
+            />
+            <TextField
+              label="Voie"
+              value={pr.voie}
+              onChange={(voie) => update({ voie })}
+              suggestions={SUGGESTIONS.voie}
+              maxLength={60}
+            />
+            <TextField
+              label="Libellé (affiché)"
+              value={pr.libelle}
+              onChange={(libelle) => update({ libelle })}
+              placeholder="ex. Suspension buvable 125 mg/5 mL"
+              maxLength={190}
+            />
+          </div>
+          <div className="form-grid form-grid-4">
+            <NumberField
+              label="Quantité de principe actif"
+              name={`pres-quantite-${i}`}
+              min={0.001}
+              value={pr.quantite ?? ''}
+              onChange={(v) => update({ quantite: v === '' ? null : v })}
+              error={err(`presentations[${i}].quantite`)}
+              required
+            />
+            <TextField
+              label="Unité"
+              value={pr.unite}
+              onChange={(unite) => update({ unite })}
+              suggestions={SUGGESTIONS.unite}
+              maxLength={20}
+              error={err(`presentations[${i}].unite`)}
+            />
+            <NumberField
+              label="Pour"
+              name={`pres-par-${i}`}
+              min={0.001}
+              value={pr.par_quantite ?? ''}
+              onChange={(v) => update({ par_quantite: v === '' ? null : v })}
+              error={err(`presentations[${i}].par_quantite`)}
+            />
+            <SelectField
+              label="Unité de prise"
+              value={pr.par_unite}
+              onChange={(par_unite) => update({ par_unite })}
+              options={entries(PAR_UNITES)}
+              error={err(`presentations[${i}].par_unite`)}
+              required
+            />
+          </div>
+          <div className="form-grid form-grid-3">
+            <NumberField
+              label="Conditionnement"
+              name={`pres-cond-${i}`}
+              min={0}
+              value={pr.conditionnement_quantite ?? ''}
+              onChange={(v) => update({ conditionnement_quantite: v === '' ? null : v })}
+              hint="Quantité par boîte ou flacon"
+            />
+            <TextField
+              label="Unité du conditionnement"
+              value={pr.conditionnement_unite}
+              onChange={(conditionnement_unite) => update({ conditionnement_unite })}
+              placeholder="ex. comprimés, mL"
+              maxLength={30}
+            />
+            <div className="field field-check">
+              <input
+                id={`pres-secable-${i}`}
+                type="checkbox"
+                checked={Boolean(pr.secable)}
+                onChange={(e) => update({ secable: e.target.checked })}
+              />
+              <label htmlFor={`pres-secable-${i}`}>Comprimé sécable</label>
+            </div>
+          </div>
+          {pr.source && <p className="hint">Source : {pr.source}</p>}
+          <CaseValidation
+            id={`pres-validee-${i}`}
+            aValider={pr.a_valider}
+            onChange={(a_valider) => update({ a_valider })}
+            label="Présentation vérifiée"
+          />
+        </>
+      )}
+    />
+  );
+}
+
 function MoleculeEditor({ id, initial, onSaved }) {
   const { api } = useServices();
   const { historique, ...depart } = initial;
@@ -1310,6 +1595,12 @@ function MoleculeEditor({ id, initial, onSaved }) {
             duree: '',
             securite: null,
             remarque: '',
+            dose_base: 'par_prise',
+            frequence_type: null,
+            prises_par_jour: null,
+            intervalle_heures: null,
+            durees: [],
+            structure_a_valider: false,
           })}
           itemLabel={(p) =>
             [POPULATIONS[p.population], p.indication || p.dose_texte].filter(Boolean).join(' — ')
@@ -1421,8 +1712,23 @@ function MoleculeEditor({ id, initial, onSaved }) {
                 value={p.remarque}
                 onChange={(remarque) => update({ remarque })}
               />
+              <StructurePosologie p={p} update={update} i={i} err={err} />
             </>
           )}
+        />
+      </section>
+
+      <section className="card">
+        <h2>Présentations (par DCI)</h2>
+        <p className="hint">
+          Formes standard, indépendantes des marques : elles servent à convertir une dose en nombre de
+          comprimés, en mL ou en ampoules sur l’ordonnance. Les présentations lues dans le catalogue sont « à
+          valider ».
+        </p>
+        <PresentationsEditor
+          items={form.presentations || []}
+          onChange={(presentations) => set({ presentations })}
+          err={err}
         />
       </section>
 

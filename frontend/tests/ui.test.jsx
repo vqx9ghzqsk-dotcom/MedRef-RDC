@@ -1256,3 +1256,74 @@ describe('Comptes : profils, vérification, mot de passe oublié (lot A)', () =>
     expect(screen.queryByRole('button', { name: 'Comptes' })).toBeNull();
   });
 });
+
+describe('Posologies structurées et présentations (lot B)', () => {
+  const molecule = {
+    id: 12,
+    dci: 'Paracétamol',
+    slug: 'paracetamol',
+    fiche_source: null,
+    fiche_a_valider: false,
+    historique: [],
+    posologies: [
+      {
+        population: 'enfant',
+        indication: 'Fièvre',
+        voie: 'orale',
+        dose_texte: '15 mg/kg toutes les 6 h',
+        dose_par_kg: 15,
+        dose_max: 1000,
+        dose_base: 'par_prise',
+        unite: 'mg',
+        frequence: 'Toutes les 6 h',
+        frequence_type: 'intervalle',
+        prises_par_jour: 4,
+        intervalle_heures: 6,
+        duree: '3 jours',
+        durees: [{ min: 3, max: null, unite: 'jours', contexte: null, defaut: true }],
+        securite: null,
+        remarque: null,
+        structure_a_valider: true,
+      },
+    ],
+    presentations: [
+      {
+        forme: 'suspension_buvable',
+        voie: 'orale',
+        quantite: 120,
+        unite: 'mg',
+        par_quantite: 5,
+        par_unite: 'ml',
+        secable: false,
+        conditionnement_quantite: null,
+        conditionnement_unite: null,
+        libelle: 'Solution ou suspension buvable 120 mg/5 mL',
+        source: 'Catalogue des firmes : déclarée par 5 produits',
+        a_valider: true,
+      },
+    ],
+  };
+
+  it('affiche la structure « à valider » et envoie la validation avec les présentations', async () => {
+    const user = userEvent.setup();
+    const adminSaveMolecule = vi.fn(async () => ({ ok: true, inchange: false }));
+    renderApp(
+      '/admin/molecules/12',
+      {
+        adminMolecule: vi.fn(async () => molecule),
+        adminSaveMolecule,
+        adminProduitsMolecule: vi.fn(async () => ({ lies: [], suggestions: [] })),
+      },
+      { id: 1, nom: 'Admin', email: 'a@x.cd', role: 'admin' },
+    );
+    expect(await screen.findByText('Calcul automatique (fiche de prescription)')).toBeInTheDocument();
+    expect(screen.getByLabelText('Intervalle entre les prises')).toHaveValue('6');
+    expect(screen.getByText('Source : Catalogue des firmes : déclarée par 5 produits')).toBeInTheDocument();
+    await user.click(screen.getByLabelText(/Structure relue et validée par un médecin/));
+    await user.click(screen.getByLabelText(/Présentation vérifiée/));
+    await user.click(screen.getByRole('button', { name: /Enregistrer/ }));
+    const payload = adminSaveMolecule.mock.calls[0][1];
+    expect(payload.posologies[0]).toMatchObject({ structure_a_valider: false, frequence_type: 'intervalle' });
+    expect(payload.presentations[0]).toMatchObject({ quantite: 120, par_quantite: 5, a_valider: false });
+  });
+});

@@ -43,6 +43,39 @@ const CATEGORIES = [
 ];
 const POPULATIONS = ['adulte', 'enfant', 'nouveau_ne', 'grossesse'];
 const SECURITES = ['autorise', 'prudence', 'contre_indique'];
+// Posologies structurées et présentations (lot B)
+const DOSE_BASES = ['par_prise', 'par_jour'];
+const FREQUENCE_TYPES = ['prises_par_jour', 'intervalle', 'dose_unique', 'perfusion', 'schema'];
+const UNITES_DUREE = ['heures', 'jours', 'semaines', 'mois', 'doses'];
+const FORMES_PRESENTATION = [
+  'comprime',
+  'gelule',
+  'suspension_buvable',
+  'sirop',
+  'solution_buvable',
+  'gouttes_buvables',
+  'sachet',
+  'injectable',
+  'perfusion',
+  'suppositoire',
+  'ovule',
+  'creme_pommade',
+  'collyre',
+  'inhalation',
+  'autre',
+];
+const PAR_UNITES = [
+  'comprime',
+  'gelule',
+  'ml',
+  'sachet',
+  'ampoule',
+  'flacon',
+  'suppositoire',
+  'ovule',
+  'dose',
+  'g',
+];
 const LONG = 20000;
 const TYPES_FORME = [
   'commune',
@@ -228,6 +261,7 @@ const LIBELLES_RUBRIQUES = {
   formes: 'formes cliniques',
   urgences: 'signes d’alerte des urgences',
   posologies: 'posologies',
+  presentations: 'présentations',
 };
 
 const listeRubriques = (cles) => cles.map((k) => LIBELLES_RUBRIQUES[k] || k.replace(/_/g, ' ')).join(', ');
@@ -908,20 +942,110 @@ async function etatMolecule(q, id) {
   ]);
   if (!mo) return null;
   mo.fiche_a_valider = Boolean(mo.fiche_a_valider);
-  const posologies = await q(
-    `SELECT population, indication, voie, dose_texte, dose_par_kg, dose_max, unite, frequence, duree,
-            securite, remarque
-       FROM molecule_posologies WHERE molecule_id = ? ORDER BY ordre`,
-    [id],
-  );
+  const [posologies, presentations] = await Promise.all([
+    q(
+      `SELECT population, indication, voie, dose_texte, dose_par_kg, dose_max, dose_base, unite, frequence,
+              frequence_type, prises_par_jour, intervalle_heures, duree, durees, securite, remarque,
+              structure_a_valider
+         FROM molecule_posologies WHERE molecule_id = ? ORDER BY ordre`,
+      [id],
+    ),
+    q(
+      `SELECT forme, voie, quantite, unite, par_quantite, par_unite, secable, conditionnement_quantite,
+              conditionnement_unite, libelle, source, a_valider
+         FROM molecule_presentations WHERE molecule_id = ? ORDER BY ordre, id`,
+      [id],
+    ),
+  ]);
   return {
     ...mo,
     posologies: posologies.map((p) => ({
       ...p,
       dose_par_kg: nombreOuNull(p.dose_par_kg),
       dose_max: nombreOuNull(p.dose_max),
+      intervalle_heures: nombreOuNull(p.intervalle_heures),
+      durees: typeof p.durees === 'string' ? JSON.parse(p.durees) : p.durees || [],
+      structure_a_valider: Boolean(p.structure_a_valider),
+    })),
+    presentations: presentations.map((pr) => ({
+      ...pr,
+      quantite: Number(pr.quantite),
+      par_quantite: Number(pr.par_quantite),
+      conditionnement_quantite: nombreOuNull(pr.conditionnement_quantite),
+      secable: Boolean(pr.secable),
+      a_valider: Boolean(pr.a_valider),
     })),
   };
+}
+
+/** Champs structurés d'une posologie (lot B) : base de la dose, fréquence, durées proposées. */
+function lireStructurePosologie(v, p, i) {
+  const champ = (k) => `posologies[${i}].${k}`;
+  const frequenceType = v.oneOf(p.frequence_type, FREQUENCE_TYPES, champ('frequence_type'));
+  const prises = v.number(p.prises_par_jour, champ('prises_par_jour'), { min: 1, max: 24 });
+  const intervalle = v.number(p.intervalle_heures, champ('intervalle_heures'), { min: 0.25, max: 168 });
+  if (prises !== null && !Number.isInteger(prises))
+    v.errors[champ('prises_par_jour')] = 'Nombre entier attendu';
+  if (frequenceType === 'prises_par_jour' && prises === null)
+    v.errors[champ('prises_par_jour')] = 'Nombre de prises par jour requis';
+  if (frequenceType === 'intervalle' && intervalle === null)
+    v.errors[champ('intervalle_heures')] = 'Intervalle en heures requis';
+  if (p.structure_a_valider !== undefined && typeof p.structure_a_valider !== 'boolean')
+    v.errors[champ('structure_a_valider')] = 'Oui ou non attendu';
+  const durees = (Array.isArray(p.durees) ? p.durees : []).slice(0, 10).map((d, j) => {
+    const c = (k) => `posologies[${i}].durees[${j}].${k}`;
+    const min = v.number(d && d.min, c('min'), { min: 0.01, max: 1000 });
+    if (min === null) v.errors[c('min')] = 'Durée requise';
+    const max = v.number(d && d.max, c('max'), { min: 0.01, max: 1000 });
+    if (min !== null && max !== null && max < min)
+      v.errors[c('max')] = 'Doit être supérieure ou égale au minimum';
+    return {
+      min,
+      max,
+      unite: v.oneOf(d && d.unite, UNITES_DUREE, c('unite'), { required: true }),
+      contexte: v.text(d && d.contexte, 190, c('contexte')),
+      defaut: Boolean(d && d.defaut),
+    };
+  });
+  if (durees.filter((d) => d.defaut).length > 1) v.errors[champ('durees')] = 'Une seule durée par défaut';
+  return {
+    dose_base: v.oneOf(p.dose_base, DOSE_BASES, champ('dose_base')),
+    frequence_type: frequenceType,
+    prises_par_jour: frequenceType === 'prises_par_jour' || frequenceType === 'intervalle' ? prises : null,
+    intervalle_heures: frequenceType === 'intervalle' ? intervalle : null,
+    durees,
+    structure_a_valider: p.structure_a_valider === true,
+  };
+}
+
+/** Présentations standard de la molécule (lot B) ; undefined = non envoyées (inchangées). */
+function lirePresentations(v, liste) {
+  const vues = new Set();
+  return v.list(liste, 'presentations', 40)?.map((pr, i) => {
+    const c = (k) => `presentations[${i}].${k}`;
+    const out = {
+      forme: v.oneOf(pr.forme, FORMES_PRESENTATION, c('forme'), { required: true }),
+      voie: v.text(pr.voie, 60, c('voie')),
+      quantite: v.number(pr.quantite, c('quantite'), { min: 0.001, max: 100000000 }),
+      unite: v.text(pr.unite, 20, c('unite'), { required: true }),
+      par_quantite: v.number(pr.par_quantite ?? 1, c('par_quantite'), { min: 0.001, max: 100000 }) ?? 1,
+      par_unite: v.oneOf(pr.par_unite, PAR_UNITES, c('par_unite'), { required: true }),
+      secable: pr.secable === true,
+      conditionnement_quantite: v.number(pr.conditionnement_quantite, c('conditionnement_quantite'), {
+        min: 0,
+        max: 100000,
+      }),
+      conditionnement_unite: v.text(pr.conditionnement_unite, 30, c('conditionnement_unite')),
+      libelle: v.text(pr.libelle, 190, c('libelle')),
+      source: v.text(pr.source, 120, c('source')),
+      a_valider: pr.a_valider === true,
+    };
+    if (out.quantite === null) v.errors[c('quantite')] = 'Quantité de principe actif requise';
+    const cle = [out.forme, out.quantite, out.unite, out.par_quantite, out.par_unite].join('|');
+    if (vues.has(cle)) v.errors[c('quantite')] = 'Présentation en double';
+    vues.add(cle);
+    return out;
+  });
 }
 
 router.get(
@@ -959,7 +1083,9 @@ router.put(
       duree: v.text(p.duree, 160, `posologies[${i}].duree`),
       securite: v.oneOf(p.securite, SECURITES, `posologies[${i}].securite`),
       remarque: v.text(p.remarque, LONG, `posologies[${i}].remarque`),
+      ...lireStructurePosologie(v, p, i),
     }));
+    const presentations = lirePresentations(v, body.presentations);
     v.check();
 
     const resultat = await db.transaction(async (conn) => {
@@ -981,8 +1107,9 @@ router.put(
         for (const [i, p] of posologies.entries()) {
           await conn.execute(
             `INSERT INTO molecule_posologies (molecule_id, population, indication, voie, dose_texte, dose_par_kg,
-               dose_max, unite, frequence, duree, securite, remarque, ordre)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+               dose_max, dose_base, unite, frequence, frequence_type, prises_par_jour, intervalle_heures, duree,
+               durees, securite, remarque, structure_a_valider, ordre)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
               id,
               p.population,
@@ -991,11 +1118,43 @@ router.put(
               p.dose_texte,
               p.dose_par_kg,
               p.dose_max,
+              p.dose_base,
               p.unite,
               p.frequence,
+              p.frequence_type,
+              p.prises_par_jour,
+              p.intervalle_heures,
               p.duree,
+              p.durees.length ? JSON.stringify(p.durees) : null,
               p.securite,
               p.remarque,
+              Number(p.structure_a_valider),
+              i + 1,
+            ],
+          );
+        }
+      }
+      if (presentations) {
+        await conn.execute('DELETE FROM molecule_presentations WHERE molecule_id = ?', [id]);
+        for (const [i, pr] of presentations.entries()) {
+          await conn.execute(
+            `INSERT INTO molecule_presentations (molecule_id, forme, voie, quantite, unite, par_quantite, par_unite,
+               secable, conditionnement_quantite, conditionnement_unite, libelle, source, a_valider, ordre)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              id,
+              pr.forme,
+              pr.voie,
+              pr.quantite,
+              pr.unite,
+              pr.par_quantite,
+              pr.par_unite,
+              Number(pr.secable),
+              pr.conditionnement_quantite,
+              pr.conditionnement_unite,
+              pr.libelle,
+              pr.source,
+              Number(pr.a_valider),
               i + 1,
             ],
           );

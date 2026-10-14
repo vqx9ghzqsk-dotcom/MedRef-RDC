@@ -239,3 +239,57 @@ export const PROVINCES = [
   'Tshopo',
   'Tshuapa',
 ];
+
+// ------------------------------------------------------------------ Posologies structurées (lot B)
+
+export const DOSE_BASES = {
+  par_prise: 'Par prise',
+  par_jour: 'Par jour (à répartir entre les prises)',
+};
+
+export const FREQUENCE_TYPES = {
+  prises_par_jour: 'Nombre de prises par jour',
+  intervalle: 'Toutes les N heures',
+  dose_unique: 'Dose unique',
+  perfusion: 'Perfusion continue',
+  schema: 'Schéma particulier (texte)',
+};
+
+export const UNITES_DUREE = {
+  heures: 'heure(s)',
+  jours: 'jour(s)',
+  semaines: 'semaine(s)',
+  mois: 'mois',
+  doses: 'dose(s)',
+};
+
+export const FORMES_PRESENTATION = {
+  comprime: 'Comprimé',
+  gelule: 'Gélule',
+  suspension_buvable: 'Suspension buvable',
+  sirop: 'Sirop',
+  solution_buvable: 'Solution buvable',
+  gouttes_buvables: 'Gouttes buvables',
+  sachet: 'Sachet',
+  injectable: 'Injectable',
+  perfusion: 'Perfusion',
+  suppositoire: 'Suppositoire',
+  ovule: 'Ovule',
+  creme_pommade: 'Crème / pommade',
+  collyre: 'Collyre',
+  inhalation: 'Inhalation',
+  autre: 'Autre',
+};
+
+export const PAR_UNITES = {
+  comprime: 'comprimé',
+  gelule: 'gélule',
+  ml: 'mL',
+  sachet: 'sachet',
+  ampoule: 'ampoule',
+  flacon: 'flacon',
+  suppositoire: 'suppositoire',
+  ovule: 'ovule',
+  dose: 'dose',
+  g: 'g',
+};

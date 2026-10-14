@@ -7,6 +7,7 @@ const { chargerCatalogues } = require('./catalogues');
 const { chargerAcorep } = require('./acorep');
 const { appliquerSelection } = require('./selection');
 const { chargerNouvellesFiches } = require('./fiches');
+const { chargerPosologiesAjoutees } = require('./posologiesAjoutees');
 
 /** Référence à une fiche par son slug (sinon : libellé libre). */
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -382,6 +383,8 @@ async function seed(conn) {
   const selection = await appliquerSelection(conn, data.selection);
   // Fiches ajoutées par lots (références résolues dans la base, molécules ACOREP comprises)
   const fichesAjoutees = await chargerNouvellesFiches(conn, data, data.ajouts);
+  // Posologies ajoutées par lots (seulement pour les molécules sans posologie)
+  const posologiesAjoutees = await chargerPosologiesAjoutees(conn, data.posologiesAjoutees);
 
   return {
     semiologie,
@@ -389,6 +392,7 @@ async function seed(conn) {
     acorep,
     selection,
     fichesAjoutees,
+    posologiesAjoutees,
     departements: data.departements.length,
     pathologies: data.pathologies.length,
     molecules: data.molecules.length,

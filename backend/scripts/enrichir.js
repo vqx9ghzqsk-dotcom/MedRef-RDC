@@ -4,7 +4,8 @@
  * Ajoute à une base en service le contenu nouveau des fichiers seed-data/ sans
  * rien écraser : formes cliniques des fiches qui n’en ont pas encore, syndromes et
  * termes du glossaire absents, signes d'alerte non renseignés, produits des catalogues,
- * répertoire des AMM de l'ACOREP et fiches des substances absentes.
+ * répertoire des AMM de l'ACOREP, fiches des substances absentes et posologies des molécules
+ * qui n'en ont aucune.
  *   npm run db:enrichir
  * Une sauvegarde est faite avant toute écriture.
  */
@@ -17,6 +18,7 @@ const { chargerCatalogues } = require('../db/catalogues');
 const { chargerAcorep } = require('../db/acorep');
 const { appliquerSelection } = require('../db/selection');
 const { chargerNouvellesFiches } = require('../db/fiches');
+const { chargerPosologiesAjoutees } = require('../db/posologiesAjoutees');
 const data = require('../db/seed-data');
 
 async function main() {
@@ -30,9 +32,10 @@ async function main() {
     const acorep = await chargerAcorep(conn, data.acorep);
     const selection = await appliquerSelection(conn, data.selection);
     const fiches = await chargerNouvellesFiches(conn, data, data.ajouts);
+    const posologies = await chargerPosologiesAjoutees(conn, data.posologiesAjoutees);
     await conn.commit();
     await analyserTables(conn);
-    console.log('✔ Contenu ajouté', { semiologie, catalogues, acorep, selection, fiches });
+    console.log('✔ Contenu ajouté', { semiologie, catalogues, acorep, selection, fiches, posologies });
   } catch (err) {
     await conn.rollback().catch(() => {});
     throw err;

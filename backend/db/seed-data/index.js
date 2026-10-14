@@ -31,6 +31,8 @@ const acorep = require('./acorep.json');
 const selection = require('./operateurs-retenus');
 // Fiches de pathologies ajoutées par lots (feuille de route)
 const ajouts = require('./pathologies-ajoutees');
+// Posologies ajoutées par lots (molécules citées dans les fiches qui n'en avaient pas)
+const posologiesAjoutees = require('./posologies-ajoutees');
 
 const pathologies = [
   ...require('./pathologies/infectiologie'),
@@ -63,4 +65,5 @@ module.exports = {
   acorep,
   selection,
   ajouts,
+  posologiesAjoutees,
 };

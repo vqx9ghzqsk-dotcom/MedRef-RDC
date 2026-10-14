@@ -736,6 +736,82 @@ router.put(
   }),
 );
 
+const VALIDATION_GROUPEE_MAX = 1000;
+
+/**
+ * Validation groupée : le relecteur valide, en une fois, des fiches « à valider »
+ * qu'il a relues. Seul le statut change ; chaque fiche reçoit son entrée
+ * d'historique (version complète avant / après) comme une validation unitaire.
+ * Les fiches en brouillon ou déjà validées sont ignorées, de même qu'en double
+ * validation celles dont le relecteur a rédigé la dernière version.
+ */
+router.post(
+  '/admin/pathologies/validation',
+  asyncHandler(async (req, res) => {
+    const body = req.body || {};
+    const errors = {};
+    if (body.confirme !== true) errors.confirme = 'Confirmez avoir relu les fiches sélectionnées';
+    const ids = Array.isArray(body.ids) ? [...new Set(body.ids)] : [];
+    if (!ids.length || ids.some((id) => !Number.isInteger(id) || id < 1))
+      errors.ids = 'Liste de fiches attendue';
+    else if (ids.length > VALIDATION_GROUPEE_MAX) errors.ids = `${VALIDATION_GROUPEE_MAX} fiches maximum`;
+    if (Object.keys(errors).length) throw new HttpError(400, 'Données invalides', errors);
+
+    const resultat = await db.transaction(async (conn) => {
+      const q = viaConn(conn);
+      const fiches = await q(
+        `SELECT id, nom, statut FROM pathologies WHERE id IN (${ids.map(() => '?').join(', ')}) FOR UPDATE`,
+        ids,
+      );
+      const validees = [];
+      const ignorees = [];
+      for (const id of ids) {
+        const fiche = fiches.find((f) => f.id === id);
+        if (!fiche) {
+          ignorees.push({ id, nom: null, raison: 'Fiche introuvable' });
+          continue;
+        }
+        if (fiche.statut !== 'a_valider') {
+          const raison = fiche.statut === 'valide' ? 'Déjà validée' : 'Brouillon (fiche non terminée)';
+          ignorees.push({ id, nom: fiche.nom, raison });
+          continue;
+        }
+        if (config.contenu.doubleValidation) {
+          const [dernier] = await q(
+            `SELECT user_id FROM modifications
+              WHERE entite = 'pathologie' AND entite_id = ? AND action = 'modification'
+              ORDER BY id DESC LIMIT 1`,
+            [id],
+          );
+          if (dernier && dernier.user_id === req.editor.id) {
+            ignorees.push({ id, nom: fiche.nom, raison: 'Vous avez rédigé la dernière version' });
+            continue;
+          }
+        }
+        const avant = await etatPathologie(q, id);
+        await conn.execute(
+          `UPDATE pathologies SET statut = 'valide', valide_par = ?, valide_le = NOW(),
+                  revision_le = DATE_ADD(CURDATE(), INTERVAL ? MONTH)
+            WHERE id = ?`,
+          [req.editor.id, config.contenu.revisionMois, id],
+        );
+        await logModification(conn, {
+          userId: req.editor.id,
+          entite: 'pathologie',
+          entiteId: id,
+          action: 'validation',
+          resume: 'Fiche validée (validation groupée)',
+          avant,
+          apres: { ...avant, statut: 'valide' },
+        });
+        validees.push({ id, nom: fiche.nom });
+      }
+      return { validees, ignorees };
+    });
+    res.json({ ok: true, ...resultat });
+  }),
+);
+
 // ---------------------------------------------------------------- Molécules
 
 const nombreOuNull = (v) => (v === null || v === undefined ? null : Number(v));

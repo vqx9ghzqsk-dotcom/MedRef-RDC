@@ -48,6 +48,8 @@ export function createMedRefApi(client) {
     adminResume: () => data(client.get('/api/admin/resume')),
     adminPathologie: (id) => data(client.get(`/api/admin/pathologies/${enc(id)}`)),
     adminSavePathologie: (id, payload) => client.put(`/api/admin/pathologies/${enc(id)}`, payload),
+    adminValiderPathologies: (ids, confirme) =>
+      client.post('/api/admin/pathologies/validation', { ids, confirme }),
     adminMolecule: (id) => data(client.get(`/api/admin/molecules/${enc(id)}`)),
     adminSaveMolecule: (id, payload) => client.put(`/api/admin/molecules/${enc(id)}`, payload),
     adminMedicament: (id) => data(client.get(`/api/admin/medicaments/${enc(id)}`)),

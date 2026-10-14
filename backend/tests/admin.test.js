@@ -251,6 +251,106 @@ describe('Double validation (VALIDATION_DOUBLE=1)', () => {
   });
 });
 
+describe('POST /api/admin/pathologies/validation (validation groupée)', () => {
+  const role = (r = 'medecin') => db.query.mockResolvedValueOnce([{ id: 7, nom: 'Dr Test', role: r }]);
+
+  /** Transaction factice : `fiches` répond au SELECT … FOR UPDATE, états minimaux ensuite. */
+  function fakeValidation(fiches, { dernierAuteur } = {}) {
+    const conn = {
+      execute: jest.fn(async (sql) => {
+        if (sql.includes('FOR UPDATE')) return [fiches];
+        if (sql.includes('FROM modifications')) return [dernierAuteur ? [{ user_id: dernierAuteur }] : []];
+        if (/^\s*SELECT/.test(sql) && /WHERE id = \?/.test(sql))
+          return [[{ nom: 'Fiche', statut: 'a_valider' }]];
+        if (/^\s*SELECT/.test(sql)) return [[]];
+        return [{ affectedRows: 1 }];
+      }),
+    };
+    db.transaction.mockImplementation(async (fn) => fn(conn));
+    return conn;
+  }
+
+  it('exige la confirmation et une liste d’identifiants valide', async () => {
+    role();
+    let res = await request(app)
+      .post('/api/admin/pathologies/validation')
+      .set(auth('medecin'))
+      .send({ ids: [1] });
+    expect(res.status).toBe(400);
+    expect(res.body.details.confirme).toBeDefined();
+    role();
+    res = await request(app)
+      .post('/api/admin/pathologies/validation')
+      .set(auth('medecin'))
+      .send({ ids: ['x', -2], confirme: true });
+    expect(res.status).toBe(400);
+    expect(res.body.details.ids).toBeDefined();
+    expect(db.transaction).not.toHaveBeenCalled();
+  });
+
+  it('refuse un utilisateur non éditeur', async () => {
+    role('user');
+    const res = await request(app)
+      .post('/api/admin/pathologies/validation')
+      .set(auth('admin'))
+      .send({ ids: [1], confirme: true });
+    expect(res.status).toBe(403);
+  });
+
+  it('valide les fiches « à valider », ignore les autres et trace chaque validation', async () => {
+    role();
+    const conn = fakeValidation([
+      { id: 1, nom: 'Paludisme', statut: 'a_valider' },
+      { id: 2, nom: 'Typhoïde', statut: 'valide' },
+      { id: 3, nom: 'Brouillon', statut: 'brouillon' },
+    ]);
+    const res = await request(app)
+      .post('/api/admin/pathologies/validation')
+      .set(auth('medecin'))
+      .send({ ids: [1, 2, 3, 4], confirme: true });
+    expect(res.status).toBe(200);
+    expect(res.body.validees).toEqual([{ id: 1, nom: 'Paludisme' }]);
+    expect(res.body.ignorees.map((f) => [f.id, f.raison])).toEqual([
+      [2, 'Déjà validée'],
+      [3, 'Brouillon (fiche non terminée)'],
+      [4, 'Fiche introuvable'],
+    ]);
+    const updates = conn.execute.mock.calls.filter(([q]) => q.includes('UPDATE pathologies'));
+    expect(updates).toHaveLength(1);
+    expect(updates[0][0]).toMatch(/statut = 'valide'.*valide_le = NOW\(\)/s);
+    expect(updates[0][1]).toEqual([7, 24, 1]);
+    const logs = conn.execute.mock.calls.filter(([q]) => q.includes('INSERT INTO modifications'));
+    expect(logs).toHaveLength(1);
+    expect(logs[0][1].slice(0, 5)).toEqual([
+      7,
+      'pathologie',
+      1,
+      'validation',
+      'Fiche validée (validation groupée)',
+    ]);
+    expect(JSON.parse(logs[0][1][5]).statut).toBe('a_valider');
+    expect(JSON.parse(logs[0][1][6]).statut).toBe('valide');
+  });
+
+  it('en double validation, ignore les fiches dont on a rédigé la dernière version', async () => {
+    const config = require('../src/config');
+    config.contenu.doubleValidation = true;
+    try {
+      role();
+      const conn = fakeValidation([{ id: 1, nom: 'Paludisme', statut: 'a_valider' }], { dernierAuteur: 7 });
+      const res = await request(app)
+        .post('/api/admin/pathologies/validation')
+        .set(auth('medecin'))
+        .send({ ids: [1], confirme: true });
+      expect(res.body.validees).toEqual([]);
+      expect(res.body.ignorees[0].raison).toMatch(/dernière version/);
+      expect(conn.execute.mock.calls.some(([q]) => q.includes('UPDATE pathologies'))).toBe(false);
+    } finally {
+      config.contenu.doubleValidation = false;
+    }
+  });
+});
+
 describe('Versions et enregistrements sans changement', () => {
   it('n’ajoute rien à l’historique si rien n’a changé', async () => {
     mockRefs();

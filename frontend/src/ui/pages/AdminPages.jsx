@@ -161,44 +161,14 @@ function AdminHome() {
               )}
 
               {onglet === 'fiches' && (
-                <div className="table-wrap">
-                  <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">Fiche</th>
-                        <th scope="col">Département</th>
-                        <th scope="col">Statut</th>
-                        <th scope="col">Validation</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {d.pathologies
-                        .filter(
-                          (p) =>
-                            (!statut || (statut === 'a_revoir' ? p.a_revoir : p.statut === statut)) &&
-                            filtre(`${p.nom} ${p.specialite}`),
-                        )
-                        .map((p) => (
-                          <tr key={p.id}>
-                            <td>
-                              <Link to={`/admin/pathologies/${p.id}`}>{p.nom}</Link>
-                              <span className="row-sub">{p.specialite}</span>
-                            </td>
-                            <td>{p.departement}</td>
-                            <td>
-                              <span className={`tag statut-${p.statut}`}>{STATUTS_FICHE[p.statut]}</span>
-                              {p.a_revoir && <span className="tag tag-warn"> À revoir</span>}
-                            </td>
-                            <td className="muted">
-                              {p.statut === 'valide'
-                                ? `${p.valide_par || '—'}, ${formatDateTime(p.valide_le)}`
-                                : '—'}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
+                <FichesAdmin
+                  fiches={d.pathologies.filter(
+                    (p) =>
+                      (!statut || (statut === 'a_revoir' ? p.a_revoir : p.statut === statut)) &&
+                      filtre(`${p.nom} ${p.specialite} ${p.departement}`),
+                  )}
+                  onValidees={state.reload}
+                />
               )}
 
               {onglet === 'molecules' && (
@@ -304,6 +274,161 @@ function AdminHome() {
 const AIDE_PUCES = 'Une ligne par signe, commençant par « - ». **gras** pour l’essentiel.';
 
 /** Syndromes d'une forme : puces retirables + liste déroulante pour en ajouter. */
+/**
+ * Liste des fiches avec validation groupée : seules les fiches « à valider »
+ * sont sélectionnables ; la validation exige une confirmation explicite de relecture.
+ */
+function FichesAdmin({ fiches, onValidees }) {
+  const { api } = useServices();
+  const [selection, setSelection] = useState(() => new Set());
+  const [confirmation, setConfirmation] = useState(false);
+  const [envoi, setEnvoi] = useState({ enCours: false, erreur: null, resultat: null });
+
+  const selectionnables = fiches.filter((p) => p.statut === 'a_valider');
+  const choisies = selectionnables.filter((p) => selection.has(p.id));
+  const toutesCochees = selectionnables.length > 0 && choisies.length === selectionnables.length;
+
+  const basculer = (id) =>
+    setSelection((s) => {
+      const n = new Set(s);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
+  const toutBasculer = () =>
+    setSelection((s) => {
+      const n = new Set(s);
+      for (const p of selectionnables) {
+        if (toutesCochees) n.delete(p.id);
+        else n.add(p.id);
+      }
+      return n;
+    });
+
+  const valider = async () => {
+    setEnvoi({ enCours: true, erreur: null, resultat: null });
+    try {
+      const r = await api.adminValiderPathologies(
+        choisies.map((p) => p.id),
+        true,
+      );
+      setEnvoi({ enCours: false, erreur: null, resultat: r });
+      setSelection(new Set());
+      setConfirmation(false);
+      onValidees();
+    } catch (err) {
+      setEnvoi({ enCours: false, erreur: err.message, resultat: null });
+    }
+  };
+
+  return (
+    <>
+      <div className="validation-groupee" role="group" aria-label="Validation groupée">
+        <p className="hint">
+          {selectionnables.length
+            ? `${choisies.length} fiche(s) sélectionnée(s) sur ${selectionnables.length} « à valider » affichée(s). ` +
+              'Filtrez par recherche ou par statut pour cibler un ensemble relu.'
+            : 'Aucune fiche « à valider » dans la liste affichée.'}
+        </p>
+        {choisies.length > 0 && (
+          <div className="validation-confirmation">
+            <div className="field field-check">
+              <input
+                id="confirmation-relecture"
+                type="checkbox"
+                checked={confirmation}
+                onChange={(e) => setConfirmation(e.target.checked)}
+              />
+              <label htmlFor="confirmation-relecture">
+                J’ai relu ces {choisies.length} fiche(s) et je les valide sous ma responsabilité médicale.
+              </label>
+            </div>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={!confirmation || envoi.enCours}
+              onClick={valider}
+            >
+              {envoi.enCours ? 'Validation…' : `Valider la sélection (${choisies.length})`}
+            </button>
+          </div>
+        )}
+        {envoi.erreur && (
+          <p className="form-error" role="alert">
+            {envoi.erreur}
+          </p>
+        )}
+        {envoi.resultat && (
+          <div role="status">
+            <p className="form-success">{envoi.resultat.validees.length} fiche(s) validée(s).</p>
+            {envoi.resultat.ignorees.length > 0 && (
+              <details>
+                <summary>{envoi.resultat.ignorees.length} fiche(s) non validée(s)</summary>
+                <ul>
+                  {envoi.resultat.ignorees.map((f) => (
+                    <li key={f.id}>
+                      {f.nom || `Fiche ${f.id}`} : {f.raison}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th scope="col" className="col-check">
+                <input
+                  type="checkbox"
+                  aria-label="Sélectionner toutes les fiches « à valider » affichées"
+                  checked={toutesCochees}
+                  disabled={!selectionnables.length}
+                  onChange={toutBasculer}
+                />
+              </th>
+              <th scope="col">Fiche</th>
+              <th scope="col">Département</th>
+              <th scope="col">Statut</th>
+              <th scope="col">Validation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fiches.map((p) => (
+              <tr key={p.id}>
+                <td className="col-check">
+                  {p.statut === 'a_valider' && (
+                    <input
+                      type="checkbox"
+                      aria-label={`Sélectionner ${p.nom}`}
+                      checked={selection.has(p.id)}
+                      onChange={() => basculer(p.id)}
+                    />
+                  )}
+                </td>
+                <td>
+                  <Link to={`/admin/pathologies/${p.id}`}>{p.nom}</Link>
+                  <span className="row-sub">{p.specialite}</span>
+                </td>
+                <td>{p.departement}</td>
+                <td>
+                  <span className={`tag statut-${p.statut}`}>{STATUTS_FICHE[p.statut]}</span>
+                  {p.a_revoir && <span className="tag tag-warn"> À revoir</span>}
+                </td>
+                <td className="muted">
+                  {p.statut === 'valide' ? `${p.valide_par || '—'}, ${formatDateTime(p.valide_le)}` : '—'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
 function SyndromesForme({ valeur, options, onChange, erreur }) {
   const restants = options.filter((o) => !valeur.includes(o.slug));
   return (

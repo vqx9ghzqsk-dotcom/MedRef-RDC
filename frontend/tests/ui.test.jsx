@@ -614,6 +614,54 @@ describe('Administration', () => {
     expect(screen.getByRole('link', { name: 'Asthme' })).toBeInTheDocument();
   });
 
+  it('valide en groupe les fiches « à valider » sélectionnées, après confirmation de relecture', async () => {
+    const fiche = (id, nom, statut) => ({
+      id,
+      nom,
+      specialite: 'Infectiologie',
+      departement: 'Médecine interne',
+      statut,
+    });
+    const adminResume = vi.fn(async () => ({
+      statuts: { brouillon: 0, a_valider: 2, valide: 1 },
+      pathologies: [
+        fiche(3, 'Paludisme grave', 'a_valider'),
+        fiche(5, 'Typhoïde', 'a_valider'),
+        fiche(4, 'Asthme', 'valide'),
+      ],
+      molecules: [],
+      medicaments: [],
+      modifications: [],
+    }));
+    const adminValiderPathologies = vi.fn(async () => ({
+      ok: true,
+      validees: [
+        { id: 3, nom: 'Paludisme grave' },
+        { id: 5, nom: 'Typhoïde' },
+      ],
+      ignorees: [],
+    }));
+    const user = userEvent.setup();
+    renderApp(
+      '/admin',
+      { adminResume, adminValiderPathologies },
+      { id: 1, nom: 'Admin', email: 'a@x.cd', role: 'admin' },
+    );
+    await screen.findByRole('link', { name: 'Paludisme grave' });
+    // Une fiche déjà validée n'est pas sélectionnable
+    expect(screen.queryByLabelText('Sélectionner Asthme')).toBeNull();
+    await user.click(screen.getByLabelText('Sélectionner toutes les fiches « à valider » affichées'));
+    const bouton = screen.getByRole('button', { name: 'Valider la sélection (2)' });
+    expect(bouton).toBeDisabled();
+    await user.click(screen.getByLabelText(/J’ai relu ces 2 fiche\(s\)/));
+    const chargements = adminResume.mock.calls.length;
+    await user.click(bouton);
+    expect(adminValiderPathologies).toHaveBeenCalledWith([3, 5], true);
+    expect(await screen.findByText('2 fiche(s) validée(s).')).toBeInTheDocument();
+    // La liste est rechargée après la validation
+    expect(adminResume.mock.calls.length).toBeGreaterThan(chargements);
+  });
+
   it('édite une fiche validée : elle repasse « à valider » et l’enregistrement envoie les collections', async () => {
     const adminPathologie = vi.fn(async () => ({
       id: 3,

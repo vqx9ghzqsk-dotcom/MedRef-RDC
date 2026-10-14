@@ -5,6 +5,17 @@
  * aucune (lot B des évolutions). Chargées sans rien écraser par db/posologiesAjoutees.js.
  */
 
-const LOTS = ['lot-01', 'lot-02', 'lot-03', 'lot-04', 'lot-05', 'lot-06', 'lot-07', 'lot-08', 'lot-09'];
+const LOTS = [
+  'lot-01',
+  'lot-02',
+  'lot-03',
+  'lot-04',
+  'lot-05',
+  'lot-06',
+  'lot-07',
+  'lot-08',
+  'lot-09',
+  'lot-10',
+];
 
 module.exports = Object.assign({}, ...LOTS.map((lot) => require(`./${lot}`)));

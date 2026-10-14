@@ -18,6 +18,7 @@ const LOTS = [
   'lot-10',
   'lot-11',
   'lot-12',
+  'lot-13',
 ];
 
 module.exports = Object.assign({}, ...LOTS.map((lot) => require(`./${lot}`)));

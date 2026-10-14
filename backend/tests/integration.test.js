@@ -50,8 +50,8 @@ describeDb('Intégration MySQL', () => {
     expect(deps.body.data).toHaveLength(5);
     const mi = await request(app).get('/api/departements/medecine-interne');
     const infectio = mi.body.data.specialites.find((s) => s.nom === 'Infectiologie');
-    // 5 fiches de départ + 26 fiches des lots 1 à 3 (seed-data/pathologies-ajoutees)
-    expect(infectio.nb_pathologies).toBe(31);
+    // 5 fiches de départ + 26 des lots 1 à 3 + 3 du lot 34 + 3 du lot 35 (seed-data/pathologies-ajoutees)
+    expect(infectio.nb_pathologies).toBe(37);
     const sp = await request(app).get(`/api/specialites/${infectio.slug}`);
     expect(sp.body.data.pathologies.map((p) => p.slug)).toContain('paludisme-grave');
     const fiche = await request(app).get('/api/pathologies/paludisme-grave');

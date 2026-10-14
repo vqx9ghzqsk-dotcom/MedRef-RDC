@@ -162,6 +162,47 @@ const specialites = [
     description:
       'Conséquences psychologiques des violences et des catastrophes : violences sexuelles, conflits armés, tortures, déplacements ; soutien psychosocial et soins spécialisés.',
   },
+  // --- Lot 48
+  {
+    departement: 'pediatrie',
+    nom: 'Génétique et maladies héréditaires',
+    description:
+      'Anomalies chromosomiques (trisomie 21, syndrome de Turner), maladies métaboliques héréditaires, albinisme ; conseil génétique et accompagnement des familles.',
+  },
+  {
+    departement: 'pediatrie',
+    nom: 'Santé de l’adolescent',
+    description:
+      'Problèmes de santé propres aux 10–19 ans : grossesse précoce, IST, usage de substances, santé menstruelle, acné, santé mentale ; services adaptés aux adolescents et confidentialité.',
+  },
+  // --- Lot 49
+  {
+    departement: 'pediatrie',
+    nom: 'Immunologie et rhumatologie pédiatriques',
+    description:
+      'Arthrites et maladies inflammatoires de l’enfant (arthrite juvénile idiopathique, lupus, vascularites), déficits immunitaires primitifs.',
+  },
+  // --- Lot 54
+  {
+    departement: 'gynecologie-obstetrique',
+    nom: 'Médecine materno-fœtale',
+    description:
+      'Échographie obstétricale, dépistage et diagnostic prénatal des malformations et des infections fœtales, surveillance du bien-être fœtal, pathologies fœtales (anasarque, retard de croissance).',
+  },
+  // --- Lot 58
+  {
+    departement: 'gynecologie-obstetrique',
+    nom: 'Sénologie',
+    description:
+      'Pathologie mammaire : tumeurs bénignes, écoulements mamelonnaires, mastodynies, infections du sein, dépistage et orientation des cancers du sein.',
+  },
+  // --- Lot 64
+  {
+    departement: 'chirurgie',
+    nom: 'Chirurgie vasculaire',
+    description:
+      'Pathologies des artères et des veines : varices, anévrismes, plaies vasculaires, ischémies, abords vasculaires pour hémodialyse.',
+  },
 ];
 
 const examens = [
@@ -765,6 +806,646 @@ const examens = [
     valeurs_normales:
       '- Cortisol de 8 h : environ 140 à 690 nmol/L\n- < 100 nmol/L : insuffisance surrénalienne très probable ; ne pas retarder l’hydrocortisone en urgence pour ce dosage',
   },
+  // --- Lot 33
+  {
+    slug: 'lipasemie',
+    nom: 'Lipasémie',
+    type: 'biologie',
+    description:
+      'Dosage de la lipase sérique : diagnostic de la pancréatite aiguë (plus spécifique que l’amylase).',
+    valeurs_normales:
+      '- < 60 UI/L environ (selon le laboratoire)\n- Pancréatite aiguë : > 3 fois la limite supérieure ; le taux n’est pas corrélé à la gravité',
+  },
+  {
+    slug: 'coloscopie',
+    nom: 'Coloscopie',
+    type: 'exploration',
+    description:
+      'Exploration endoscopique du côlon et du rectum avec biopsies : rectorragies, anémie ferriprive inexpliquée, suspicion de cancer colorectal, polypes.',
+    valeurs_normales:
+      '- Muqueuse normale, absence de polype, de tumeur ou d’ulcération\n- Préparation colique indispensable ; rectosigmoïdoscopie si la coloscopie est indisponible',
+  },
+  {
+    slug: 'arn-vhc',
+    nom: 'ARN du virus de l’hépatite C (charge virale VHC)',
+    type: 'biologie',
+    description:
+      'Recherche de l’ARN du VHC par PCR : confirme une infection active après une sérologie positive et vérifie la guérison 12 semaines après le traitement.',
+    valeurs_normales:
+      '- Indétectable : pas d’infection active (guérison spontanée ou après traitement)\n- Détectable : hépatite C active à traiter ; l’antigène core du VHC est une alternative',
+  },
+  {
+    slug: 'test-g6pd',
+    nom: 'Dosage ou test rapide du G6PD',
+    type: 'biologie',
+    description:
+      'Mesure de l’activité de la glucose-6-phosphate déshydrogénase (test qualitatif, quantitatif ou test rapide) : déficit avant primaquine ou tafénoquine, ictère néonatal, hémolyse aiguë.',
+    valeurs_normales:
+      '- Activité normale (≥ 70 % de la médiane, ou ≥ 6 UI/g Hb selon le test)\n- Faussement normal juste après une hémolyse (réticulocytes riches en enzyme) : contrôler à distance',
+  },
+  {
+    slug: 'vitamine-b12-folates',
+    nom: 'Vitamine B12 et folates sériques',
+    type: 'biologie',
+    description:
+      'Dosage de la vitamine B12 (cobalamine) et des folates : anémie macrocytaire, neuropathie, troubles cognitifs, malnutrition.',
+    valeurs_normales:
+      '- Vitamine B12 > 200 pg/mL (150 pmol/L) environ\n- Folates sériques > 4 ng/mL environ (selon le laboratoire)',
+  },
+  // --- Lot 34
+  {
+    slug: 'myelogramme',
+    nom: 'Myélogramme (ponction de moelle osseuse)',
+    type: 'exploration',
+    description:
+      'Ponction sternale ou iliaque avec étude cytologique de la moelle : leucémies aiguës, myélome, aplasie, envahissement médullaire, cytopénies inexpliquées.',
+    valeurs_normales:
+      '- Moelle riche, lignées représentées, blastes < 5 %, plasmocytes < 5 %\n- Leucémie aiguë : blastes ≥ 20 % ; myélome : plasmocytes ≥ 10 %',
+  },
+  {
+    slug: 'electrophorese-proteines',
+    nom: 'Électrophorèse des protéines sériques',
+    type: 'biologie',
+    description:
+      'Séparation des protéines du sérum : pic monoclonal (myélome, gammapathies), hypergammaglobuline polyclonale (VIH, infections chroniques), hypoalbuminémie.',
+    valeurs_normales:
+      '- Albumine 35–50 g/L, gammaglobulines 7–16 g/L, sans pic monoclonal\n- Compléter par l’immunofixation et la recherche de protéinurie de Bence-Jones si pic',
+  },
+  {
+    slug: 'dosage-facteurs-coagulation',
+    nom: 'Dosage des facteurs de la coagulation (VIII, IX)',
+    type: 'biologie',
+    description:
+      'Mesure de l’activité des facteurs VIII et IX devant un TCA allongé isolé ou des saignements : diagnostic et sévérité de l’hémophilie A ou B, recherche d’inhibiteur.',
+    valeurs_normales: '- Activité normale 50–150 %\n- Hémophilie sévère < 1 %, modérée 1–5 %, mineure 5–40 %',
+  },
+  {
+    slug: 'recherche-microfilaires',
+    nom: 'Recherche de microfilaires sanguines',
+    type: 'biologie',
+    description:
+      'Frottis ou goutte épaisse (± concentration) : Wuchereria bancrofti (prélèvement nocturne, 22 h – 2 h), Loa loa (prélèvement diurne, 10 h – 15 h) avec quantification ; tests antigéniques rapides pour la filariose lymphatique.',
+    valeurs_normales:
+      '- Absence de microfilaires\n- Loa loa : > 8 000 mf/mL = risque d’encéphalopathie sous ivermectine ou DEC ; > 30 000 mf/mL = risque majeur',
+  },
+  // --- Lot 35
+  {
+    slug: 'serologie-leptospirose',
+    nom: 'Diagnostic biologique de la leptospirose (PCR, sérologie)',
+    type: 'biologie',
+    description:
+      'PCR sur sang ou urines en début de maladie (1re semaine) ; sérologie ELISA IgM ou test de micro-agglutination (MAT) à partir du 6e–8e jour, avec séroconversion sur deux prélèvements.',
+    valeurs_normales:
+      '- PCR négative, IgM absentes\n- Une sérologie négative précoce n’élimine pas le diagnostic : traiter sur la clinique',
+  },
+  {
+    slug: 'test-grippe',
+    nom: 'Test de la grippe (TDR antigénique, PCR)',
+    type: 'biologie',
+    description:
+      'Recherche des virus grippaux A et B sur prélèvement nasopharyngé : test rapide antigénique (sensibilité moyenne) ou PCR (référence), utile en surveillance et pour les formes graves.',
+    valeurs_normales: '- Négatif\n- Un TDR négatif n’exclut pas la grippe en période épidémique',
+  },
+  {
+    slug: 'scanner-thoracique',
+    nom: 'Scanner thoracique',
+    type: 'imagerie',
+    description:
+      'Tomodensitométrie du thorax (avec injection selon l’indication) : nodules et masses, cancer bronchique et son extension, dilatation des bronches, abcès, pneumopathies interstitielles.',
+    valeurs_normales:
+      '- Parenchyme, bronches, médiastin et plèvre normaux\n- Pour l’embolie pulmonaire : angioscanner thoracique',
+  },
+  {
+    slug: 'fibroscopie-bronchique',
+    nom: 'Fibroscopie bronchique',
+    type: 'exploration',
+    description:
+      'Endoscopie des bronches avec biopsies, aspiration et lavage broncho-alvéolaire : cancer bronchique, hémoptysie, corps étranger, infections (tuberculose, pneumocystose).',
+    valeurs_normales:
+      '- Arbre bronchique normal, sans bourgeon, sténose ni saignement\n- Prélèvements : histologie, bactériologie, recherche de BK',
+  },
+  {
+    slug: 'complement-c3-c4',
+    nom: 'Complément sérique (C3, C4)',
+    type: 'biologie',
+    description:
+      'Dosage des fractions C3 et C4 du complément : orientation étiologique des glomérulonéphrites (post-infectieuse, lupus, cryoglobulinémie).',
+    valeurs_normales:
+      '- C3 0,9–1,8 g/L ; C4 0,1–0,4 g/L\n- C3 bas transitoire (< 8 semaines) dans la glomérulonéphrite post-infectieuse',
+  },
+  // --- Lot 36
+  {
+    slug: 'anticorps-antinucleaires',
+    nom: 'Anticorps antinucléaires (et anti-ADN natif)',
+    type: 'biologie',
+    description:
+      'Dépistage des maladies auto-immunes (lupus, connectivites) par immunofluorescence ; anticorps anti-ADN natif et anti-Sm spécifiques du lupus.',
+    valeurs_normales:
+      '- Négatifs ou titre < 1/80\n- Un titre faible isolé est fréquent et non spécifique (infections, âge) ; ne pas diagnostiquer un lupus sur ce seul résultat',
+  },
+  {
+    slug: 'densitometrie-osseuse',
+    nom: 'Ostéodensitométrie (DXA)',
+    type: 'imagerie',
+    description:
+      'Mesure de la densité minérale osseuse au rachis lombaire et à la hanche : diagnostic de l’ostéoporose et suivi du traitement.',
+    valeurs_normales:
+      '- T-score ≥ −1 : normal ; entre −1 et −2,5 : ostéopénie ; ≤ −2,5 : ostéoporose\n- Peu disponible : la fracture de fragilité suffit au diagnostic clinique',
+  },
+  {
+    slug: 'vitesse-sedimentation',
+    nom: 'Vitesse de sédimentation (VS)',
+    type: 'biologie',
+    description:
+      'Marqueur non spécifique d’inflammation : rhumatismes inflammatoires, infections, tuberculose, myélome, maladies auto-immunes.',
+    valeurs_normales:
+      '- < (âge/2) mm à la 1re heure chez l’homme, < (âge + 10)/2 chez la femme\n- Augmentée aussi par l’anémie, la grossesse, l’insuffisance rénale',
+  },
+  // --- Lot 37
+  {
+    slug: 'cholinesterase',
+    nom: 'Activité cholinestérasique (pseudocholinestérase, acétylcholinestérase)',
+    type: 'biologie',
+    description:
+      'Mesure de l’activité des cholinestérases plasmatique ou érythrocytaire : confirmation et suivi d’une intoxication aux organophosphorés ou aux carbamates.',
+    valeurs_normales:
+      '- Activité normale selon le laboratoire\n- Baisse > 50 % évocatrice d’intoxication ; ne pas attendre le résultat pour traiter',
+  },
+  // --- Lot 38
+  {
+    slug: 'prelevement-oculaire',
+    nom: 'Prélèvement conjonctival (Gram, culture)',
+    type: 'biologie',
+    description:
+      'Écouvillonnage des sécrétions conjonctivales avec coloration de Gram, culture et, si disponible, PCR Chlamydia et gonocoque : conjonctivite néonatale, conjonctivite purulente sévère.',
+    valeurs_normales:
+      '- Absence de germe pathogène\n- Diplocoques Gram négatif intracellulaires : gonocoque (urgence)',
+  },
+  // --- Lot 41
+  {
+    slug: 'test-de-la-sueur',
+    nom: 'Test de la sueur',
+    type: 'exploration',
+    description:
+      'Mesure de la concentration en chlorures de la sueur après stimulation par iontophorèse à la pilocarpine : diagnostic de la mucoviscidose.',
+    valeurs_normales:
+      '- Chlorures < 30 mmol/L : normal ; 30–59 : intermédiaire ; ≥ 60 mmol/L : mucoviscidose (à confirmer sur un second test)\n- Peu disponible : orienter vers un centre spécialisé',
+  },
+  {
+    slug: 'pcr-cmv',
+    nom: 'PCR cytomégalovirus (urine, salive)',
+    type: 'biologie',
+    description:
+      'Recherche du génome du CMV dans les urines ou la salive du nouveau-né dans les 3 premières semaines de vie : diagnostic de l’infection congénitale à CMV.',
+    valeurs_normales:
+      '- Négative\n- Positive avant 21 jours de vie : infection congénitale ; après 3 semaines, impossible de distinguer d’une infection acquise',
+  },
+  // --- Lot 43
+  {
+    slug: 'anticorps-anti-transglutaminase',
+    nom: 'Anticorps anti-transglutaminase IgA',
+    type: 'biologie',
+    description:
+      'Dépistage sérologique de la maladie cœliaque, chez un patient consommant du gluten, avec dosage associé des IgA totales (un déficit en IgA donne un faux négatif).',
+    valeurs_normales:
+      '- Négatifs (seuil selon la trousse)\n- Positifs : maladie cœliaque probable ; confirmation par biopsie duodénale, sauf taux > 10 fois la normale chez l’enfant (centre spécialisé)',
+  },
+  // --- Lot 44
+  {
+    slug: 'catecholamines-urinaires',
+    nom: 'Métabolites urinaires des catécholamines (VMA, HVA)',
+    type: 'biologie',
+    description:
+      'Dosage des acides vanylmandélique (VMA) et homovanillique (HVA) dans les urines, rapporté à la créatininurie : diagnostic et suivi du neuroblastome.',
+    valeurs_normales:
+      '- Valeurs de référence selon l’âge (rapport à la créatinine urinaire)\n- Élevés dans plus de 90 % des neuroblastomes',
+  },
+  {
+    slug: 'frottis-sanguin',
+    nom: 'Frottis sanguin',
+    type: 'biologie',
+    description:
+      'Examen au microscope d’un étalement de sang coloré (May-Grünwald-Giemsa) : morphologie des globules rouges (sphérocytes, schizocytes, cellules cibles, drépanocytes), des leucocytes (blastes) et des plaquettes ; recherche de parasites.',
+    valeurs_normales:
+      '- Morphologie normale, absence de blastes et de parasites\n- À interpréter avec la NFS par un biologiste',
+  },
+  {
+    slug: 'phosphoremie',
+    nom: 'Phosphorémie',
+    type: 'biologie',
+    description:
+      'Dosage du phosphore sanguin : dépistage du syndrome de renutrition inappropriée, du syndrome de lyse tumorale et des troubles du métabolisme phosphocalcique.',
+    valeurs_normales:
+      '- Enfant : 1,3–2,1 mmol/L (selon l’âge) ; adulte : 0,8–1,45 mmol/L\n- Hypophosphatémie sévère < 0,3 mmol/L chez l’adulte : risque cardiaque et respiratoire',
+  },
+  // --- Lot 45
+  {
+    slug: 'cystographie-mictionnelle',
+    nom: 'Cystographie rétrograde et mictionnelle',
+    type: 'imagerie',
+    description:
+      'Opacification de la vessie par sonde urétrale avec clichés pendant la miction : recherche d’un reflux vésico-urétéral et de valves de l’urètre postérieur chez le garçon.',
+    valeurs_normales:
+      '- Vessie et urètre normaux, absence de reflux\n- Reflux classé de I à V ; réaliser à distance d’une infection urinaire, urines stériles, sous antibioprophylaxie',
+  },
+  {
+    slug: 'age-osseux',
+    nom: 'Âge osseux (radiographie de la main et du poignet gauches)',
+    type: 'imagerie',
+    description:
+      'Estimation de la maturation osseuse par comparaison à un atlas (Greulich et Pyle) : exploration d’une petite taille, d’un retard pubertaire ou d’une puberté précoce.',
+    valeurs_normales:
+      '- Âge osseux proche de l’âge civil (± 2 ans)\n- Retardé : retard constitutionnel, hypothyroïdie, déficit en hormone de croissance, malnutrition ; avancé : puberté précoce, hyperplasie des surrénales, obésité',
+  },
+  {
+    slug: 'gonadotrophines-lh-fsh',
+    nom: 'Gonadotrophines (LH, FSH) et stéroïdes sexuels',
+    type: 'biologie',
+    description:
+      'Dosage de LH, FSH, testostérone ou œstradiol : exploration de la puberté (précoce ou retardée), de l’hypogonadisme et de l’aménorrhée.',
+    valeurs_normales:
+      '- Valeurs selon l’âge et le stade pubertaire (laboratoire spécialisé)\n- LH/FSH élevées + stéroïdes bas : hypogonadisme périphérique (Turner, Klinefelter) ; LH/FSH basses : origine centrale ou retard constitutionnel',
+  },
+  {
+    slug: '17-hydroxyprogesterone',
+    nom: '17-hydroxyprogestérone',
+    type: 'biologie',
+    description:
+      'Dosage sanguin de la 17-OH-progestérone : diagnostic de l’hyperplasie congénitale des surrénales par déficit en 21-hydroxylase (dépistage néonatal dans certains pays).',
+    valeurs_normales:
+      '- Valeurs de référence selon l’âge (élevées physiologiquement les premiers jours et chez le prématuré)\n- Très élevée : déficit en 21-hydroxylase',
+  },
+  {
+    slug: 'caryotype',
+    nom: 'Caryotype',
+    type: 'biologie',
+    description:
+      'Étude des chromosomes sur lymphocytes sanguins : syndrome de Turner (petite taille, retard pubertaire de la fille), Klinefelter, ambiguïté sexuelle, trisomies.',
+    valeurs_normales: '- 46,XX ou 46,XY\n- Laboratoire de génétique spécialisé (peu disponible)',
+  },
+  // --- Lot 48
+  {
+    slug: 'ammoniemie',
+    nom: 'Ammoniémie',
+    type: 'biologie',
+    description:
+      'Dosage de l’ammoniac sanguin (prélèvement sur glace, analyse rapide) : erreurs innées du cycle de l’urée, encéphalopathie hépatique, syndrome de Reye.',
+    valeurs_normales:
+      '- Nouveau-né < 110 µmol/L ; enfant et adulte < 50 µmol/L\n- > 150–200 µmol/L chez le nouveau-né : suspicion de maladie métabolique, urgence',
+  },
+  // --- Lot 49
+  {
+    slug: 'dosage-immunoglobulines',
+    nom: 'Dosage pondéral des immunoglobulines (IgG, IgA, IgM)',
+    type: 'biologie',
+    description:
+      'Mesure des immunoglobulines sériques : exploration des infections récidivantes (déficits immunitaires primitifs ou secondaires).',
+    valeurs_normales:
+      '- Valeurs de référence selon l’âge (laboratoire)\n- Très basses : agammaglobulinémie, déficit immunitaire commun variable ; IgA isolément indétectables : déficit en IgA ; élevées : infection chronique, VIH',
+  },
+  {
+    slug: 'adn-vhb',
+    nom: 'Charge virale du virus de l’hépatite B (ADN VHB)',
+    type: 'biologie',
+    description:
+      'Quantification de l’ADN du VHB par PCR : décision de traitement de l’hépatite B chronique et prévention de la transmission mère-enfant.',
+    valeurs_normales:
+      '- Indétectable\n- Grossesse : ≥ 200 000 UI/mL → ténofovir à partir de 24–28 semaines (OMS 2024 : ténofovir recommandé pour toute femme AgHBs positive si charge virale indisponible)',
+  },
+  // --- Lot 50
+  {
+    slug: 'serologies-torch',
+    nom: 'Sérologies toxoplasmose, rubéole, CMV (IgG, IgM)',
+    type: 'biologie',
+    description:
+      'Recherche des anticorps IgG et IgM contre la toxoplasmose, la rubéole et le cytomégalovirus : statut immunitaire de la femme enceinte et diagnostic d’une infection récente.',
+    valeurs_normales:
+      '- IgG positives, IgM négatives : immunité ancienne\n- IgG négatives : femme non immunisée (prévention)\n- IgM positives : infection récente possible, à confirmer (avidité des IgG, second prélèvement à 2–3 semaines) dans un laboratoire de référence',
+  },
+  {
+    slug: 'anticorps-antiphospholipides',
+    nom: 'Anticorps antiphospholipides',
+    type: 'biologie',
+    description:
+      'Anticoagulant circulant lupique, anticorps anticardiolipine et anti-bêta-2-glycoprotéine I : syndrome des antiphospholipides (thromboses, fausses couches répétées, pré-éclampsie précoce).',
+    valeurs_normales: '- Négatifs\n- Positivité à confirmer sur un second prélèvement à 12 semaines',
+  },
+  // --- Lot 51
+  {
+    slug: 'acides-biliaires-seriques',
+    nom: 'Acides biliaires sériques',
+    type: 'biologie',
+    description:
+      'Dosage des acides biliaires totaux à jeun : diagnostic et suivi de la cholestase gravidique (le taux conditionne le risque fœtal).',
+    valeurs_normales:
+      '- < 10 µmol/L\n- ≥ 10 µmol/L avec prurit : cholestase gravidique ; ≥ 40 µmol/L : forme sévère ; ≥ 100 µmol/L : risque de mort fœtale élevé',
+  },
+  // --- Lot 53
+  {
+    slug: 'fibrinogene',
+    nom: 'Fibrinogène',
+    type: 'biologie',
+    description:
+      'Dosage du fibrinogène plasmatique : marqueur précoce de la coagulopathie de consommation (hémorragie du post-partum, hématome rétroplacentaire, embolie amniotique, CIVD).',
+    valeurs_normales:
+      '- 2–4 g/L hors grossesse ; 4–6 g/L au 3e trimestre\n- < 2 g/L pendant une hémorragie obstétricale : risque d’hémorragie sévère, substitution (cryoprécipité, plasma)',
+  },
+  {
+    slug: 'prelevement-de-pus',
+    nom: 'Prélèvement de pus (Gram, culture, antibiogramme)',
+    type: 'biologie',
+    description:
+      'Prélèvement d’une collection ou d’une plaie infectée (abcès, infection de site opératoire) pour identification du germe et antibiogramme.',
+    valeurs_normales:
+      '- Stérile\n- Prélever avant les antibiotiques si possible, en profondeur (pas d’écouvillonnage superficiel)',
+  },
+  // --- Lot 54
+  {
+    slug: 'prolactinemie',
+    nom: 'Prolactinémie',
+    type: 'biologie',
+    description:
+      'Dosage de la prolactine sérique (à jeun, au calme, hors stress) : exploration des aménorrhées, de la galactorrhée et de l’infertilité.',
+    valeurs_normales:
+      '- Femme : < 25 ng/mL (hors grossesse et allaitement)\n- Élevée : médicaments (antipsychotiques, métoclopramide), hypothyroïdie, adénome hypophysaire (prolactinome) ; contrôler avant d’explorer',
+  },
+  {
+    slug: 'amniocentese',
+    nom: 'Amniocentèse',
+    type: 'exploration',
+    description:
+      'Prélèvement de liquide amniotique par ponction transabdominale échoguidée (à partir de 15–16 semaines) : caryotype fœtal, PCR des infections fœtales (toxoplasmose, CMV).',
+    valeurs_normales:
+      '- Caryotype normal, PCR négatives\n- Risque de fausse couche ≈ 0,5 % ; centre de diagnostic prénatal ; immunoglobulines anti-D si rhésus négatif',
+  },
+  // --- Lot 55
+  {
+    slug: 'hysteroscopie',
+    nom: 'Hystéroscopie',
+    type: 'exploration',
+    description:
+      'Exploration endoscopique de la cavité utérine par le col : diagnostic et traitement des polypes, fibromes sous-muqueux, synéchies, hyperplasie de l’endomètre, biopsies dirigées.',
+    valeurs_normales:
+      '- Cavité utérine normale, endomètre régulier\n- Disponible en centre spécialisé ; à réaliser en dehors d’une infection et d’une grossesse',
+  },
+  // --- Lot 56
+  {
+    slug: 'hormone-antimullerienne',
+    nom: 'Hormone antimüllérienne (AMH)',
+    type: 'biologie',
+    description:
+      'Marqueur de la réserve ovarienne (nombre de follicules) : bilan d’infertilité, insuffisance ovarienne prématurée, choix de la stratégie d’assistance médicale à la procréation.',
+    valeurs_normales:
+      '- Valeurs selon l’âge et la technique (laboratoire spécialisé)\n- Très basse : réserve ovarienne diminuée ; élevée : syndrome des ovaires polykystiques',
+  },
+  {
+    slug: 'ca-125',
+    nom: 'CA 125',
+    type: 'biologie',
+    description:
+      'Marqueur tumoral sérique utile dans l’évaluation d’une masse ovarienne suspecte (surtout après la ménopause) et le suivi des cancers de l’ovaire.',
+    valeurs_normales:
+      '- < 35 UI/mL\n- Élevé aussi dans l’endométriose, les fibromes, les infections pelviennes, la grossesse, la tuberculose péritonéale : peu spécifique avant la ménopause',
+  },
+  // --- Lot 57
+  {
+    slug: 'colposcopie',
+    nom: 'Colposcopie',
+    type: 'exploration',
+    description:
+      'Examen du col utérin à la loupe binoculaire après application d’acide acétique et de lugol : localisation et biopsie des lésions précancéreuses après un dépistage positif (IVA, HPV, frottis).',
+    valeurs_normales:
+      '- Zone de jonction visible, absence de lésion acidophile\n- Lésion : biopsie dirigée ; zone de jonction non visible : examen insuffisant',
+  },
+  // --- Lot 58
+  {
+    slug: 'anuscopie',
+    nom: 'Anuscopie',
+    type: 'exploration',
+    description:
+      'Examen du canal anal et du bas rectum à l’aide d’un anuscope : hémorroïdes, fissure, fistule, condylomes, tumeur ; complétée par une coloscopie en cas de rectorragies après 45–50 ans ou de signes d’alarme.',
+    valeurs_normales:
+      '- Canal anal normal\n- Réalisable en consultation, sans préparation ou après un petit lavement',
+  },
+  // --- Lot 59
+  {
+    slug: 'ace',
+    nom: 'Antigène carcino-embryonnaire (ACE)',
+    type: 'biologie',
+    description:
+      'Marqueur tumoral sérique utile au bilan initial et à la surveillance après traitement du cancer colorectal (pas pour le dépistage).',
+    valeurs_normales:
+      '- < 5 ng/mL (plus élevé chez le fumeur)\n- Élévation après chirurgie : récidive ou métastases à rechercher',
+  },
+  {
+    slug: 'opacification-digestive',
+    nom: 'Opacification digestive (transit, fistulographie)',
+    type: 'imagerie',
+    description:
+      'Radiographies après ingestion ou injection d’un produit de contraste hydrosoluble : localisation d’une fistule, d’un obstacle, d’une fuite anastomotique, étude d’une sténose.',
+    valeurs_normales:
+      '- Transit normal, pas de fuite\n- Utiliser un produit hydrosoluble en cas de suspicion de perforation ou de fistule',
+  },
+  // --- Lot 60
+  {
+    slug: 'cytoponction-thyroidienne',
+    nom: 'Cytoponction thyroïdienne',
+    type: 'biologie',
+    description:
+      'Ponction à l’aiguille fine d’un nodule thyroïdien (idéalement échoguidée) pour examen cytologique, classé selon le système de Bethesda : orientation vers la surveillance ou la chirurgie.',
+    valeurs_normales:
+      '- Bethesda II (bénin) : surveillance\n- Bethesda V–VI (suspect, malin) : chirurgie ; III–IV : répéter ou discuter selon le contexte',
+  },
+  // --- Lot 61
+  {
+    slug: 'phosphatases-alcalines',
+    nom: 'Phosphatases alcalines',
+    type: 'biologie',
+    description:
+      'Enzyme d’origine osseuse et hépatique : élevée dans le rachitisme, l’ostéomalacie, les tumeurs et métastases osseuses (ostéosarcome), la maladie de Paget, la consolidation des fractures et les cholestases.',
+    valeurs_normales:
+      '- Adulte : 40–130 UI/L ; enfant en croissance : valeurs nettement plus élevées (normes selon l’âge)\n- Origine osseuse ou hépatique à préciser avec la GGT',
+  },
+  // --- Lot 62
+  {
+    slug: 'echo-doppler-arteriel',
+    nom: 'Écho-Doppler artériel des membres',
+    type: 'imagerie',
+    description:
+      'Exploration ultrasonore des artères des membres : localisation et étendue des sténoses et occlusions (artériopathie, ischémie aiguë, traumatisme vasculaire, faux anévrisme).',
+    valeurs_normales:
+      '- Flux triphasique, pas de sténose\n- Absence de flux en aval d’une occlusion ; ne doit pas retarder la revascularisation d’une ischémie aiguë grave',
+  },
+  // --- Lot 63
+  {
+    slug: 'cystoscopie',
+    nom: 'Cystoscopie',
+    type: 'exploration',
+    description:
+      'Exploration endoscopique de l’urètre et de la vessie : bilan d’une hématurie, diagnostic et biopsie (ou résection) des tumeurs vésicales, lésions bilharziennes, corps étrangers, sténoses.',
+    valeurs_normales:
+      '- Muqueuse vésicale normale\n- Réalisée sur urines stériles (ECBU préalable), sous anesthésie locale (fibroscope) ou au bloc',
+  },
+  {
+    slug: 'cytologie-urinaire',
+    nom: 'Cytologie urinaire',
+    type: 'biologie',
+    description:
+      'Recherche de cellules tumorales dans les urines : bilan d’une hématurie, dépistage et suivi des tumeurs urothéliales de haut grade.',
+    valeurs_normales:
+      '- Absence de cellules suspectes\n- Peu sensible pour les tumeurs de bas grade ; une cytologie négative n’élimine pas un cancer',
+  },
+  // --- Lot 65
+  {
+    slug: 'nasofibroscopie',
+    nom: 'Nasofibroscopie (endoscopie ORL)',
+    type: 'exploration',
+    description: 'Examen endoscopique des fosses nasales, du cavum, du pharynx et du larynx : sinusites, polypes, tumeurs ORL (biopsies), mobilité des cordes vocales, corps étrangers.',
+    valeurs_normales: '- Muqueuses normales, cordes vocales mobiles\n- Réalisable en consultation sous anesthésie locale',
+  },
+  {
+    slug: 'test-fluoresceine',
+    nom: 'Test à la fluorescéine (lampe à fente)',
+    type: 'exploration',
+    description: 'Instillation de fluorescéine dans l’œil puis examen à la lumière bleue : mise en évidence des ulcérations et abrasions de la cornée (kératite, ulcère, dendrite herpétique, corps étranger).',
+    valeurs_normales: '- Pas de prise de fluorescéine\n- Zone verte : désépithélialisation ; aspect dendritique : herpès',
+  },
+  // --- Lot 66
+  {
+    slug: 'refraction',
+    nom: 'Mesure de la réfraction (skiascopie, réfractomètre)',
+    type: 'exploration',
+    description: 'Mesure objective (réfractomètre automatique, skiascopie, sous cycloplégie chez l’enfant) puis subjective (verres d’essai) de l’erreur de réfraction : myopie, hypermétropie, astigmatisme, presbytie ; prescription des lunettes.',
+    valeurs_normales: '- Emmétropie : pas de correction nécessaire\n- Résultat exprimé en dioptries (sphère, cylindre, axe)',
+  },
+  {
+    slug: 'echographie-oculaire',
+    nom: 'Échographie oculaire (mode B)',
+    type: 'imagerie',
+    description: 'Échographie du globe et de l’orbite à travers les paupières : décollement de rétine, hémorragie du vitré, tumeur intraoculaire, corps étranger, lorsque le fond d’œil est impossible (cataracte, hémorragie).',
+    valeurs_normales: '- Vitré vide d’échos, rétine à plat',
+  },
+  // --- Lot 67
+  {
+    slug: 'holter-ecg',
+    nom: 'Holter ECG (enregistrement de 24 à 72 h)',
+    type: 'exploration',
+    description: 'Enregistrement continu de l’ECG en ambulatoire : recherche d’une fibrillation atriale paroxystique après un AVC ischémique ou un AIT, palpitations, syncopes.',
+    valeurs_normales: '- Rythme sinusal, pas de trouble du rythme significatif\n- Fibrillation atriale > 30 s : anticoagulation à discuter après un AVC',
+  },
+  {
+    slug: 'anca',
+    nom: 'Anticorps anticytoplasme des polynucléaires (ANCA)',
+    type: 'biologie',
+    description: 'Recherche par immunofluorescence et ELISA (anti-PR3, anti-MPO) : vascularites des petits vaisseaux (granulomatose avec polyangéite, polyangéite microscopique, granulomatose éosinophilique).',
+    valeurs_normales: '- Négatifs\n- c-ANCA anti-PR3 : granulomatose avec polyangéite ; p-ANCA anti-MPO : polyangéite microscopique',
+  },
+  {
+    slug: 'angioscanner-cerebral',
+    nom: 'Angioscanner des vaisseaux cervico-encéphaliques',
+    type: 'imagerie',
+    description: 'Scanner avec injection de produit de contraste iodé en phase artérielle et veineuse : sténoses et occlusions artérielles, dissections, anévrismes, vascularites, thromboses veineuses cérébrales (signe du delta vide).',
+    valeurs_normales: '- Vaisseaux perméables, sans sténose\n- Sinus veineux opacifiés',
+  },
+  // --- Lot 68
+  {
+    slug: 'anticorps-anti-rach',
+    nom: 'Anticorps anti-récepteurs de l’acétylcholine (et anti-MuSK)',
+    type: 'biologie',
+    description: 'Dosage sérique des anticorps dirigés contre les récepteurs de l’acétylcholine de la jonction neuromusculaire : diagnostic de la myasthénie auto-immune ; anticorps anti-MuSK si négatifs.',
+    valeurs_normales: '- Négatifs\n- Positifs dans 85 % des myasthénies généralisées et 50 % des formes oculaires',
+  },
+  {
+    slug: 'serologie-htlv-1',
+    nom: 'Sérologie HTLV-1',
+    type: 'biologie',
+    description: 'Recherche d’anticorps anti-HTLV-1 dans le sang (ELISA confirmé par Western blot) et dans le LCR : paraparésie spastique tropicale, leucémie-lymphome T de l’adulte.',
+    valeurs_normales: '- Négative\n- Positive dans le sang et le LCR : myélopathie associée au HTLV-1 probable',
+  },
+  {
+    slug: 'epreuves-vestibulaires',
+    nom: 'Épreuves vestibulaires (manœuvres et vidéonystagmographie)',
+    type: 'exploration',
+    description: 'Examen du nystagmus et des fonctions vestibulaires : manœuvre de Dix-Hallpike (vertige positionnel paroxystique bénin), test d’impulsion céphalique, épreuves caloriques et vidéonystagmographie (névrite vestibulaire, maladie de Ménière).',
+    valeurs_normales: '- Pas de nystagmus spontané ni provoqué\n- Réponses vestibulaires symétriques',
+  },
+  // --- Lot 69
+  {
+    slug: 'anticorps-anti-aquaporine-4',
+    nom: 'Anticorps anti-aquaporine 4 (et anti-MOG)',
+    type: 'biologie',
+    description: 'Recherche sérique (test cellulaire) des anticorps anti-aquaporine 4, marqueurs de la neuromyélite optique ; anticorps anti-MOG si négatifs.',
+    valeurs_normales: '- Négatifs\n- Positifs : neuromyélite optique (spécificité > 99 %)',
+  },
+  // --- Lot 70
+  {
+    slug: 'pcr-hsv',
+    nom: 'PCR herpès simplex (HSV-1 et HSV-2) dans le LCR',
+    type: 'biologie',
+    description: 'Amplification génique du virus herpès simplex dans le liquide cérébrospinal : diagnostic de l’encéphalite herpétique (peut être négative les 72 premières heures) ; recherche associée de VZV, CMV, entérovirus.',
+    valeurs_normales: '- Négative\n- Positive : encéphalite herpétique (sensibilité > 95 % après le 3e jour)',
+  },
+  {
+    slug: 'serologie-cysticercose',
+    nom: 'Sérologie de la cysticercose (Western blot, EITB)',
+    type: 'biologie',
+    description: 'Recherche d’anticorps anti-Taenia solium dans le sérum (immunoblot) ou le LCR : appui au diagnostic de la neurocysticercose, à interpréter avec l’imagerie.',
+    valeurs_normales: '- Négative\n- Moins sensible en cas de lésion unique ou calcifiée',
+  },
+  {
+    slug: 'test-monofilament',
+    nom: 'Test au monofilament et examen neurologique du pied',
+    type: 'exploration',
+    description: 'Évaluation de la sensibilité protectrice de la plante du pied avec un monofilament de 10 g, associée à la sensibilité vibratoire (diapason) et aux réflexes : dépistage de la neuropathie diabétique et lépreuse, risque de plaie.',
+    valeurs_normales: '- Perception du monofilament en tous les points testés\n- Non-perception d’un point ou plus : pied à risque',
+  },
+  // --- Lot 71
+  {
+    slug: 'ceruloplasmine-cuivre',
+    nom: 'Céruloplasmine et cuivre (sérique et urinaire des 24 h)',
+    type: 'biologie',
+    description: 'Dosage de la céruloplasmine sérique, du cuivre sérique et de la cuprurie des 24 heures : dépistage de la maladie de Wilson devant des mouvements anormaux, une hépatopathie ou des troubles psychiatriques avant 40 ans.',
+    valeurs_normales: '- Céruloplasmine 0,2–0,4 g/L\n- Cuprurie < 40 µg/24 h\n- Maladie de Wilson : céruloplasmine basse, cuprurie > 100 µg/24 h',
+  },
+  // --- Lot 73
+  {
+    slug: 'testosteronemie',
+    nom: 'Testostérone totale (dosage matinal)',
+    type: 'biologie',
+    description: 'Dosage sanguin de la testostérone totale, prélevé le matin à jeun, à contrôler si bas : hypogonadisme masculin (baisse de la libido, troubles de l’érection, infertilité), hyperandrogénie féminine.',
+    valeurs_normales: '- Homme adulte : 3–10 ng/mL (10–35 nmol/L)\n- Femme : < 0,7 ng/mL',
+  },
+  // --- Lot 74
+  {
+    slug: 'depistage-urinaire-drogues',
+    nom: 'Dépistage urinaire des drogues (tests rapides)',
+    type: 'biologie',
+    description: 'Tests immunochromatographiques rapides sur urine : cannabis (THC), opiacés et opioïdes (morphine, tramadol selon le test), cocaïne, amphétamines, benzodiazépines ; orientation diagnostique devant une intoxication, un trouble psychiatrique aigu ou le suivi d’un traitement de substitution.',
+    valeurs_normales: '- Négatif\n- Cannabis détectable plusieurs jours (jusqu’à plusieurs semaines chez le consommateur régulier)\n- Résultat positif à confirmer si enjeu médico-légal',
+  },
+  // --- Lot 75
+  {
+    slug: 'evaluation-cognitive',
+    nom: 'Évaluation cognitive (MoCA, MMSE, test de l’horloge)',
+    type: 'exploration',
+    description: 'Tests de dépistage des troubles cognitifs au cabinet : mémoire, orientation, attention, langage, fonctions exécutives et visuo-spatiales ; à adapter au niveau d’instruction et à la langue ; suivi de l’évolution.',
+    valeurs_normales: '- MoCA ≥ 26/30 (ajouter 1 point si ≤ 12 ans de scolarité)\n- MMSE ≥ 24/30 (seuils à adapter au niveau d’études)',
+  },
+  // --- Lot 76
+  {
+    slug: 'anticorps-myosites',
+    nom: 'Anticorps des myosites (anti-Jo-1, anti-Mi-2, anti-TIF1-γ, anti-HMGCR)',
+    type: 'biologie',
+    description: 'Recherche d’autoanticorps spécifiques ou associés aux myosites inflammatoires : orientation vers une dermatomyosite (anti-Mi-2, anti-TIF1-γ associé aux cancers), un syndrome des antisynthétases (anti-Jo-1, pneumopathie interstitielle) ou une myopathie nécrosante (anti-HMGCR, statines).',
+    valeurs_normales: '- Négatifs\n- Interprétation avec la clinique, les CPK, l’EMG et la biopsie musculaire',
+  },
+  {
+    slug: 'polysomnographie',
+    nom: 'Polysomnographie et tests itératifs de latence d’endormissement',
+    type: 'exploration',
+    description: 'Enregistrement nocturne du sommeil (EEG, mouvements oculaires, tonus musculaire, respiration, oxymétrie) et, le lendemain, mesures répétées du délai d’endormissement : apnées du sommeil, narcolepsie, hypersomnies, parasomnies atypiques (centre spécialisé).',
+    valeurs_normales: '- Index d’apnées-hypopnées < 5/h\n- Latence moyenne d’endormissement > 8 min, pas d’endormissement en sommeil paradoxal\n- Narcolepsie : latence ≤ 8 min et au moins 2 endormissements en sommeil paradoxal',
+  },
 ];
 
 const symptomes = [
@@ -943,6 +1624,280 @@ const symptomes = [
   ['Prise de poids', 'Augmentation du poids corporel.'],
   ['Exophtalmie', 'Saillie anormale du globe oculaire hors de l’orbite.'],
   ['Frilosité', 'Sensibilité excessive au froid.'],
+  // --- Lot 33
+  ['Pyrosis', 'Brûlure rétrosternale ascendante, souvent après les repas ou en position couchée.'],
+  ['Épigastralgies', 'Douleur ou brûlure du creux de l’estomac (épigastre).'],
+  // --- Lot 34
+  [
+    'Purpura',
+    'Taches rouges ou violacées de la peau ne s’effaçant pas à la pression (pétéchies, ecchymoses).',
+  ],
+  // --- Lot 35
+  ['Myalgies', 'Douleurs musculaires, diffuses ou localisées (mollets).'],
+  ['Rhinorrhée', 'Écoulement nasal clair ou purulent.'],
+  // --- Lot 36
+  [
+    'Plaques érythémato-squameuses',
+    'Plaques rouges recouvertes de squames, bien limitées (psoriasis, dermatophyties).',
+  ],
+  ['Lésions eczématiformes', 'Plaques rouges, prurigineuses, suintantes ou sèches, mal limitées (eczéma).'],
+  ['Photosensibilité', 'Éruption ou aggravation cutanée après exposition au soleil.'],
+  [
+    'Douleur de l’épaule',
+    'Douleur de l’épaule, mécanique ou nocturne, avec ou sans limitation des mouvements.',
+  ],
+  // --- Lot 37
+  ['Comédons et pustules', 'Points noirs, microkystes, papules et pustules du visage et du dos (acné).'],
+  ['Fasciculations', 'Contractions involontaires, brèves et visibles de faisceaux musculaires.'],
+  // --- Lot 38
+  [
+    'Hyperthermie',
+    'Élévation de la température corporelle au-delà de 40 °C par défaut de thermorégulation (chaleur, effort), sans dérèglement infectieux.',
+  ],
+  // --- Lot 40
+  ['Pleurs excessifs', 'Pleurs prolongés ou inconsolables du nourrisson.'],
+  ['Boiterie', 'Marche asymétrique, appui évité sur un membre inférieur.'],
+  ['Tuméfaction parotidienne', 'Gonflement de la région parotidienne, en avant et au-dessous de l’oreille.'],
+  // --- Lot 41
+  [
+    'Langue framboisée',
+    'Langue rouge vif à papilles saillantes, après une phase saburrale (scarlatine, maladie de Kawasaki).',
+  ],
+  // --- Lot 42
+  ['Constipation', 'Selles rares, dures ou difficiles à émettre.'],
+  [
+    'Régurgitations',
+    'Remontées sans effort de lait ou d’aliments dans la bouche, fréquentes chez le nourrisson.',
+  ],
+  // --- Lot 43
+  [
+    'Selles décolorées',
+    'Selles blanc mastic ou jaune pâle, traduisant l’absence de bile dans l’intestin (cholestase, atrésie des voies biliaires).',
+  ],
+  // --- Lot 44
+  [
+    'Leucocorie',
+    'Reflet pupillaire blanc (« œil de chat »), visible à la lumière ou sur les photographies au flash : rétinoblastome jusqu’à preuve du contraire, cataracte congénitale.',
+  ],
+  [
+    'Strabisme',
+    'Défaut de parallélisme des axes visuels ; d’apparition récente chez l’enfant, il impose un fond d’œil (rétinoblastome).',
+  ],
+  [
+    'Hémarthrose',
+    'Épanchement de sang dans une articulation : articulation chaude, gonflée, douloureuse et bloquée (hémophilie).',
+  ],
+  [
+    'Ecchymoses',
+    'Taches bleutées sous-cutanées par extravasation de sang, spontanées ou après un traumatisme minime (troubles de l’hémostase, maltraitance).',
+  ],
+  // --- Lot 45
+  [
+    'Petite taille',
+    'Taille inférieure à −2 DS (ou −2 Z-scores) pour l’âge et le sexe, ou ralentissement de la vitesse de croissance.',
+  ],
+  [
+    'Retard pubertaire',
+    'Absence de développement des seins après 13 ans chez la fille ou d’augmentation du volume testiculaire après 14 ans chez le garçon.',
+  ],
+  [
+    'Puberté précoce',
+    'Apparition des caractères sexuels secondaires avant 8 ans chez la fille et 9 ans chez le garçon.',
+  ],
+  [
+    'Ambiguïté sexuelle',
+    'Organes génitaux externes ne permettant pas d’attribuer le sexe à la naissance (clitoridomégalie, hypospadias avec cryptorchidie, fusion des bourrelets).',
+  ],
+  [
+    'Anurie',
+    'Absence ou quasi-absence d’urines (< 0,5 mL/kg/h chez l’enfant pendant plusieurs heures, < 100 mL/24 h chez l’adulte).',
+  ],
+  // --- Lot 46
+  [
+    'Macrocéphalie',
+    'Périmètre crânien supérieur à +2 DS pour l’âge, ou augmentation trop rapide du périmètre crânien (hydrocéphalie, épanchement, macrocéphalie familiale).',
+  ],
+  [
+    'Spasmes infantiles',
+    'Contractions brèves et brusques en flexion (tête, tronc, bras), souvent en salves au réveil, chez le nourrisson (syndrome de West).',
+  ],
+  [
+    'Régression des acquisitions',
+    'Perte d’acquisitions motrices, du langage ou sociales déjà obtenues (encéphalopathie évolutive, syndrome de West, autisme).',
+  ],
+  // --- Lot 47
+  [
+    'Hypoacousie',
+    'Baisse de l’audition, uni- ou bilatérale ; chez l’enfant, retard de langage, inattention, difficultés scolaires.',
+  ],
+  [
+    'Ronflements',
+    'Bruit respiratoire pendant le sommeil par obstruction partielle des voies aériennes supérieures ; avec pauses respiratoires, évoque un syndrome d’apnées obstructives (hypertrophie adéno-amygdalienne).',
+  ],
+  [
+    'Tuméfaction rétro-auriculaire',
+    'Gonflement inflammatoire derrière l’oreille, décollant le pavillon (mastoïdite, adénopathie).',
+  ],
+  [
+    'Papules cutanées',
+    'Petites élevures fermes de la peau (< 1 cm), isolées ou groupées (molluscum, verrues, prurigo, lichen).',
+  ],
+  // --- Lot 48
+  [
+    'Dysménorrhée',
+    'Douleurs pelviennes survenant pendant les règles, parfois avec nausées, céphalées ou malaise ; primaire chez l’adolescente, secondaire (endométriose, infection) si elle apparaît tardivement.',
+  ],
+  [
+    'Nystagmus',
+    'Mouvements involontaires rythmiques des yeux ; chez le nourrisson, il évoque une baisse visuelle sévère (cataracte, albinisme, atteinte rétinienne).',
+  ],
+  [
+    'Dysmorphie',
+    'Particularités morphologiques du visage ou du corps (forme des yeux, des oreilles, des mains) évocatrices d’un syndrome génétique.',
+  ],
+  // --- Lot 49
+  [
+    'Nausées',
+    'Envie de vomir, isolée ou précédant les vomissements (grossesse, migraine, troubles digestifs, médicaments).',
+  ],
+  [
+    'Infections récidivantes',
+    'Infections plus fréquentes, plus graves, plus prolongées ou à germes inhabituels que chez les enfants du même âge (déficit immunitaire).',
+  ],
+  [
+    'Sifflements respiratoires',
+    'Bruit aigu expiratoire (wheezing) témoignant d’une obstruction bronchique (asthme, bronchiolite).',
+  ],
+  // --- Lot 53
+  [
+    'Écoulement purulent d’une plaie',
+    'Issue de pus par une plaie ou une cicatrice opératoire, avec rougeur, chaleur et douleur (infection du site opératoire).',
+  ],
+  [
+    'Douleur périnéale',
+    'Douleur du périnée (déchirure, épisiotomie, hématome, infection, abcès) ; une douleur intense et croissante après l’accouchement évoque un hématome.',
+  ],
+  // --- Lot 54
+  [
+    'Galactorrhée',
+    'Écoulement de lait par le mamelon en dehors de la grossesse et de l’allaitement (hyperprolactinémie).',
+  ],
+  [
+    'Diminution des mouvements fœtaux',
+    'Perception par la femme enceinte d’une baisse ou d’un arrêt des mouvements du fœtus après 28 semaines : signe d’alerte imposant une évaluation le jour même.',
+  ],
+  [
+    'Troubles du cycle menstruel',
+    'Règles irrégulières, trop rares (spanioménorrhée), trop fréquentes ou trop abondantes.',
+  ],
+  // --- Lot 55
+  [
+    'Hirsutisme',
+    'Pilosité excessive de type masculin chez la femme (visage, thorax, ligne ombilico-pubienne) : syndrome des ovaires polykystiques, hyperandrogénie.',
+  ],
+  [
+    'Bouffées de chaleur',
+    'Sensation brutale de chaleur du visage et du thorax avec rougeur et sueurs, typique de la ménopause et de la carence en œstrogènes.',
+  ],
+  [
+    'Pesanteur pelvienne',
+    'Sensation de poids ou de « boule » dans le vagin, majorée en position debout et en fin de journée (prolapsus génital).',
+  ],
+  [
+    'Tuméfaction vulvaire',
+    'Gonflement d’une grande lèvre ou de la vulve, douloureux ou non (kyste ou abcès de la glande de Bartholin, hématome).',
+  ],
+  [
+    'Végétations génitales',
+    'Excroissances verruqueuses de la vulve, du vagin, du pénis ou de la région anale (condylomes à HPV).',
+  ],
+  // --- Lot 58
+  [
+    'Écoulement mamelonnaire',
+    'Écoulement par le mamelon en dehors de l’allaitement : laiteux (galactorrhée), séreux, verdâtre ou sanglant (à explorer s’il est unilatéral, spontané, sanglant).',
+  ],
+  [
+    'Prolapsus anal',
+    'Extériorisation par l’anus de tissu (hémorroïdes internes, muqueuse rectale), spontanément réductible ou non.',
+  ],
+  // --- Lot 62
+  [
+    'Tuméfaction scrotale',
+    'Augmentation de volume d’une bourse, douloureuse ou non (hydrocèle, hernie, varicocèle, orchi-épididymite, tumeur, filariose).',
+  ],
+  [
+    'Bourse vide',
+    'Absence de testicule palpable dans la bourse (cryptorchidie, testicule rétractile, ectopie, anorchidie).',
+  ],
+  [
+    'Membre froid et pâle',
+    'Membre froid, pâle ou marbré, sans pouls, douloureux, avec troubles sensitifs ou moteurs : ischémie aiguë, urgence vasculaire.',
+  ],
+  // --- Lot 64
+  [
+    'Jambes lourdes',
+    'Sensation de pesanteur et de fatigue des jambes, majorée en fin de journée, à la station debout et à la chaleur (insuffisance veineuse, varices).',
+  ],
+  [
+    'Rétraction cicatricielle',
+    'Cicatrice épaisse qui se raccourcit et limite les mouvements d’une articulation (brides après brûlure).',
+  ],
+  // --- Lot 65
+  ['Acouphènes', 'Perception d’un bruit (sifflement, bourdonnement) sans source extérieure, souvent associée à une baisse de l’audition.'],
+  // --- Lot 66
+  ['Douleur dentaire', 'Douleur d’une dent, provoquée (froid, sucre, mastication) ou spontanée et pulsatile (carie profonde, abcès).'],
+  ['Saignement des gencives', 'Gingivorragies au brossage ou spontanées (gingivite, parodontite, troubles de l’hémostase, scorbut, leucémie).'],
+  ['Ulcérations buccales', 'Aphtes, ulcérations ou érosions de la muqueuse de la bouche, souvent douloureuses.'],
+  ['Larmoiement', 'Écoulement excessif de larmes (irritation, corps étranger, kératite, obstruction des voies lacrymales).'],
+  ['Malocclusion dentaire', 'Mauvais engrènement des dents à la fermeture de la bouche (fracture de la mâchoire, luxation, tumeur).'],
+  // --- Lot 67
+  ['Aphasie', 'Trouble du langage acquis par lésion cérébrale : difficulté à parler, à trouver les mots ou à comprendre (AVC de l’hémisphère gauche).'],
+  ['Douleur de la plaie opératoire', 'Douleur au niveau de l’incision chirurgicale, attendue dans les premiers jours ; son aggravation fait rechercher une complication.'],
+  // --- Lot 68
+  ['Absences', 'Brèves suspensions de la conscience (quelques secondes) avec regard fixe et arrêt de l’activité, souvent pluriquotidiennes chez l’enfant.'],
+  ['Diplopie', 'Vision double d’un objet unique (atteinte des muscles ou des nerfs oculomoteurs, myasthénie, hypertension intracrânienne).'],
+  ['Paresthésies', 'Sensations anormales non douloureuses (fourmillements, picotements, engourdissement), souvent aux pieds et aux mains dans les neuropathies.'],
+  // --- Lot 69
+  ['Douleur faciale', 'Douleur du visage, en éclairs (névralgie du trijumeau), continue (sinusite, dent, zona) ou à la mastication.'],
+  ['Crampes musculaires', 'Contractions involontaires, douloureuses et transitoires d’un muscle (neuropathies, SLA, troubles ioniques, effort).'],
+  ['Dysarthrie', 'Trouble de l’articulation de la parole (voix pâteuse, mal articulée) par atteinte neurologique ou musculaire.'],
+  ['Douleur radiculaire', 'Douleur suivant le trajet d’une racine nerveuse (sciatique, cruralgie, névralgie cervico-brachiale), souvent majorée par la toux et l’effort.'],
+  // --- Lot 70
+  ['Atrophie musculaire', 'Diminution visible du volume d’un muscle ou d’un groupe musculaire (atteinte du nerf, de la corne antérieure ou du muscle, immobilisation).'],
+  ['Mains en griffe', 'Déformation des doigts en flexion par paralysie des muscles intrinsèques de la main (lèpre, lésion du nerf ulnaire ou médian).'],
+  // --- Lot 71
+  ['Postures anormales', 'Contractions musculaires prolongées entraînant des torsions ou des positions anormales du cou, du tronc ou des membres (dystonies).'],
+  ['Impatiences des jambes', 'Besoin irrésistible de bouger les jambes, avec sensations désagréables, au repos et le soir, soulagé par le mouvement.'],
+  ['Troubles de la concentration', 'Difficulté à maintenir l’attention sur une tâche, distractibilité, lenteur intellectuelle.'],
+  ['Irritabilité', 'Tendance excessive à la colère, à l’agacement ou à l’impatience, inhabituelle pour la personne.'],
+  ['Amnésie', 'Perte de la mémoire d’une période (autour d’un traumatisme, d’une crise) ou difficulté à mémoriser de nouvelles informations.'],
+  // --- Lot 72
+  ['Obsessions et compulsions', 'Pensées intrusives répétées et angoissantes (obsessions) et comportements ou rituels répétitifs destinés à les neutraliser (compulsions : lavage, vérification, comptage).'],
+  ['Peurs excessives', 'Peur intense et disproportionnée d’un objet, d’une situation ou d’un lieu, entraînant un évitement.'],
+  ['Plaintes somatiques multiples', 'Symptômes physiques nombreux et variés (douleurs, fatigue, troubles digestifs) sans explication médicale suffisante, source de détresse et de consultations répétées.'],
+  ['Restriction alimentaire', 'Limitation volontaire et marquée des apports alimentaires, souvent liée à une peur de grossir ou à une perception déformée du corps.'],
+  ['Crises de boulimie', 'Épisodes d’ingestion rapide de grandes quantités de nourriture avec sentiment de perte de contrôle, parfois suivis de vomissements provoqués.'],
+  // --- Lot 73
+  ['Troubles de l’érection', 'Difficulté persistante à obtenir ou maintenir une érection suffisante pour un rapport sexuel satisfaisant.'],
+  ['Baisse de la libido', 'Diminution persistante du désir et de l’intérêt sexuels.'],
+  ['Difficultés scolaires', 'Résultats scolaires insuffisants, redoublements, difficultés à lire, écrire ou calculer, absentéisme.'],
+  ['Repli sur soi', 'Retrait des relations sociales et familiales, isolement, perte d’intérêt pour les activités habituelles.'],
+  ['Automutilations', 'Lésions volontaires infligées à son propre corps (coupures, brûlures, coups), souvent pour soulager une détresse émotionnelle.'],
+  ['États de transe ou de possession', 'Épisodes d’altération de la conscience et de l’identité, vécus comme une prise de contrôle par un esprit ou une force extérieure.'],
+  // --- Lot 74
+  ['Incontinence fécale', 'Émission involontaire de selles dans les vêtements ou en des lieux inappropriés, au-delà de l’âge de la propreté (encoprésie).'],
+  ['Mutisme', 'Absence de parole chez une personne capable de parler, généralisée ou limitée à certaines situations.'],
+  ['Angoisse de séparation', 'Anxiété excessive lors de la séparation d’avec les parents ou le domicile (pleurs, plaintes, refus de dormir seul ou d’aller à l’école).'],
+  ['Comportements agressifs', 'Agressions physiques ou verbales répétées envers les personnes ou les animaux, destructions, colères violentes.'],
+  ['Cauchemars et terreurs nocturnes', 'Rêves effrayants réveillant l’enfant (cauchemars) ou épisodes de cris et d’agitation en début de nuit sans réveil complet ni souvenir (terreurs nocturnes).'],
+  ['Somnolence', 'Tendance anormale à s’endormir ou difficulté à rester éveillé pendant la journée.'],
+  // --- Lot 75
+  ['Euphorie', 'Sentiment intense et inapproprié de bien-être, d’excitation ou de toute-puissance (intoxication, manie).'],
+  ['Désinhibition', 'Perte du contrôle des comportements sociaux : propos ou gestes inadaptés, familiarité excessive, impulsivité.'],
+  ['Apathie', 'Perte de motivation et d’initiative, indifférence affective, réduction des activités spontanées.'],
+  ['Stupeur', 'État d’immobilité et d’absence de réaction aux stimulations, sans perte de conscience vraie (catatonie, dépression sévère).'],
+  // --- Lot 76
+  ['Cataplexie', 'Perte brutale et brève du tonus musculaire, conscience conservée, déclenchée par une émotion (rire, surprise, colère), évocatrice de narcolepsie.'],
 ];
 
 const molecules = [
@@ -1980,6 +2935,736 @@ const molecules = [
     effets_indesirables: 'Convulsions, agitation, syndrome de sevrage, troubles du rythme.',
     precautions:
       'Contre-indiqué en cas d’intoxication associée aux tricycliques, d’épilepsie traitée par benzodiazépines ou de dépendance ; surveillance prolongée.',
+  },
+  // --- Lot 33
+  {
+    dci: 'Rifaximine',
+    slug: 'rifaximine',
+    classe: 'Antibiotiques intestinaux non absorbés (rifamycines)',
+    groupe: 'Gastro-entérologie',
+    mecanisme: 'Antibiotique peu absorbé réduisant la flore intestinale productrice d’ammoniaque.',
+    indications:
+      'Prévention des récidives d’encéphalopathie hépatique, en association au lactulose ; diarrhée du voyageur non invasive.',
+    posologie:
+      'Encéphalopathie hépatique : 550 mg 2 fois par jour (ou 400 mg 3 fois par jour), au long cours.',
+    effets_indesirables: 'Nausées, ballonnements, rarement colite à Clostridioides difficile.',
+    precautions: 'Disponibilité et coût limités ; ne pas utiliser dans les diarrhées fébriles ou sanglantes.',
+  },
+  // --- Lot 34
+  {
+    dci: 'Facteur VIII de coagulation',
+    slug: 'facteur-viii',
+    classe: 'Facteurs de coagulation',
+    groupe: 'Hématologie',
+    mecanisme: 'Remplacement du facteur VIII déficitaire (concentré plasmatique ou recombinant).',
+    indications: 'Hémophilie A : traitement des saignements et prophylaxie.',
+    posologie:
+      '1 UI/kg élève l’activité de 2 % : hémarthrose 20–40 UI/kg ; hémorragie grave ou chirurgie 50 UI/kg puis 25 UI/kg toutes les 8–12 h selon l’activité mesurée.',
+    effets_indesirables: 'Apparition d’inhibiteurs (anticorps), réactions allergiques.',
+    precautions:
+      'Disponibilité limitée (programmes de dons humanitaires) ; à défaut, cryoprécipité ou plasma frais congelé.',
+  },
+  {
+    dci: 'Facteur IX de coagulation',
+    slug: 'facteur-ix',
+    classe: 'Facteurs de coagulation',
+    groupe: 'Hématologie',
+    mecanisme: 'Remplacement du facteur IX déficitaire (concentré plasmatique ou recombinant).',
+    indications: 'Hémophilie B : traitement des saignements et prophylaxie.',
+    posologie:
+      '1 UI/kg élève l’activité d’environ 1 % : hémarthrose 30–50 UI/kg ; hémorragie grave ou chirurgie 80–100 UI/kg puis selon l’activité mesurée (toutes les 12–24 h).',
+    effets_indesirables: 'Inhibiteurs, réactions allergiques, thromboses (concentrés plasmatiques).',
+    precautions: 'À défaut : plasma frais congelé (pas de cryoprécipité, qui ne contient pas de facteur IX).',
+  },
+  {
+    dci: 'Desmopressine',
+    slug: 'desmopressine',
+    classe: 'Analogues de la vasopressine',
+    groupe: 'Hématologie',
+    mecanisme:
+      'Libération du facteur VIII et du facteur Willebrand stockés dans l’endothélium ; effet antidiurétique.',
+    indications:
+      'Hémophilie A mineure et maladie de Willebrand de type 1 (saignements mineurs, gestes) ; diabète insipide ; énurésie.',
+    posologie:
+      'Hémostase : 0,3 µg/kg IV en 30 min (ou spray nasal), répétable à 12–24 h (tachyphylaxie après 2–3 doses).',
+    effets_indesirables: 'Hyponatrémie (restreindre les boissons 24 h), céphalées, flush.',
+    precautions:
+      'Inefficace dans l’hémophilie B et l’hémophilie A sévère ; prudence chez l’enfant de moins de 2 ans et le coronarien.',
+  },
+  {
+    dci: 'Diéthylcarbamazine',
+    slug: 'diethylcarbamazine',
+    classe: 'Antifilariens',
+    groupe: 'Antiparasitaires',
+    mecanisme: 'Action microfilaricide et partiellement macrofilaricide sur Wuchereria, Brugia et Loa loa.',
+    indications: 'Filariose lymphatique (hors zones d’onchocercose) ; loase avec microfilarémie faible.',
+    posologie:
+      'Filariose lymphatique : 6 mg/kg/j pendant 12 jours, ou 6 mg/kg dose unique en traitement de masse (IDA, hors zones d’onchocercose et de loase). Loase : doses progressives jusqu’à 8–10 mg/kg/j pendant 21 jours, seulement si microfilarémie < 2 000 mf/mL.',
+    effets_indesirables:
+      'Fièvre, céphalées, prurit, réactions de Mazzotti ; encéphalopathie si forte microfilarémie à Loa loa.',
+    precautions:
+      'Contre-indiquée en cas d’onchocercose (aggravation oculaire) et de forte microfilarémie à Loa loa ; grossesse.',
+  },
+  {
+    dci: 'Primaquine',
+    slug: 'primaquine',
+    classe: 'Antipaludiques (8-aminoquinoléines)',
+    groupe: 'Antiparasitaires',
+    mecanisme:
+      'Action sur les hypnozoïtes hépatiques (P. vivax, P. ovale) et les gamétocytes de P. falciparum.',
+    indications:
+      'Cure radicale du paludisme à P. vivax ou ovale ; dose unique faible contre la transmission de P. falciparum ; pneumocystose (avec clindamycine).',
+    posologie:
+      'Gamétocytocide (P. falciparum) : 0,25 mg/kg dose unique ; cure radicale : 0,25–0,5 mg/kg/j pendant 14 jours (G6PD normal) ; pneumocystose : 30 mg base/j pendant 21 jours avec clindamycine.',
+    effets_indesirables: 'Hémolyse en cas de déficit en G6PD, troubles digestifs, méthémoglobinémie.',
+    precautions:
+      'Tester le G6PD avant la cure radicale ; contre-indiquée pendant la grossesse et chez le nourrisson de moins de 6 mois (cure radicale).',
+  },
+  // --- Lot 35
+  {
+    dci: 'Oseltamivir',
+    slug: 'oseltamivir',
+    classe: 'Inhibiteurs de la neuraminidase',
+    groupe: 'Antiviraux',
+    mecanisme: 'Inhibition de la neuraminidase des virus grippaux A et B : bloque la libération des virions.',
+    indications:
+      'Grippe grave ou chez les patients à risque de complications (grossesse, enfant < 2 ans, sujet âgé, maladies chroniques, immunodépression) ; prophylaxie post-exposition selon les recommandations.',
+    posologie:
+      'Adulte : 75 mg 2 fois par jour pendant 5 jours. Enfant ≥ 1 an : ≤ 15 kg 30 mg ; 15–23 kg 45 mg ; 23–40 kg 60 mg ; > 40 kg 75 mg, 2 fois par jour 5 jours ; nourrisson < 1 an : 3 mg/kg 2 fois par jour.',
+    effets_indesirables: 'Nausées, vomissements, céphalées ; rares troubles neuropsychiatriques.',
+    precautions:
+      'Débuter le plus tôt possible (idéalement < 48 h) ; adapter à la fonction rénale ; utilisable pendant la grossesse.',
+  },
+  // --- Lot 36
+  {
+    dci: 'Acide alendronique',
+    slug: 'acide-alendronique',
+    classe: 'Bisphosphonates',
+    groupe: 'Rhumatologie',
+    mecanisme: 'Inhibition de la résorption osseuse par les ostéoclastes.',
+    indications:
+      'Ostéoporose post-ménopausique, masculine et cortisonique ; prévention secondaire après une fracture de fragilité.',
+    posologie:
+      '70 mg une fois par semaine, à jeun, avec un grand verre d’eau, en restant debout ou assis 30 minutes ; durée 5 ans puis réévaluation.',
+    effets_indesirables:
+      'Œsophagite, douleurs digestives ; rares ostéonécroses de la mâchoire et fractures atypiques du fémur.',
+    precautions:
+      'Corriger la carence en vitamine D et en calcium avant ; contre-indiqué si DFG < 35 mL/min, troubles de la vidange œsophagienne ; soins dentaires préalables.',
+  },
+  {
+    dci: 'Azathioprine',
+    slug: 'azathioprine',
+    classe: 'Immunosuppresseurs (antimétabolites)',
+    groupe: 'Immunologie',
+    mecanisme: 'Inhibition de la synthèse des purines et de la prolifération lymphocytaire.',
+    indications:
+      'Lupus (traitement d’entretien, épargne cortisonique), hépatite auto-immune, vascularites, maladies inflammatoires de l’intestin.',
+    posologie: '1 à 2,5 mg/kg/j per os, en débutant à 50 mg/j avec augmentation progressive.',
+    effets_indesirables:
+      'Leucopénie, thrombopénie, hépatite, pancréatite, infections, lymphomes à long terme.',
+    precautions:
+      'NFS et bilan hépatique réguliers ; interaction majeure avec l’allopurinol (réduire la dose de 75 %) ; utilisable pendant la grossesse si nécessaire.',
+  },
+  {
+    dci: 'Calcipotriol',
+    slug: 'calcipotriol',
+    classe: 'Analogues de la vitamine D (topiques)',
+    groupe: 'Dermatologie',
+    mecanisme: 'Freine la prolifération et favorise la différenciation des kératinocytes.',
+    indications: 'Psoriasis en plaques, seul ou associé au bétaméthasone.',
+    posologie: '1 à 2 applications par jour sur les plaques, maximum 100 g par semaine (adulte).',
+    effets_indesirables: 'Irritation cutanée ; hypercalcémie si surdosage.',
+    precautions: 'Éviter le visage et les plis ; ne pas dépasser la surface et les quantités recommandées.',
+  },
+  // --- Lot 37
+  {
+    dci: 'Valaciclovir',
+    slug: 'valaciclovir',
+    classe: 'Antiviraux (analogues nucléosidiques)',
+    groupe: 'Antiviraux',
+    mecanisme:
+      'Prodrogue de l’aciclovir (meilleure biodisponibilité) : inhibition de l’ADN polymérase des herpèsvirus.',
+    indications: 'Zona, herpès génital et labial (primo-infection, récurrences, traitement suppressif).',
+    posologie:
+      'Zona : 1 g 3 fois par jour pendant 7 jours ; herpès génital primo-infection 1 g 2 fois par jour 7–10 jours, récurrence 500 mg 2 fois par jour 3 jours ; traitement suppressif 500 mg/j.',
+    effets_indesirables:
+      'Céphalées, nausées ; neurotoxicité et insuffisance rénale en cas de surdosage chez l’insuffisant rénal.',
+    precautions:
+      'Adapter à la fonction rénale ; hydratation ; souvent moins disponible et plus coûteux que l’aciclovir.',
+  },
+  {
+    dci: 'Peroxyde de benzoyle',
+    slug: 'peroxyde-de-benzoyle',
+    classe: 'Antiacnéiques topiques',
+    groupe: 'Dermatologie',
+    mecanisme: 'Action antibactérienne sur Cutibacterium acnes et légèrement comédolytique.',
+    indications:
+      'Acné inflammatoire légère à modérée, seul ou associé à un rétinoïde topique ou à un antibiotique.',
+    posologie:
+      'Gel à 2,5–5 % en couche mince 1 fois par jour le soir sur les zones atteintes, à augmenter selon la tolérance.',
+    effets_indesirables: 'Irritation, sécheresse, décoloration des textiles et des cheveux.',
+    precautions: 'Éviter les yeux et les muqueuses ; photoprotection ; utilisable pendant la grossesse.',
+  },
+  // --- Lot 38
+  {
+    dci: 'Poractant alfa',
+    slug: 'poractant-alfa',
+    classe: 'Surfactants pulmonaires',
+    groupe: 'Néonatologie',
+    mecanisme:
+      'Surfactant d’origine porcine : abaisse la tension superficielle alvéolaire et prévient le collapsus des alvéoles.',
+    indications: 'Maladie des membranes hyalines du prématuré (traitement curatif, parfois prophylactique).',
+    posologie:
+      '200 mg/kg (2,5 mL/kg) en instillation intratrachéale, puis 100 mg/kg à 12 h si besoin (maximum 400 mg/kg au total).',
+    effets_indesirables:
+      'Bradycardie et désaturation transitoires pendant l’instillation, hémorragie pulmonaire, pneumothorax.',
+    precautions:
+      'Réservé aux unités de néonatologie disposant d’oxygène, de CPAP ou de ventilation et d’un personnel formé ; technique INSURE ou LISA.',
+  },
+  {
+    dci: 'Immunoglobulines anti-HBs',
+    slug: 'immunoglobulines-anti-hbs',
+    classe: 'Immunoglobulines spécifiques',
+    groupe: 'Vaccins et sérums',
+    mecanisme:
+      'Anticorps spécifiques contre l’antigène de surface du virus de l’hépatite B : immunisation passive immédiate.',
+    indications:
+      'Nouveau-né de mère AgHBs positive (avec le vaccin dans les 12–24 h) ; exposition au sang chez un sujet non immunisé.',
+    posologie:
+      'Nouveau-né : 100 à 200 UI en IM (cuisse opposée au vaccin) dans les 12 heures suivant la naissance ; adulte exposé : 500 UI IM.',
+    effets_indesirables: 'Douleur au point d’injection, rares réactions allergiques.',
+    precautions:
+      'Disponibilité limitée : la vaccination contre l’hépatite B à la naissance reste prioritaire et ne doit jamais être retardée.',
+  },
+  // --- Lot 41
+  {
+    dci: 'Valganciclovir',
+    slug: 'valganciclovir',
+    classe: 'Antiviraux (analogues nucléosidiques)',
+    groupe: 'Antiviraux',
+    mecanisme: 'Prodrogue du ganciclovir : inhibition de l’ADN polymérase du cytomégalovirus.',
+    indications:
+      'Infection congénitale symptomatique à CMV du nouveau-né (amélioration du pronostic auditif et neurologique) ; rétinite à CMV chez le patient VIH.',
+    posologie:
+      'Nouveau-né : 16 mg/kg per os 2 fois par jour pendant 6 mois, débuté dans le premier mois de vie (centre spécialisé).',
+    effets_indesirables: 'Neutropénie (fréquente), thrombopénie, anémie, toxicité hépatique.',
+    precautions:
+      'NFS hebdomadaire puis mensuelle ; adapter à la fonction rénale ; peu disponible : traitement spécialisé.',
+  },
+  // --- Lot 43
+  {
+    dci: 'Acide ursodésoxycholique',
+    slug: 'acide-ursodesoxycholique',
+    classe: 'Acides biliaires',
+    groupe: 'Hépato-gastro-entérologie',
+    mecanisme:
+      'Acide biliaire hydrophile qui augmente le flux biliaire et remplace les acides biliaires toxiques.',
+    indications:
+      'Cholestases chroniques (atrésie des voies biliaires après intervention de Kasai, cholangite biliaire primitive) ; dissolution de petits calculs cholestéroliques.',
+    posologie: 'Enfant : 10–20 mg/kg/j en 2 à 3 prises. Adulte : 10–15 mg/kg/j.',
+    effets_indesirables: 'Diarrhée, douleurs abdominales, prurit transitoire.',
+    precautions:
+      'Contre-indiqué en cas d’obstruction complète des voies biliaires ou de cholécystite aiguë ; peu disponible.',
+  },
+  // --- Lot 44
+  {
+    dci: 'Mercaptopurine',
+    slug: 'mercaptopurine',
+    classe: 'Antimétabolites (analogues des purines)',
+    groupe: 'Oncologie',
+    mecanisme: 'Analogue des purines qui inhibe la synthèse des acides nucléiques des cellules en division.',
+    indications:
+      'Leucémie aiguë lymphoblastique (traitement d’entretien) ; maladies inflammatoires chroniques de l’intestin.',
+    posologie:
+      'LAL, entretien : 50–75 mg/m²/j per os le soir, ajusté selon la numération (protocole du centre d’oncologie).',
+    effets_indesirables: 'Myélosuppression, hépatotoxicité, mucite, pancréatite.',
+    precautions:
+      'NFS régulière ; réduire la dose avec l’allopurinol ; déficit en TPMT ; manipulation des cytotoxiques.',
+  },
+  {
+    dci: 'Dactinomycine',
+    slug: 'dactinomycine',
+    classe: 'Antibiotiques cytotoxiques',
+    groupe: 'Oncologie',
+    mecanisme: 'Intercalation dans l’ADN et inhibition de la synthèse de l’ARN.',
+    indications: 'Néphroblastome (tumeur de Wilms), rhabdomyosarcome, tumeurs trophoblastiques.',
+    posologie: 'Néphroblastome : 45 µg/kg IV (maximum 2 mg) selon le protocole SIOP ou AHOP.',
+    effets_indesirables:
+      'Myélosuppression, nausées, mucite, maladie veino-occlusive hépatique, nécrose en cas d’extravasation.',
+    precautions: 'Réservée aux centres d’oncologie pédiatrique ; vésicant.',
+  },
+  {
+    dci: 'Carboplatine',
+    slug: 'carboplatine',
+    classe: 'Sels de platine',
+    groupe: 'Oncologie',
+    mecanisme: 'Agent alkylant formant des ponts dans l’ADN.',
+    indications: 'Rétinoblastome, neuroblastome, tumeurs germinales, cancers de l’ovaire et du poumon.',
+    posologie: 'Selon le protocole (dose calculée sur la surface corporelle ou la fonction rénale).',
+    effets_indesirables:
+      'Myélosuppression (thrombopénie), nausées, ototoxicité, néphrotoxicité moindre que le cisplatine.',
+    precautions: 'Centres d’oncologie ; adapter à la fonction rénale ; audiogramme.',
+  },
+  {
+    dci: 'Étoposide',
+    slug: 'etoposide',
+    classe: 'Inhibiteurs de la topo-isomérase II',
+    groupe: 'Oncologie',
+    mecanisme: 'Inhibition de la topo-isomérase II, cassures de l’ADN.',
+    indications:
+      'Rétinoblastome, neuroblastome, leucémies, lymphomes, tumeurs germinales, cancer du poumon à petites cellules.',
+    posologie: 'Selon le protocole d’oncologie (IV ou per os).',
+    effets_indesirables:
+      'Myélosuppression, alopécie, mucite, hypotension si perfusion rapide, leucémies secondaires.',
+    precautions: 'Centres d’oncologie ; perfusion lente.',
+  },
+  {
+    dci: 'Déféroxamine',
+    slug: 'deferoxamine',
+    classe: 'Chélateurs du fer',
+    groupe: 'Hématologie',
+    mecanisme: 'Chélation du fer libre et du fer de la ferritine, éliminé dans les urines et la bile.',
+    indications:
+      'Surcharge en fer post-transfusionnelle (thalassémie, drépanocytose) ; intoxication aiguë au fer.',
+    posologie:
+      'Surcharge : 20–40 mg/kg/j en perfusion sous-cutanée lente de 8 à 12 h, 5 à 7 jours par semaine.',
+    effets_indesirables:
+      'Réactions au point d’injection, troubles visuels et auditifs, retard de croissance à forte dose, infections à Yersinia.',
+    precautions:
+      'Débuter quand la ferritine dépasse 1 000 µg/L ; contrôles ophtalmologiques et auditifs ; coûteux.',
+  },
+  {
+    dci: 'Déférasirox',
+    slug: 'deferasirox',
+    classe: 'Chélateurs du fer',
+    groupe: 'Hématologie',
+    mecanisme: 'Chélateur oral du fer, éliminé dans les selles.',
+    indications:
+      'Surcharge en fer post-transfusionnelle chronique (thalassémie, drépanocytose) à partir de 2 ans.',
+    posologie: '20–30 mg/kg/j per os en une prise (comprimés dispersibles ; dose ajustée sur la ferritine).',
+    effets_indesirables: 'Troubles digestifs, éruption, élévation de la créatinine et des transaminases.',
+    precautions: 'Surveillance mensuelle de la créatinine et des transaminases ; peu disponible.',
+  },
+  // --- Lot 45
+  {
+    dci: 'Triptoréline',
+    slug: 'triptoreline',
+    classe: 'Agonistes de la GnRH',
+    groupe: 'Hormones et corticoïdes',
+    mecanisme:
+      'Agoniste de la GnRH qui, administré en continu, désensibilise l’hypophyse et supprime la sécrétion de LH, FSH et des stéroïdes sexuels.',
+    indications:
+      'Puberté précoce centrale ; cancer de la prostate ; endométriose, fibromes (préparation chirurgicale).',
+    posologie:
+      'Puberté précoce : 3 mg IM toutes les 4 semaines (forme mensuelle) ou 11,25 mg tous les 3 mois (endocrinologie pédiatrique).',
+    effets_indesirables:
+      'Réaction au point d’injection, céphalées, bouffées de chaleur, saignement de privation au début.',
+    precautions: 'Prescription spécialisée ; surveillance clinique et de l’âge osseux.',
+  },
+  {
+    dci: 'Somatropine',
+    slug: 'somatropine',
+    classe: 'Hormone de croissance recombinante',
+    groupe: 'Hormones et corticoïdes',
+    mecanisme:
+      'Hormone de croissance humaine recombinante stimulant la production d’IGF-1 et la croissance du cartilage de conjugaison.',
+    indications:
+      'Déficit en hormone de croissance, syndrome de Turner, insuffisance rénale chronique de l’enfant, enfants nés petits pour l’âge gestationnel sans rattrapage.',
+    posologie: '0,025–0,05 mg/kg/j en SC le soir (selon l’indication, endocrinologie pédiatrique).',
+    effets_indesirables: 'Céphalées, hypertension intracrânienne bénigne, épiphysiolyse, hyperglycémie.',
+    precautions: 'Très coûteuse et peu disponible ; contre-indiquée en cas de tumeur évolutive.',
+  },
+  // --- Lot 46
+  {
+    dci: 'Vigabatrin',
+    slug: 'vigabatrin',
+    classe: 'Antiépileptiques (inhibiteurs de la GABA-transaminase)',
+    groupe: 'Neurologie',
+    mecanisme:
+      'Inhibition irréversible de la GABA-transaminase, augmentant la concentration cérébrale de GABA.',
+    indications:
+      'Spasmes infantiles (syndrome de West), en particulier dans la sclérose tubéreuse de Bourneville ; épilepsies focales réfractaires.',
+    posologie:
+      'Spasmes infantiles : 50 mg/kg/j en 2 prises, augmenté jusqu’à 100–150 mg/kg/j selon la réponse (neurologie pédiatrique).',
+    effets_indesirables:
+      'Rétrécissement concentrique irréversible du champ visuel (traitements prolongés), somnolence, irritabilité, prise de poids.',
+    precautions:
+      'Durée la plus courte possible ; surveillance ophtalmologique ; arrêt progressif ; peu disponible.',
+  },
+  // --- Lot 49
+  {
+    dci: 'Lamotrigine',
+    slug: 'lamotrigine',
+    classe: 'Antiépileptiques (bloqueurs des canaux sodiques)',
+    groupe: 'Neurologie',
+    mecanisme: 'Blocage des canaux sodiques voltage-dépendants et réduction de la libération de glutamate.',
+    indications:
+      'Épilepsies focales et généralisées, en particulier chez la femme en âge de procréer et pendant la grossesse (faible risque malformatif) ; trouble bipolaire (prévention des épisodes dépressifs).',
+    posologie:
+      'Adulte : 25 mg/j pendant 2 semaines, puis 50 mg/j pendant 2 semaines, puis augmentation progressive jusqu’à 100–200 mg/j en 1–2 prises (doses réduites de moitié avec le valproate, augmentées avec les inducteurs enzymatiques).',
+    effets_indesirables:
+      'Éruptions cutanées (dont syndrome de Stevens-Johnson, surtout si titration rapide ou association au valproate), vertiges, diplopie, céphalées.',
+    precautions:
+      'Titration lente obligatoire ; arrêt immédiat en cas d’éruption ; les taux baissent pendant la grossesse (ajustement) et avec les contraceptifs œstroprogestatifs.',
+  },
+  // --- Lot 50
+  {
+    dci: 'Spiramycine',
+    slug: 'spiramycine',
+    classe: 'Macrolides',
+    groupe: 'Antibiotiques',
+    mecanisme:
+      'Inhibition de la synthèse protéique bactérienne ; concentration placentaire élevée limitant le passage de Toxoplasma gondii au fœtus.',
+    indications:
+      'Toxoplasmose acquise pendant la grossesse (prévention de la transmission fœtale) ; infections ORL et bronchopulmonaires.',
+    posologie:
+      'Toxoplasmose gravidique : 3 MUI per os 3 fois par jour (9 MUI/j) jusqu’à l’accouchement ou jusqu’au relais par pyriméthamine-sulfadiazine si infection fœtale prouvée.',
+    effets_indesirables: 'Troubles digestifs, réactions cutanées, rares paresthésies.',
+    precautions: 'Peu disponible ; n’a pas d’effet sur un fœtus déjà infecté (relais spécialisé).',
+  },
+  // --- Lot 59
+  {
+    dci: 'Oxaliplatine',
+    slug: 'oxaliplatine',
+    classe: 'Sels de platine',
+    groupe: 'Oncologie',
+    mecanisme: 'Agent alkylant formant des adduits avec l’ADN, bloquant la réplication et la transcription.',
+    indications:
+      'Cancer colorectal (adjuvant après chirurgie des stades III et métastatique, protocoles FOLFOX, CAPOX), cancers gastriques et pancréatiques.',
+    posologie:
+      'Selon le protocole d’oncologie (FOLFOX : 85 mg/m² IV toutes les 2 semaines ; CAPOX : 130 mg/m² toutes les 3 semaines).',
+    effets_indesirables:
+      'Neuropathie périphérique sensitive (aggravée par le froid), myélosuppression, nausées, diarrhée, réactions d’hypersensibilité.',
+    precautions:
+      'Réservé aux centres d’oncologie ; éviter le froid pendant et après la perfusion ; surveillance neurologique et de la NFS.',
+  },
+  // --- Lot 67
+  {
+    dci: 'Suxaméthonium',
+    slug: 'suxamethonium',
+    classe: 'Curare dépolarisant',
+    groupe: 'Anesthésie et réanimation',
+    mecanisme: 'Agoniste des récepteurs nicotiniques de la plaque motrice, entraînant une dépolarisation prolongée (fasciculations) puis une paralysie musculaire brève.',
+    indications: 'Intubation en séquence rapide (estomac plein, urgence, césarienne) : délai d’action de 60 s et durée de 5–10 min.',
+    posologie: '1 mg/kg IV (1–1,5 mg/kg) après l’hypnotique ; enfant 1–2 mg/kg.',
+    effets_indesirables: 'Hyperkaliémie, bradycardie, myalgies, hypertension intraoculaire, hyperthermie maligne, curarisation prolongée (déficit en pseudocholinestérase), anaphylaxie.',
+    precautions: 'Contre-indiqué en cas d’hyperkaliémie, de brûlures ou de traumatismes étendus après 48 h, de myopathies, d’antécédent d’hyperthermie maligne ; conservation au froid.',
+  },
+  {
+    dci: 'Rocuronium',
+    slug: 'rocuronium',
+    classe: 'Curare non dépolarisant (aminostéroïde)',
+    groupe: 'Anesthésie et réanimation',
+    mecanisme: 'Antagoniste compétitif de l’acétylcholine au niveau des récepteurs nicotiniques de la plaque motrice.',
+    indications: 'Curarisation pour l’intubation et la chirurgie ; alternative au suxaméthonium pour l’intubation en séquence rapide (1,2 mg/kg).',
+    posologie: 'Intubation : 0,6 mg/kg IV (1–1,2 mg/kg en séquence rapide) ; entretien 0,1–0,2 mg/kg selon la surveillance.',
+    effets_indesirables: 'Anaphylaxie, curarisation résiduelle, douleur à l’injection.',
+    precautions: 'Ventilation obligatoire ; décurarisation par néostigmine (+ atropine) ou sugammadex ; surveillance de la curarisation.',
+  },
+  {
+    dci: 'Atracurium',
+    slug: 'atracurium',
+    classe: 'Curare non dépolarisant (benzylisoquinoléine)',
+    groupe: 'Anesthésie et réanimation',
+    mecanisme: 'Antagoniste compétitif de l’acétylcholine à la plaque motrice ; élimination indépendante du foie et du rein (voie de Hofmann).',
+    indications: 'Curarisation au cours de l’anesthésie générale, notamment en cas d’insuffisance rénale ou hépatique.',
+    posologie: '0,5 mg/kg IV pour l’intubation, puis 0,1–0,2 mg/kg selon la surveillance.',
+    effets_indesirables: 'Libération d’histamine (rougeur, hypotension, bronchospasme), anaphylaxie, curarisation résiduelle.',
+    precautions: 'Ventilation obligatoire ; conservation au froid ; décurarisation par néostigmine et atropine.',
+  },
+  // --- Lot 68
+  {
+    dci: 'Pyridostigmine',
+    slug: 'pyridostigmine',
+    classe: 'Anticholinestérasique',
+    groupe: 'Neurologie',
+    mecanisme: 'Inhibition réversible de l’acétylcholinestérase augmentant l’acétylcholine disponible à la jonction neuromusculaire.',
+    indications: 'Traitement symptomatique de la myasthénie.',
+    posologie: 'Adulte : 30–60 mg per os 3 à 4 fois par jour, à adapter (maximum habituel 360 mg/j) ; enfant 1 mg/kg par prise.',
+    effets_indesirables: 'Crampes abdominales, diarrhée, hypersalivation, sueurs, fasciculations, bradycardie ; surdosage : crise cholinergique (faiblesse aggravée).',
+    precautions: 'Prudence en cas d’asthme et de troubles du rythme ; distinguer crise myasthénique et crise cholinergique.',
+  },
+  {
+    dci: 'Éthosuximide',
+    slug: 'ethosuximide',
+    classe: 'Antiépileptique (succinimide)',
+    groupe: 'Neurologie',
+    mecanisme: 'Blocage des canaux calciques de type T des neurones thalamiques, responsables des décharges des absences.',
+    indications: 'Épilepsie-absences de l’enfant (traitement de première intention avec le valproate).',
+    posologie: 'Enfant : 10–15 mg/kg/j en 2 prises, augmenté progressivement jusqu’à 20–40 mg/kg/j (maximum 1,5 g/j).',
+    effets_indesirables: 'Troubles digestifs, somnolence, céphalées, hoquet, rares troubles hématologiques et réactions cutanées.',
+    precautions: 'Inefficace sur les crises généralisées tonico-cloniques ; surveillance de la NFS.',
+  },
+  {
+    dci: 'Topiramate',
+    slug: 'topiramate',
+    classe: 'Antiépileptique',
+    groupe: 'Neurologie',
+    mecanisme: 'Blocage des canaux sodiques, potentialisation du GABA, antagonisme des récepteurs AMPA du glutamate.',
+    indications: 'Épilepsies focales et généralisées (en association, épilepsies pharmacorésistantes, syndrome de Lennox-Gastaut) ; prévention de la migraine.',
+    posologie: 'Adulte : débuter à 25 mg/j, augmenter de 25–50 mg par semaine jusqu’à 100–200 mg/j en 2 prises ; enfant 5–9 mg/kg/j.',
+    effets_indesirables: 'Troubles cognitifs et du langage, paresthésies, perte de poids, lithiase rénale, glaucome aigu, acidose métabolique.',
+    precautions: 'Tératogène (fentes labio-palatines) ; diminue l’efficacité de la contraception orale ; hydratation suffisante.',
+  },
+  // --- Lot 69
+  {
+    dci: 'Oxcarbazépine',
+    slug: 'oxcarbazepine',
+    classe: 'Antiépileptique (carboxamide)',
+    groupe: 'Neurologie',
+    mecanisme: 'Blocage des canaux sodiques voltage-dépendants, stabilisant les membranes neuronales hyperexcitables.',
+    indications: 'Névralgie du trijumeau (alternative à la carbamazépine, mieux tolérée) ; épilepsies focales.',
+    posologie: 'Adulte : débuter à 150–300 mg 2 fois par jour, augmenter jusqu’à 600–1 200 mg/j (maximum 2 400 mg/j).',
+    effets_indesirables: 'Hyponatrémie (fréquente), somnolence, vertiges, diplopie, éruptions cutanées (rares toxidermies graves).',
+    precautions: 'Surveiller la natrémie (sujet âgé, diurétiques) ; inducteur enzymatique modéré (contraception orale, antirétroviraux).',
+  },
+  {
+    dci: 'Riluzole',
+    slug: 'riluzole',
+    classe: 'Antiglutamatergique',
+    groupe: 'Neurologie',
+    mecanisme: 'Inhibition de la libération du glutamate et blocage des canaux sodiques, ralentissant la dégénérescence des motoneurones.',
+    indications: 'Sclérose latérale amyotrophique (allongement modeste de la survie).',
+    posologie: '50 mg per os 2 fois par jour, à distance des repas.',
+    effets_indesirables: 'Élévation des transaminases, nausées, asthénie, neutropénie rare.',
+    precautions: 'Surveillance des transaminases (mensuelle les 3 premiers mois) et de la NFS ; contre-indiqué en cas d’insuffisance hépatique.',
+  },
+  {
+    dci: 'Antitoxine botulique',
+    slug: 'antitoxine-botulique',
+    classe: 'Immunsérum (antitoxine équine)',
+    groupe: 'Vaccins et sérums',
+    mecanisme: 'Neutralisation de la toxine botulique circulante non encore fixée aux terminaisons nerveuses.',
+    indications: 'Botulisme alimentaire ou par blessure, le plus tôt possible après le diagnostic clinique (sans attendre la confirmation).',
+    posologie: 'Selon le produit (antitoxine heptavalente) : un flacon IV, en perfusion lente, après test de tolérance selon le fabricant.',
+    effets_indesirables: 'Réactions d’hypersensibilité immédiate (anaphylaxie), maladie sérique.',
+    precautions: 'Disponibilité très limitée (stocks nationaux ou internationaux) ; adrénaline prête ; ne régresse pas une paralysie déjà installée.',
+  },
+  // --- Lot 70
+  {
+    dci: 'Sumatriptan',
+    slug: 'sumatriptan',
+    classe: 'Triptan (agoniste des récepteurs 5-HT1B/1D)',
+    groupe: 'Neurologie',
+    mecanisme: 'Vasoconstriction des vaisseaux méningés et inhibition de la libération des neuropeptides de l’inflammation neurogène.',
+    indications: 'Crise de migraine ; crise d’algie vasculaire de la face (voie sous-cutanée ou nasale).',
+    posologie: 'Migraine : 50–100 mg per os, renouvelable après 2 h (maximum 300 mg/j). Algie vasculaire : 6 mg en sous-cutané (maximum 2 injections par 24 h).',
+    effets_indesirables: 'Sensations de chaleur, d’oppression thoracique, paresthésies, vertiges, somnolence.',
+    precautions: 'Contre-indiqué en cas de coronaropathie, d’AVC, d’HTA non contrôlée, d’artériopathie ; ne pas associer aux dérivés de l’ergot.',
+  },
+  {
+    dci: 'Vérapamil',
+    slug: 'verapamil',
+    classe: 'Inhibiteur calcique non dihydropyridinique',
+    groupe: 'Cardiovasculaire',
+    mecanisme: 'Blocage des canaux calciques de type L du myocarde, du tissu nodal et des muscles lisses vasculaires.',
+    indications: 'Traitement de fond de l’algie vasculaire de la face ; tachycardies supraventriculaires ; angor ; HTA.',
+    posologie: 'Algie vasculaire : 240 mg/j, augmentés progressivement par paliers (jusqu’à 480–720 mg/j) sous surveillance ECG.',
+    effets_indesirables: 'Constipation, bradycardie, blocs auriculo-ventriculaires, hypotension, œdèmes des chevilles.',
+    precautions: 'ECG avant et à chaque palier ; contre-indiqué en cas de bloc AV, d’insuffisance cardiaque ; prudence avec les bêtabloquants.',
+  },
+  // --- Lot 71
+  {
+    dci: 'Bipéridène',
+    slug: 'biperidene',
+    classe: 'Anticholinergique antiparkinsonien',
+    groupe: 'Neurologie',
+    mecanisme: 'Antagonisme des récepteurs muscariniques centraux, rétablissant l’équilibre dopamine-acétylcholine dans les noyaux gris centraux.',
+    indications: 'Dystonie aiguë et syndromes parkinsoniens induits par les neuroleptiques (forme injectable en urgence) ; maladie de Parkinson.',
+    posologie: 'Dystonie aiguë : 2,5–5 mg IM ou IV lente, renouvelable après 30 min ; relais oral 2–6 mg/j.',
+    effets_indesirables: 'Sécheresse buccale, constipation, rétention urinaire, flou visuel, confusion et hallucinations (sujet âgé).',
+    precautions: 'Contre-indiqué en cas de glaucome par fermeture de l’angle, d’adénome prostatique avec rétention ; éviter chez le sujet âgé (troubles cognitifs).',
+  },
+  {
+    dci: 'Tétrabénazine',
+    slug: 'tetrabenazine',
+    classe: 'Inhibiteur du transporteur vésiculaire des monoamines (VMAT2)',
+    groupe: 'Neurologie',
+    mecanisme: 'Déplétion présynaptique en dopamine, réduisant les mouvements hyperkinétiques.',
+    indications: 'Chorées (maladie de Huntington, chorées sévères), dyskinésies tardives, tics sévères.',
+    posologie: '12,5 mg/j, augmentés progressivement par paliers de 12,5 mg jusqu’à 25–75 mg/j en 2–3 prises.',
+    effets_indesirables: 'Dépression et idées suicidaires, somnolence, syndrome parkinsonien, akathisie, syndrome malin.',
+    precautions: 'Contre-indiquée en cas de dépression non traitée ou d’idées suicidaires ; surveillance de l’humeur ; disponibilité limitée.',
+  },
+  {
+    dci: 'Primidone',
+    slug: 'primidone',
+    classe: 'Antiépileptique (désoxybarbiturique)',
+    groupe: 'Neurologie',
+    mecanisme: 'Métabolisée en phénobarbital et phényléthylmalonamide ; réduit l’oscillation des circuits du tremblement.',
+    indications: 'Tremblement essentiel (traitement de première intention avec le propranolol) ; épilepsies.',
+    posologie: 'Tremblement : débuter à 25 mg le soir, augmenter lentement jusqu’à 50–250 mg/j.',
+    effets_indesirables: 'Somnolence, vertiges, nausées et ataxie surtout au début, dépendance.',
+    precautions: 'Débuter à très faible dose ; inducteur enzymatique (interactions, contraception orale, antirétroviraux) ; éviter chez la femme enceinte.',
+  },
+  {
+    dci: 'Pramipexole',
+    slug: 'pramipexole',
+    classe: 'Agoniste dopaminergique non ergoté',
+    groupe: 'Neurologie',
+    mecanisme: 'Stimulation directe des récepteurs dopaminergiques D2 et D3.',
+    indications: 'Syndrome des jambes sans repos modéré à sévère ; maladie de Parkinson.',
+    posologie: 'Jambes sans repos : 0,088 mg (sel 0,125 mg) 2–3 h avant le coucher, augmenté si besoin jusqu’à 0,54 mg/j.',
+    effets_indesirables: 'Nausées, somnolence et endormissements brutaux, hypotension orthostatique, troubles du contrôle des impulsions, phénomène d’augmentation.',
+    precautions: 'Informer du risque d’accès de sommeil (conduite) et des troubles du comportement (jeu, achats) ; adapter à la fonction rénale.',
+  },
+  {
+    dci: 'Toxine botulinique de type A',
+    slug: 'toxine-botulinique-type-a',
+    classe: 'Neurotoxine thérapeutique',
+    groupe: 'Neurologie',
+    mecanisme: 'Blocage de la libération d’acétylcholine à la jonction neuromusculaire, entraînant une paralysie locale et réversible du muscle injecté.',
+    indications: 'Dystonies focales (torticolis spasmodique, blépharospasme), spasticité focale (après AVC, paralysie cérébrale), hypersialorrhée.',
+    posologie: 'Injections intramusculaires ciblées selon le muscle et le produit, renouvelées tous les 3–4 mois, par un praticien formé.',
+    effets_indesirables: 'Faiblesse excessive des muscles voisins, dysphagie (injections cervicales), ptosis, douleur au point d’injection.',
+    precautions: 'Réservée aux centres spécialisés ; unités non interchangeables entre les produits ; contre-indiquée en cas de myasthénie.',
+  },
+  // --- Lot 72
+  {
+    dci: 'Hydroxyzine',
+    slug: 'hydroxyzine',
+    classe: 'Antihistaminique H1 sédatif (anxiolytique)',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Antagonisme des récepteurs H1 centraux, effet sédatif et anxiolytique sans dépendance notable.',
+    indications: 'Anxiété (traitement d’appoint de courte durée), prurit, prémédication.',
+    posologie: 'Adulte : 25–50 mg jusqu’à 3 fois par jour (maximum 100 mg/j ; 50 mg/j chez le sujet âgé).',
+    effets_indesirables: 'Somnolence, sécheresse buccale, effets anticholinergiques, allongement de l’intervalle QT.',
+    precautions: 'Éviter chez le sujet âgé, en cas d’allongement du QT, de glaucome ou d’adénome prostatique ; pas d’alcool ni de conduite.',
+  },
+  {
+    dci: 'Clomipramine',
+    slug: 'clomipramine',
+    classe: 'Antidépresseur tricyclique',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Inhibition puissante de la recapture de la sérotonine et de la noradrénaline.',
+    indications: 'Trouble obsessionnel compulsif (en cas d’échec des ISRS), dépression sévère, trouble panique.',
+    posologie: 'Débuter à 25 mg/j, augmenter progressivement jusqu’à 100–250 mg/j selon la tolérance.',
+    effets_indesirables: 'Effets anticholinergiques (sécheresse buccale, constipation, rétention, flou visuel), hypotension orthostatique, prise de poids, troubles du rythme, convulsions.',
+    precautions: 'ECG chez le sujet de plus de 50 ans ou cardiaque ; toxicité grave en cas de surdosage (risque suicidaire : délivrance limitée) ; contre-indiqué après un infarctus récent.',
+  },
+  {
+    dci: 'Zopiclone',
+    slug: 'zopiclone',
+    classe: 'Hypnotique apparenté aux benzodiazépines (cyclopyrrolone)',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Modulation positive des récepteurs GABA-A, raccourcissant le délai d’endormissement.',
+    indications: 'Insomnie occasionnelle ou transitoire sévère, sur une courte durée.',
+    posologie: '3,75–7,5 mg au coucher (3,75 mg chez le sujet âgé), pendant 2–4 semaines au maximum.',
+    effets_indesirables: 'Goût amer, somnolence résiduelle, troubles de la mémoire, comportements complexes pendant le sommeil, dépendance.',
+    precautions: 'Durée la plus courte possible ; prudence chez le sujet âgé (chutes), en cas d’apnée du sommeil, d’insuffisance respiratoire ; pas d’alcool.',
+  },
+  {
+    dci: 'Quétiapine',
+    slug: 'quetiapine',
+    classe: 'Antipsychotique atypique',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Antagonisme des récepteurs dopaminergiques D2 (faible) et sérotoninergiques 5-HT2A, effet antihistaminique sédatif.',
+    indications: 'Schizophrénie, trouble bipolaire (manie, dépression bipolaire) ; psychose chez le patient parkinsonien.',
+    posologie: 'Schizophrénie : 50 mg/j le premier jour, augmentation progressive jusqu’à 300–750 mg/j ; doses plus faibles chez le sujet âgé.',
+    effets_indesirables: 'Sédation, hypotension orthostatique, prise de poids, troubles métaboliques, allongement du QT ; peu d’effets extrapyramidaux.',
+    precautions: 'Surveillance du poids, de la glycémie et des lipides ; prudence chez le sujet âgé dément (mortalité accrue).',
+  },
+  {
+    dci: 'Mirtazapine',
+    slug: 'mirtazapine',
+    classe: 'Antidépresseur noradrénergique et sérotoninergique spécifique',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Antagonisme des récepteurs α2 présynaptiques, 5-HT2, 5-HT3 et H1, augmentant la transmission noradrénergique et sérotoninergique.',
+    indications: 'Dépression, notamment avec insomnie, anorexie ou amaigrissement ; dépression du sujet âgé.',
+    posologie: '15 mg au coucher, augmentés à 30–45 mg/j.',
+    effets_indesirables: 'Somnolence, augmentation de l’appétit et du poids, sécheresse buccale ; rares neutropénies.',
+    precautions: 'Peu d’interactions et peu d’effets sexuels ; surveillance du poids ; NFS en cas de fièvre ou d’angine.',
+  },
+  // --- Lot 74
+  {
+    dci: 'Nicotine',
+    slug: 'nicotine',
+    classe: 'Substitut nicotinique',
+    groupe: 'Addictologie',
+    mecanisme: 'Apport de nicotine sans les produits toxiques de la fumée, réduisant les symptômes de sevrage et l’envie de fumer.',
+    indications: 'Aide à l’arrêt du tabac (timbres transdermiques, gommes, pastilles, inhaleur).',
+    posologie: 'Timbre 21 mg/24 h si plus de 20 cigarettes par jour (14 mg si 10–20), associé à des formes orales à la demande ; dégression sur 8–12 semaines.',
+    effets_indesirables: 'Irritation cutanée (timbre), troubles du sommeil, nausées, hoquet, palpitations en cas de surdosage.',
+    precautions: 'Utilisable chez le coronarien stable et la femme enceinte (préférable au tabac) ; adapter la dose aux signes de sous- ou surdosage.',
+  },
+  {
+    dci: 'Varénicline',
+    slug: 'varenicline',
+    classe: 'Agoniste partiel des récepteurs nicotiniques α4β2',
+    groupe: 'Addictologie',
+    mecanisme: 'Stimulation partielle des récepteurs nicotiniques réduisant le manque, et blocage de l’effet de récompense de la nicotine.',
+    indications: 'Aide à l’arrêt du tabac chez l’adulte (traitement le plus efficace en monothérapie).',
+    posologie: '0,5 mg/j pendant 3 jours, puis 0,5 mg 2 fois par jour jusqu’au jour 7, puis 1 mg 2 fois par jour pendant 12 semaines ; arrêt du tabac entre le 8e et le 14e jour.',
+    effets_indesirables: 'Nausées (fréquentes), rêves anormaux, insomnie, céphalées.',
+    precautions: 'Surveiller l’humeur ; adapter à la fonction rénale ; disponibilité limitée.',
+  },
+  {
+    dci: 'Méthadone',
+    slug: 'methadone',
+    classe: 'Agoniste opioïde de longue durée d’action',
+    groupe: 'Addictologie',
+    mecanisme: 'Agoniste des récepteurs μ de longue demi-vie, supprimant le manque et le besoin de consommer sans effet euphorique marqué aux doses stables.',
+    indications: 'Traitement de substitution de la dépendance aux opioïdes (héroïne, tramadol, codéine).',
+    posologie: 'Début 10–30 mg/j, augmentation prudente par paliers de 5–10 mg tous les 3–5 jours ; dose d’entretien habituelle 60–120 mg/j, prise supervisée au début.',
+    effets_indesirables: 'Dépression respiratoire (surtout à l’induction et en association aux benzodiazépines ou à l’alcool), constipation, sueurs, allongement du QT.',
+    precautions: 'Programme encadré, délivrance contrôlée ; ECG si doses élevées ou facteurs de risque ; naloxone disponible ; interactions (rifampicine, efavirenz diminuent les taux).',
+  },
+  {
+    dci: 'Buprénorphine',
+    slug: 'buprenorphine',
+    classe: 'Agoniste partiel opioïde',
+    groupe: 'Addictologie',
+    mecanisme: 'Agoniste partiel des récepteurs μ à forte affinité avec effet plafond sur la dépression respiratoire.',
+    indications: 'Traitement de substitution de la dépendance aux opioïdes.',
+    posologie: 'Induction sublinguale 2–4 mg au moins 12–24 h après le dernier opioïde (signes de manque présents), puis 8–16 mg/j (maximum 24 mg/j).',
+    effets_indesirables: 'Syndrome de manque précipité si induction trop précoce, constipation, céphalées, hépatotoxicité.',
+    precautions: 'Plus sûre que la méthadone en cas de surdosage ; prudence avec benzodiazépines et alcool ; surveillance hépatique.',
+  },
+  // --- Lot 75
+  {
+    dci: 'Lorazépam',
+    slug: 'lorazepam',
+    classe: 'Benzodiazépine de demi-vie intermédiaire',
+    groupe: 'Psychiatrie',
+    mecanisme: 'Modulation positive des récepteurs GABA-A (anxiolytique, sédatif, anticonvulsivant, myorelaxant).',
+    indications: 'Catatonie (traitement de première intention et test diagnostique), état de mal épileptique, anxiété aiguë, agitation, sevrage alcoolique chez l’insuffisant hépatique.',
+    posologie: 'Catatonie : 1–2 mg IV, IM ou per os, renouvelé toutes les 4–8 h (jusqu’à 8–24 mg/j) ; état de mal : 0,1 mg/kg IV (maximum 4 mg par dose).',
+    effets_indesirables: 'Sédation, dépression respiratoire (surtout associé aux opioïdes ou à l’alcool), confusion chez le sujet âgé, dépendance.',
+    precautions: 'Surveillance respiratoire, flumazénil disponible ; durée limitée hors catatonie ; conservation au froid de la forme injectable.',
+  },
+  {
+    dci: 'Mémantine',
+    slug: 'memantine',
+    classe: 'Antagoniste des récepteurs NMDA',
+    groupe: 'Neurologie',
+    mecanisme: 'Antagonisme non compétitif des récepteurs NMDA, limitant l’excitotoxicité glutamatergique.',
+    indications: 'Démence de type Alzheimer modérée à sévère, seule ou associée à un inhibiteur de la cholinestérase.',
+    posologie: '5 mg/j, augmentés de 5 mg par semaine jusqu’à 20 mg/j (10 mg/j si insuffisance rénale sévère).',
+    effets_indesirables: 'Vertiges, céphalées, somnolence, constipation, confusion, hypertension.',
+    precautions: 'Adapter à la fonction rénale ; bénéfice modeste à réévaluer ; disponibilité limitée.',
+  },
+  {
+    dci: 'Rivastigmine',
+    slug: 'rivastigmine',
+    classe: 'Inhibiteur de la cholinestérase',
+    groupe: 'Neurologie',
+    mecanisme: 'Inhibition de l’acétylcholinestérase et de la butyrylcholinestérase, augmentant l’acétylcholine cérébrale.',
+    indications: 'Démence de la maladie d’Alzheimer légère à modérée, démence à corps de Lewy et démence de la maladie de Parkinson.',
+    posologie: 'Gélules : 1,5 mg 2 fois par jour, augmentés toutes les 2–4 semaines jusqu’à 3–6 mg 2 fois par jour ; timbre 4,6 puis 9,5 mg/24 h.',
+    effets_indesirables: 'Nausées, vomissements, perte de poids, diarrhée, bradycardie, syncope, aggravation du tremblement.',
+    precautions: 'Prudence en cas de bradycardie, de troubles de conduction, d’asthme, d’ulcère ; prise au cours des repas.',
+  },
+  // --- Lot 76
+  {
+    dci: 'Modafinil',
+    slug: 'modafinil',
+    classe: 'Psychostimulant non amphétaminique (éveillant)',
+    groupe: 'Neurologie',
+    mecanisme: 'Inhibition de la recapture de la dopamine et activation des systèmes d’éveil (histamine, orexine), favorisant la vigilance.',
+    indications: 'Somnolence diurne excessive de la narcolepsie et des hypersomnies centrales.',
+    posologie: '100–200 mg le matin, éventuellement 100 mg supplémentaires à midi (maximum 400 mg/j).',
+    effets_indesirables: 'Céphalées, nervosité, insomnie, palpitations, perte d’appétit ; rares réactions cutanées graves.',
+    precautions: 'Inducteur enzymatique (diminue l’efficacité de la contraception orale) ; contre-indiqué en cas d’HTA sévère ou d’arythmie ; prescription spécialisée.',
   },
 ];
 

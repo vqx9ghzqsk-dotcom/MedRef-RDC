@@ -257,34 +257,6 @@ function IllustrationHero() {
   );
 }
 
-/** Photo du héros (portrait recadré sur le soignant, allégée : 17 à 29 Ko). Si elle ne charge pas, on garde l'illustration dessinée. */
-function PhotoHero() {
-  const [ok, setOk] = useState(true);
-  if (!ok) return <IllustrationHero />;
-  return (
-    <figure className="v-hero-photo">
-      <img
-        src="/images/soignant-600.webp"
-        srcSet="/images/soignant-400.webp 400w, /images/soignant-600.webp 600w"
-        sizes="(max-width: 760px) 80vw, 420px"
-        width="600"
-        height="876"
-        alt="Professionnel de santé en tenue médicale, bras croisés, devant des rayons de pharmacie"
-        decoding="async"
-        onError={() => setOk(false)}
-      />
-      <figcaption className="v-puce v-puce-haut">
-        <strong>Urgences</strong>
-        <span>Conduite ABCDE</span>
-      </figcaption>
-      <p className="v-puce v-puce-bas">
-        <strong>Médicaments</strong>
-        <span>Disponibles en RDC</span>
-      </p>
-    </figure>
-  );
-}
-
 export function VitrinePage() {
   const [ouvert, setOuvert] = useState(false);
   const fermer = () => setOuvert(false);
@@ -353,7 +325,7 @@ export function VitrinePage() {
               Gratuit pour les professionnels de santé · Conçu par le Dr Ben Mingalu
             </p>
           </div>
-          <PhotoHero />
+          <IllustrationHero />
         </section>
 
         <section id="apropos" className="v-section v-apropos">

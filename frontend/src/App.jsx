@@ -26,6 +26,7 @@ import {
 } from './ui/pages/AdminPages.jsx';
 import { RecherchePage } from './ui/pages/RecherchePage.jsx';
 import { OrdonnancePage, PrescriptionsPage } from './ui/pages/PrescriptionsPage.jsx';
+import { AvisFormPage, AvisPage, MesAvisPage } from './ui/pages/AvisPages.jsx';
 import { NotFoundPage } from './ui/pages/NotFoundPage.jsx';
 import { HorsLignePage } from './ui/pages/HorsLignePage.jsx';
 import { ComptePage } from './ui/pages/ComptePage.jsx';
@@ -62,6 +63,10 @@ export function AppRoutes() {
         <Route path="recherche" element={<RecherchePage />} />
         <Route path="prescriptions" element={<PrescriptionsPage />} />
         <Route path="prescriptions/:id" element={<OrdonnancePage />} />
+        <Route path="avis" element={<MesAvisPage />} />
+        <Route path="avis/nouveau" element={<AvisFormPage />} />
+        <Route path="avis/:id" element={<AvisPage />} />
+        <Route path="avis/:id/modifier" element={<AvisFormPage />} />
         <Route path="hors-ligne" element={<HorsLignePage />} />
         <Route path="compte" element={<ComptePage />} />
         <Route path="admin" element={<AdminHomePage />} />

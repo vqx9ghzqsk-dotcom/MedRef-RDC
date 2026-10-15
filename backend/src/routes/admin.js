@@ -1966,3 +1966,5 @@ router.put('/admin/actualites/:id', sauverActualite(false));
 module.exports = router;
 module.exports.parsePathologie = parsePathologie;
 module.exports.rubriquesModifiees = rubriquesModifiees;
+module.exports.createValidator = createValidator;
+module.exports.logModification = logModification;

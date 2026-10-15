@@ -307,3 +307,32 @@ export const STATUTS_ACTUALITE = {
   publie: 'Publiée',
   archive: 'Archivée',
 };
+
+export const TYPES_AVIS = {
+  efficacite: 'Efficacité',
+  tolerance: 'Tolérance, effet indésirable',
+  qualite: 'Qualité du produit (falsification suspectée, défaut, conservation)',
+  disponibilite_prix: 'Disponibilité et prix',
+  donnee_scientifique: 'Nouvelle donnée scientifique',
+};
+
+export const STATUTS_AVIS = {
+  soumis: 'En examen',
+  complement_demande: 'Complément demandé',
+  publie: 'Publié',
+  rejete: 'Rejeté',
+  retire: 'Retiré',
+};
+
+export const TYPES_SOURCE_AVIS = {
+  etude: 'Étude',
+  recommandation: 'Recommandation',
+  notice: 'Notice',
+  autre: 'Autre',
+};
+
+export const CIBLES_AVIS = {
+  produit: 'Produit',
+  molecule: 'Molécule',
+  pathologie: 'Traitement d’une fiche',
+};

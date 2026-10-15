@@ -121,6 +121,13 @@ function PourVous({ moi, derniere }) {
       );
     }
   }
+  if (moi && PROFILS_PRESCRIPTEURS.concat('pharmacien').includes(moi.profil)) {
+    elements.push(
+      <li key="avis">
+        <Link to="/avis">Mes avis et avis à examiner</Link> sur les produits et les traitements
+      </li>,
+    );
+  }
   if (derniere) {
     elements.push(
       <li key="rx">

@@ -25,6 +25,22 @@ export function createMedRefApi(client) {
     pathologies: () => data(client.get('/api/pathologies')),
     accueil: () => data(client.get('/api/accueil')),
     accueilPourMoi: () => data(client.get('/api/accueil/pour-moi')),
+
+    // Avis sur les produits et traitements (lot E)
+    avisPublics: (cibleType, cible) => data(client.get('/api/avis', { cible_type: cibleType, cible })),
+    avis: (id) => data(client.get(`/api/avis/${enc(id)}`)),
+    mesAvis: () => data(client.get('/api/avis/mes')),
+    avisExamen: () => data(client.get('/api/avis/examen')),
+    creerAvis: (payload) => data(client.post('/api/avis', payload)),
+    modifierAvis: (id, payload) => data(client.put(`/api/avis/${enc(id)}`, payload)),
+    retirerAvis: (id) => data(client.post(`/api/avis/${enc(id)}/retirer`, {})),
+    photoAvis: (id, dataUrl, legende) =>
+      data(client.post(`/api/avis/${enc(id)}/photos`, { data: dataUrl, legende })),
+    voterAvis: (id) => data(client.post(`/api/avis/${enc(id)}/vote`, {})),
+    commenterAvis: (id, texte) => data(client.post(`/api/avis/${enc(id)}/commentaires`, { texte })),
+    signalerAvis: (id, motif, commentaireId) =>
+      client.post(`/api/avis/${enc(id)}/signalements`, { motif, commentaire_id: commentaireId || undefined }),
+    pharmacovigilance: () => data(client.get('/api/parametres/pharmacovigilance')),
     pathologie: (slug) => data(client.get(`/api/pathologies/${enc(slug)}`)),
 
     // Portes d'entrée transversales
@@ -63,6 +79,14 @@ export function createMedRefApi(client) {
     adminMedicament: (id) => data(client.get(`/api/admin/medicaments/${enc(id)}`)),
     adminSaveMedicament: (id, payload) => client.put(`/api/admin/medicaments/${enc(id)}`, payload),
     adminComptes: () => data(client.get('/api/admin/comptes')),
+    adminAvis: (statut) => data(client.get('/api/admin/avis', statut ? { statut } : undefined)),
+    adminModererAvis: (id, decision, motif) =>
+      data(client.post(`/api/admin/avis/${enc(id)}/moderation`, { decision, motif })),
+    adminSignalements: () => data(client.get('/api/admin/signalements')),
+    adminTraiterSignalement: (id, masquerCommentaire) =>
+      client.post(`/api/admin/signalements/${enc(id)}/traiter`, { masquer_commentaire: masquerCommentaire }),
+    adminSavePharmacovigilance: (contact) =>
+      data(client.put('/api/admin/parametres/pharmacovigilance', { contact })),
     adminActualites: () => data(client.get('/api/admin/actualites')),
     adminActualite: (id) => data(client.get(`/api/admin/actualites/${enc(id)}`)),
     adminSaveActualite: (id, payload) =>

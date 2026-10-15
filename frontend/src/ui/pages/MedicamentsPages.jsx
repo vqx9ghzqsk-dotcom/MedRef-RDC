@@ -7,6 +7,7 @@ import { FicheProduit } from '../components/FicheProduit.jsx';
 import { LienProduit } from '../components/Produits.jsx';
 import { RechercheProduit } from '../components/RechercheProduit.jsx';
 import { LIGNES, NATURES_PRODUIT } from '../../core/labels.js';
+import { AvisCible } from '../components/Avis.jsx';
 
 const FILTER_KEYS = ['q', 'groupe', 'forme', 'enfant', 'operateur', 'classe', 'molecule'];
 const fr = (n) => Number(n).toLocaleString('fr-FR');
@@ -323,6 +324,8 @@ export function MedicamentPage() {
             </header>
 
             <FicheProduit produit={m} />
+
+            <AvisCible type="produit" cible={m.id} nom={m.nom_commercial} />
 
             {m.pathologies.length > 0 && (
               <section className="related">

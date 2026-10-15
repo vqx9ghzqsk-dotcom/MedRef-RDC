@@ -13,3 +13,6 @@ logs/
 
 # Dossier de travail des catalogues (fichiers Word, images sources, scripts) : reste local
 /catalogues/
+
+# Photos jointes aux avis (lot E) : données des utilisateurs, hors dépôt
+/backend/medias/avis/

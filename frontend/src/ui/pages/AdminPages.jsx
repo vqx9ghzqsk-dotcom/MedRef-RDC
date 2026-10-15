@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
 import { useAsync } from '../hooks/useAsync.js';
@@ -42,6 +42,7 @@ import {
   formatPrixCdf,
 } from '../../core/labels.js';
 import { ActualitesAdmin } from '../components/ActualitesAdmin.jsx';
+import { AvisAdmin } from '../components/AvisAdmin.jsx';
 
 const entries = (obj) => Object.entries(obj).map(([k, v]) => [k, typeof v === 'string' ? v : v.label]);
 
@@ -78,6 +79,7 @@ const ONGLETS_ADMIN = [
   ['catalogue', 'Catalogue des firmes'],
   ['semiologie', 'Glossaire et syndromes'],
   ['actualites', 'Actualités'],
+  ['avis', 'Avis'],
   ['historique', 'Historique'],
   ['comptes', 'Comptes', 'admin'],
 ];
@@ -94,7 +96,10 @@ function AdminHome() {
   const { api } = useServices();
   const { user } = useAuth();
   const state = useAsync(() => api.adminResume(), [api]);
-  const [onglet, setOnglet] = useState('fiches');
+  const [params] = useSearchParams();
+  const [onglet, setOnglet] = useState(() =>
+    ONGLETS_ADMIN.some(([k]) => k === params.get('onglet')) ? params.get('onglet') : 'fiches',
+  );
   const [statut, setStatut] = useState('');
   const [q, setQ] = useState('');
   const norm = (s) =>
@@ -145,7 +150,7 @@ function AdminHome() {
                 ))}
               </div>
 
-              {!['historique', 'catalogue', 'comptes', 'actualites'].includes(onglet) && (
+              {!['historique', 'catalogue', 'comptes', 'actualites', 'avis'].includes(onglet) && (
                 <form className="filter-bar" onSubmit={(e) => e.preventDefault()} aria-label="Filtres">
                   <div className="field">
                     <label htmlFor="admin-q">Rechercher</label>
@@ -175,6 +180,7 @@ function AdminHome() {
               )}
 
               {onglet === 'actualites' && <ActualitesAdmin user={user} />}
+              {onglet === 'avis' && <AvisAdmin user={user} />}
 
               {onglet === 'fiches' && (
                 <FichesAdmin

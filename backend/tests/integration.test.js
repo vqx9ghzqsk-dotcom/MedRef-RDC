@@ -546,6 +546,110 @@ describeDb('Intégration MySQL', () => {
     expect(refus.status).toBe(400);
   });
 
+  it('lots C à E : liste des pathologies, accueil, actualités et avis avec examen par les pairs', async () => {
+    const inscrire = async (prefix, profil = 'medecin_generaliste') => {
+      const r = await request(app)
+        .post('/api/auth/register')
+        .send({
+          email: `${prefix}-${Date.now()}@medref.cd`,
+          password: 'Quinine-2026',
+          nom: `Dr ${prefix}`,
+          profil,
+        });
+      return { id: r.body.user.id, headers: { Authorization: `Bearer ${r.body.token}` } };
+    };
+    const liste = await request(app).get('/api/pathologies');
+    expect(liste.body.data.some((p) => p.slug === 'paludisme-grave')).toBe(true);
+
+    const admin = await inscrire('admin-avis');
+    await db.query("UPDATE users SET role = 'admin' WHERE id = ?", [admin.id]);
+    const auteur = await inscrire('auteur-avis');
+    const pair = await inscrire('pair-avis', 'pharmacien');
+
+    // Actualité publiée par un administrateur : visible sur l'accueil
+    const actu = await request(app).post('/api/admin/actualites').set(admin.headers).send({
+      type: 'alerte_sanitaire',
+      titre: 'Alerte de test',
+      resume: 'Essai',
+      source_titre: 'Source de test',
+      publie_le: '2020-01-01',
+      statut: 'publie',
+    });
+    expect(actu.status).toBe(201);
+    const accueil = await request(app).get('/api/accueil');
+    expect(accueil.body.data.alertes.map((a) => a.titre)).toContain('Alerte de test');
+    expect(accueil.body.data.totaux.fiches).toBeGreaterThan(0);
+    const moi = await request(app).get('/api/accueil/pour-moi').set(admin.headers);
+    expect(moi.body.data.comptes_a_verifier).toEqual(expect.any(Number));
+
+    // Avis : refusé tant que le compte n'est pas vérifié
+    const corps = {
+      cible_type: 'molecule',
+      cible: 'artesunate',
+      type: 'donnee_scientifique',
+      titre: 'Donnée de test',
+      description: 'Observation de test',
+      liens_interets: 'Aucun',
+      engagement: true,
+      sources: [{ type: 'recommandation', titre: 'Guide OMS', url: 'https://example.org' }],
+    };
+    expect((await request(app).post('/api/avis').set(auteur.headers).send(corps)).status).toBe(403);
+    await db.query("UPDATE users SET verification = 'verifie' WHERE id IN (?, ?)", [auteur.id, pair.id]);
+    const cree = await request(app).post('/api/avis').set(auteur.headers).send(corps);
+    expect(cree.status).toBe(201);
+    const id = cree.body.data.id;
+
+    // Examen par les pairs : vote et commentaire du pharmacien vérifié, pas de l'auteur
+    expect((await request(app).post(`/api/avis/${id}/vote`).set(auteur.headers)).status).toBe(403);
+    expect((await request(app).post(`/api/avis/${id}/vote`).set(pair.headers)).body.data).toEqual({
+      a_vote: true,
+      votes: 1,
+    });
+    expect(
+      (await request(app).post(`/api/avis/${id}/commentaires`).set(pair.headers).send({ texte: 'Pertinent' }))
+        .status,
+    ).toBe(201);
+    const examen = await request(app).get('/api/avis/examen').set(pair.headers);
+    expect(examen.body.data.find((a) => a.id === id).a_vote).toBe(true);
+
+    // Non publié : invisible publiquement ; publié après modération
+    expect((await request(app).get(`/api/avis/${id}`)).status).toBe(404);
+    expect(
+      (await request(app).get('/api/avis').query({ cible_type: 'molecule', cible: 'artesunate' })).body.data,
+    ).toEqual([]);
+    const pub = await request(app)
+      .post(`/api/admin/avis/${id}/moderation`)
+      .set(admin.headers)
+      .send({ decision: 'publier' });
+    expect(pub.body.data.statut).toBe('publie');
+    const publics = await request(app)
+      .get('/api/avis')
+      .query({ cible_type: 'molecule', cible: 'artesunate' });
+    expect(publics.body.data.map((a) => a.id)).toEqual([id]);
+    const detail = await request(app).get(`/api/avis/${id}`);
+    expect(detail.body.data.sources[0].titre).toBe('Guide OMS');
+    expect(detail.body.data.commentaires[0].texte).toBe('Pertinent');
+    expect(detail.body.data.votes).toBe(1);
+
+    // Signalement traité ; coordonnées de pharmacovigilance saisies par l'administrateur
+    expect(
+      (await request(app).post(`/api/avis/${id}/signalements`).set(pair.headers).send({ motif: 'Test' }))
+        .status,
+    ).toBe(201);
+    const sig = await request(app).get('/api/admin/signalements').set(admin.headers);
+    const s = sig.body.data.find((x) => x.avis_id === id);
+    expect(
+      (await request(app).post(`/api/admin/signalements/${s.id}/traiter`).set(admin.headers).send({})).status,
+    ).toBe(200);
+    await request(app)
+      .put('/api/admin/parametres/pharmacovigilance')
+      .set(admin.headers)
+      .send({ contact: 'Contact de test' });
+    expect((await request(app).get('/api/parametres/pharmacovigilance')).body.data.contact).toBe(
+      'Contact de test',
+    );
+  });
+
   describe('migrations et sauvegardes', () => {
     const { connect } = require('../db/connexion');
     const { migrate, status } = require('../db/migrations');

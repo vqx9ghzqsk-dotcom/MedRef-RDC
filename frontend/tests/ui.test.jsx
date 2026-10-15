@@ -1445,3 +1445,107 @@ describe('Accueil personnalisé (lot D)', () => {
     expect(screen.getByText(/faites vérifier votre numéro d’ordre/)).toBeInTheDocument();
   });
 });
+
+describe('Avis sur les produits et les traitements (lot E)', () => {
+  const verifie = {
+    id: 7,
+    nom: 'Dr K',
+    role: 'user',
+    email: 'k@medref.cd',
+    profil: 'medecin_generaliste',
+    verification: 'verifie',
+  };
+
+  it('formulaire : rappel de pharmacovigilance pour un produit suspect et envoi structuré', async () => {
+    const user = userEvent.setup();
+    const creerAvis = vi.fn(async () => ({ id: 42 }));
+    renderApp(
+      '/avis/nouveau?cible_type=produit&cible=9&nom=Aerius',
+      {
+        creerAvis,
+        pharmacovigilance: vi.fn(async () => ({ contact: null })),
+        avis: vi.fn(async () => ({
+          id: 42,
+          titre: 'Comprimés friables',
+          type: 'qualite',
+          statut: 'soumis',
+          cible: { type: 'produit', id: 9, nom: 'Aerius' },
+          sources: [],
+          photos: [],
+          commentaires: [],
+          votes: 0,
+          droits: {},
+          liens_interets: 'Aucun',
+          description: 'x',
+          nb_patients: null,
+        })),
+      },
+      verifie,
+    );
+    expect(await screen.findByRole('heading', { name: 'Donner un avis argumenté' })).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText('Type d’avis *'), 'qualite');
+    expect(
+      await screen.findByText(/ne remplace pas la notification de pharmacovigilance/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/coordonnées officielles n’ont pas encore été renseignées/)).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Titre *'), 'Comprimés friables');
+    await user.type(screen.getByLabelText('Description factuelle *'), 'Lot de 30 boîtes.');
+    await user.type(screen.getByLabelText('Numéro de lot'), 'AB123');
+    await user.type(screen.getByLabelText('Déclaration de liens d’intérêts *'), 'Aucun');
+    await user.click(screen.getByRole('checkbox', { name: /Je certifie/ }));
+    await user.click(screen.getByRole('button', { name: 'Soumettre pour examen' }));
+    await waitFor(() => expect(creerAvis).toHaveBeenCalled());
+    expect(creerAvis.mock.calls[0][0]).toMatchObject({
+      cible_type: 'produit',
+      cible: '9',
+      type: 'qualite',
+      numero_lot: 'AB123',
+      engagement: true,
+      liens_interets: 'Aucun',
+    });
+  });
+
+  it('un compte non vérifié ne peut pas donner d’avis', async () => {
+    renderApp(
+      '/avis/nouveau?cible_type=produit&cible=9&nom=Aerius',
+      {},
+      { ...verifie, verification: 'en_attente' },
+    );
+    expect(await screen.findByText(/réservés aux médecins, pharmaciens/)).toBeInTheDocument();
+  });
+
+  it('examen par un pair : vote « pertinent et sourcé » et commentaire, sans modifier l’avis', async () => {
+    const user = userEvent.setup();
+    const voterAvis = vi.fn(async () => ({ a_vote: true, votes: 1 }));
+    renderApp(
+      '/avis/42',
+      {
+        voterAvis,
+        avis: vi.fn(async () => ({
+          id: 42,
+          titre: 'Données de tolérance',
+          type: 'tolerance',
+          grave: false,
+          statut: 'soumis',
+          cible: { type: 'molecule', slug: 'artesunate', nom: 'Artésunate' },
+          description: 'Observation.',
+          nb_patients: 12,
+          sources: [{ type: 'etude', titre: 'Étude X', url: 'https://example.org' }],
+          photos: [],
+          commentaires: [],
+          votes: 0,
+          a_vote: false,
+          liens_interets: 'Aucun',
+          droits: { examiner: true, signaler: true, modifier: false, retirer: false, moderer: false },
+        })),
+      },
+      verifie,
+    );
+    expect(await screen.findByRole('heading', { name: 'Données de tolérance' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Étude X' })).toHaveAttribute('href', 'https://example.org');
+    expect(screen.queryByRole('link', { name: 'Compléter mon avis' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Élément pertinent et sourcé' }));
+    expect(voterAvis).toHaveBeenCalledWith(42);
+    expect(screen.getByLabelText(/Votre commentaire/)).toBeInTheDocument();
+  });
+});

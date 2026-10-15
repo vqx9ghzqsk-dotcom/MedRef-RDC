@@ -6,6 +6,7 @@ import { AsyncView } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { RichText } from '../components/RichText.jsx';
 import { VignettesProduits } from '../components/Produits.jsx';
+import { AvisCible } from '../components/Avis.jsx';
 import {
   CATEGORIES_EXAMEN,
   FREQUENCES,
@@ -733,6 +734,7 @@ export function PathologiePage() {
               </Related>
             </div>
           </div>
+          <AvisCible type="pathologie" cible={f.slug} nom={f.nom} />
         </article>
       )}
     </AsyncView>

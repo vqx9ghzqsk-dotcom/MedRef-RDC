@@ -7,6 +7,7 @@ import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { FichePharmaco, Posologies } from '../components/Pharmaco.jsx';
 import { ProduitsGalerie } from '../components/Produits.jsx';
 import { LIGNES } from '../../core/labels.js';
+import { AvisCible } from '../components/Avis.jsx';
 
 export function MoleculesPage() {
   const { api } = useServices();
@@ -178,6 +179,8 @@ export function MoleculePage() {
               </p>
               <ProduitsGalerie produits={m.produits} dci={m.dci} />
             </section>
+
+            <AvisCible type="molecule" cible={m.slug} nom={m.dci} />
           </article>
         );
       }}

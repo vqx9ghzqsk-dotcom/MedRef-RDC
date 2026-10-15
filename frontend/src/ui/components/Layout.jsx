@@ -7,6 +7,7 @@ import { ErrorBoundary } from './ErrorBoundary.jsx';
 import { GlossaireProvider } from '../context/glossaire.jsx';
 import { PanneauProduitProvider } from './Produits.jsx';
 import { VitrinePage } from '../pages/VitrinePage.jsx';
+import { Foret } from './ForetFond.jsx';
 
 const PAGES_AUTH = ['/connexion', '/inscription', '/mot-de-passe-oublie', '/reinitialiser-mot-de-passe'];
 
@@ -46,6 +47,9 @@ export function Layout() {
 
   return (
     <div className="app">
+      <div className="app-fond" aria-hidden="true">
+        <Foret className="app-fond-svg" />
+      </div>
       <a href="#contenu" className="skip-link">
         Aller au contenu
       </a>

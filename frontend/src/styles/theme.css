@@ -296,3 +296,156 @@ textarea {
     box-shadow: none;
   }
 }
+
+/* =====================================================================
+   Décor de la fenêtre de connexion étendu à toute l'application :
+   forêt fixe en arrière-plan, contenu posé sur un grand panneau en
+   verre dépoli, champs soulignés, boutons marine.
+   ===================================================================== */
+
+:root {
+  --verre: rgba(255, 255, 255, 0.66);
+  --verre-fort: rgba(255, 255, 255, 0.86);
+  --verre-bord: rgba(255, 255, 255, 0.8);
+  --bouton: #0b1b3f;
+  --bouton-survol: #12306b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --verre: rgba(9, 22, 52, 0.74);
+    --verre-fort: rgba(15, 32, 72, 0.88);
+    --verre-bord: rgba(120, 160, 230, 0.28);
+    --bouton: #2f6df0;
+    --bouton-survol: #4a82f5;
+  }
+}
+
+.app {
+  position: relative;
+  isolation: isolate;
+}
+.app-fond {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: #9bbbe4;
+}
+.app-fond-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  .app-fond::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 10, 28, 0.62);
+  }
+}
+
+/* Panneau de contenu */
+.content {
+  width: min(1180px, calc(100% - 24px));
+  margin: 1.25rem auto 1.5rem;
+  padding: clamp(1rem, 3vw, 2rem) clamp(0.9rem, 3vw, 2rem) 2.5rem;
+  border-radius: 28px;
+  background: var(--verre);
+  border: 1px solid var(--verre-bord);
+  box-shadow: 0 24px 60px rgba(7, 18, 43, 0.28);
+}
+@media (min-width: 761px) {
+  .content {
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
+  }
+}
+@media (max-width: 760px) {
+  /* Mobile / 3G : pas de flou coûteux, panneau plus opaque */
+  .content {
+    background: var(--verre-fort);
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .content {
+    background: var(--verre-fort);
+  }
+}
+
+/* Cartes posées sur le panneau */
+.card,
+.dep-card,
+.quick-tile,
+.actu {
+  background: var(--verre-fort);
+}
+.quick-urgence {
+  background: var(--urgence-bg);
+}
+
+/* Champs soulignés, comme dans la fenêtre de connexion */
+.field input:not([type='checkbox']):not([type='radio']),
+.field select,
+.field textarea {
+  background: rgba(255, 255, 255, 0.4);
+  border: 0;
+  border-bottom: 2px solid var(--ink);
+  border-radius: 10px 10px 0 0;
+}
+@media (prefers-color-scheme: dark) {
+  .field input:not([type='checkbox']):not([type='radio']),
+  .field select,
+  .field textarea {
+    background: rgba(255, 255, 255, 0.07);
+  }
+}
+.field input:not([type='checkbox']):not([type='radio']):focus,
+.field select:focus,
+.field textarea:focus {
+  border-bottom-color: var(--action);
+  box-shadow: 0 2px 0 0 var(--action);
+  outline: none;
+}
+.field input[aria-invalid='true'],
+.field select[aria-invalid='true'] {
+  border-bottom-color: var(--urgence);
+}
+
+/* Boutons : marine, coins de 12 px */
+.btn {
+  border-radius: 12px;
+}
+.btn-secondary,
+.btn-ghost {
+  border-radius: 12px;
+}
+.btn-primary {
+  background: var(--bouton);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--bouton-survol);
+  filter: none;
+}
+.hero .search .btn-primary {
+  background: var(--action);
+}
+.hero .search .btn,
+.hero .search input {
+  border-radius: 12px;
+}
+
+@media print {
+  .app-fond {
+    display: none;
+  }
+  .content {
+    background: none;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

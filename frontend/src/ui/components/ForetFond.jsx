@@ -46,7 +46,7 @@ const herbe = (y, haut, pas, decal) => {
   return `${d} L1450 ${y + 60} Z`;
 };
 
-export function Foret({ className }) {
+export function Foret({ className, okapi = { x: -24, y: 402, s: 1.5 } }) {
   return (
     <svg
       className={className}
@@ -92,7 +92,7 @@ export function Foret({ className }) {
       </g>
 
       {/* Okapi (silhouette) */}
-      <g transform="translate(-24 402) scale(1.5)">
+      <g transform={`translate(${okapi.x} ${okapi.y}) scale(${okapi.s})`}>
         <g fill="#0b1b3f">
           <path d="M78 128C100 104 178 98 228 116C256 126 268 150 260 178C254 200 228 208 190 207C150 206 104 208 84 195C64 182 62 150 78 128Z" />
           <path d="M84 130L60 86L82 78L114 118Z" />

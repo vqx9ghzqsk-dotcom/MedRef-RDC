@@ -48,7 +48,7 @@ export function Layout() {
   return (
     <div className="app">
       <div className="app-fond" aria-hidden="true">
-        <Foret className="app-fond-svg" />
+        <Foret className="app-fond-svg" okapi={{ x: -14, y: 613, s: 0.8 }} />
       </div>
       <a href="#contenu" className="skip-link">
         Aller au contenu

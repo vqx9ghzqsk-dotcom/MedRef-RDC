@@ -348,7 +348,7 @@ textarea {
 
 /* Panneau de contenu */
 .content {
-  width: min(1180px, calc(100% - 24px));
+  width: min(1100px, calc(100% - 24px));
   margin: 1.25rem auto 1.5rem;
   padding: clamp(1rem, 3vw, 2rem) clamp(0.9rem, 3vw, 2rem) 2.5rem;
   border-radius: 28px;
@@ -447,5 +447,15 @@ textarea {
     box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+}
+
+/* Barre du haut : assez large pour garder la navigation et le compte sur une ligne */
+.topbar-inner {
+  max-width: 1360px;
+}
+@media (min-width: 960px) {
+  .mainnav a {
+    padding-inline: 0.7rem;
   }
 }

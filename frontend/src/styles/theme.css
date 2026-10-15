@@ -238,9 +238,11 @@ textarea {
 .tag,
 .tag-mini,
 .segmented,
-.segmented-btn,
-.tablist [role='tab'] {
+.segmented-btn {
   border-radius: 999px;
+}
+.tablist [role='tab'] {
+  border-radius: 14px 14px 0 0;
 }
 .patho-list a,
 .med-list a,

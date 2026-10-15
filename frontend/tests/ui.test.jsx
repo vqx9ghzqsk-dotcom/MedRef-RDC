@@ -1395,3 +1395,53 @@ describe('Ordonnance guidée (lot C)', () => {
     );
   });
 });
+
+describe('Accueil personnalisé (lot D)', () => {
+  it('affiche les alertes avec leur source, les nouveautés et le bloc personnel', async () => {
+    renderApp(
+      '/',
+      {
+        accueil: vi.fn(async () => ({
+          alertes: [
+            {
+              id: 1,
+              type: 'alerte_sanitaire',
+              titre: 'Épidémie de choléra',
+              resume: 'Cas confirmés.',
+              zone: 'Kinshasa',
+              source_titre: 'Ministère de la Santé',
+              source_url: 'https://example.org/communique',
+              publie_le: '2026-10-14',
+            },
+          ],
+          actualites: [],
+          produits: [{ id: 9, nom_commercial: 'Aerius', dci: 'Desloratadine', operateur: 'Organon' }],
+          fiches_validees: [],
+          fiches_mises_a_jour: [
+            { nom: 'Rougeole', slug: 'rougeole', statut: 'a_valider', updated_at: '2026-10-13' },
+          ],
+          totaux: { fiches: 792, produits: 1799, amm: 6352, molecules: 702 },
+        })),
+        accueilPourMoi: vi.fn(async () => ({
+          role: 'admin',
+          profil: 'medecin_generaliste',
+          verification: 'non_demandee',
+          fiches_a_valider: 792,
+          comptes_a_verifier: 2,
+        })),
+      },
+      { id: 7, nom: 'Admin', role: 'admin', email: 'a@b.cd' },
+    );
+    expect(await screen.findByRole('heading', { name: 'Alertes sanitaires' })).toBeInTheDocument();
+    expect(screen.getByText('Épidémie de choléra')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Ministère de la Santé' })).toHaveAttribute(
+      'href',
+      'https://example.org/communique',
+    );
+    expect(await screen.findByText(/792 fiches en relecture médicale/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Aerius' })).toHaveAttribute('href', '/medicaments/9');
+    expect(await screen.findByRole('link', { name: '792 fiches à valider' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '2 comptes à vérifier' })).toBeInTheDocument();
+    expect(screen.getByText(/faites vérifier votre numéro d’ordre/)).toBeInTheDocument();
+  });
+});

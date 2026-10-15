@@ -23,6 +23,8 @@ export function createMedRefApi(client) {
     departement: (slug) => data(client.get(`/api/departements/${enc(slug)}`)),
     specialite: (slug) => data(client.get(`/api/specialites/${enc(slug)}`)),
     pathologies: () => data(client.get('/api/pathologies')),
+    accueil: () => data(client.get('/api/accueil')),
+    accueilPourMoi: () => data(client.get('/api/accueil/pour-moi')),
     pathologie: (slug) => data(client.get(`/api/pathologies/${enc(slug)}`)),
 
     // Portes d'entrée transversales
@@ -61,6 +63,12 @@ export function createMedRefApi(client) {
     adminMedicament: (id) => data(client.get(`/api/admin/medicaments/${enc(id)}`)),
     adminSaveMedicament: (id, payload) => client.put(`/api/admin/medicaments/${enc(id)}`, payload),
     adminComptes: () => data(client.get('/api/admin/comptes')),
+    adminActualites: () => data(client.get('/api/admin/actualites')),
+    adminActualite: (id) => data(client.get(`/api/admin/actualites/${enc(id)}`)),
+    adminSaveActualite: (id, payload) =>
+      id
+        ? client.put(`/api/admin/actualites/${enc(id)}`, payload)
+        : client.post('/api/admin/actualites', payload),
     adminDecisionVerification: (id, decision, motif) =>
       client.post(`/api/admin/comptes/${enc(id)}/verification`, { decision, motif }),
     adminLienReinitialisation: (id) => client.post(`/api/admin/comptes/${enc(id)}/lien-reinitialisation`, {}),

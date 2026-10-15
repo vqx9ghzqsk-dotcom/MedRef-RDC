@@ -50,6 +50,7 @@ router.get(
       '/api/medicaments',
       '/api/medicaments/filtres',
       '/api/pathologies',
+      '/api/accueil',
       '/api/sources',
       '/api/glossaire',
       '/api/syndromes',

@@ -293,3 +293,17 @@ export const PAR_UNITES = {
   dose: 'dose',
   g: 'g',
 };
+
+export const TYPES_ACTUALITE = {
+  alerte_sanitaire: 'Alerte sanitaire',
+  pharmacovigilance: 'Pharmacovigilance, retrait de lot',
+  protocole: 'Protocole national',
+  innovation: 'Innovation',
+  information: 'Information',
+};
+
+export const STATUTS_ACTUALITE = {
+  brouillon: 'Brouillon',
+  publie: 'Publiée',
+  archive: 'Archivée',
+};

@@ -416,3 +416,4 @@ router.get(
 
 module.exports = router;
 module.exports.dedupePathologies = dedupePathologies;
+module.exports.PERIMETRE = PERIMETRE;

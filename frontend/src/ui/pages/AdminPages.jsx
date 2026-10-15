@@ -41,6 +41,7 @@ import {
   TYPES_FORME,
   formatPrixCdf,
 } from '../../core/labels.js';
+import { ActualitesAdmin } from '../components/ActualitesAdmin.jsx';
 
 const entries = (obj) => Object.entries(obj).map(([k, v]) => [k, typeof v === 'string' ? v : v.label]);
 
@@ -76,6 +77,7 @@ const ONGLETS_ADMIN = [
   ['produits', 'Produits'],
   ['catalogue', 'Catalogue des firmes'],
   ['semiologie', 'Glossaire et syndromes'],
+  ['actualites', 'Actualités'],
   ['historique', 'Historique'],
   ['comptes', 'Comptes', 'admin'],
 ];
@@ -143,7 +145,7 @@ function AdminHome() {
                 ))}
               </div>
 
-              {!['historique', 'catalogue', 'comptes'].includes(onglet) && (
+              {!['historique', 'catalogue', 'comptes', 'actualites'].includes(onglet) && (
                 <form className="filter-bar" onSubmit={(e) => e.preventDefault()} aria-label="Filtres">
                   <div className="field">
                     <label htmlFor="admin-q">Rechercher</label>
@@ -171,6 +173,8 @@ function AdminHome() {
                   )}
                 </form>
               )}
+
+              {onglet === 'actualites' && <ActualitesAdmin user={user} />}
 
               {onglet === 'fiches' && (
                 <FichesAdmin

@@ -3075,3 +3075,73 @@ details.forme {
     max-width: none;
   }
 }
+
+/* Lot D : accueil */
+.actu-liste,
+.nouv-liste,
+.moi-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+.actu {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--link);
+  border-radius: var(--radius-small);
+  padding: 0.7rem 0.9rem;
+}
+.actu h3 {
+  margin: 0.15rem 0 0.3rem;
+  font-size: 1.05rem;
+}
+.actu p {
+  margin: 0.2rem 0;
+}
+.actu-alerte_sanitaire,
+.actu-pharmacovigilance {
+  border-left-color: var(--urgence);
+  background: var(--urgence-bg);
+}
+.actu-protocole {
+  border-left-color: var(--ok);
+}
+.actu-type {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+}
+.actu-resume {
+  white-space: pre-line;
+}
+.actu-source {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.alertes-titre {
+  color: var(--urgence);
+}
+.nouv-grid {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 720px) {
+  .nouv-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.nouv-grid h3 {
+  margin-top: 0;
+  font-size: 1.05rem;
+}
+.nouv-grid h4 {
+  margin: 0.9rem 0 0.4rem;
+  font-size: 0.95rem;
+}
+.nouv-liste li .row-sub {
+  display: block;
+}

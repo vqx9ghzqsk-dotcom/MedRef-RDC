@@ -1795,6 +1795,174 @@ function sauverSyndrome(creation) {
 router.post('/admin/syndromes', sauverSyndrome(true));
 router.put('/admin/syndromes/:id', sauverSyndrome(false));
 
+// ------------------------------------------------------------------ Actualités (lot D)
+
+const TYPES_ACTUALITE = ['alerte_sanitaire', 'pharmacovigilance', 'protocole', 'innovation', 'information'];
+const STATUTS_ACTUALITE = ['brouillon', 'publie', 'archive'];
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+const dateIso = (d) => (d instanceof Date ? d.toISOString().slice(0, 10) : d ? String(d).slice(0, 10) : null);
+
+async function lireActualite(q, id) {
+  const [a] = await q(
+    `SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.zone, a.publie_le, a.expire_le,
+            a.statut, a.created_at, a.updated_at, p.slug AS pathologie_slug, p.nom AS pathologie_nom,
+            mo.slug AS molecule_slug, mo.dci AS molecule_dci, u.nom AS auteur, pp.nom AS publie_par
+       FROM actualites a
+       LEFT JOIN pathologies p ON p.id = a.pathologie_id
+       LEFT JOIN molecules mo ON mo.id = a.molecule_id
+       LEFT JOIN users u ON u.id = a.auteur_id
+       LEFT JOIN users pp ON pp.id = a.publie_par
+      WHERE a.id = ?`,
+    [id],
+  );
+  return a ? { ...a, publie_le: dateIso(a.publie_le), expire_le: dateIso(a.expire_le) } : null;
+}
+
+router.get(
+  '/admin/actualites',
+  asyncHandler(async (_req, res) => {
+    const rows = await db.query(
+      `SELECT a.id, a.type, a.titre, a.statut, a.publie_le, a.expire_le, a.updated_at, u.nom AS auteur
+         FROM actualites a LEFT JOIN users u ON u.id = a.auteur_id
+        ORDER BY FIELD(a.statut, 'brouillon', 'publie', 'archive'), a.publie_le DESC, a.id DESC`,
+    );
+    res.json({
+      data: rows.map((a) => ({ ...a, publie_le: dateIso(a.publie_le), expire_le: dateIso(a.expire_le) })),
+    });
+  }),
+);
+
+router.get(
+  '/admin/actualites/:id',
+  asyncHandler(async (req, res) => {
+    const id = toInt(req.params.id);
+    const a = id && (await lireActualite(db.query, id));
+    if (!a) throw notFound('Actualité');
+    res.json({ data: a });
+  }),
+);
+
+/** Valide le corps d'une actualité ; les liens fiche et molécule se font par slug. */
+async function lireCorpsActualite(body, editor) {
+  const v = createValidator();
+  const type = v.oneOf(body.type, TYPES_ACTUALITE, 'type', { required: true });
+  const titre = v.text(body.titre, 190, 'titre', { required: true });
+  const resume = v.text(body.resume, 4000, 'resume', { required: true });
+  const sourceTitre = v.text(body.source_titre, 255, 'source_titre', { required: true });
+  const sourceUrl = v.text(body.source_url, 500, 'source_url');
+  if (sourceUrl && !/^https?:\/\/\S+$/i.test(sourceUrl)) v.errors.source_url = 'Adresse http(s) attendue';
+  const zone = v.text(body.zone, 190, 'zone');
+  const publieLe = v.text(body.publie_le, 10, 'publie_le', { required: true });
+  if (publieLe && (!DATE_RE.test(publieLe) || Number.isNaN(Date.parse(publieLe))))
+    v.errors.publie_le = 'Date AAAA-MM-JJ attendue';
+  const expireLe = v.text(body.expire_le, 10, 'expire_le');
+  if (expireLe && (!DATE_RE.test(expireLe) || Number.isNaN(Date.parse(expireLe))))
+    v.errors.expire_le = 'Date AAAA-MM-JJ attendue';
+  else if (expireLe && publieLe && expireLe < publieLe)
+    v.errors.expire_le = 'Doit suivre la date de publication';
+  let statut = v.oneOf(body.statut, STATUTS_ACTUALITE, 'statut') || 'brouillon';
+  // Seul un administrateur publie ; un relecteur « medecin » propose un brouillon
+  if (statut === 'publie' && editor.role !== 'admin') statut = 'brouillon';
+  let pathologieId = null;
+  let moleculeId = null;
+  const pSlug = v.text(body.pathologie_slug, 190, 'pathologie_slug');
+  const mSlug = v.text(body.molecule_slug, 190, 'molecule_slug');
+  if (pSlug) {
+    const [p] = await db.query('SELECT id FROM pathologies WHERE slug = ?', [pSlug]);
+    if (p) pathologieId = p.id;
+    else v.errors.pathologie_slug = 'Fiche introuvable';
+  }
+  if (mSlug) {
+    const [m] = await db.query('SELECT id FROM molecules WHERE slug = ?', [mSlug]);
+    if (m) moleculeId = m.id;
+    else v.errors.molecule_slug = 'Molécule introuvable';
+  }
+  v.check();
+  return {
+    type,
+    titre,
+    resume,
+    source_titre: sourceTitre,
+    source_url: sourceUrl,
+    zone,
+    pathologie_id: pathologieId,
+    molecule_id: moleculeId,
+    publie_le: publieLe,
+    expire_le: expireLe,
+    statut,
+  };
+}
+
+const COLONNES_ACTUALITE = [
+  'type',
+  'titre',
+  'resume',
+  'source_titre',
+  'source_url',
+  'zone',
+  'pathologie_id',
+  'molecule_id',
+  'publie_le',
+  'expire_le',
+  'statut',
+];
+
+const sauverActualite = (creation) =>
+  asyncHandler(async (req, res) => {
+    const id = creation ? null : toInt(req.params.id);
+    if (!creation && !id) throw notFound('Actualité');
+    const a = await lireCorpsActualite(req.body || {}, req.editor);
+    const resultat = await db.transaction(async (conn) => {
+      const q = viaConn(conn);
+      let cible = id;
+      let avant = null;
+      if (creation) {
+        const [r] = await conn.execute(
+          `INSERT INTO actualites (${COLONNES_ACTUALITE.join(', ')}, auteur_id, publie_par)
+           VALUES (${COLONNES_ACTUALITE.map(() => '?').join(', ')}, ?, ?)`,
+          [
+            ...COLONNES_ACTUALITE.map((c) => a[c]),
+            req.editor.id,
+            a.statut === 'publie' ? req.editor.id : null,
+          ],
+        );
+        cible = r.insertId;
+      } else {
+        avant = await lireActualite(q, id);
+        if (!avant) throw notFound('Actualité');
+        // Un relecteur ne peut pas modifier une actualité publiée sans la renvoyer en brouillon
+        if (avant.statut === 'publie' && req.editor.role !== 'admin') a.statut = 'brouillon';
+        await conn.execute(
+          `UPDATE actualites SET ${COLONNES_ACTUALITE.map((c) => `${c} = ?`).join(', ')},
+                  publie_par = CASE WHEN ? = 'publie' AND statut <> 'publie' THEN ? ELSE publie_par END
+            WHERE id = ?`,
+          [...COLONNES_ACTUALITE.map((c) => a[c]), a.statut, req.editor.id, id],
+        );
+      }
+      const apres = await lireActualite(q, cible);
+      const publication = apres.statut === 'publie' && (!avant || avant.statut !== 'publie');
+      await logModification(conn, {
+        userId: req.editor.id,
+        entite: 'actualite',
+        entiteId: cible,
+        action: publication ? 'validation' : 'modification',
+        resume:
+          `${creation ? 'Actualité créée' : publication ? 'Actualité publiée' : 'Actualité modifiée'} : ${a.titre}`.slice(
+            0,
+            300,
+          ),
+        avant,
+        apres,
+      });
+      return apres;
+    });
+    res.status(creation ? 201 : 200).json({ data: resultat });
+  });
+
+router.post('/admin/actualites', sauverActualite(true));
+router.put('/admin/actualites/:id', sauverActualite(false));
+
 module.exports = router;
 module.exports.parsePathologie = parsePathologie;
 module.exports.rubriquesModifiees = rubriquesModifiees;

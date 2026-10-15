@@ -98,6 +98,7 @@ function createApp() {
   app.use('/api', require('./routes/catalogue'));
   app.use('/api', require('./routes/referentiels'));
   app.use('/api', require('./routes/medicaments'));
+  app.use('/api', require('./routes/accueil'));
   app.use('/api', require('./routes/sources'));
   app.use('/api', require('./routes/recherche'));
   app.use('/api', require('./routes/semiologie'));

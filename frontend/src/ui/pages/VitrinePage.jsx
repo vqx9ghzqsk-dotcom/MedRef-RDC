@@ -266,8 +266,6 @@ export function VitrinePage() {
         Aller au contenu
       </a>
 
-      <p className="v-bandeau">La référence clinique pensée pour la République démocratique du Congo</p>
-
       <header className="v-entete">
         <div className="v-nav">
           <a href="#accueil" className="v-brand" aria-label="MedRef RDC, accueil">
@@ -308,8 +306,8 @@ export function VitrinePage() {
               La référence clinique <span>pensée pour la RDC</span>
             </h1>
             <p className="v-hero-lead">
-              Pathologies, urgences, médicaments disponibles localement et protocoles nationaux, reliés entre
-              eux pour décider plus vite et prescrire plus sûrement.
+              Pathologies, urgences, médicaments disponibles localement et protocoles nationaux pour décider
+              plus vite et prescrire plus sûrement.
             </p>
             <div className="v-actions">
               <Link to="/connexion" className="v-btn v-btn-plein">
@@ -337,11 +335,6 @@ export function VitrinePage() {
                 MedRef RDC rassemble au même endroit ce dont le clinicien a besoin au chevet du patient : les
                 pathologies par spécialité, les urgences, les médicaments réellement disponibles dans le pays,
                 les examens et les calculs de doses.
-              </p>
-              <p>
-                Les contenus s’appuient sur des références reconnues et sur les protocoles nationaux, avec
-                leurs sources, et sont en cours de relecture médicale. L’outil aide à la décision ; il ne
-                remplace jamais le jugement clinique.
               </p>
             </div>
           </div>
@@ -388,24 +381,6 @@ export function VitrinePage() {
               <li key={s}>{s}</li>
             ))}
           </ul>
-          <p className="v-avertissement" role="note">
-            <strong>Important :</strong> MedRef RDC est un outil d’aide à la décision destiné aux
-            professionnels de santé. Il ne remplace pas le jugement clinique ni les protocoles de votre
-            établissement.
-          </p>
-        </section>
-
-        <section className="v-cta" aria-labelledby="v-cta-titre">
-          <h2 id="v-cta-titre">Rejoignez MedRef RDC</h2>
-          <p>Connectez-vous ou créez votre compte pour accéder à tout le référentiel.</p>
-          <div className="v-actions v-actions-centre">
-            <Link to="/connexion" className="v-btn v-btn-clair">
-              Se connecter
-            </Link>
-            <Link to="/inscription" className="v-btn v-btn-contour">
-              Créer un compte
-            </Link>
-          </div>
         </section>
       </main>
 

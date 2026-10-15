@@ -257,21 +257,20 @@ function IllustrationHero() {
   );
 }
 
-/** Photo du héros (allégée : 20 à 30 Ko). Si elle ne charge pas, on garde l'illustration dessinée. */
+/** Photo du héros (portrait recadré sur le soignant, allégée : 17 à 29 Ko). Si elle ne charge pas, on garde l'illustration dessinée. */
 function PhotoHero() {
   const [ok, setOk] = useState(true);
   if (!ok) return <IllustrationHero />;
   return (
     <figure className="v-hero-photo">
       <img
-        src="/images/soignant-720.webp"
-        srcSet="/images/soignant-480.webp 480w, /images/soignant-720.webp 720w"
+        src="/images/soignant-600.webp"
+        srcSet="/images/soignant-400.webp 400w, /images/soignant-600.webp 600w"
         sizes="(max-width: 760px) 80vw, 420px"
-        width="720"
-        height="1080"
+        width="600"
+        height="876"
         alt="Professionnel de santé en tenue médicale, bras croisés, devant des rayons de pharmacie"
         decoding="async"
-        fetchPriority="high"
         onError={() => setOk(false)}
       />
       <figcaption className="v-puce v-puce-haut">

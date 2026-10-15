@@ -6,6 +6,7 @@ import { isEditor } from './AdminForm.jsx';
 import { ErrorBoundary } from './ErrorBoundary.jsx';
 import { GlossaireProvider } from '../context/glossaire.jsx';
 import { PanneauProduitProvider } from './Produits.jsx';
+import { VitrinePage } from '../pages/VitrinePage.jsx';
 
 export const QUICK_ACCESS = [
   { to: '/urgences', label: 'Urgences', hint: 'Conduite ABCDE, signes de gravité', tone: 'urgence' },
@@ -26,6 +27,9 @@ export function Layout() {
   useEffect(() => {
     if (typeof window.scrollTo === 'function') window.scrollTo(0, 0);
   }, [pathname]);
+
+  // Visiteur non connecté sur « / » : page de présentation, sans l'en-tête de l'application.
+  if (!user && pathname === '/') return <VitrinePage />;
 
   return (
     <div className="app">

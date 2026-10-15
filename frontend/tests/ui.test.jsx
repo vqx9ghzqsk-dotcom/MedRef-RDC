@@ -224,9 +224,23 @@ function renderApp(path, apiOverrides = {}, user = null) {
   return api;
 }
 
+const MEDECIN = { id: 7, nom: 'Dr Test', email: 'dr@test.cd', role: 'medecin' };
+
 describe('Accueil', () => {
+  it('visiteur : page de présentation, sans données, avec connexion et inscription', () => {
+    const api = renderApp('/');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('pensée pour la RDC');
+    expect(screen.getAllByRole('link', { name: 'Se connecter' })[0]).toHaveAttribute('href', '/connexion');
+    expect(screen.getAllByRole('link', { name: 'Créer un compte' })[0]).toHaveAttribute(
+      'href',
+      '/inscription',
+    );
+    expect(screen.queryByRole('region', { name: 'Accès rapides' })).toBeNull();
+    expect(api.departements).not.toHaveBeenCalled();
+  });
+
   it('affiche l’identité, la recherche, les 7 accès rapides et les départements', async () => {
-    renderApp('/');
+    renderApp('/', {}, MEDECIN);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('MedRef RDC');
     expect(screen.getByText('par le Dr Ben Mingalu')).toBeInTheDocument();
     expect(screen.getAllByRole('search').length).toBeGreaterThan(0);
@@ -1037,7 +1051,7 @@ describe('Liste des médicaments', () => {
 
 describe('Accès aux produits depuis le bouton Médicaments', () => {
   it('l’accueil garde une seule barre de recherche, sans recherche de produits à part', async () => {
-    renderApp('/');
+    renderApp('/', {}, MEDECIN);
     await screen.findByText('Accès rapides');
     expect(screen.queryByRole('combobox')).toBeNull();
   });

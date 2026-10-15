@@ -4,6 +4,8 @@
  * toute l'application.
  */
 
+import { useId } from 'react';
+
 // Troncs : [x, largeur, plan] — 0 = lointain, 1 = intermédiaire, 2 = premier plan
 const TRONCS = [
   [40, 38, 0],
@@ -47,6 +49,9 @@ const herbe = (y, haut, pas, decal) => {
 };
 
 export function Foret({ className, okapi = { x: -24, y: 402, s: 1.5 } }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const ciel = `af-ciel-${uid}`;
+  const brume = `af-brume-${uid}`;
   return (
     <svg
       className={className}
@@ -56,22 +61,22 @@ export function Foret({ className, okapi = { x: -24, y: 402, s: 1.5 } }) {
       focusable="false"
     >
       <defs>
-        <linearGradient id="af-ciel" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={ciel} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#7fa6dc" />
           <stop offset="0.6" stopColor="#c3d8f2" />
           <stop offset="1" stopColor="#dfeaf8" />
         </linearGradient>
-        <linearGradient id="af-brume" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={brume} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#dfeaf8" stopOpacity="0" />
           <stop offset="1" stopColor="#dfeaf8" stopOpacity="0.85" />
         </linearGradient>
       </defs>
-      <rect width="1440" height="900" fill="url(#af-ciel)" />
+      <rect width="1440" height="900" fill={`url(#${ciel})`} />
 
       {TRONCS.filter((t) => t[2] === 0).map(([x, w]) => (
         <rect key={`a${x}`} x={x} y="0" width={w} height="900" fill={COULEURS_TRONC[0]} opacity="0.55" />
       ))}
-      <rect y="560" width="1440" height="340" fill="url(#af-brume)" />
+      <rect y="560" width="1440" height="340" fill={`url(#${brume})`} />
       {TRONCS.filter((t) => t[2] === 1).map(([x, w]) => (
         <rect key={`b${x}`} x={x} y="0" width={w} height="900" fill={COULEURS_TRONC[1]} opacity="0.85" />
       ))}

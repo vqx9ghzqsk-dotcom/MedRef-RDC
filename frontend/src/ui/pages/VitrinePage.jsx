@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Foret } from '../components/ForetFond.jsx';
 import '../../styles/vitrine.css';
 
 /**
@@ -262,6 +263,9 @@ export function VitrinePage() {
 
   return (
     <div className="vitrine">
+      <div className="v-fond" aria-hidden="true">
+        <Foret className="v-fond-svg" okapi={{ x: -14, y: 613, s: 0.8 }} />
+      </div>
       <a href="#accueil" className="v-skip">
         Aller au contenu
       </a>

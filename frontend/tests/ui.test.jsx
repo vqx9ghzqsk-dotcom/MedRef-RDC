@@ -235,6 +235,10 @@ describe('Accueil', () => {
       'href',
       '/inscription',
     );
+    expect(screen.getByRole('img', { name: /Professionnel de santé/ })).toHaveAttribute(
+      'src',
+      '/images/soignant-720.webp',
+    );
     expect(screen.queryByRole('region', { name: 'Accès rapides' })).toBeNull();
     expect(api.departements).not.toHaveBeenCalled();
   });

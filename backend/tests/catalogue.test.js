@@ -268,6 +268,21 @@ describe('Catalogue', () => {
     const res = await request(app).get('/api/pathologies/xyz');
     expect(res.status).toBe(404);
   });
+
+  it('liste légère des pathologies pour la recherche de diagnostic', async () => {
+    db.query.mockResolvedValueOnce([
+      { nom: 'Paludisme grave', slug: 'paludisme-grave', statut: 'a_valider', specialite: 'Infectiologie' },
+    ]);
+    const res = await request(app).get('/api/pathologies');
+    expect(res.status).toBe(200);
+    expect(res.body.data[0]).toEqual({
+      nom: 'Paludisme grave',
+      slug: 'paludisme-grave',
+      statut: 'a_valider',
+      specialite: 'Infectiologie',
+    });
+    expect(db.query.mock.calls[0][0]).not.toMatch(/resume|definition/);
+  });
 });
 
 describe('Urgences / Symptômes / Scores', () => {

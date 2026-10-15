@@ -944,7 +944,7 @@ async function etatMolecule(q, id) {
   mo.fiche_a_valider = Boolean(mo.fiche_a_valider);
   const [posologies, presentations] = await Promise.all([
     q(
-      `SELECT population, indication, voie, dose_texte, dose_par_kg, dose_max, dose_base, unite, frequence,
+      `SELECT population, indication, voie, dose_texte, dose_par_kg, dose_par_m2, dose_max, dose_base, unite, frequence,
               frequence_type, prises_par_jour, intervalle_heures, duree, durees, securite, remarque,
               structure_a_valider
          FROM molecule_posologies WHERE molecule_id = ? ORDER BY ordre`,
@@ -962,6 +962,7 @@ async function etatMolecule(q, id) {
     posologies: posologies.map((p) => ({
       ...p,
       dose_par_kg: nombreOuNull(p.dose_par_kg),
+      dose_par_m2: nombreOuNull(p.dose_par_m2),
       dose_max: nombreOuNull(p.dose_max),
       intervalle_heures: nombreOuNull(p.intervalle_heures),
       durees: typeof p.durees === 'string' ? JSON.parse(p.durees) : p.durees || [],
@@ -1077,6 +1078,7 @@ router.put(
       voie: v.text(p.voie, 60, `posologies[${i}].voie`),
       dose_texte: v.text(p.dose_texte, 400, `posologies[${i}].dose_texte`, { required: true }),
       dose_par_kg: v.number(p.dose_par_kg, `posologies[${i}].dose_par_kg`, { min: 0, max: 100000 }),
+      dose_par_m2: v.number(p.dose_par_m2, `posologies[${i}].dose_par_m2`, { min: 0, max: 100000 }),
       dose_max: v.number(p.dose_max, `posologies[${i}].dose_max`, { min: 0, max: 1000000 }),
       unite: v.text(p.unite, 20, `posologies[${i}].unite`) || 'mg',
       frequence: v.text(p.frequence, 160, `posologies[${i}].frequence`),
@@ -1108,8 +1110,8 @@ router.put(
           await conn.execute(
             `INSERT INTO molecule_posologies (molecule_id, population, indication, voie, dose_texte, dose_par_kg,
                dose_max, dose_base, unite, frequence, frequence_type, prises_par_jour, intervalle_heures, duree,
-               durees, securite, remarque, structure_a_valider, ordre)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+               durees, securite, remarque, structure_a_valider, ordre, dose_par_m2)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
               id,
               p.population,
@@ -1130,6 +1132,7 @@ router.put(
               p.remarque,
               Number(p.structure_a_valider),
               i + 1,
+              p.dose_par_m2 ?? null,
             ],
           );
         }

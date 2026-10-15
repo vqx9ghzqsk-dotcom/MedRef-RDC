@@ -1327,3 +1327,71 @@ describe('Posologies structurées et présentations (lot B)', () => {
     expect(payload.presentations[0]).toMatchObject({ quantite: 120, par_quantite: 5, a_valider: false });
   });
 });
+
+describe('Ordonnance guidée (lot C)', () => {
+  const artesunate = {
+    id: 3,
+    dci: 'Artésunate',
+    slug: 'artesunate',
+    classe: 'Antipaludiques',
+    interactions: null,
+    posologies: [
+      {
+        population: 'enfant',
+        indication: 'Paludisme grave',
+        voie: 'IV ou IM',
+        dose_texte: '3 mg/kg à H0, H12, H24',
+        dose_par_kg: 3,
+        dose_par_m2: null,
+        dose_max: null,
+        dose_base: 'par_prise',
+        unite: 'mg',
+        frequence: 'H0, H12, H24 puis toutes les 24 h',
+        frequence_type: 'schema',
+        durees: [
+          { min: 24, max: null, unite: 'heures', contexte: 'Au moins, puis relais oral', defaut: true },
+        ],
+        securite: 'autorise',
+        structure_a_valider: true,
+      },
+    ],
+    presentations: [
+      {
+        forme: 'injectable',
+        voie: 'injectable',
+        quantite: 60,
+        unite: 'mg',
+        par_quantite: 1,
+        par_unite: 'flacon',
+        libelle: 'Flacon 60 mg',
+      },
+    ],
+  };
+
+  it('calcule la dose au poids depuis la fiche et propose les bilans du diagnostic', async () => {
+    const user = userEvent.setup();
+    try {
+      globalThis.localStorage?.removeItem('medref.ordonnance.brouillon');
+    } catch {
+      /* rien */
+    }
+    renderApp('/prescriptions?pathologie=paludisme-grave', {
+      pathologies: vi.fn(async () => [
+        { nom: 'Paludisme grave', slug: 'paludisme-grave', statut: 'a_valider' },
+      ]),
+      molecules: vi.fn(async () => [{ dci: 'Artésunate', slug: 'artesunate', classe: 'Antipaludiques' }]),
+      molecule: vi.fn(async () => artesunate),
+    });
+    expect(await screen.findByRole('link', { name: 'Paludisme grave' })).toBeInTheDocument();
+    expect(screen.getByText(/Contenu non encore validé par un médecin/)).toBeInTheDocument();
+    expect(screen.getByLabelText('TDR paludisme')).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Âge'), '4');
+    await user.type(screen.getByLabelText(/^Poids/), '15');
+    await user.click(screen.getByRole('button', { name: 'Ajouter Artésunate' }));
+    expect(await screen.findByText(/3 mg\/kg × 15 kg = 45 mg par prise/)).toBeInTheDocument();
+    expect(screen.getByText(/0,75 flacon/)).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Durée' })).toHaveDisplayValue(
+      /24 h \(Au moins, puis relais oral\)/,
+    );
+  });
+});

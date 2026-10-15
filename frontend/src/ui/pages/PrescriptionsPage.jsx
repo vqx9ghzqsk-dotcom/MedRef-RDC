@@ -1,206 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { useServices } from '../context/services.jsx';
+import { Link, useParams } from 'react-router-dom';
 import { usePrescriptions } from '../hooks/usePrescriptions.js';
+import { useAuth } from '../context/auth.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { Empty, Loading } from '../components/Status.jsx';
-import { nettoyerTexte, SUGGESTIONS } from '../../core/saisie.js';
-
-const emptyLine = () => ({ dci: '', posologie: '', duree: '' });
-
-function PrescriptionForm({ onCreate }) {
-  const { api } = useServices();
-  const [params, setParams] = useSearchParams();
-  const pathologieSlug = params.get('pathologie');
-  const [label, setLabel] = useState('');
-  const [lignes, setLignes] = useState([emptyLine()]);
-  const [notes, setNotes] = useState('');
-  const [source, setSource] = useState(null);
-  const [error, setError] = useState(null);
-  const [saved, setSaved] = useState(false);
-  const [dcis, setDcis] = useState([]);
-
-  // DCI proposées à la saisie (liste des molécules ; disponible hors ligne si déjà consultée)
-  useEffect(() => {
-    if (typeof api.molecules !== 'function') return undefined;
-    let actif = true;
-    api
-      .molecules()
-      .then((liste) => actif && setDcis(liste.map((m) => m.dci)))
-      .catch(() => {});
-    return () => {
-      actif = false;
-    };
-  }, [api]);
-
-  // Pré-remplissage depuis une fiche pathologie (molécules de 1re intention).
-  useEffect(() => {
-    if (!pathologieSlug) return undefined;
-    let cancelled = false;
-    api
-      .pathologie(pathologieSlug)
-      .then((f) => {
-        if (cancelled) return;
-        const meds = f.molecules.filter((m) => m.ligne === 'premiere');
-        setSource({ nom: f.nom, slug: f.slug });
-        if (meds.length) setLignes(meds.map((m) => ({ ...emptyLine(), dci: m.dci })));
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [api, pathologieSlug]);
-
-  const setLine = (i, key, value) =>
-    setLignes((ls) => ls.map((l, j) => (j === i ? { ...l, [key]: value } : l)));
-
-  const submit = async (e) => {
-    e.preventDefault();
-    const filled = lignes.filter((l) => l.dci.trim());
-    if (!filled.length) {
-      setError('Ajoutez au moins un médicament.');
-      return;
-    }
-    setError(null);
-    await onCreate({
-      patient_label: nettoyerTexte(label, 190),
-      contenu: {
-        lignes: filled.map((l) => ({
-          dci: nettoyerTexte(l.dci, 190),
-          posologie: nettoyerTexte(l.posologie, 400),
-          duree: nettoyerTexte(l.duree, 160),
-        })),
-        notes: notes.trim(),
-        pathologie: source,
-      },
-    });
-    setLabel('');
-    setLignes([emptyLine()]);
-    setNotes('');
-    setSource(null);
-    setSaved(true);
-    if (pathologieSlug) setParams({}, { replace: true });
-  };
-
-  return (
-    <form className="card prescription-form" onSubmit={submit} noValidate>
-      <h2>Nouvelle prescription</h2>
-      {source && (
-        <p className="muted">
-          Pré-remplie depuis <Link to={`/pathologies/${source.slug}`}>{source.nom}</Link>. Complétez posologie
-          et durée selon le patient.
-        </p>
-      )}
-      <div className="field">
-        <label htmlFor="rx-label">Patient (initiales, âge, poids…)</label>
-        <input
-          id="rx-label"
-          value={label}
-          maxLength={190}
-          onChange={(e) => setLabel(e.target.value)}
-          placeholder="ex. M. K., 34 ans, 62 kg"
-          autoComplete="off"
-        />
-        <p className="hint">
-          Évitez le nom complet : ces données restent sur l’appareil jusqu’à la synchronisation.
-        </p>
-      </div>
-      <fieldset className="rx-lines">
-        <legend>Médicaments</legend>
-        {lignes.map((l, i) => (
-          <div className="rx-line" key={i}>
-            <div className="field">
-              <label htmlFor={`rx-dci-${i}`}>Molécule (DCI)</label>
-              <input
-                id={`rx-dci-${i}`}
-                value={l.dci}
-                onChange={(e) => setLine(i, 'dci', e.target.value)}
-                list="rx-dci-liste"
-                placeholder="ex. Amoxicilline"
-                maxLength={190}
-                autoComplete="off"
-              />
-            </div>
-            <div className="field">
-              <label htmlFor={`rx-pos-${i}`}>Posologie</label>
-              <input
-                id={`rx-pos-${i}`}
-                value={l.posologie}
-                onChange={(e) => setLine(i, 'posologie', e.target.value)}
-                placeholder="ex. 1 comprimé de 500 mg 3 fois par jour"
-                maxLength={400}
-                autoComplete="off"
-              />
-            </div>
-            <div className="field">
-              <label htmlFor={`rx-duree-${i}`}>Durée</label>
-              <input
-                id={`rx-duree-${i}`}
-                value={l.duree}
-                onChange={(e) => setLine(i, 'duree', e.target.value)}
-                list="rx-duree-liste"
-                placeholder="ex. 7 jours"
-                maxLength={160}
-                autoComplete="off"
-              />
-            </div>
-            {lignes.length > 1 && (
-              <button
-                type="button"
-                className="btn btn-ghost btn-small"
-                onClick={() => setLignes((ls) => ls.filter((_, j) => j !== i))}
-                aria-label={`Retirer le médicament ${i + 1}`}
-              >
-                Retirer
-              </button>
-            )}
-          </div>
-        ))}
-        <button
-          type="button"
-          className="btn btn-secondary btn-small"
-          onClick={() => setLignes((ls) => [...ls, emptyLine()])}
-        >
-          Ajouter un médicament
-        </button>
-      </fieldset>
-      <div className="field">
-        <label htmlFor="rx-notes">Consignes</label>
-        <textarea
-          id="rx-notes"
-          rows={3}
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="ex. Prendre pendant les repas. Revenir si la fièvre persiste après 48 h."
-          maxLength={2000}
-        />
-      </div>
-      <datalist id="rx-dci-liste">
-        {dcis.map((d) => (
-          <option key={d} value={d} />
-        ))}
-      </datalist>
-      <datalist id="rx-duree-liste">
-        {SUGGESTIONS.duree.map((d) => (
-          <option key={d} value={d} />
-        ))}
-      </datalist>
-      {error && (
-        <p className="form-error" role="alert">
-          {error}
-        </p>
-      )}
-      <button type="submit" className="btn btn-primary">
-        Enregistrer la prescription
-      </button>
-      {saved && (
-        <p className="form-success" role="status">
-          Prescription enregistrée sur cet appareil.
-        </p>
-      )}
-    </form>
-  );
-}
+import { OrdonnanceGuidee } from '../components/OrdonnanceGuidee.jsx';
+import { CATEGORIES_EXAMEN, NIVEAUX_SOINS, ORDRES, PROFILS, STRUCTURES } from '../../core/labels.js';
+import { droitOrdonnance } from '../../core/prescription.js';
 
 function SyncBadge({ item }) {
   if (item.sync_status === 'synced') return <span className="tag tag-ok">Synchronisée</span>;
@@ -212,6 +18,8 @@ function SyncBadge({ item }) {
 function PrescriptionItem({ item, onRemove }) {
   const [confirming, setConfirming] = useState(false);
   const date = new Date(item.updated_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
+  const c = item.contenu || {};
+  const diagnostics = c.version === 2 ? c.diagnostics || [] : c.pathologie ? [c.pathologie] : [];
   return (
     <li className="rx-item">
       <div className="rx-item-head">
@@ -220,15 +28,15 @@ function PrescriptionItem({ item, onRemove }) {
       </div>
       <p className="muted">
         {date}
-        {item.contenu?.pathologie && (
-          <>
+        {diagnostics.map((d) => (
+          <span key={d.slug}>
             {', '}
-            <Link to={`/pathologies/${item.contenu.pathologie.slug}`}>{item.contenu.pathologie.nom}</Link>
-          </>
-        )}
+            <Link to={`/pathologies/${d.slug}`}>{d.nom}</Link>
+          </span>
+        ))}
       </p>
       <ul className="rx-item-lines">
-        {item.contenu?.lignes?.map((l, i) => (
+        {c.lignes?.map((l, i) => (
           <li key={i}>
             <strong>{l.dci}</strong>
             {l.posologie && `, ${l.posologie}`}
@@ -236,8 +44,11 @@ function PrescriptionItem({ item, onRemove }) {
           </li>
         ))}
       </ul>
-      {item.contenu?.notes && <p>{item.contenu.notes}</p>}
+      {c.version !== 2 && c.notes && <p>{c.notes}</p>}
       <div className="rx-item-actions">
+        <Link to={`/prescriptions/${item.id}`} className="btn btn-secondary btn-small">
+          Ouvrir et imprimer
+        </Link>
         {confirming ? (
           <>
             <span>Supprimer cette prescription ?</span>
@@ -258,6 +69,42 @@ function PrescriptionItem({ item, onRemove }) {
   );
 }
 
+function BarreSynchro({ canSync, online, pending, syncState, sync }) {
+  return (
+    <div className="sync-bar no-print" role="status">
+      {!canSync ? (
+        <p>
+          Vos prescriptions sont enregistrées sur cet appareil uniquement.{' '}
+          <Link to="/connexion" state={{ from: '/prescriptions' }}>
+            Connectez-vous
+          </Link>{' '}
+          pour les sauvegarder en ligne.
+        </p>
+      ) : (
+        <>
+          <p>
+            {pending ? (
+              <span className="tag tag-pending">{pending} en attente</span>
+            ) : (
+              <span className="tag tag-ok">Tout est synchronisé</span>
+            )}{' '}
+            {!online && 'Hors connexion : envoi automatique au retour du réseau.'}
+            {syncState.error && <span className="form-error"> Échec de l’envoi : {syncState.error}</span>}
+          </p>
+          <button
+            type="button"
+            className="btn btn-secondary btn-small"
+            onClick={sync}
+            disabled={!online || syncState.running}
+          >
+            {syncState.running ? 'Synchronisation…' : 'Synchroniser maintenant'}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function PrescriptionsPage() {
   const { items, loading, online, canSync, syncState, sync, create, remove } = usePrescriptions();
   const pending = items.filter((i) => i.sync_status !== 'synced').length;
@@ -268,61 +115,242 @@ export function PrescriptionsPage() {
       <header className="page-header">
         <h1>Prescriptions</h1>
         <p className="lead">
-          Rédigez vos prescriptions même sans réseau ; elles sont envoyées dès que la connexion revient.
+          Ordonnance guidée par les fiches : diagnostics, bilans, traitements avec calcul de dose au poids et
+          durées de la fiche. Utilisable sans réseau ; envoi dès que la connexion revient.
         </p>
       </header>
 
-      <div className="sync-bar" role="status">
-        {!canSync ? (
-          <p>
-            Vos prescriptions sont enregistrées sur cet appareil uniquement.{' '}
-            <Link to="/connexion" state={{ from: '/prescriptions' }}>
-              Connectez-vous
-            </Link>{' '}
-            pour les sauvegarder en ligne.
-          </p>
+      <BarreSynchro canSync={canSync} online={online} pending={pending} syncState={syncState} sync={sync} />
+
+      <OrdonnanceGuidee onCreate={create} />
+
+      <section aria-labelledby="rx-list-title" className="rx-historique">
+        <h2 id="rx-list-title" className="section-title">
+          Mes prescriptions
+        </h2>
+        {loading ? (
+          <Loading />
+        ) : items.length ? (
+          <ul className="rx-list">
+            {items.map((item) => (
+              <PrescriptionItem key={item.id} item={item} onRemove={remove} />
+            ))}
+          </ul>
         ) : (
-          <>
-            <p>
-              {pending ? (
-                <span className="tag tag-pending">{pending} en attente</span>
-              ) : (
-                <span className="tag tag-ok">Tout est synchronisé</span>
-              )}{' '}
-              {!online && 'Hors connexion : envoi automatique au retour du réseau.'}
-              {syncState.error && <span className="form-error"> Échec de l’envoi : {syncState.error}</span>}
-            </p>
-            <button
-              type="button"
-              className="btn btn-secondary btn-small"
-              onClick={sync}
-              disabled={!online || syncState.running}
-            >
-              {syncState.running ? 'Synchronisation…' : 'Synchroniser maintenant'}
-            </button>
-          </>
+          <Empty>Aucune prescription pour l’instant.</Empty>
         )}
+      </section>
+    </>
+  );
+}
+
+// ------------------------------------------------------------------ ordonnance imprimable
+
+const sansMarkdown = (t) =>
+  String(t || '')
+    .replace(/\*\*/g, '')
+    .replace(/^- /gm, '• ');
+
+function EnTete({ user, droit }) {
+  if (!droit.entete) return <p className="ordo-avertissement">{droit.motif}</p>;
+  const profession = [PROFILS[user.profil], user.specialite_exercee].filter(Boolean).join(' — ');
+  return (
+    <div className="ordo-entete">
+      <p className="ordo-prescripteur">{user.nom}</p>
+      <p>{profession}</p>
+      {user.numero_ordre && (
+        <p>
+          {ORDRES[user.ordre_professionnel] || 'Ordre professionnel'} : n° {user.numero_ordre}
+        </p>
+      )}
+      {(user.structure_nom || user.structure_type) && (
+        <p>
+          {[user.structure_nom, STRUCTURES[user.structure_type], user.province].filter(Boolean).join(' — ')}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function PatientLigne({ patient }) {
+  if (!patient) return null;
+  const morceaux = [
+    patient.code,
+    patient.age?.valeur && `${patient.age.valeur} ${patient.age.unite}`,
+    patient.sexe === 'F' ? 'féminin' : patient.sexe === 'M' ? 'masculin' : null,
+    patient.poids && `${patient.poids} kg`,
+    patient.taille && `${patient.taille} cm`,
+    patient.surface && `SC ${String(patient.surface).replace('.', ',')} m²`,
+    patient.grossesse && `enceinte${patient.trimestre ? ` (T${patient.trimestre})` : ''}`,
+    patient.allaitement && 'allaitement',
+  ].filter(Boolean);
+  return (
+    <>
+      <p>
+        <strong>Patient :</strong> {morceaux.join(', ') || 'non précisé'}
+      </p>
+      {patient.allergies && (
+        <p>
+          <strong>Allergies :</strong> {patient.allergies}
+        </p>
+      )}
+    </>
+  );
+}
+
+export function OrdonnancePage() {
+  const { id } = useParams();
+  const { items, loading } = usePrescriptions();
+  const { user } = useAuth();
+  const [format, setFormat] = useState('A4');
+  const item = items.find((i) => i.id === id);
+
+  // Taille de page pour l'impression (A4 ou A5)
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `@page { size: ${format}; margin: 12mm; }`;
+    document.head.appendChild(style);
+    return () => style.remove();
+  }, [format]);
+
+  if (loading) return <Loading />;
+  if (!item) {
+    return (
+      <Empty>
+        Prescription introuvable sur cet appareil. <Link to="/prescriptions">Retour aux prescriptions</Link>
+      </Empty>
+    );
+  }
+  const c = item.contenu || {};
+  const droit = droitOrdonnance(user);
+  const nonValide =
+    (c.diagnostics || []).some((d) => d.statut && d.statut !== 'valide') ||
+    (c.traitements || []).some((t) => t.a_valider);
+  const date = new Date(item.updated_at).toLocaleDateString('fr-FR', { dateStyle: 'long' });
+  const traitements = c.version === 2 ? c.traitements || [] : c.lignes || [];
+  const bilans = c.bilans || [];
+
+  return (
+    <>
+      <Breadcrumb items={[{ label: 'Prescriptions', to: '/prescriptions' }, { label: 'Ordonnance' }]} />
+      <div className="ordo-barre no-print">
+        <label>
+          Format{' '}
+          <select value={format} onChange={(e) => setFormat(e.target.value)}>
+            <option value="A4">A4</option>
+            <option value="A5">A5</option>
+          </select>
+        </label>
+        <button type="button" className="btn btn-primary" onClick={() => window.print()}>
+          Imprimer ou enregistrer en PDF
+        </button>
+        <Link to="/prescriptions" className="btn btn-ghost">
+          Retour
+        </Link>
       </div>
 
-      <div className="rx-layout">
-        <PrescriptionForm onCreate={create} />
-        <section aria-labelledby="rx-list-title">
-          <h2 id="rx-list-title" className="section-title">
-            Mes prescriptions
-          </h2>
-          {loading ? (
-            <Loading />
-          ) : items.length ? (
-            <ul className="rx-list">
-              {items.map((item) => (
-                <PrescriptionItem key={item.id} item={item} onRemove={remove} />
+      <article className={`ordonnance ordonnance-${format.toLowerCase()}`} aria-label="Ordonnance">
+        <EnTete user={user} droit={droit} />
+        <p className="ordo-date">Le {date}</p>
+        <PatientLigne patient={c.patient} />
+        {(c.diagnostics || []).length > 0 && (
+          <p>
+            <strong>Diagnostic{c.diagnostics.length > 1 ? 's' : ''} :</strong>{' '}
+            {c.diagnostics.map((d) => (d.forme ? `${d.nom} (${d.forme})` : d.nom)).join(' ; ')}
+          </p>
+        )}
+
+        {traitements.length > 0 && (
+          <section>
+            <h2>Traitement</h2>
+            <ol className="ordo-traitements">
+              {traitements.map((t, i) => (
+                <li key={i}>
+                  <strong>{t.dci}</strong>
+                  {t.posologie && <> : {t.posologie}</>}
+                  {t.duree && <>, pendant {t.duree}</>}
+                  {t.quantite && <span className="ordo-qsp"> — Qté : {t.quantite}</span>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {bilans.length > 0 && (
+          <section>
+            <h2>Examens demandés</h2>
+            <ul>
+              {bilans.map((b) => (
+                <li key={b.slug}>
+                  {b.nom}
+                  {CATEGORIES_EXAMEN[b.categorie] && (
+                    <span className="muted"> ({CATEGORIES_EXAMEN[b.categorie]})</span>
+                  )}
+                </li>
               ))}
             </ul>
-          ) : (
-            <Empty>Aucune prescription pour l’instant. Rédigez-en une avec le formulaire.</Empty>
-          )}
+          </section>
+        )}
+
+        {(c.conseils || (c.version !== 2 && c.notes)) && (
+          <section>
+            <h2>Conseils</h2>
+            <p className="ordo-texte">{c.conseils || c.notes}</p>
+          </section>
+        )}
+
+        {(c.transferts || []).length > 0 && (
+          <section>
+            <h2>Revenir ou être transféré si ({NIVEAUX_SOINS[c.niveau]?.label || 'niveau de soins'})</h2>
+            {c.transferts.map((x) => (
+              <p key={x.diagnostic} className="ordo-texte">
+                <strong>{x.diagnostic} :</strong>
+                {'\n'}
+                {sansMarkdown(x.texte)}
+              </p>
+            ))}
+          </section>
+        )}
+
+        <div className="ordo-signature">
+          <p>Signature et cachet</p>
+        </div>
+
+        <footer className="ordo-pied">
+          <p>
+            Aide à la prescription MedRef RDC — la décision et la responsabilité restent celles du
+            prescripteur.
+          </p>
+          {nonValide && <p>Contenu de référence en cours de validation médicale.</p>}
+        </footer>
+      </article>
+
+      {(c.alertes || []).length > 0 && (
+        <section className="card no-print">
+          <h2>Alertes relevées à la rédaction</h2>
+          <ul className="alertes-dose">
+            {c.alertes.map((a) => (
+              <li key={a} className="alerte-dose">
+                {a}
+              </li>
+            ))}
+          </ul>
         </section>
-      </div>
+      )}
+      {c.traitements?.some((t) => t.calcul) && (
+        <section className="card no-print">
+          <h2>Détail des calculs</h2>
+          <ul>
+            {c.traitements
+              .filter((t) => t.calcul)
+              .map((t) => (
+                <li key={t.dci}>
+                  <strong>{t.dci}</strong> : {t.calcul}
+                </li>
+              ))}
+          </ul>
+        </section>
+      )}
     </>
   );
 }

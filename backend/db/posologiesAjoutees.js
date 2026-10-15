@@ -25,6 +25,7 @@ function verifierLigne(slug, l, i) {
   if (l.frequence_type === 'prises_par_jour' && !(l.prises_par_jour >= 1)) pb.push(`${ou} : prises par jour`);
   if (l.frequence_type === 'intervalle' && !(l.intervalle_heures > 0)) pb.push(`${ou} : intervalle`);
   if (l.dose_par_kg !== null && !l.dose_base) pb.push(`${ou} : dose par kg sans base`);
+  if ((l.dose_par_m2 ?? null) !== null && !l.dose_base) pb.push(`${ou} : dose par m² sans base`);
   for (const d of l.durees) {
     if (!(d.min > 0) || !UNITES_DUREE.includes(d.unite) || (d.max !== null && d.max < d.min)) {
       pb.push(`${ou} : durée ${JSON.stringify(d)}`);
@@ -61,8 +62,8 @@ async function chargerPosologiesAjoutees(conn, lots) {
       await conn.query(
         `INSERT INTO molecule_posologies (molecule_id, population, indication, voie, dose_texte, dose_par_kg,
            dose_max, dose_base, unite, frequence, frequence_type, prises_par_jour, intervalle_heures, duree,
-           durees, securite, remarque, structure_a_valider, ordre)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)`,
+           durees, securite, remarque, structure_a_valider, ordre, dose_par_m2)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
         [
           id,
           l.population,
@@ -82,6 +83,7 @@ async function chargerPosologiesAjoutees(conn, lots) {
           l.securite,
           l.remarque,
           i + 1,
+          l.dose_par_m2 ?? null,
         ],
       );
       lignes_ajoutees += 1;

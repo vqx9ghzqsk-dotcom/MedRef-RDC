@@ -1589,6 +1589,7 @@ function MoleculeEditor({ id, initial, onSaved }) {
             voie: '',
             dose_texte: '',
             dose_par_kg: null,
+            dose_par_m2: null,
             dose_max: null,
             unite: 'mg',
             frequence: '',
@@ -1644,7 +1645,7 @@ function MoleculeEditor({ id, initial, onSaved }) {
                 maxLength={400}
                 required
               />
-              <div className="form-grid form-grid-3">
+              <div className="form-grid form-grid-4">
                 <NumberField
                   label="Dose par kg et par prise"
                   name="dose_par_kg"
@@ -1655,6 +1656,17 @@ function MoleculeEditor({ id, initial, onSaved }) {
                   onChange={(v) => update({ dose_par_kg: v === '' ? null : v })}
                   error={err(`posologies[${i}].dose_par_kg`)}
                   hint="Laisser vide si la dose n’est pas calculée au poids"
+                />
+                <NumberField
+                  label="Dose par m² (surface corporelle)"
+                  name="dose_par_m2"
+                  unit={p.unite ? `${p.unite}/m²` : undefined}
+                  min={0}
+                  max={100000}
+                  value={p.dose_par_m2 ?? ''}
+                  onChange={(v) => update({ dose_par_m2: v === '' ? null : v })}
+                  error={err(`posologies[${i}].dose_par_m2`)}
+                  hint="Chimiothérapies : la fiche de prescription calcule la surface (poids et taille)"
                 />
                 <NumberField
                   label="Dose maximale par prise"

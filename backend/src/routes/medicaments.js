@@ -14,7 +14,7 @@ const router = express.Router();
 
 const LIGNE_RANK = { premiere: 1, deuxieme: 2, alternative: 3, adjuvant: 4 };
 const POSOLOGIE_COLS = `pos.id, pos.molecule_id, pos.population, pos.indication, pos.voie, pos.dose_texte,
-  pos.dose_par_kg, pos.dose_max, pos.dose_base, pos.unite, pos.frequence, pos.frequence_type, pos.prises_par_jour,
+  pos.dose_par_kg, pos.dose_par_m2, pos.dose_max, pos.dose_base, pos.unite, pos.frequence, pos.frequence_type, pos.prises_par_jour,
   pos.intervalle_heures, pos.duree, pos.durees, pos.securite, pos.remarque, pos.structure_a_valider`;
 const POSOLOGIE_ORDER = "FIELD(pos.population, 'adulte', 'enfant', 'nouveau_ne', 'grossesse'), pos.ordre";
 
@@ -24,6 +24,7 @@ const nombreOuNull = (v) => (v === null || v === undefined ? null : Number(v));
 const toPosologie = ({
   molecule_id: _m,
   dose_par_kg: kg,
+  dose_par_m2: m2,
   dose_max: max,
   intervalle_heures: h,
   durees,
@@ -31,6 +32,7 @@ const toPosologie = ({
 }) => ({
   ...p,
   dose_par_kg: nombreOuNull(kg),
+  dose_par_m2: nombreOuNull(m2),
   dose_max: nombreOuNull(max),
   intervalle_heures: nombreOuNull(h),
   durees: (typeof durees === 'string' ? JSON.parse(durees) : durees) || [],

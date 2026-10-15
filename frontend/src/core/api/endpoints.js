@@ -22,6 +22,7 @@ export function createMedRefApi(client) {
     departements: () => data(client.get('/api/departements')),
     departement: (slug) => data(client.get(`/api/departements/${enc(slug)}`)),
     specialite: (slug) => data(client.get(`/api/specialites/${enc(slug)}`)),
+    pathologies: () => data(client.get('/api/pathologies')),
     pathologie: (slug) => data(client.get(`/api/pathologies/${enc(slug)}`)),
 
     // Portes d'entrée transversales

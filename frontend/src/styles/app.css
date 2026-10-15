@@ -2880,3 +2880,198 @@ details.forme {
   border-bottom: 1px solid var(--line);
   margin-bottom: 0.4rem;
 }
+
+/* Lot C : ordonnance guidée */
+.ordo {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.ordo-section {
+  margin: 0;
+  min-width: 0;
+}
+.ordo-section > legend {
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0 0.3rem;
+}
+.ordo-section h3 {
+  font-size: 1rem;
+  margin: 0.8rem 0 0.4rem;
+}
+.ordo-age {
+  display: flex;
+  gap: 0.5rem;
+}
+.ordo-age input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ordo-age select {
+  flex: 0 0 auto;
+  width: auto;
+}
+.ordo-cases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  align-items: center;
+  margin: 0.4rem 0 0.8rem;
+}
+.checkbox {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+  margin: 0.25rem 0;
+}
+.checkbox input {
+  margin-top: 0.25rem;
+  flex: 0 0 auto;
+}
+.ordo-resultats,
+.ordo-propositions,
+.ordo-lignes {
+  list-style: none;
+  margin: 0.3rem 0 0.8rem;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.ordo-diagnostic,
+.ordo-ligne {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  padding: 0.6rem 0.8rem;
+  margin-top: 0.6rem;
+  background: var(--surface);
+}
+.ordo-diagnostic-tete,
+.ordo-ligne-tete {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.ordo-calcul {
+  background: var(--link-bg);
+  border-radius: var(--radius-small);
+  padding: 0.4rem 0.6rem;
+  margin: 0.4rem 0;
+}
+.ordo-calcul p {
+  margin: 0.15rem 0;
+}
+.ordo-transfert,
+.ordo-texte {
+  white-space: pre-line;
+}
+.ordo-actions,
+.ordo-barre {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+.ordo-barre {
+  margin: 0.5rem 0 1rem;
+}
+.alerte-info {
+  border-left-color: var(--link);
+  background: var(--link-bg);
+}
+.rx-historique {
+  margin-top: 1rem;
+}
+
+/* Ordonnance imprimable */
+.ordonnance {
+  background: #fff;
+  color: #111;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  max-width: 210mm;
+  margin: 0 auto 1rem;
+  line-height: 1.45;
+}
+.ordonnance-a5 {
+  max-width: 148mm;
+  font-size: 0.92rem;
+}
+.ordonnance h2 {
+  font-size: 1rem;
+  margin: 1rem 0 0.4rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.15rem;
+}
+.ordonnance p {
+  margin: 0.2rem 0;
+}
+.ordonnance .muted {
+  color: #555;
+}
+.ordo-entete {
+  border-bottom: 2px solid #111;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+.ordo-prescripteur {
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.ordo-avertissement {
+  border: 2px dashed #c8102e;
+  color: #c8102e;
+  padding: 0.4rem 0.6rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+.ordo-date {
+  text-align: right;
+}
+.ordo-traitements li {
+  margin: 0.35rem 0;
+}
+.ordo-qsp {
+  white-space: nowrap;
+}
+.ordo-signature {
+  margin: 1.5rem 0 1rem auto;
+  width: 45%;
+  min-height: 5rem;
+  border-top: 1px solid #999;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #555;
+}
+.ordo-pied {
+  border-top: 1px solid #ccc;
+  padding-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #444;
+}
+
+@media print {
+  .topbar,
+  .footer,
+  .breadcrumb,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+  body,
+  .app,
+  .content {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .ordonnance {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    max-width: none;
+  }
+}

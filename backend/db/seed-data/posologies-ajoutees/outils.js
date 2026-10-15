@@ -3,13 +3,13 @@
 /**
  * Aide à la rédaction des posologies ajoutées (structurées dès l'écriture).
  *   p(population, dose lisible, options)
- *   options : ind, voie, kg (dose par kg), max (plafond), base ('par_prise' | 'par_jour'),
+ *   options : ind, voie, kg (dose par kg), m2 (dose par m² de surface corporelle), max (plafond), base ('par_prise' | 'par_jour'),
  *             unite ('mg' par défaut), freq (texte affiché), duree (texte affiché),
  *             f : fréquence structurée → { n } prises par jour, { h } toutes les h heures,
  *                 'unique', 'perfusion' ou 'schema',
  *             durees : [[min, max|null, unite, contexte|null, defaut?], …],
  *             sec ('autorise' | 'prudence' | 'contre_indique'), rem
- * La base vaut « par_prise » par défaut dès qu'une dose par kg est donnée.
+ * La base vaut « par_prise » par défaut dès qu'une dose par kg ou par m² est donnée.
  */
 
 function frequenceStructuree(f) {
@@ -35,8 +35,9 @@ const p = (population, dose_texte, o = {}) => ({
   indication: o.ind ?? null,
   voie: o.voie ?? null,
   dose_par_kg: o.kg ?? null,
+  dose_par_m2: o.m2 ?? null,
   dose_max: o.max ?? null,
-  dose_base: o.base ?? (o.kg !== undefined ? 'par_prise' : null),
+  dose_base: o.base ?? (o.kg !== undefined || o.m2 !== undefined ? 'par_prise' : null),
   unite: o.unite ?? 'mg',
   frequence: o.freq ?? null,
   ...frequenceStructuree(o.f),

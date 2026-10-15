@@ -100,6 +100,22 @@ router.get(
   }),
 );
 
+/**
+ * Liste légère de toutes les pathologies (nom, slug, statut, spécialité) : recherche d'un
+ * diagnostic dans la fiche de prescription, y compris hors ligne (mise en cache).
+ */
+router.get(
+  '/pathologies',
+  asyncHandler(async (req, res) => {
+    const rows = await db.query(
+      `SELECT p.nom, p.slug, p.statut, s.nom AS specialite
+         FROM pathologies p JOIN specialites s ON s.id = p.specialite_id
+        ORDER BY p.nom`,
+    );
+    res.json({ data: rows });
+  }),
+);
+
 /** Fiche pathologie complète, avec tous les blocs interconnectés. */
 router.get(
   '/pathologies/:slug',

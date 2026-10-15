@@ -1,0 +1,234 @@
+/* =====================================================================
+   Fenêtre de connexion / inscription : forêt, okapi, carte en verre dépoli.
+   La scène est toujours claire (même en thème sombre) : les couleurs de la
+   carte sont donc redéfinies localement.
+   ===================================================================== */
+
+.auth-scene {
+  --ink: #0b1b3f;
+  --ink-soft: #2e4468;
+  --line: rgba(11, 27, 63, 0.35);
+  --link: #12306b;
+  --link-bg: #e5eeff;
+  --urgence: #a80c27;
+  --urgence-bg: #fdeced;
+  --ok: #17603a;
+  --ok-bg: #e2f3ea;
+  color-scheme: light;
+  color: var(--ink);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #9bbbe4;
+}
+
+.auth-fond {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.auth-haut {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px max(20px, 4vw);
+}
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.15rem;
+  text-shadow: 0 1px 8px rgba(7, 18, 43, 0.5);
+}
+.auth-retour {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 9px 20px;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  background: rgba(11, 27, 63, 0.25);
+}
+.auth-retour:hover {
+  background: rgba(11, 27, 63, 0.45);
+}
+
+.auth-centre {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px 40px;
+}
+
+.auth-carte {
+  position: relative;
+  width: min(430px, 100%);
+  padding: 34px 32px 28px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 24px 60px rgba(7, 18, 43, 0.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+}
+.auth-carte:focus {
+  outline: none;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .auth-carte {
+    background: rgba(245, 249, 255, 0.96);
+  }
+}
+
+.auth-fermer {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 0 26px 0 18px;
+  background: #0b1b3f;
+  color: #fff;
+}
+.auth-fermer:hover {
+  background: #12306b;
+}
+
+/* ---- Contenu du formulaire --------------------------------------- */
+
+.auth-carte.auth-carte,
+.auth-carte .narrow {
+  max-width: none;
+}
+.auth-carte h1 {
+  margin: 0 36px 6px 0;
+  font-family: var(--serif);
+  font-size: 1.9rem;
+  text-align: left;
+  color: #0b1b3f;
+}
+.auth-carte .muted {
+  color: var(--ink-soft);
+  font-size: 0.93rem;
+  margin-bottom: 18px;
+}
+.auth-carte .field {
+  margin-bottom: 16px;
+}
+.auth-carte .field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.auth-carte .field input,
+.auth-carte .field select {
+  width: 100%;
+  background: transparent;
+  color: #0b1b3f;
+  border: 0;
+  border-bottom: 2px solid #0b1b3f;
+  border-radius: 0;
+  padding: 0.55rem 2.4rem 0.55rem 0.1rem;
+  box-shadow: none;
+}
+.auth-carte .field select {
+  padding-right: 0.5rem;
+}
+.auth-carte .field input::placeholder {
+  color: rgba(11, 27, 63, 0.5);
+}
+.auth-carte .field input:focus,
+.auth-carte .field select:focus {
+  outline: none;
+  border-bottom-color: #2563eb;
+  box-shadow: 0 2px 0 0 #2563eb;
+}
+.auth-carte .field input[type='email'] {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b1b3f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='m3 7 9 6 9-6'/%3E%3C/svg%3E")
+    no-repeat right 0.2rem center / 18px;
+}
+.auth-carte .field input[aria-invalid='true'] {
+  border-bottom-color: var(--urgence);
+}
+
+.field-mdp {
+  position: relative;
+}
+.field-mdp input {
+  padding-right: 2.6rem;
+}
+.field-mdp-voir {
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #0b1b3f;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.field-mdp-voir:hover {
+  background: rgba(11, 27, 63, 0.08);
+}
+
+.auth-carte .hint {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+.auth-carte .btn-primary {
+  background: #0b1b3f;
+  color: #fff;
+  border-radius: 12px;
+  min-height: 48px;
+  margin-top: 6px;
+}
+.auth-carte .btn-primary:hover:not(:disabled) {
+  background: #12306b;
+}
+.auth-carte .auth-switch {
+  margin: 18px 0 0;
+  text-align: center;
+  font-size: 0.93rem;
+  color: var(--ink-soft);
+}
+.auth-carte .auth-switch a {
+  color: #0b1b3f;
+  font-weight: 700;
+}
+.auth-carte .form-error,
+.auth-carte .form-success {
+  border-radius: 12px;
+}
+
+@media (max-width: 480px) {
+  .auth-carte {
+    padding: 28px 20px 22px;
+  }
+  .auth-retour {
+    padding: 8px 14px;
+  }
+}

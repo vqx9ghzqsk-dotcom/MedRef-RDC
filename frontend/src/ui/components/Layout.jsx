@@ -8,6 +8,8 @@ import { GlossaireProvider } from '../context/glossaire.jsx';
 import { PanneauProduitProvider } from './Produits.jsx';
 import { VitrinePage } from '../pages/VitrinePage.jsx';
 
+const PAGES_AUTH = ['/connexion', '/inscription', '/mot-de-passe-oublie', '/reinitialiser-mot-de-passe'];
+
 export const QUICK_ACCESS = [
   { to: '/urgences', label: 'Urgences', hint: 'Conduite ABCDE, signes de gravité', tone: 'urgence' },
   { to: '/symptomes', label: 'Symptômes', hint: 'Partir de ce que présente le patient' },
@@ -30,6 +32,17 @@ export function Layout() {
 
   // Visiteur non connecté sur « / » : page de présentation, sans l'en-tête de l'application.
   if (!user && pathname === '/') return <VitrinePage />;
+  // Connexion, inscription et mot de passe : fenêtre ouverte par-dessus la page de présentation.
+  if (!user && PAGES_AUTH.includes(pathname)) {
+    return (
+      <>
+        <div inert="" aria-hidden="true">
+          <VitrinePage />
+        </div>
+        <Outlet />
+      </>
+    );
+  }
 
   return (
     <div className="app">

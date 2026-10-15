@@ -3,20 +3,56 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { useAuth } from '../context/auth.jsx';
 import { useServices } from '../context/services.jsx';
 import { PROFILS } from '../../core/labels.js';
+import { AuthScene } from '../components/AuthScene.jsx';
 
-/** Champ texte avec message d'erreur rattaché (accessibilité). */
-function Champ({ id, label, value, onChange, error, ...props }) {
+/** Champ texte avec message d'erreur rattaché (accessibilité). Les mots de passe ont un bouton œil. */
+function Champ({ id, label, value, onChange, error, type, ...props }) {
+  const [visible, setVisible] = useState(false);
+  const motDePasse = type === 'password';
+  const input = (
+    <input
+      id={id}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      type={motDePasse && visible ? 'text' : type}
+      aria-invalid={error ? 'true' : undefined}
+      aria-describedby={error ? `${id}-err` : undefined}
+      {...props}
+    />
+  );
   return (
     <div className="field">
       <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        aria-invalid={error ? 'true' : undefined}
-        aria-describedby={error ? `${id}-err` : undefined}
-        {...props}
-      />
+      {motDePasse ? (
+        <div className="field-mdp">
+          {input}
+          <button
+            type="button"
+            className="field-mdp-voir"
+            aria-label={visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+            aria-pressed={visible}
+            onClick={() => setVisible((v) => !v)}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+              <circle cx="12" cy="12" r="3" />
+              {visible && <path d="M4 4l16 16" />}
+            </svg>
+          </button>
+        </div>
+      ) : (
+        input
+      )}
       {error && (
         <p id={`${id}-err`} className="field-error">
           {error}
@@ -56,7 +92,7 @@ function AuthForm({ mode }) {
   };
 
   return (
-    <section className="auth narrow">
+    <AuthScene>
       <h1>{isRegister ? 'Créer un compte' : 'Se connecter'}</h1>
       <p className="muted">
         {isRegister
@@ -169,7 +205,7 @@ function AuthForm({ mode }) {
           </>
         )}
       </p>
-    </section>
+    </AuthScene>
   );
 }
 
@@ -194,7 +230,7 @@ export function MotDePasseOubliePage() {
   };
 
   return (
-    <section className="auth narrow">
+    <AuthScene>
       <h1>Mot de passe oublié</h1>
       <p className="muted">
         Indiquez l’adresse e-mail de votre compte. Vous recevrez un lien pour choisir un nouveau mot de passe,
@@ -233,7 +269,7 @@ export function MotDePasseOubliePage() {
       <p className="auth-switch">
         <Link to="/connexion">Retour à la connexion</Link>
       </p>
-    </section>
+    </AuthScene>
   );
 }
 
@@ -267,18 +303,18 @@ export function ReinitialiserMotDePassePage() {
 
   if (!jeton) {
     return (
-      <section className="auth narrow">
+      <AuthScene>
         <h1>Nouveau mot de passe</h1>
         <p className="form-error" role="alert">
           Lien incomplet. Ouvrez le lien reçu en entier, ou{' '}
           <Link to="/mot-de-passe-oublie">faites une nouvelle demande</Link>.
         </p>
-      </section>
+      </AuthScene>
     );
   }
 
   return (
-    <section className="auth narrow">
+    <AuthScene>
       <h1>Nouveau mot de passe</h1>
       {etat.ok ? (
         <p className="form-success" role="status">
@@ -318,6 +354,6 @@ export function ReinitialiserMotDePassePage() {
           </button>
         </form>
       )}
-    </section>
+    </AuthScene>
   );
 }

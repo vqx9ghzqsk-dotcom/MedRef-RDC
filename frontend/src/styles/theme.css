@@ -1,0 +1,296 @@
+/* =====================================================================
+   MedRef RDC — habillage commun avec la page de présentation
+   Couche d'ajustements chargée après app.css : mêmes composants, même
+   comportement, seul l'aspect change (bleu marine, coins arrondis,
+   boutons en pastille, titres en empattement, cartes aériennes).
+   Supprimer ce fichier (et son import dans main.jsx) rend l'ancien aspect.
+   ===================================================================== */
+
+:root {
+  --bg: #f3f7fb;
+  --surface: #ffffff;
+  --surface-2: #e8eff9;
+  --ink: #12233a;
+  --ink-soft: #52647a;
+  --line: #d6e0ee;
+  --brand: #0b1b3f;
+  --link: #1d4fd8;
+  --link-bg: #e5eeff;
+  --action: #2563eb;
+  --radius: 20px;
+  --radius-small: 14px;
+  --serif: Georgia, 'Times New Roman', 'Noto Serif', serif;
+  --ombre: 0 10px 30px rgba(18, 48, 107, 0.08);
+  --ombre-haute: 0 16px 36px rgba(18, 48, 107, 0.14);
+  --marine: linear-gradient(135deg, #0b1b3f 0%, #12306b 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #07122b;
+    --surface: #0f2048;
+    --surface-2: #16295a;
+    --ink: #e8efff;
+    --ink-soft: #a9bbdc;
+    --line: #264070;
+    --brand: #0b1b3f;
+    --link: #8dc2ff;
+    --link-bg: #173264;
+    --action: #2f6df0;
+    --ombre: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --ombre-haute: 0 16px 36px rgba(0, 0, 0, 0.5);
+  }
+}
+
+body {
+  background: var(--bg);
+}
+
+/* ---- Titres ------------------------------------------------------ */
+
+h1,
+h2 {
+  font-family: var(--serif);
+}
+h1 {
+  font-weight: 700;
+}
+h2 {
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  color: var(--ink);
+}
+
+/* ---- Barre de navigation ---------------------------------------- */
+
+.topbar {
+  background: var(--marine);
+  border-radius: 0 0 28px 28px;
+  box-shadow: 0 8px 28px rgba(7, 18, 43, 0.28);
+}
+.brand-mark {
+  color: #2563eb;
+}
+.mainnav a {
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  color: #dbe7ff;
+}
+.mainnav a:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.mainnav a.active {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.mainnav a.nav-urgence {
+  color: #ffc2cb;
+}
+.account-name {
+  color: #dbe7ff;
+}
+.topbar .btn-ghost {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+}
+.topbar .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+.offline-banner {
+  border-radius: 0 0 20px 20px;
+}
+
+/* ---- Boutons et champs ------------------------------------------ */
+
+.btn {
+  border-radius: 999px;
+  padding-inline: 1.3rem;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    background 0.15s ease;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-primary {
+  background: var(--action);
+  color: #fff;
+}
+.btn-secondary {
+  border-radius: 999px;
+}
+.btn-ghost {
+  border-radius: 999px;
+}
+.search input,
+.field input,
+.field select,
+.field textarea,
+select,
+textarea {
+  border-radius: var(--radius-small);
+}
+.search input {
+  background: var(--surface);
+}
+
+/* ---- Accueil : bandeau d'entrée ---------------------------------- */
+
+.hero {
+  max-width: none;
+  margin-top: 0.25rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border-radius: 28px;
+  color: #fff;
+  background:
+    radial-gradient(700px 360px at 90% 0%, rgba(59, 130, 246, 0.4), transparent 62%),
+    radial-gradient(520px 300px at 0% 100%, rgba(37, 99, 235, 0.28), transparent 62%),
+    linear-gradient(160deg, #0b1b3f 0%, #0d2352 55%, #12306b 100%);
+  box-shadow: var(--ombre-haute);
+}
+.hero h1 {
+  color: #fff;
+  font-family: var(--serif);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.hero-byline {
+  color: #9fb4d6;
+}
+.hero-lead {
+  color: #d3e1f7;
+}
+.hero .search input {
+  background: #fff;
+  color: #12233a;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  padding-inline: 1.25rem;
+}
+.hero .search input::placeholder {
+  color: #5d6f85;
+}
+.hero .search input:focus {
+  border-color: #7cbcff;
+}
+.hero .search .btn {
+  border-radius: 999px;
+}
+.hero .search .btn-primary {
+  background: var(--action);
+  color: #fff;
+}
+
+/* ---- Cartes et tuiles ------------------------------------------- */
+
+.card,
+.dep-card,
+.quick-tile,
+.stat-tile,
+.actu,
+.panneau,
+.urgence-strip,
+.sync-bar,
+.table-wrap {
+  border-radius: var(--radius);
+}
+.card,
+.dep-card,
+.quick-tile,
+.actu {
+  box-shadow: var(--ombre);
+}
+.dep-card,
+.quick-tile {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.dep-card:hover,
+.quick-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ombre-haute);
+}
+.dep-card:hover {
+  border-color: var(--action);
+}
+.dep-name,
+.quick-label {
+  font-weight: 700;
+}
+.dep-card {
+  padding: 1.25rem;
+}
+.quick-tile {
+  padding: 1rem 1.15rem;
+}
+
+/* ---- Étiquettes, onglets, listes -------------------------------- */
+
+.chip,
+.tag,
+.tag-mini,
+.segmented,
+.segmented-btn,
+.tablist [role='tab'] {
+  border-radius: 999px;
+}
+.patho-list a,
+.med-list a,
+.source-list li,
+.rx-item {
+  border-radius: var(--radius-small);
+}
+
+/* ---- Pied de page ------------------------------------------------ */
+
+.footer {
+  margin-top: 1rem;
+  border-top: 0;
+  border-radius: 28px 28px 0 0;
+  background: #060f26;
+  color: #b8c8e4;
+}
+.footer a {
+  color: #dbe7ff;
+}
+.footer strong {
+  color: #fff;
+}
+
+/* ---- Accessibilité : mouvement réduit ---------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .dep-card,
+  .quick-tile {
+    transition: none;
+  }
+  .btn:hover:not(:disabled),
+  .dep-card:hover,
+  .quick-tile:hover {
+    transform: none;
+  }
+}
+
+/* ---- Impression : ordonnances et fiches restent sobres ----------- */
+
+@media print {
+  .topbar,
+  .footer {
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .hero {
+    background: none;
+    color: inherit;
+    box-shadow: none;
+  }
+}

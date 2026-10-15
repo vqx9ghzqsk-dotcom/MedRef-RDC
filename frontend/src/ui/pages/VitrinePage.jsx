@@ -417,9 +417,7 @@ export function VitrinePage() {
             </p>
           </div>
         </div>
-        <p className="v-pied-bas">
-          © {new Date().getFullYear()} MedRef RDC · Ne remplace pas le jugement clinique.
-        </p>
+        <p className="v-pied-bas">© {new Date().getFullYear()} MedRef RDC</p>
       </footer>
     </div>
   );

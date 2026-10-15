@@ -6,6 +6,7 @@ import { ServicesProvider, createWebServices } from './ui/context/services.jsx';
 import { AuthProvider } from './ui/context/auth.jsx';
 import { registerServiceWorker } from './registerServiceWorker.js';
 import './styles/app.css';
+import './styles/theme.css';
 
 const services = createWebServices();
 

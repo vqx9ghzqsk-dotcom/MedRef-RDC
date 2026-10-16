@@ -80,6 +80,10 @@ describe('Contrôle de conformité aux protocoles', () => {
             corrections: [{ ajouter: 'statut' }, { champ: 'diagnostic' }],
           },
         ],
+        examens: [
+          { slug: 'nfs', champ: 'type', valeur: 'x', ancienne: 'y' },
+          { slug: 'tsh', motif: 'm', champ: 'nom', remplacer: ['a'] },
+        ],
       },
     ]);
     expect(pb).toEqual(
@@ -93,6 +97,9 @@ describe('Contrôle de conformité aux protocoles', () => {
         'X/b correction 1 : niveau cs',
         'X/c correction 1 : ajout inconnu statut',
         'X/c correction 2 : ni remplacement ni valeur',
+        'X examen nfs : motif absent',
+        'X examen nfs : champ type non modifiable (examen)',
+        'X examen tsh : remplacement invalide',
       ]),
     );
   });

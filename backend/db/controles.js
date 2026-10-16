@@ -13,6 +13,8 @@
  *    appliquée et elle est signalée ;
  *  - `valeur` (avec `ancienne`) fixe une valeur, sous la même condition ;
  *  - `ajouter` crée un élément absent ; `retirer` enlève un lien molécule → fiche.
+ * Un lot peut aussi corriger le référentiel des examens (`examens`), commun à
+ * toutes les fiches ; le motif et le passage avant / après figurent dans son rapport.
  *
  * Toute fiche modifiée reçoit une entrée d'historique (version complète avant /
  * après, comparable dans l'administration). Le contrôle ne vaut pas validation :
@@ -128,6 +130,13 @@ const CIBLES_MOLECULE = {
   },
 };
 
+/** Référentiel des examens, commun à toutes les fiches : `lot.examens` = [{ slug, motif, champ, ... }]. */
+const CIBLE_EXAMEN = {
+  table: 'examens',
+  champs: ['nom', 'description', 'valeurs_normales'],
+  cle: () => ['id = ?', []],
+};
+
 const AJOUTS_PATHOLOGIE = ['principe', 'complication', 'examen', 'differentiel', 'molecule'];
 const AJOUTS_MOLECULE = ['posologie'];
 
@@ -157,6 +166,14 @@ function remplacerPassage(valeur, [ancien, nouveau]) {
 }
 
 const egal = (a, b) => (a == null && b == null) || String(a) === String(b);
+
+/** Une modification de champ porte un remplacement valide, ou une valeur avec l'ancienne. */
+function verifierModification(op, ici, pb) {
+  const r = op.remplacer;
+  const remplacement = Array.isArray(r) && r.length === 2 && r.every((t) => typeof t === 'string' && t);
+  if (r !== undefined && (!remplacement || r[0] === r[1])) pb.push(`${ici} : remplacement invalide`);
+  if (r === undefined && !('valeur' in op && 'ancienne' in op)) pb.push(`${ici} : ni remplacement ni valeur`);
+}
 
 /** Vérifie la cohérence des données ; renvoie la liste des problèmes. */
 function verifierDonnees(lots) {
@@ -192,12 +209,7 @@ function verifierDonnees(lots) {
           const cible = cibles[type];
           if (!cible.champs.includes(op.champ))
             pb.push(`${ici} : champ ${op.champ} non modifiable (${type})`);
-          const r = op.remplacer;
-          const remplacement =
-            Array.isArray(r) && r.length === 2 && r.every((t) => typeof t === 'string' && t);
-          if (r !== undefined && (!remplacement || r[0] === r[1])) pb.push(`${ici} : remplacement invalide`);
-          if (r === undefined && !('valeur' in op && 'ancienne' in op))
-            pb.push(`${ici} : ni remplacement ni valeur`);
+          verifierModification(op, ici, pb);
           if (type === 'niveau' && !NIVEAUX.includes(op.niveau)) pb.push(`${ici} : niveau ${op.niveau}`);
           if (type === 'examen' && !CATEGORIES.includes(op.categorie))
             pb.push(`${ici} : catégorie ${op.categorie}`);
@@ -206,6 +218,13 @@ function verifierDonnees(lots) {
             pb.push(`${ici} : population`);
         }
       }
+    }
+    for (const [i, op] of (lot.examens || []).entries()) {
+      const ici = `${lot.lot} examen ${op.slug || i + 1}`;
+      if (!op.slug) pb.push(`${ici} : examen sans identifiant`);
+      if (!op.motif) pb.push(`${ici} : motif absent`);
+      if (!CIBLE_EXAMEN.champs.includes(op.champ)) pb.push(`${ici} : champ ${op.champ} non modifiable (examen)`);
+      verifierModification(op, ici, pb);
     }
   }
   return pb;
@@ -413,6 +432,8 @@ const LIBELLES_CHAMPS = {
   contexte: 'contexte',
   ligne: 'ligne de traitement',
   dose_texte: 'dose',
+  nom: 'libellé',
+  valeurs_normales: 'valeurs normales',
 };
 
 /** Libellé court d'une opération, pour les conflits et l'historique. */
@@ -520,6 +541,16 @@ async function chargerControles(conn, lots, { strict = false } = {}) {
         );
         bilan[entite === 'pathologie' ? 'fiches' : 'molecules'] += 1;
       }
+    }
+
+    // Référentiel des examens : le motif et le passage avant / après figurent dans le rapport du lot
+    for (const op of lot.examens || []) {
+      const [row] = await q('SELECT id FROM examens WHERE slug = ?', [op.slug]);
+      if (!row) throw new Error(`Contrôle ${lot.lot} : examen inconnu ${op.slug}`);
+      const resultat = await modifierChamp(q, CIBLE_EXAMEN, row.id, op);
+      if (resultat === 'applique') bilan.corrections_appliquees += 1;
+      else if (resultat === 'deja') bilan.deja_appliquees += 1;
+      else bilan.conflits.push(`${lot.lot} — examen ${op.slug} : ${op.champ} (${resultat})`);
     }
   }
   if (strict && bilan.conflits.length) {

@@ -1,6 +1,6 @@
 # Lot C03 — Dermatologie, endocrinologie et diabétologie
 
-Contrôle du 16/10/2026 : 32 fiches, 17 corrections. Chaque correction est aussi visible dans l’historique de la fiche (administration, « Voir les changements »).
+Contrôle du 16/10/2026 : 32 fiches, 17 corrections. Chaque correction d’une fiche est aussi visible dans son historique (administration, « Voir les changements »).
 
 ## Acné
 

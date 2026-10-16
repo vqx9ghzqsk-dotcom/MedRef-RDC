@@ -69,10 +69,12 @@ async function main() {
   const arbitrages = [];
   for (const lot of lots) {
     const entites = [...(lot.fiches || []), ...(lot.molecules || [])];
+    const referentiel = lot.examens || [];
+    const nbCorrections = entites.reduce((n, f) => n + (f.corrections || []).length, 0) + referentiel.length;
     const md = [
       `# Lot ${lot.lot} — ${lot.titre}`,
       '',
-      `Contrôle du ${lot.date.split('-').reverse().join('/')} : ${entites.length} fiches, ${entites.reduce((n, f) => n + (f.corrections || []).length, 0)} corrections. Chaque correction est aussi visible dans l’historique de la fiche (administration, « Voir les changements »).`,
+      `Contrôle du ${lot.date.split('-').reverse().join('/')} : ${entites.length} fiches, ${nbCorrections} corrections. Chaque correction d’une fiche est aussi visible dans son historique (administration, « Voir les changements »).`,
     ];
     for (const f of entites) {
       const info = noms.get(f.slug) || { nom: f.slug };
@@ -104,12 +106,20 @@ async function main() {
         arbitrages.push(`- **${info.nom}** (lot ${lot.lot}) : ${f.a_arbitrer}`);
       }
     }
+    if (referentiel.length) {
+      md.push('', '## Référentiel des examens', '', 'Libellés communs à toutes les fiches qui citent l’examen.');
+      for (const op of referentiel) {
+        md.push('', `*Examen \`${op.slug}\`, ${LIBELLES_CHAMPS[op.champ] || op.champ}* : ${op.motif}`, '');
+        const [avant, apres] = op.remplacer || [String(op.ancienne), String(op.valeur)];
+        md.push('Avant :', '', citer(avant), '', 'Après :', '', citer(apres));
+      }
+    }
     fs.writeFileSync(path.join(SORTIE, nomFichier(lot)), md.join('\n') + '\n');
     bilan.push({
       lot,
       fiches: entites.length,
       corrigees: entites.filter((f) => (f.corrections || []).length).length,
-      corrections: entites.reduce((n, f) => n + (f.corrections || []).length, 0),
+      corrections: nbCorrections,
       arbitrer: entites.filter((f) => f.a_arbitrer).length,
     });
   }

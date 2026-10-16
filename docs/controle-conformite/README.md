@@ -13,7 +13,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C01](C01-infectiologie-medecine-interne.md) | Infectiologie (médecine interne) | 37 | 9 | 12 | 2 |
 | [C02](C02-cardiologie-nephrologie-et-medecine-interne-generale.md) | Cardiologie, néphrologie et médecine interne générale | 33 | 3 | 3 | 2 |
 | [C03](C03-dermatologie-endocrinologie-et-diabetologie.md) | Dermatologie, endocrinologie et diabétologie | 32 | 9 | 17 | 5 |
-| **Total** | | **102** | **21** | **32** | **9** |
+| [C04](C04-gastro-enterologie-hepatologie-et-hematologie.md) | Gastro-entérologie, hépatologie et hématologie | 33 | 3 | 6 | 2 |
+| **Total** | | **135** | **24** | **38** | **11** |
 
 ## Points à arbitrer
 
@@ -26,3 +27,5 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 - **Acidocétose diabétique** (lot C03) : Seuil de bicarbonates du diagnostic : la fiche garde < 15 mmol/L (JBDS) ; le consensus 2024 retient < 18 mmol/L (forme légère 15–18).
 - **Néphropathie diabétique** (lot C03) : Cible tensionnelle : la fiche garde < 130/80 mmHg (ADA) ; KDIGO 2021 propose une systolique < 120 mmHg si tolérée (même point que la fiche de maladie rénale chronique, lot C02). La finérénone (KDIGO 2022, ADA) n’est pas citée : peu accessible en RDC.
 - **Obésité de l’adulte** (lot C03) : Seuils de chirurgie bariatrique : la fiche suit NICE (IMC ≥ 40, ou ≥ 35 avec complications) ; l’ASMBS/IFSO (2022) les abaisse à IMC ≥ 35 sans condition et ≥ 30 avec maladie métabolique.
+- **Dyspepsie et gastrite** (lot C04) : Âge à partir duquel l’endoscopie est d’emblée indiquée : 50–60 ans dans cette fiche (ACG/CAG : 60 ans), 45–55 ans dans les fiches de l’infection à H. pylori et de l’ulcère. Le cancer gastrique survenant plus tôt en Afrique, un seuil commun est à fixer.
+- **Hémophilie** (lot C04) : Dose de facteur IX dans l’hémarthrose : 30–50 UI/kg dans la fiche ; la WFH 2020 vise un pic de 40–60 UI/dL sans contrainte de ressources (soit environ 40–60 UI/kg de facteur IX plasmatique) et des niveaux plus bas en cas de contrainte. À fixer selon les concentrés disponibles.

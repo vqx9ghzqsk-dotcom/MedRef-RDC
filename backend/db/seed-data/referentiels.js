@@ -812,10 +812,11 @@ const examens = [
   },
   {
     slug: 'serologies-hepatites',
-    nom: 'Sérologies hépatites C et D',
+    nom: 'Sérologies des hépatites virales (A, B, C, D, E)',
     type: 'biologie',
-    description: 'Co-infections à rechercher chez le porteur de l’AgHBs.',
-    valeurs_normales: '- Anti-VHC négatif ; anti-VHD négatif',
+    description:
+      'Selon le virus recherché : IgM anti-VHA et anti-VHE (hépatite aiguë), anti-VHC (à confirmer par l’ARN), anti-VHD chez le porteur de l’AgHBs ; l’hépatite B se dépiste par l’AgHBs.',
+    valeurs_normales: '- IgM anti-VHA et anti-VHE négatives\n- Anti-VHC négatif ; anti-VHD négatif\n- AgHBs négatif',
   },
   {
     slug: 'alpha-foetoproteine',

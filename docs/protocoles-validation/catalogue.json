@@ -1,0 +1,1752 @@
+[
+ {
+  "code": "oms-cpn-2016",
+  "titre": "WHO recommendations on antenatal care for a positive pregnancy experience",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241549912",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-accouchement-2018",
+  "titre": "WHO recommendations: intrapartum care for a positive childbirth experience",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550215",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pe-e-2011",
+  "titre": "WHO recommendations for prevention and treatment of pre-eclampsia and eclampsia",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241548335",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-mcpc-2017",
+  "titre": "Managing complications in pregnancy and childbirth - 2nd edition",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241565493",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pcpnc-2015",
+  "titre": "Pregnancy, childbirth, postpartum and newborn care: A guide for essential practice (3rd edition)",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241549356",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-avortement-2022",
+  "titre": "Abortion care guideline",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240039483",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-cem-2015",
+  "titre": "Medical eligibility criteria for contraceptive use",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241549158",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pf-manuel-2022",
+  "titre": "Family planning: a global handbook for providers: evidence-based guidance developed through worldwide collaboration, 3rd ed",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9780999203705",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-col-depistage-2021",
+  "titre": "WHO guideline for screening and treatment of cervical pre-cancer lesions for cervical cancer prevention",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240030824",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-postnatal-2022",
+  "titre": "WHO recommendations on maternal and newborn care for a positive postnatal experience",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240045989",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-premature-2022",
+  "titre": "WHO recommendations for care of the preterm or low-birth-weight infant",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240058262",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-reanimation-nn-2012",
+  "titre": "Guidelines on basic newborn resuscitation",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241503693",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pb-nouveau-ne-2003",
+  "titre": "Managing newborn problems",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9241546220",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-viol-2020",
+  "titre": "Clinical management of rape and intimate partner violence survivors",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240001411",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-hpp-2023",
+  "titre": "WHO recommendations on the assessment of postpartum blood loss and use of a treatment bundle for postpartum haemorrhage",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240085398",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pocket-book-2013",
+  "titre": "Pocket book of hospital care for children: Second edition",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/978-92-4-154837-3",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-etat-2016",
+  "titre": "Paediatric emergency triage, assessment and treatment: care of critically-ill children",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241510219",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-oxygene-enfant-2016",
+  "titre": "Oxygen therapy for children",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241549554",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-tb-enfant-2022",
+  "titre": "WHO consolidated guidelines on tuberculosis: module 5: management of tuberculosis in children and adolescents",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240046764",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-ist-2021",
+  "titre": "Guidelines for the management of symptomatic sexually transmitted infections",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240024168",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-cryptocoque-2022",
+  "titre": "Guidelines for diagnosing, preventing and managing cryptococcal disease among adults, adolescents and children living with HIV",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240052178",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-vih-avance-2017",
+  "titre": "Guidelines for managing advanced HIV disease and rapid initiation of antiretroviral therapy",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550062",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-hepc-2018",
+  "titre": "Guidelines for the care and treatment of persons diagnosed with chronic hepatitis C virus infection",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550345",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-tha-2019",
+  "titre": "WHO interim guidelines for the treatment of gambiense human African trypanosomiasis",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550567",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-lepre-2018",
+  "titre": "Guidelines for the diagnosis, treatment and prevention of leprosy",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789290226383",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-serpents-afrique-2010",
+  "titre": "Guidelines for the prevention and clinical management of snakebite in Africa",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789290231684",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-ebola-tt-2022",
+  "titre": "Therapeutics for Ebola virus disease",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240055742",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-grippe-2024",
+  "titre": "Clinical practice guidelines for influenza",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240097759",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-schisto-2022",
+  "titre": "WHO guideline on control and elimination of human schistosomiasis",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240041608",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-geohelminthes-2017",
+  "titre": "Preventive chemotherapy to control soil-transmitted helminth infections in at-risk population groups",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550116",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-filariose-2017",
+  "titre": "Guideline ‒ Alternative mass drug administration regimens to eliminate lymphatic filariasis",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550161",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-oncho-2016",
+  "titre": "Guidelines for stopping mass drug administration and verifying elimination of human onchocerciasis",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241510011",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-hta-2021",
+  "titre": "Guideline for the pharmacological treatment of hypertension in adults",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240033986",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-diabete-2018",
+  "titre": "Guidelines on second- and third-line medicines and type of insulin for the control of blood glucose levels in non-pregnant adults with diabetes mellitus",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550284",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-demence-2019",
+  "titre": "Risk reduction of cognitive decline and dementia: WHO guidelines",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550543",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-chirurgie-district-2003",
+  "titre": "Surgical care at the district hospital",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9241545755",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-isc-2018",
+  "titre": "Global guidelines for the prevention of surgical site infection",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241550475",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-mhgap-ig-2016",
+  "titre": "mhGAP Intervention Guide - Version 2.0",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241549790",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-mhgap-2023",
+  "titre": "Mental Health Gap Action Programme (mhGAP) guideline for mental, neurological and substance use disorders",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240084278",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-mhgap-urgences-2015",
+  "titre": "mhGAP Humanitarian Intervention Guide (mhGAP-HIG)",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241548922",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-opioides-2009",
+  "titre": "Guidelines for the psychosocially assisted pharmacological treatment of opioid dependence",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241547543",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-tabac-2024",
+  "titre": "WHO clinical treatment guideline for tobacco cessation in adults",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240096431",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "msf-guide-clinique",
+  "titre": "Guide clinique et thérapeutique",
+  "organisation": "MSF",
+  "niveau": 4,
+  "url": "https://medicalguidelines.msf.org/fr/node/170",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "msf-obstetrique",
+  "titre": "Soins obstétricaux et néonatals essentiels",
+  "organisation": "MSF",
+  "niveau": 4,
+  "url": "https://medicalguidelines.msf.org/fr/node/449",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "msf-cholera",
+  "titre": "Prise en charge d’une ÉPIDÉMIE DE CHOLÉRA",
+  "organisation": "MSF",
+  "niveau": 4,
+  "url": "https://medicalguidelines.msf.org/fr/node/800",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "msf-rougeole",
+  "titre": "Prise en charge d’une ÉPIDÉMIE DE ROUGEOLE",
+  "organisation": "MSF",
+  "niveau": 4,
+  "url": "https://medicalguidelines.msf.org/fr/node/498",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "msf-tuberculose",
+  "titre": "Tuberculose",
+  "organisation": "MSF",
+  "niveau": 4,
+  "url": "https://medicalguidelines.msf.org/fr/node/1063",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-hta",
+  "titre": "Hypertension in adults: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng136",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-ic",
+  "titre": "Chronic heart failure in adults: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng106",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-fa",
+  "titre": "Atrial fibrillation: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng196",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-angor",
+  "titre": "Stable angina: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg126",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-sca",
+  "titre": "Acute coronary syndromes",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng185",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-tev",
+  "titre": "Venous thromboembolic diseases: diagnosis, management and thrombophilia testing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng158",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-mrc",
+  "titre": "Chronic kidney disease: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng203",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-ira",
+  "titre": "Acute kidney injury: prevention, detection and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng148",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-dt2",
+  "titre": "Type 2 diabetes in adults: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng28",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-dt1",
+  "titre": "Type 1 diabetes in adults: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng17",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-dt-enfant",
+  "titre": "Diabetes (type 1 and type 2) in children and young people: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng18",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-pied-diabetique",
+  "titre": "Diabetic foot problems: prevention and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng19",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-thyroide",
+  "titre": "Thyroid disease: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng145",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-lipides",
+  "titre": "Cardiovascular disease: risk assessment and reduction, including lipid modification",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng238",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-obesite",
+  "titre": "Overweight and obesity management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng246",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-goutte",
+  "titre": "Gout: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng219",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-pr",
+  "titre": "Rheumatoid arthritis in adults: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng100",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-arthrose",
+  "titre": "Osteoarthritis in over 16s: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng226",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-lombalgie",
+  "titre": "Low back pain and sciatica in over 16s: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng59",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-spondylo",
+  "titre": "Spondyloarthritis in over 16s: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng65",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-psoriasis",
+  "titre": "Psoriasis: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg153",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-acne",
+  "titre": "Acne vulgaris: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng198",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-eczema-enfant",
+  "titre": "Atopic eczema in under 12s: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg57",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-cellulite",
+  "titre": "Cellulitis and erysipelas: antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng141",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-impetigo",
+  "titre": "Impetigo: antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng153",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-pneumonie",
+  "titre": "Pneumonia (community-acquired): antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng138",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-bpco",
+  "titre": "Chronic obstructive pulmonary disease in over 16s: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng115",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-asthme",
+  "titre": "Asthma: diagnosis, monitoring and chronic asthma management (BTS, NICE, SIGN)",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng245",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-bronchiolite",
+  "titre": "Bronchiolitis in children: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng9",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-sepsis",
+  "titre": "Suspected sepsis: recognition, diagnosis and early management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng51",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-meningite",
+  "titre": "Meningitis (bacterial) and meningococcal disease: recognition, diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng240",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-fievre-enfant",
+  "titre": "Fever in under 5s: assessment and initial management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng143",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-iu-enfant",
+  "titre": "Urinary tract infection in under 16s: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng224",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-pyelonephrite",
+  "titre": "Pyelonephritis (acute): antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng111",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-ictere-nn",
+  "titre": "Jaundice in newborn babies under 28 days",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg98",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-infection-nn",
+  "titre": "Neonatal infection: antibiotics for prevention and treatment",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng195",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-respi-nn",
+  "titre": "Specialist neonatal respiratory care for babies born preterm",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng124",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-constipation-enfant",
+  "titre": "Constipation in children and young people: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg99",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-diarrhee-enfant",
+  "titre": "Diarrhoea and vomiting caused by gastroenteritis in under 5s: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg84",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-hd-haute",
+  "titre": "Acute upper gastrointestinal bleeding in over 16s: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg141",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-pancreatite",
+  "titre": "Pancreatitis",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng104",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-cirrhose",
+  "titre": "Cirrhosis in over 16s: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng50",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-hepb",
+  "titre": "Hepatitis B (chronic): diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg165",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-dyspepsie",
+  "titre": "Gastro-oesophageal reflux disease and dyspepsia in adults: investigation and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg184",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-endometriose",
+  "titre": "Endometriosis: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng73",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-menorragies",
+  "titre": "Heavy menstrual bleeding: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng88",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-menopause",
+  "titre": "Menopause: identification and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng23",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-infertilite",
+  "titre": "Fertility problems: assessment and treatment",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg156",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-geu",
+  "titre": "Ectopic pregnancy and miscarriage: diagnosis and initial management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng126",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-cpn",
+  "titre": "Antenatal care",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng201",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-hta-grossesse",
+  "titre": "Hypertension in pregnancy: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng133",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-diabete-grossesse",
+  "titre": "Diabetes in pregnancy: management from preconception to the postnatal period",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng3",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-accouchement",
+  "titre": "Intrapartum care",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng235",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-declenchement",
+  "titre": "Inducing labour",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng207",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-cesarienne",
+  "titre": "Caesarean birth",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng192",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-premature",
+  "titre": "Preterm labour and birth",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng25",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-postnatal",
+  "titre": "Postnatal care",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng194",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-gemellaire",
+  "titre": "Twin and triplet pregnancy",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng137",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-incontinence",
+  "titre": "Urinary incontinence and pelvic organ prolapse in women: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng123",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-fractures",
+  "titre": "Fractures (non-complex): assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng38",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-trauma-majeur",
+  "titre": "Major trauma: assessment and initial management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng39",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-rachis",
+  "titre": "Spinal injury: assessment and initial management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng41",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-tc",
+  "titre": "Head injury: assessment and early management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng232",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-lithiase",
+  "titre": "Renal and ureteric stones: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng118",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-hbp",
+  "titre": "Lower urinary tract symptoms in men: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg97",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-glaucome",
+  "titre": "Glaucoma: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng81",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-cataracte",
+  "titre": "Cataracts in adults: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng77",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-otite",
+  "titre": "Otitis media (acute): antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng91",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-sinusite",
+  "titre": "Sinusitis (acute): antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng79",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-angine",
+  "titre": "Sore throat (acute): antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng84",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-epilepsie",
+  "titre": "Epilepsies in children, young people and adults",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng217",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-cephalees",
+  "titre": "Headaches in over 12s: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg150",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-avc",
+  "titre": "Stroke and transient ischaemic attack in over 16s: diagnosis and initial management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng128",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-parkinson",
+  "titre": "Parkinson’s disease in adults",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng71",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-sep",
+  "titre": "Multiple sclerosis in adults: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng220",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-demence",
+  "titre": "Dementia: assessment, management and support for people living with dementia and their carers",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng97",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-delirium",
+  "titre": "Delirium: prevention, diagnosis and management in hospital and long-term care",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg103",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-depression",
+  "titre": "Depression in adults: treatment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng222",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-depression-ado",
+  "titre": "Depression in children and young people: identification and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng134",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-psychose",
+  "titre": "Psychosis and schizophrenia in adults: prevention and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg178",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-bipolaire",
+  "titre": "Bipolar disorder: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg185",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-anxiete",
+  "titre": "Generalised anxiety disorder and panic disorder in adults: management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg113",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-tspt",
+  "titre": "Post-traumatic stress disorder",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng116",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-toc",
+  "titre": "Obsessive-compulsive disorder and body dysmorphic disorder: treatment",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg31",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-tca",
+  "titre": "Eating disorders: recognition and treatment",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng69",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-suicide",
+  "titre": "Self-harm: assessment, management and preventing recurrence",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng225",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-tdah",
+  "titre": "Attention deficit hyperactivity disorder: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng87",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-autisme",
+  "titre": "Autism spectrum disorder in under 19s: recognition, referral and diagnosis",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg128",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-alcool",
+  "titre": "Alcohol-use disorders: diagnosis, assessment and management of harmful drinking (high-risk drinking) and alcohol dependence",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg115",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-sevrage-alcool",
+  "titre": "Alcohol-use disorders: diagnosis and management of physical complications",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg100",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-tabac",
+  "titre": "Tobacco: preventing uptake, promoting quitting and treating dependence",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng209",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-drogues",
+  "titre": "Drug misuse in over 16s: psychosocial interventions",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg51",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-anaphylaxie",
+  "titre": "Anaphylaxis: assessment and referral after emergency treatment",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg134",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-hemorragie-meningee",
+  "titre": "Subarachnoid haemorrhage caused by a ruptured aneurysm: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng228",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-syncope",
+  "titre": "Transient loss of consciousness ('blackouts') in over 16s",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg109",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-violences",
+  "titre": "Child abuse and neglect",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng76",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-raa-2024",
+  "titre": "WHO guideline on the prevention and diagnosis of rheumatic fever and rheumatic heart disease",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240100077",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-diphterie-2024",
+  "titre": "Clinical management of diphtheria: guideline, 2 February 2024",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications-detail-redirect/WHO-DIPH-Clinical-2024.1",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-mpox-2025",
+  "titre": "Clinical management and infection prevention and control for mpox: living guideline, May 2025",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/B09434",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-arbovirus-2025",
+  "titre": "WHO guidelines for clinical management of arboviral diseases: dengue, chikungunya, Zika and yellow fever",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240111110",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-rage-2018",
+  "titre": "WHO Expert Consultation on Rabies: WHO TRS N°1012 Third report",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/WHO-TRS-1012",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-peste-2021",
+  "titre": "WHO guidelines for plague management: revised recommendations for the use of rapid diagnostic tests, fluoroquinolones for case management and personal protective equipment for prevention of post-mortem transmission",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240015579",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-kaposi-peau-vih-2014",
+  "titre": "Guidelines on the treatment of skin and oral HIV-associated conditions in children and adults",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241548915",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-imai-adulte-2011",
+  "titre": "IMAI district clinician manual: hospital care adolescents and adults",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/imai-district-clinician-manual-hospital-care-adolescents-and-adults",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-fistule-2006",
+  "titre": "Obstetric fistula: Guiding principles for clinical management and programme development",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9241593679",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "eau-urologie",
+  "titre": "EAU Guidelines - Uroweb",
+  "organisation": "European Association of Urology",
+  "niveau": 2,
+  "url": "https://uroweb.org/guidelines",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "bts-plevre-2023",
+  "titre": "BTS guideline for pleural disease in adults.",
+  "organisation": "British Thoracic Society",
+  "niveau": 2,
+  "url": "https://www.brit-thoracic.org.uk/quality-improvement/guidelines/pleural-disease/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "esvs-vasculaire",
+  "titre": "Vascular Surgery Guidelines | ESVS",
+  "organisation": "European Society for Vascular Surgery",
+  "niveau": 2,
+  "url": "https://esvs.org/guidelines/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "idsa-neurocysticercose-2017",
+  "titre": "ASTMH/IDSA 2017 Clinical Practice Guideline Update for the Diagnosis and Treatment of Neurocysticercosis",
+  "organisation": "IDSA / ASTMH",
+  "niveau": 2,
+  "url": "https://www.idsociety.org/practice-guideline/neurocysticercosis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-greentop",
+  "titre": "Green-top Guidelines | RCOG",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "who-trachome",
+  "titre": "Trachoma control : a guide for programme managers.",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9241546905",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-transfusion-2001",
+  "titre": "The clinical use of blood in medicine, obstetrics, paediatrics, surgery and anaesthesia, trauma and burns",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://iris.who.int/handle/10665/42397",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-leptospirose-2003",
+  "titre": "Human leptospirosis : guidance for diagnosis, surveillance and control",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://iris.who.int/handle/10665/42667",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-traumatologie-2004",
+  "titre": "Guidelines for essential trauma care / World Health Organization, International Society of Surgery/Société Internationale de Chirurgie and the International Association for the Surgery of Trauma and Surgical Intensive Care (IATSIC)",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://iris.who.int/handle/10665/42565",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-maltraitance-2022",
+  "titre": "Responding to child maltreatment: a clinical handbook for health professionals",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240048737",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-vitamine-a-2011",
+  "titre": "Guideline : vitamin A supplementation in infants and children 6-59 months of age",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241501767",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-anemie-fer-2016",
+  "titre": "Daily iron supplementation in infants and children",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241549523",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pied-bot",
+  "titre": "Global Clubfoot Initiative",
+  "organisation": "Global Clubfoot Initiative",
+  "niveau": 2,
+  "url": "https://globalclubfoot.com/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rdc-plan-cholera-2023",
+  "titre": "Plan stratégique multisectoriel d’élimination du choléra 2023-2027 (RDC)",
+  "organisation": "Ministère de la Santé RDC / PNECHOL-MD (hébergé par le GTFCC)",
+  "niveau": 1,
+  "url": "https://www.gtfcc.org/wp-content/uploads/2025/05/national-cholera-plan-dr-congo.pdf",
+  "verification": "confirmé par recherche (site protégé contre les robots)"
+ },
+ {
+  "code": "cdc-io-vih",
+  "titre": "Guidelines for the Prevention and Treatment of Opportunistic Infections in Adults and Adolescents with HIV",
+  "organisation": "NIH / CDC / HIVMA-IDSA",
+  "niveau": 2,
+  "url": "https://clinicalinfo.hiv.gov/en/guidelines/adult-and-adolescent-opportunistic-infection",
+  "verification": "confirmé par recherche (site protégé contre les robots)"
+ },
+ {
+  "code": "wfh-hemophilie-2020",
+  "titre": "WFH Guidelines for the Management of Hemophilia, 3rd edition (2020)",
+  "organisation": "World Federation of Hemophilia",
+  "niveau": 2,
+  "url": "https://www1.wfh.org/publications/files/pdf-1863.pdf",
+  "verification": "confirmé par recherche (site protégé contre les robots)"
+ },
+ {
+  "code": "podc-oncopediatrie",
+  "titre": "A framework to develop adapted treatment regimens to manage pediatric cancer in low- and middle-income countries (SIOP PODC)",
+  "organisation": "SIOP — Paediatric Oncology in Developing Countries",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6428601",
+  "verification": "confirmé par recherche (site protégé contre les robots)"
+ },
+ {
+  "code": "ispad-2022",
+  "titre": "ISPAD Clinical Practice Consensus Guidelines 2022 (dont acidocétose et état hyperosmolaire)",
+  "organisation": "International Society for Pediatric and Adolescent Diabetes",
+  "niveau": 2,
+  "url": "https://www.ispad.org/resources/ispad-clinical-practice-consensus-guidelines/2022-ispad-clinical-practice-consensus-guidelines.html",
+  "verification": "confirmé par recherche (site protégé contre les robots)"
+ },
+ {
+  "code": "aao-ppp",
+  "titre": "Preferred Practice Pattern® Guidelines",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://aao.org/about-preferred-practice-patterns",
+  "verification": "confirmé par recherche (site protégé contre les robots)"
+ },
+ {
+  "code": "tif-thalassemie-2021",
+  "titre": "Guidelines for the Management of Transfusion Dependent Thalassaemia, 4th edition (2021)",
+  "organisation": "Thalassaemia International Federation",
+  "niveau": 2,
+  "url": "https://thalassaemia.org.cy/publications/tif-publications/guidelines-for-the-management-of-transfusion-dependent-thalassaemia-4th-edition-2021-v2/",
+  "verification": "confirmé par recherche (site protégé contre les robots)"
+ },
+ {
+  "code": "rachitisme-consensus-2016",
+  "titre": "Global Consensus Recommendations on Prevention and Management of Nutritional Rickets (2016)",
+  "organisation": "Consensus international (11 sociétés savantes)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26745253/",
+  "verification": "confirmé par recherche (site protégé contre les robots)"
+ },
+ {
+  "code": "rdc-hgr-t1-2016",
+  "titre": "Guide clinique de l’Hôpital général de référence, Tome 1 : Médecine interne (2016)",
+  "organisation": "Ministère de la Santé RDC",
+  "niveau": 1,
+  "url": null,
+  "fichier": "C:\\Users\\HP\\Documents\\MedRefRDC-sources\\HGR-T1-medecine-interne-2016.pdf",
+  "verification": "document officiel téléchargé (dossier local)"
+ },
+ {
+  "code": "rdc-pnlp-2012",
+  "titre": "Guide technique de prise en charge du paludisme, HGR (2010, révisé 2012) et centre de santé (2010)",
+  "organisation": "PNLP — Ministère de la Santé RDC",
+  "niveau": 1,
+  "url": null,
+  "fichier": "C:\\Users\\HP\\Documents\\MedRefRDC-sources\\PNLP-guide-HGR-2012.pdf",
+  "verification": "document officiel téléchargé (dossier local)"
+ },
+ {
+  "code": "rdc-pnls-2019",
+  "titre": "Guide national de prise en charge du VIH (édition 2019, la plus récente trouvée)",
+  "organisation": "PNLS — Ministère de la Santé RDC",
+  "niveau": 1,
+  "url": null,
+  "fichier": "C:\\Users\\HP\\Documents\\MedRefRDC-sources\\PNLS-VIH-guide-2019.pdf",
+  "verification": "document officiel téléchargé (dossier local)"
+ },
+ {
+  "code": "rdc-pnlt-2021",
+  "titre": "Guide de prise en charge de la tuberculose — PATI-6 (2021)",
+  "organisation": "PNLT — Ministère de la Santé RDC",
+  "niveau": 1,
+  "url": null,
+  "fichier": "C:\\Users\\HP\\Documents\\MedRefRDC-sources\\PNLT-PATI6-2021.pdf",
+  "verification": "document officiel téléchargé (dossier local)"
+ },
+ {
+  "code": "rdc-pronanut-2013",
+  "titre": "Fiches techniques PCIMA (2013 ; protocole 2016 non trouvé en ligne)",
+  "organisation": "PRONANUT — Ministère de la Santé RDC",
+  "niveau": 1,
+  "url": null,
+  "fichier": "C:\\Users\\HP\\Documents\\MedRefRDC-sources\\PRONANUT-PCIMA-fiches-2013.pdf",
+  "verification": "document officiel téléchargé (dossier local)"
+ },
+ {
+  "code": "rdc-smne-2012",
+  "titre": "Normes SMNE — Santé de l’enfant, volume 4 (2012)",
+  "organisation": "Ministère de la Santé RDC",
+  "niveau": 1,
+  "url": null,
+  "fichier": "C:\\Users\\HP\\Documents\\MedRefRDC-sources\\SMNE-sante-enfant-vol4-2012.pdf",
+  "verification": "document officiel téléchargé (dossier local)"
+ },
+ {
+  "code": "db-1",
+  "titre": "WHO guidelines for malaria",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/guidelines-for-malaria",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-6",
+  "titre": "WHO consolidated guidelines on tuberculosis (Module 3 : diagnostic ; Module 4 : traitement)",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/teams/global-tuberculosis-programme",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-8",
+  "titre": "Consolidated guidelines on HIV prevention, testing, treatment, service delivery and monitoring",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240031593",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-10",
+  "titre": "Guidelines for the prevention, diagnosis, care and treatment of people with chronic hepatitis B infection",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240090903",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-12",
+  "titre": "WHO guidelines on meningitis diagnosis, treatment and care",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/health-topics/meningitis",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-13",
+  "titre": "Cholera Outbreak Response: Field Manual",
+  "organisation": "Global Task Force on Cholera Control (GTFCC) — OMS",
+  "niveau": 1,
+  "url": "https://www.gtfcc.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-16",
+  "titre": "Prise en charge intégrée des maladies de l'enfant (PCIME) — tableaux de prise en charge",
+  "organisation": "OMS / UNICEF",
+  "niveau": 1,
+  "url": "https://www.who.int/teams/maternal-newborn-child-adolescent-health-and-ageing",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-17",
+  "titre": "The treatment of diarrhoea: a manual for physicians and other senior health workers",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9241593180",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-18",
+  "titre": "WHO guideline on the prevention and management of wasting and nutritional oedema",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240082830",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-20",
+  "titre": "WHO recommendations for management of serious bacterial infections in infants aged 0–59 days",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/health-topics/newborn-health",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-22",
+  "titre": "WHO recommendations: drug treatment for severe hypertension in pregnancy",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/health-topics/maternal-health",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-23",
+  "titre": "WHO recommendations for the prevention and treatment of postpartum haemorrhage",
+  "organisation": "Organisation mondiale de la Santé",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241548502",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-28",
+  "titre": "2024 ESC Guidelines for the management of elevated blood pressure and hypertension",
+  "organisation": "European Society of Cardiology",
+  "niveau": 2,
+  "url": "https://www.escardio.org/Guidelines",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-30",
+  "titre": "2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure (mise à jour 2023)",
+  "organisation": "European Society of Cardiology",
+  "niveau": 2,
+  "url": "https://www.escardio.org/Guidelines",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-32",
+  "titre": "GINA — Global Strategy for Asthma Management and Prevention",
+  "organisation": "Global Initiative for Asthma",
+  "niveau": 2,
+  "url": "https://ginasthma.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-35",
+  "titre": "KDIGO Clinical Practice Guideline for Acute Kidney Injury",
+  "organisation": "KDIGO",
+  "niveau": 2,
+  "url": "https://kdigo.org/guidelines/acute-kidney-injury/",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-36",
+  "titre": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+  "organisation": "KDIGO",
+  "niveau": 2,
+  "url": "https://kdigo.org/guidelines/ckd-evaluation-and-management/",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-37",
+  "titre": "ADA — Standards of Care in Diabetes",
+  "organisation": "American Diabetes Association",
+  "niveau": 2,
+  "url": "https://professional.diabetes.org/standards-of-care",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-38",
+  "titre": "Hyperglycemic Crises in Adults With Diabetes: A Consensus Report",
+  "organisation": "ADA / EASD / JBDS / AACE / DTS",
+  "niveau": 2,
+  "url": "https://diabetesjournals.org/care",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-39",
+  "titre": "American Society of Hematology 2020 guidelines for sickle cell disease: management of acute and chronic pain",
+  "organisation": "American Society of Hematology",
+  "niveau": 2,
+  "url": "https://www.hematology.org/education/clinicians/guidelines-and-quality-care/clinical-practice-guidelines/sickle-cell-disease-guidelines",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-40",
+  "titre": "Evidence-Based Management of Sickle Cell Disease: Expert Panel Report",
+  "organisation": "NHLBI — National Institutes of Health",
+  "niveau": 2,
+  "url": "https://www.nhlbi.nih.gov",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-43",
+  "titre": "Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock 2021",
+  "organisation": "Society of Critical Care Medicine / ESICM",
+  "niveau": 2,
+  "url": "https://www.sccm.org/SurvivingSepsisCampaign",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-46",
+  "titre": "FIGO recommendations on the management of postpartum hemorrhage 2022",
+  "organisation": "International Federation of Gynecology and Obstetrics",
+  "niveau": 2,
+  "url": "https://www.figo.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-48",
+  "titre": "RCOG Green-top Guideline No. 21: Diagnosis and Management of Ectopic Pregnancy",
+  "organisation": "Royal College of Obstetricians and Gynaecologists",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-49",
+  "titre": "WSES Jerusalem guidelines on acute appendicitis",
+  "organisation": "World Society of Emergency Surgery",
+  "niveau": 2,
+  "url": "https://www.wses.org.uk",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-50",
+  "titre": "Bologna guidelines for diagnosis and management of adhesive small bowel obstruction (2017 update, WSES)",
+  "organisation": "World Society of Emergency Surgery",
+  "niveau": 2,
+  "url": "https://www.wses.org.uk",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-51",
+  "titre": "The management of intra-abdominal infections from a global perspective: 2017 WSES guidelines",
+  "organisation": "World Society of Emergency Surgery",
+  "niveau": 2,
+  "url": "https://www.wses.org.uk",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-52",
+  "titre": "Guidelines for the Management of Severe Traumatic Brain Injury (4th edition)",
+  "organisation": "Brain Trauma Foundation",
+  "niveau": 2,
+  "url": "https://braintrauma.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-55",
+  "titre": "Guidelines for the Early Management of Patients With Acute Ischemic Stroke: 2019 Update",
+  "organisation": "American Heart Association / American Stroke Association",
+  "niveau": 2,
+  "url": "https://professional.heart.org/en/guidelines-and-statements",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-63",
+  "titre": "AHA — recommandations de pratique clinique",
+  "organisation": "American Heart Association",
+  "niveau": 2,
+  "url": "https://professional.heart.org/en/guidelines-and-statements",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-99",
+  "titre": "AAP — recommandations de pratique clinique",
+  "organisation": "American Academy of Pediatrics",
+  "niveau": 2,
+  "url": "https://www.aap.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-114",
+  "titre": "ESMO — recommandations de pratique clinique",
+  "organisation": "European Society for Medical Oncology",
+  "niveau": 2,
+  "url": "https://www.esmo.org/guidelines",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-115",
+  "titre": "NCCN — recommandations de pratique clinique",
+  "organisation": "National Comprehensive Cancer Network",
+  "niveau": 2,
+  "url": "https://www.nccn.org/guidelines",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-120",
+  "titre": "WSES — recommandations de pratique clinique",
+  "organisation": "World Society of Emergency Surgery",
+  "niveau": 2,
+  "url": "https://www.wses.org.uk",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-126",
+  "titre": "AAOS — recommandations de pratique clinique",
+  "organisation": "American Academy of Orthopaedic Surgeons",
+  "niveau": 2,
+  "url": "https://www.aaos.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-128",
+  "titre": "AANS — recommandations de pratique clinique",
+  "organisation": "American Association of Neurological Surgeons",
+  "niveau": 2,
+  "url": "https://www.aans.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-131",
+  "titre": "SCCM — recommandations de pratique clinique",
+  "organisation": "Society of Critical Care Medicine",
+  "niveau": 2,
+  "url": "https://www.sccm.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-134",
+  "titre": "EAN — recommandations de pratique clinique",
+  "organisation": "European Academy of Neurology",
+  "niveau": 2,
+  "url": "https://www.ean.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ },
+ {
+  "code": "db-135",
+  "titre": "ESO — recommandations de pratique clinique",
+  "organisation": "European Stroke Organisation",
+  "niveau": 2,
+  "url": "https://eso-stroke.org",
+  "verification": "source déjà citée dans MedRef RDC"
+ }
+]

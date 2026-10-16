@@ -9,6 +9,7 @@ import {
   EditorGuard,
   Historique,
   ListEditor,
+  RapportControle,
   SaveBar,
   SelectField,
   TextArea,
@@ -642,6 +643,16 @@ function FichesAdmin({ fiches, onValidees }) {
                 <td>
                   <span className={`tag statut-${p.statut}`}>{STATUTS_FICHE[p.statut]}</span>
                   {p.a_revoir && <span className="tag tag-warn"> À revoir</span>}
+                  {p.controle_le && (
+                    <span
+                      className="tag"
+                      title={`Contrôlée le ${p.controle_le} (${p.nb_corrections} correction(s))`}
+                    >
+                      {' '}
+                      Contrôlée
+                    </span>
+                  )}
+                  {p.a_arbitrer && <span className="tag tag-warn"> À arbitrer</span>}
                 </td>
                 <td className="muted">
                   {p.statut === 'valide' ? `${p.valide_par || '—'}, ${formatDateTime(p.valide_le)}` : '—'}
@@ -827,7 +838,7 @@ function Reloadable({ load, Editor }) {
 
 function PathologieEditor({ id, initial, onSaved }) {
   const { api } = useServices();
-  const { options, historique, ...depart } = initial;
+  const { options, historique, controle, ...depart } = initial;
   const [form, setForm] = useState(depart);
   const [dirty, setDirty] = useState(false);
   const [revalidation, setRevalidation] = useState(false);
@@ -889,6 +900,8 @@ function PathologieEditor({ id, initial, onSaved }) {
           )}
         </p>
       </header>
+
+      <RapportControle controle={controle} />
 
       <section className="card">
         <h2>Statut et identification</h2>
@@ -1553,7 +1566,7 @@ function PresentationsEditor({ items, onChange, err }) {
 
 function MoleculeEditor({ id, initial, onSaved }) {
   const { api } = useServices();
-  const { historique, ...depart } = initial;
+  const { historique, controle, ...depart } = initial;
   const [form, setForm] = useState(depart);
   const [dirty, setDirty] = useState(false);
   const [save, run] = useSave((payload) => api.adminSaveMolecule(id, payload));
@@ -1582,6 +1595,8 @@ function MoleculeEditor({ id, initial, onSaved }) {
           <Link to={`/molecules/${form.slug}`}>Voir la fiche publique</Link>
         </p>
       </header>
+
+      <RapportControle controle={controle} />
 
       <section className="card">
         <h2>Posologies par population</h2>

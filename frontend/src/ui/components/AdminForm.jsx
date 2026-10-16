@@ -411,3 +411,46 @@ export function formatDateTime(value) {
     ? String(value)
     : d.toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
 }
+
+/**
+ * Rapport du contrôle de conformité aux protocoles : prépare la relecture du
+ * médecin (protocoles consultés, points vérifiés, écarts corrigés, points à
+ * arbitrer). Il ne vaut pas validation ; les corrections sont dans l'historique.
+ */
+export function RapportControle({ controle }) {
+  if (!controle) return null;
+  const date = controle.controle_le
+    ? new Date(`${controle.controle_le}T00:00:00`).toLocaleDateString('fr-FR')
+    : '';
+  const protocoles = (controle.protocoles || '').split('\n').filter(Boolean);
+  return (
+    <section className="card rapport-controle" aria-labelledby="rapport-controle-titre">
+      <h2 id="rapport-controle-titre">Contrôle de conformité aux protocoles</h2>
+      <p className="muted">
+        Lot {controle.lot}, {date}. Ce contrôle prépare votre relecture : il ne vaut pas validation.
+        {controle.nb_corrections > 0 &&
+          ' Les corrections apportées figurent dans l’historique (« Contrôle de conformité »), avec la version avant / après.'}
+      </p>
+      {controle.a_arbitrer && (
+        <div className="validation validation-pending">
+          <strong>À arbitrer par le médecin</strong>
+          <RichText text={controle.a_arbitrer} headingLevel={4} />
+        </div>
+      )}
+      <h3>Protocoles consultés</h3>
+      <ul>
+        {protocoles.map((p) => (
+          <li key={p}>{p}</li>
+        ))}
+      </ul>
+      <h3>Points vérifiés</h3>
+      <RichText text={controle.verifie} headingLevel={4} />
+      <h3>Écarts corrigés</h3>
+      {controle.corrige ? (
+        <RichText text={controle.corrige} headingLevel={4} />
+      ) : (
+        <p className="muted">Aucun écart avec les protocoles.</p>
+      )}
+    </section>
+  );
+}

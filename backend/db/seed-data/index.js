@@ -35,6 +35,8 @@ const ajouts = require('./pathologies-ajoutees');
 const posologiesAjoutees = require('./posologies-ajoutees');
 // Protocoles de prise en charge pour valider les fiches (docs/protocoles-validation)
 const protocolesValidation = require('./protocoles-validation.json');
+// Contrôle de conformité aux protocoles : rapports et corrections, par lots
+const controles = require('./controles');
 
 const pathologies = [
   ...require('./pathologies/infectiologie'),
@@ -69,4 +71,5 @@ module.exports = {
   ajouts,
   posologiesAjoutees,
   protocolesValidation,
+  controles,
 };

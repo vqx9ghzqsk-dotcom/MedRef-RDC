@@ -9,6 +9,7 @@ const { appliquerSelection } = require('./selection');
 const { chargerNouvellesFiches } = require('./fiches');
 const { chargerPosologiesAjoutees } = require('./posologiesAjoutees');
 const { chargerProtocolesValidation } = require('./protocolesValidation');
+const { chargerControles } = require('./controles');
 
 /** Référence à une fiche par son slug (sinon : libellé libre). */
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -388,6 +389,8 @@ async function seed(conn) {
   const posologiesAjoutees = await chargerPosologiesAjoutees(conn, data.posologiesAjoutees);
   // Protocoles de validation rattachés à chaque fiche comme sources (après toutes les fiches)
   const protocolesValidation = await chargerProtocolesValidation(conn, data.protocolesValidation);
+  // Contrôle de conformité : corrections et rapports (base neuve : aucune correction ne doit échouer)
+  const controles = await chargerControles(conn, data.controles, { strict: true });
 
   return {
     semiologie,
@@ -397,6 +400,7 @@ async function seed(conn) {
     fichesAjoutees,
     posologiesAjoutees,
     protocolesValidation,
+    controles,
     departements: data.departements.length,
     pathologies: data.pathologies.length,
     molecules: data.molecules.length,

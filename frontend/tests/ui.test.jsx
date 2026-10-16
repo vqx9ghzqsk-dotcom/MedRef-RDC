@@ -772,6 +772,49 @@ describe('Administration', () => {
     expect(payload).not.toHaveProperty('historique');
   });
 
+  it('affiche le rapport du contrôle de conformité en tête de la fiche, sans l’envoyer à l’enregistrement', async () => {
+    const adminPathologie = vi.fn(async () => ({
+      id: 3,
+      nom: 'Peste',
+      slug: 'peste',
+      resume: 'Zoonose',
+      statut: 'a_valider',
+      principes: [],
+      complications: [],
+      niveaux: [],
+      examens: [],
+      differentiels: [],
+      options: { examens: [], pathologies: [] },
+      historique: [],
+      controle: {
+        lot: 'C01',
+        controle_le: '2026-10-16',
+        protocoles:
+          'OMS — WHO guidelines for plague management (2021)\nMSF — Guide clinique et thérapeutique',
+        verifie: 'Gentamicine 5 mg/kg/j ; isolement 48 h.',
+        corrige: 'Durée de 10 à 14 jours ; association pour les formes sévères.',
+        a_arbitrer: null,
+        nb_corrections: 1,
+      },
+    }));
+    const adminSavePathologie = vi.fn(async () => ({ ok: true }));
+    const user = userEvent.setup();
+    renderApp(
+      '/admin/pathologies/3',
+      { adminPathologie, adminSavePathologie },
+      { id: 1, nom: 'Admin', email: 'a@x.cd', role: 'medecin' },
+    );
+    const rapport = await screen.findByRole('region', { name: 'Contrôle de conformité aux protocoles' });
+    expect(within(rapport).getByText(/il ne vaut pas validation/)).toBeInTheDocument();
+    expect(
+      within(rapport).getByText('OMS — WHO guidelines for plague management (2021)'),
+    ).toBeInTheDocument();
+    expect(within(rapport).getByText(/Durée de 10 à 14 jours/)).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Résumé'), ' corrigé');
+    await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
+    expect(adminSavePathologie.mock.calls[0][1]).not.toHaveProperty('controle');
+  });
+
   it('affiche les erreurs par champ renvoyées par l’API', async () => {
     const adminMedicament = vi.fn(async () => ({
       id: 4,

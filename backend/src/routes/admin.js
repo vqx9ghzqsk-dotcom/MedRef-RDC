@@ -21,7 +21,14 @@ const db = require('../db');
 const config = require('../config');
 const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middleware/auth');
 const { asyncHandler, HttpError, notFound, toInt } = require('../utils/http');
-const { chargerFormes } = require('../services/formes');
+const {
+  etatPathologie,
+  etatMolecule,
+  nombreOuNull,
+  NIVEAUX,
+  FICHE_PHARMACO,
+  PATHOLOGIE_TEXTES,
+} = require('../services/etats');
 const { slugify } = require('../utils/slugify');
 const { relierAutomatiquement } = require('../../db/catalogues');
 const { normaliser: normaliserNom } = require('../../db/correspondance');
@@ -30,7 +37,6 @@ const router = express.Router();
 
 const STATUTS = ['brouillon', 'a_valider', 'valide'];
 const GRADES = ['forte', 'conditionnelle', 'bonne_pratique', 'consensus'];
-const NIVEAUX = ['centre_sante', 'hopital_general', 'hopital_tertiaire'];
 const CATEGORIES = [
   'premiere_intention',
   'deuxieme_intention',
@@ -94,26 +100,6 @@ const FORME_TEXTES = [
   'signes_physiques',
   'paraclinique',
   'etiologies',
-];
-const FICHE_PHARMACO = [
-  'mecanisme',
-  'pharmacocinetique',
-  'indications',
-  'posologie',
-  'contre_indications',
-  'effets_indesirables',
-  'interactions',
-  'grossesse_allaitement',
-  'surveillance',
-  'precautions',
-];
-const PATHOLOGIE_TEXTES = [
-  'definition',
-  'physiopathologie',
-  'diagnostic',
-  'etiologies',
-  'therapeutique',
-  'evolution',
 ];
 
 /** Relit le rôle en base : seuls « admin » et « medecin » accèdent à l'administration. */
@@ -208,16 +194,30 @@ const logModification = (conn, { userId, entite, entiteId, action, resume, avant
     [userId, entite, entiteId, action, resume, JSON.stringify(avant), JSON.stringify(apres)],
   );
 
+// Auteur d'une version : les corrections du contrôle de conformité n'ont pas d'utilisateur
+const AUTEUR = `COALESCE(u.nom, IF(m.user_id IS NULL AND m.resume LIKE 'Contrôle de conformité%',
+  'Contrôle de conformité', NULL))`;
+
 const historique = (entite, id) =>
   db
     .query(
-      `SELECT m.id, m.action, m.resume, m.created_at, u.nom AS auteur,
+      `SELECT m.id, m.action, m.resume, m.created_at, ${AUTEUR} AS auteur,
             (m.avant IS NOT NULL OR m.apres IS NOT NULL) AS a_version
        FROM modifications m LEFT JOIN users u ON u.id = m.user_id
       WHERE m.entite = ? AND m.entite_id = ? ORDER BY m.created_at DESC, m.id DESC LIMIT 50`,
       [entite, id],
     )
     .then((rows) => rows.map((r) => ({ ...r, a_version: Boolean(Number(r.a_version)) })));
+
+/** Rapport du contrôle de conformité aux protocoles (prépare la relecture ; ne vaut pas validation). */
+const controleDe = async (entite, id) => {
+  const [c] = await db.query(
+    `SELECT lot, controle_le, protocoles, verifie, corrige, a_arbitrer, nb_corrections
+       FROM controles_conformite WHERE entite = ? AND entite_id = ?`,
+    [entite, id],
+  );
+  return c ? { ...c, controle_le: dateIso(c.controle_le) } : null;
+};
 
 /** Exécuteur de requêtes : le pool, ou la connexion d'une transaction en cours. */
 const viaPool = (sql, params = []) => db.query(sql, params);
@@ -274,7 +274,7 @@ router.get(
     const id = toInt(req.params.id);
     if (!id) throw notFound('Version');
     const [m] = await db.query(
-      `SELECT m.id, m.entite, m.entite_id, m.action, m.resume, m.created_at, m.avant, m.apres, u.nom AS auteur
+      `SELECT m.id, m.entite, m.entite_id, m.action, m.resume, m.created_at, m.avant, m.apres, ${AUTEUR} AS auteur
          FROM modifications m LEFT JOIN users u ON u.id = m.user_id WHERE m.id = ?`,
       [id],
     );
@@ -295,11 +295,13 @@ router.get(
       db.query(
         `SELECT p.id, p.nom, p.slug, p.statut, p.updated_at, p.valide_le, v.nom AS valide_par, p.revision_le,
                 (p.statut = 'valide' AND p.revision_le IS NOT NULL AND p.revision_le <= CURDATE()) AS a_revoir,
-                s.nom AS specialite, d.nom AS departement
+                s.nom AS specialite, d.nom AS departement,
+                cc.controle_le, cc.nb_corrections, (cc.a_arbitrer IS NOT NULL) AS a_arbitrer
            FROM pathologies p
            JOIN specialites s ON s.id = p.specialite_id
            JOIN departements d ON d.id = s.departement_id
            LEFT JOIN users v ON v.id = p.valide_par
+           LEFT JOIN controles_conformite cc ON cc.entite = 'pathologie' AND cc.entite_id = p.id
           ORDER BY d.ordre, p.nom`,
       ),
       db.query(
@@ -315,7 +317,7 @@ router.get(
           ORDER BY m.nom_commercial`,
       ),
       db.query(
-        `SELECT m.id, m.entite, m.entite_id, m.action, m.resume, m.created_at, u.nom AS auteur,
+        `SELECT m.id, m.entite, m.entite_id, m.action, m.resume, m.created_at, ${AUTEUR} AS auteur,
                 COALESCE(p.nom, mo.dci, me.nom_commercial, gl.terme, sy.nom) AS libelle
            FROM modifications m
            LEFT JOIN users u ON u.id = m.user_id
@@ -327,7 +329,12 @@ router.get(
           ORDER BY m.created_at DESC, m.id DESC LIMIT 30`,
       ),
     ]);
-    const fiches = pathologies.map((p) => ({ ...p, a_revoir: Boolean(Number(p.a_revoir)) }));
+    const fiches = pathologies.map((p) => ({
+      ...p,
+      a_revoir: Boolean(Number(p.a_revoir)),
+      a_arbitrer: Boolean(Number(p.a_arbitrer)),
+      controle_le: dateIso(p.controle_le),
+    }));
     const statuts = Object.fromEntries(STATUTS.map((s) => [s, fiches.filter((p) => p.statut === s).length]));
     statuts.a_revoir = fiches.filter((p) => p.a_revoir).length;
     res.json({
@@ -348,70 +355,6 @@ router.get(
 
 // ---------------------------------------------------------------- Pathologies
 
-/** État éditable complet d'une fiche (celui qu'on enregistre et qu'on versionne). */
-async function etatPathologie(q, id) {
-  const [p] = await q(
-    `SELECT nom, resume, ${PATHOLOGIE_TEXTES.join(', ')}, statut FROM pathologies WHERE id = ?`,
-    [id],
-  );
-  if (!p) return null;
-  const [principes, complications, niveaux, examens, differentiels] = await Promise.all([
-    q(
-      `SELECT titre, objectif, details, grade_force, grade_detail, grade_source
-         FROM pathologie_principes WHERE pathologie_id = ? ORDER BY ordre`,
-      [id],
-    ),
-    q(
-      `SELECT c.nom, c.description, c.traitement, c.surveillance_clinique, c.surveillance_paraclinique,
-              f.slug AS fiche_slug
-         FROM complications c LEFT JOIN pathologies f ON f.id = c.fiche_id
-        WHERE c.pathologie_id = ? ORDER BY c.ordre`,
-      [id],
-    ),
-    q('SELECT niveau, prise_en_charge, criteres_transfert FROM pathologie_niveaux WHERE pathologie_id = ?', [
-      id,
-    ]),
-    q(
-      `SELECT e.slug AS examen_slug, pe.categorie, pe.interpretation
-         FROM pathologie_examens pe JOIN examens e ON e.id = pe.examen_id
-        WHERE pe.pathologie_id = ? ORDER BY pe.ordre`,
-      [id],
-    ),
-    q(
-      `SELECT f.slug AS fiche_slug, d.nom, d.elements_distinctifs
-         FROM pathologie_differentiels d LEFT JOIN pathologies f ON f.id = d.differentiel_id
-        WHERE d.pathologie_id = ? ORDER BY d.ordre`,
-      [id],
-    ),
-  ]);
-  return {
-    ...p,
-    principes,
-    complications,
-    niveaux: NIVEAUX.map(
-      (niveau) =>
-        niveaux.find((n) => n.niveau === niveau) || {
-          niveau,
-          prise_en_charge: null,
-          criteres_transfert: null,
-        },
-    ),
-    examens,
-    differentiels,
-    formes: (await chargerFormes(q, id)).map(({ id: _id, syndromes, examens: ex, ...f }) => ({
-      ...f,
-      syndromes: syndromes.map((sy) => sy.slug),
-      examens: ex.map((e) => ({ examen_slug: e.slug, interpretation: e.interpretation })),
-    })),
-    urgences: await q(
-      `SELECT u.slug AS urgence_slug, u.nom, pu.signes_alerte
-         FROM pathologie_urgences pu JOIN urgences u ON u.id = pu.urgence_id
-        WHERE pu.pathologie_id = ? ORDER BY u.nom`,
-      [id],
-    ),
-  };
-}
-
 router.get(
   '/admin/pathologies/:id',
   asyncHandler(async (req, res) => {
@@ -425,7 +368,7 @@ router.get(
       [id],
     );
     if (!meta) throw notFound('Pathologie');
-    const [etat, optExamens, optPathologies, hist, optSyndromes] = await Promise.all([
+    const [etat, optExamens, optPathologies, hist, optSyndromes, controle] = await Promise.all([
       etatPathologie(viaPool, id),
       db.query(
         "SELECT slug, nom, type FROM examens ORDER BY FIELD(type, 'biologie', 'imagerie', 'exploration'), nom",
@@ -433,6 +376,7 @@ router.get(
       db.query('SELECT slug, nom FROM pathologies WHERE id <> ? ORDER BY nom', [id]),
       historique('pathologie', id),
       db.query('SELECT slug, nom FROM syndromes ORDER BY nom'),
+      controleDe('pathologie', id),
     ]);
     res.json({
       data: {
@@ -441,6 +385,7 @@ router.get(
         ...etat,
         options: { examens: optExamens, pathologies: optPathologies, syndromes: optSyndromes },
         historique: hist,
+        controle,
       },
     });
   }),
@@ -934,51 +879,6 @@ router.post(
 
 // ---------------------------------------------------------------- Molécules
 
-const nombreOuNull = (v) => (v === null || v === undefined ? null : Number(v));
-
-async function etatMolecule(q, id) {
-  const [mo] = await q(`SELECT ${FICHE_PHARMACO.join(', ')}, fiche_a_valider FROM molecules WHERE id = ?`, [
-    id,
-  ]);
-  if (!mo) return null;
-  mo.fiche_a_valider = Boolean(mo.fiche_a_valider);
-  const [posologies, presentations] = await Promise.all([
-    q(
-      `SELECT population, indication, voie, dose_texte, dose_par_kg, dose_par_m2, dose_max, dose_base, unite, frequence,
-              frequence_type, prises_par_jour, intervalle_heures, duree, durees, securite, remarque,
-              structure_a_valider
-         FROM molecule_posologies WHERE molecule_id = ? ORDER BY ordre`,
-      [id],
-    ),
-    q(
-      `SELECT forme, voie, quantite, unite, par_quantite, par_unite, secable, conditionnement_quantite,
-              conditionnement_unite, libelle, source, a_valider
-         FROM molecule_presentations WHERE molecule_id = ? ORDER BY ordre, id`,
-      [id],
-    ),
-  ]);
-  return {
-    ...mo,
-    posologies: posologies.map((p) => ({
-      ...p,
-      dose_par_kg: nombreOuNull(p.dose_par_kg),
-      dose_par_m2: nombreOuNull(p.dose_par_m2),
-      dose_max: nombreOuNull(p.dose_max),
-      intervalle_heures: nombreOuNull(p.intervalle_heures),
-      durees: typeof p.durees === 'string' ? JSON.parse(p.durees) : p.durees || [],
-      structure_a_valider: Boolean(p.structure_a_valider),
-    })),
-    presentations: presentations.map((pr) => ({
-      ...pr,
-      quantite: Number(pr.quantite),
-      par_quantite: Number(pr.par_quantite),
-      conditionnement_quantite: nombreOuNull(pr.conditionnement_quantite),
-      secable: Boolean(pr.secable),
-      a_valider: Boolean(pr.a_valider),
-    })),
-  };
-}
-
 /** Champs structurés d'une posologie (lot B) : base de la dose, fréquence, durées proposées. */
 function lireStructurePosologie(v, p, i) {
   const champ = (k) => `posologies[${i}].${k}`;
@@ -1056,8 +956,12 @@ router.get(
     if (!id) throw notFound('Molécule');
     const [meta] = await db.query('SELECT id, dci, slug, fiche_source FROM molecules WHERE id = ?', [id]);
     if (!meta) throw notFound('Molécule');
-    const [etat, hist] = await Promise.all([etatMolecule(viaPool, id), historique('molecule', id)]);
-    res.json({ data: { ...meta, ...etat, historique: hist } });
+    const [etat, hist, controle] = await Promise.all([
+      etatMolecule(viaPool, id),
+      historique('molecule', id),
+      controleDe('molecule', id),
+    ]);
+    res.json({ data: { ...meta, ...etat, historique: hist, controle } });
   }),
 );
 

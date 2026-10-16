@@ -371,7 +371,7 @@ Généré automatiquement : voir README.md pour la méthode et le catalogue. Ord
 
 ## Pédiatrie — ORL et ophtalmologie pédiatriques
 
-- **Cataracte congénitale** : [Pocket book of hospital care for children: Second edition](https://www.who.int/publications/i/item/978-92-4-154837-3) ; [Cataracts in adults: management](https://www.nice.org.uk/guidance/ng77) ; [Guide clinique et thérapeutique](https://medicalguidelines.msf.org/fr/node/170)
+- **Cataracte congénitale** *(références générales)* : [Pocket book of hospital care for children: Second edition](https://www.who.int/publications/i/item/978-92-4-154837-3) ; [Guide clinique et thérapeutique](https://medicalguidelines.msf.org/fr/node/170)
 - **Conjonctivite de l’enfant** *(références générales)* : [Pocket book of hospital care for children: Second edition](https://www.who.int/publications/i/item/978-92-4-154837-3) ; [Guide clinique et thérapeutique](https://medicalguidelines.msf.org/fr/node/170)
 - **Hypertrophie adénoïdienne** *(références générales)* : [Pocket book of hospital care for children: Second edition](https://www.who.int/publications/i/item/978-92-4-154837-3) ; [Guide clinique et thérapeutique](https://medicalguidelines.msf.org/fr/node/170)
 - **Mastoïdite** *(références générales)* : [Pocket book of hospital care for children: Second edition](https://www.who.int/publications/i/item/978-92-4-154837-3) ; [Guide clinique et thérapeutique](https://medicalguidelines.msf.org/fr/node/170)

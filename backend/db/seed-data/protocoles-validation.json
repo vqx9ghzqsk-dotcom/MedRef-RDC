@@ -1,0 +1,6943 @@
+{
+ "genere_le": "2026-10-15",
+ "sources": [
+  {
+   "code": "oms-cpn-2016",
+   "titre": "WHO recommendations on antenatal care for a positive pregnancy experience",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2016,
+   "url": "https://www.who.int/publications/i/item/9789241549912",
+   "domaine": "Grossesse",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-accouchement-2018",
+   "titre": "WHO recommendations: intrapartum care for a positive childbirth experience",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2018,
+   "url": "https://www.who.int/publications/i/item/9789241550215",
+   "domaine": "Travail et accouchement",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-pe-e-2011",
+   "titre": "WHO recommendations for prevention and treatment of pre-eclampsia and eclampsia",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2011,
+   "url": "https://www.who.int/publications/i/item/9789241548335",
+   "domaine": "Pathologies obstétricales",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-mcpc-2017",
+   "titre": "Managing complications in pregnancy and childbirth - 2nd edition",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2017,
+   "url": "https://www.who.int/publications/i/item/9789241565493",
+   "domaine": null,
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-pcpnc-2015",
+   "titre": "Pregnancy, childbirth, postpartum and newborn care: A guide for essential practice (3rd edition)",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2015,
+   "url": "https://www.who.int/publications/i/item/9789241549356",
+   "domaine": null,
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-avortement-2022",
+   "titre": "Abortion care guideline",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9789240039483",
+   "domaine": "Pathologies obstétricales",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-cem-2015",
+   "titre": "Medical eligibility criteria for contraceptive use",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2015,
+   "url": "https://www.who.int/publications/i/item/9789241549158",
+   "domaine": "Planification familiale",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-pf-manuel-2022",
+   "titre": "Family planning: a global handbook for providers: evidence-based guidance developed through worldwide collaboration, 3rd ed",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9780999203705",
+   "domaine": "Planification familiale",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-col-depistage-2021",
+   "titre": "WHO guideline for screening and treatment of cervical pre-cancer lesions for cervical cancer prevention",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2021,
+   "url": "https://www.who.int/publications/i/item/9789240030824",
+   "domaine": "Gynécologie oncologique",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-postnatal-2022",
+   "titre": "WHO recommendations on maternal and newborn care for a positive postnatal experience",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9789240045989",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-premature-2022",
+   "titre": "WHO recommendations for care of the preterm or low-birth-weight infant",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9789240058262",
+   "domaine": "Néonatologie",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-reanimation-nn-2012",
+   "titre": "Guidelines on basic newborn resuscitation",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2012,
+   "url": "https://www.who.int/publications/i/item/9789241503693",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-pb-nouveau-ne-2003",
+   "titre": "Managing newborn problems",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2003,
+   "url": "https://www.who.int/publications/i/item/9241546220",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-viol-2020",
+   "titre": "Clinical management of rape and intimate partner violence survivors",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2020,
+   "url": "https://www.who.int/publications/i/item/9789240001411",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-hpp-2023",
+   "titre": "WHO recommendations on the assessment of postpartum blood loss and use of a treatment bundle for postpartum haemorrhage",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2023,
+   "url": "https://www.who.int/publications/i/item/9789240085398",
+   "domaine": "Urgences obstétricales",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "oms-pocket-book-2013",
+   "titre": "Pocket book of hospital care for children: Second edition",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2013,
+   "url": "https://www.who.int/publications/i/item/978-92-4-154837-3",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-etat-2016",
+   "titre": "Paediatric emergency triage, assessment and treatment: care of critically-ill children",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2016,
+   "url": "https://www.who.int/publications/i/item/9789241510219",
+   "domaine": "Urgences pédiatriques",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-oxygene-enfant-2016",
+   "titre": "Oxygen therapy for children",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2016,
+   "url": "https://www.who.int/publications/i/item/9789241549554",
+   "domaine": null,
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-tb-enfant-2022",
+   "titre": "WHO consolidated guidelines on tuberculosis: module 5: management of tuberculosis in children and adolescents",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9789240046764",
+   "domaine": "Infectiologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-ist-2021",
+   "titre": "Guidelines for the management of symptomatic sexually transmitted infections",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2021,
+   "url": "https://www.who.int/publications/i/item/9789240024168",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-cryptocoque-2022",
+   "titre": "Guidelines for diagnosing, preventing and managing cryptococcal disease among adults, adolescents and children living with HIV",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9789240052178",
+   "domaine": "Infectiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-vih-avance-2017",
+   "titre": "Guidelines for managing advanced HIV disease and rapid initiation of antiretroviral therapy",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2017,
+   "url": "https://www.who.int/publications/i/item/9789241550062",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-hepc-2018",
+   "titre": "Guidelines for the care and treatment of persons diagnosed with chronic hepatitis C virus infection",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2018,
+   "url": "https://www.who.int/publications/i/item/9789241550345",
+   "domaine": "Gastro-entérologie et hépatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-tha-2019",
+   "titre": "WHO interim guidelines for the treatment of gambiense human African trypanosomiasis",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2019,
+   "url": "https://www.who.int/publications/i/item/9789241550567",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-lepre-2018",
+   "titre": "Guidelines for the diagnosis, treatment and prevention of leprosy",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2018,
+   "url": "https://www.who.int/publications/i/item/9789290226383",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-serpents-afrique-2010",
+   "titre": "Guidelines for the prevention and clinical management of snakebite in Africa",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2010,
+   "url": "https://www.who.int/publications/i/item/9789290231684",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-ebola-tt-2022",
+   "titre": "Therapeutics for Ebola virus disease",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9789240055742",
+   "domaine": "Infectiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-grippe-2024",
+   "titre": "Clinical practice guidelines for influenza",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2024,
+   "url": "https://www.who.int/publications/i/item/9789240097759",
+   "domaine": "Infectiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-schisto-2022",
+   "titre": "WHO guideline on control and elimination of human schistosomiasis",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9789240041608",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-geohelminthes-2017",
+   "titre": "Preventive chemotherapy to control soil-transmitted helminth infections in at-risk population groups",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2017,
+   "url": "https://www.who.int/publications/i/item/9789241550116",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-filariose-2017",
+   "titre": "Guideline ‒ Alternative mass drug administration regimens to eliminate lymphatic filariasis",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2017,
+   "url": "https://www.who.int/publications/i/item/9789241550161",
+   "domaine": "Infectiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-oncho-2016",
+   "titre": "Guidelines for stopping mass drug administration and verifying elimination of human onchocerciasis",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2016,
+   "url": "https://www.who.int/publications/i/item/9789241510011",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-hta-2021",
+   "titre": "Guideline for the pharmacological treatment of hypertension in adults",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2021,
+   "url": "https://www.who.int/publications/i/item/9789240033986",
+   "domaine": "Cardiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-diabete-2018",
+   "titre": "Guidelines on second- and third-line medicines and type of insulin for the control of blood glucose levels in non-pregnant adults with diabetes mellitus",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2018,
+   "url": "https://www.who.int/publications/i/item/9789241550284",
+   "domaine": "Endocrinologie et diabétologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-demence-2019",
+   "titre": "Risk reduction of cognitive decline and dementia: WHO guidelines",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2019,
+   "url": "https://www.who.int/publications/i/item/9789241550543",
+   "domaine": "Démences et neurogériatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-chirurgie-district-2003",
+   "titre": "Surgical care at the district hospital",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2003,
+   "url": "https://www.who.int/publications/i/item/9241545755",
+   "domaine": null,
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "oms-isc-2018",
+   "titre": "Global guidelines for the prevention of surgical site infection",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2018,
+   "url": "https://www.who.int/publications/i/item/9789241550475",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-mhgap-ig-2016",
+   "titre": "mhGAP Intervention Guide - Version 2.0",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2016,
+   "url": "https://www.who.int/publications/i/item/9789241549790",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-mhgap-2023",
+   "titre": "Mental Health Gap Action Programme (mhGAP) guideline for mental, neurological and substance use disorders",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2023,
+   "url": "https://www.who.int/publications/i/item/9789240084278",
+   "domaine": null,
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-mhgap-urgences-2015",
+   "titre": "mhGAP Humanitarian Intervention Guide (mhGAP-HIG)",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2015,
+   "url": "https://www.who.int/publications/i/item/9789241548922",
+   "domaine": "Psychotraumatologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-opioides-2009",
+   "titre": "Guidelines for the psychosocially assisted pharmacological treatment of opioid dependence",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2009,
+   "url": "https://www.who.int/publications/i/item/9789241547543",
+   "domaine": "Addictologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-tabac-2024",
+   "titre": "WHO clinical treatment guideline for tobacco cessation in adults",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2024,
+   "url": "https://www.who.int/publications/i/item/9789240096431",
+   "domaine": "Addictologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "msf-guide-clinique",
+   "titre": "Guide clinique et thérapeutique",
+   "organisation": "MSF",
+   "niveau": 4,
+   "type": "guide",
+   "annee": null,
+   "url": "https://medicalguidelines.msf.org/fr/node/170",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "msf-obstetrique",
+   "titre": "Soins obstétricaux et néonatals essentiels",
+   "organisation": "MSF",
+   "niveau": 4,
+   "type": "guide",
+   "annee": null,
+   "url": "https://medicalguidelines.msf.org/fr/node/449",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "msf-cholera",
+   "titre": "Prise en charge d’une ÉPIDÉMIE DE CHOLÉRA",
+   "organisation": "MSF",
+   "niveau": 4,
+   "type": "guide",
+   "annee": null,
+   "url": "https://medicalguidelines.msf.org/fr/node/800",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "msf-rougeole",
+   "titre": "Prise en charge d’une ÉPIDÉMIE DE ROUGEOLE",
+   "organisation": "MSF",
+   "niveau": 4,
+   "type": "guide",
+   "annee": null,
+   "url": "https://medicalguidelines.msf.org/fr/node/498",
+   "domaine": "Infectiologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "msf-tuberculose",
+   "titre": "Tuberculose",
+   "organisation": "MSF",
+   "niveau": 4,
+   "type": "guide",
+   "annee": null,
+   "url": "https://medicalguidelines.msf.org/fr/node/1063",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-hta",
+   "titre": "Hypertension in adults: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng136",
+   "domaine": "Cardiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-ic",
+   "titre": "Chronic heart failure in adults: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng106",
+   "domaine": "Cardiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-fa",
+   "titre": "Atrial fibrillation: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng196",
+   "domaine": "Cardiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-angor",
+   "titre": "Stable angina: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg126",
+   "domaine": "Cardiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-sca",
+   "titre": "Acute coronary syndromes",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng185",
+   "domaine": "Cardiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-tev",
+   "titre": "Venous thromboembolic diseases: diagnosis, management and thrombophilia testing",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng158",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-mrc",
+   "titre": "Chronic kidney disease: assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng203",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-ira",
+   "titre": "Acute kidney injury: prevention, detection and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng148",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-dt2",
+   "titre": "Type 2 diabetes in adults: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng28",
+   "domaine": "Endocrinologie et diabétologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-dt1",
+   "titre": "Type 1 diabetes in adults: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng17",
+   "domaine": "Endocrinologie et diabétologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-dt-enfant",
+   "titre": "Diabetes (type 1 and type 2) in children and young people: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng18",
+   "domaine": "Endocrinologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-pied-diabetique",
+   "titre": "Diabetic foot problems: prevention and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng19",
+   "domaine": "Endocrinologie et diabétologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-thyroide",
+   "titre": "Thyroid disease: assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng145",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-lipides",
+   "titre": "Cardiovascular disease: risk assessment and reduction, including lipid modification",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng238",
+   "domaine": "Endocrinologie et diabétologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-obesite",
+   "titre": "Overweight and obesity management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng246",
+   "domaine": "Endocrinologie et diabétologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-goutte",
+   "titre": "Gout: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng219",
+   "domaine": "Rhumatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-pr",
+   "titre": "Rheumatoid arthritis in adults: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng100",
+   "domaine": "Rhumatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-arthrose",
+   "titre": "Osteoarthritis in over 16s: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng226",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-lombalgie",
+   "titre": "Low back pain and sciatica in over 16s: assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng59",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-spondylo",
+   "titre": "Spondyloarthritis in over 16s: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng65",
+   "domaine": "Rhumatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-psoriasis",
+   "titre": "Psoriasis: assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg153",
+   "domaine": "Dermatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-acne",
+   "titre": "Acne vulgaris: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng198",
+   "domaine": "Dermatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-eczema-enfant",
+   "titre": "Atopic eczema in under 12s: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg57",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-cellulite",
+   "titre": "Cellulitis and erysipelas: antimicrobial prescribing",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng141",
+   "domaine": "Dermatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-impetigo",
+   "titre": "Impetigo: antimicrobial prescribing",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng153",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-pneumonie",
+   "titre": "Pneumonia (community-acquired): antimicrobial prescribing",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng138",
+   "domaine": "Pneumologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-bpco",
+   "titre": "Chronic obstructive pulmonary disease in over 16s: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng115",
+   "domaine": "Pneumologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-asthme",
+   "titre": "Asthma: diagnosis, monitoring and chronic asthma management (BTS, NICE, SIGN)",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng245",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-bronchiolite",
+   "titre": "Bronchiolitis in children: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng9",
+   "domaine": "Pneumologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-sepsis",
+   "titre": "Suspected sepsis: recognition, diagnosis and early management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng51",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-meningite",
+   "titre": "Meningitis (bacterial) and meningococcal disease: recognition, diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng240",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-fievre-enfant",
+   "titre": "Fever in under 5s: assessment and initial management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng143",
+   "domaine": "Pédiatrie générale",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-iu-enfant",
+   "titre": "Urinary tract infection in under 16s: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng224",
+   "domaine": "Néphrologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-pyelonephrite",
+   "titre": "Pyelonephritis (acute): antimicrobial prescribing",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng111",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-ictere-nn",
+   "titre": "Jaundice in newborn babies under 28 days",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg98",
+   "domaine": "Néonatologie",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-infection-nn",
+   "titre": "Neonatal infection: antibiotics for prevention and treatment",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng195",
+   "domaine": "Néonatologie",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-respi-nn",
+   "titre": "Specialist neonatal respiratory care for babies born preterm",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng124",
+   "domaine": "Néonatologie",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-constipation-enfant",
+   "titre": "Constipation in children and young people: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg99",
+   "domaine": "Gastro-entérologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-diarrhee-enfant",
+   "titre": "Diarrhoea and vomiting caused by gastroenteritis in under 5s: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg84",
+   "domaine": "Gastro-entérologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-hd-haute",
+   "titre": "Acute upper gastrointestinal bleeding in over 16s: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg141",
+   "domaine": "Gastro-entérologie et hépatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-pancreatite",
+   "titre": "Pancreatitis",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng104",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-cirrhose",
+   "titre": "Cirrhosis in over 16s: assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng50",
+   "domaine": "Gastro-entérologie et hépatologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-hepb",
+   "titre": "Hepatitis B (chronic): diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg165",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-dyspepsie",
+   "titre": "Gastro-oesophageal reflux disease and dyspepsia in adults: investigation and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg184",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-endometriose",
+   "titre": "Endometriosis: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng73",
+   "domaine": "Gynécologie",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-menorragies",
+   "titre": "Heavy menstrual bleeding: assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng88",
+   "domaine": "Gynécologie",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-menopause",
+   "titre": "Menopause: identification and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng23",
+   "domaine": "Gynécologie",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-infertilite",
+   "titre": "Fertility problems: assessment and treatment",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg156",
+   "domaine": "Fertilité et reproduction",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-geu",
+   "titre": "Ectopic pregnancy and miscarriage: diagnosis and initial management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng126",
+   "domaine": "Grossesse",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-cpn",
+   "titre": "Antenatal care",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng201",
+   "domaine": "Grossesse",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-hta-grossesse",
+   "titre": "Hypertension in pregnancy: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng133",
+   "domaine": "Pathologies obstétricales",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-diabete-grossesse",
+   "titre": "Diabetes in pregnancy: management from preconception to the postnatal period",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng3",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-accouchement",
+   "titre": "Intrapartum care",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng235",
+   "domaine": "Travail et accouchement",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-declenchement",
+   "titre": "Inducing labour",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng207",
+   "domaine": "Grossesse",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-cesarienne",
+   "titre": "Caesarean birth",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng192",
+   "domaine": "Travail et accouchement",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-premature",
+   "titre": "Preterm labour and birth",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng25",
+   "domaine": "Pathologies obstétricales",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-postnatal",
+   "titre": "Postnatal care",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng194",
+   "domaine": "Post-partum",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-gemellaire",
+   "titre": "Twin and triplet pregnancy",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng137",
+   "domaine": "Grossesse",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-incontinence",
+   "titre": "Urinary incontinence and pelvic organ prolapse in women: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng123",
+   "domaine": "Gynécologie",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "nice-fractures",
+   "titre": "Fractures (non-complex): assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng38",
+   "domaine": "Traumatologie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "nice-trauma-majeur",
+   "titre": "Major trauma: assessment and initial management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng39",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-rachis",
+   "titre": "Spinal injury: assessment and initial management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng41",
+   "domaine": "Neurochirurgie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "nice-tc",
+   "titre": "Head injury: assessment and early management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng232",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-lithiase",
+   "titre": "Renal and ureteric stones: assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng118",
+   "domaine": "Urologie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "nice-hbp",
+   "titre": "Lower urinary tract symptoms in men: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg97",
+   "domaine": "Urologie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "nice-glaucome",
+   "titre": "Glaucoma: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng81",
+   "domaine": "Ophtalmologie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "nice-cataracte",
+   "titre": "Cataracts in adults: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng77",
+   "domaine": "Ophtalmologie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "nice-otite",
+   "titre": "Otitis media (acute): antimicrobial prescribing",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng91",
+   "domaine": "Pédiatrie générale",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-sinusite",
+   "titre": "Sinusitis (acute): antimicrobial prescribing",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng79",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-angine",
+   "titre": "Sore throat (acute): antimicrobial prescribing",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng84",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-epilepsie",
+   "titre": "Epilepsies in children, young people and adults",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng217",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-cephalees",
+   "titre": "Headaches in over 12s: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg150",
+   "domaine": "Neurologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-avc",
+   "titre": "Stroke and transient ischaemic attack in over 16s: diagnosis and initial management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng128",
+   "domaine": "AVC",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-parkinson",
+   "titre": "Parkinson’s disease in adults",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng71",
+   "domaine": "Mouvements anormaux",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-sep",
+   "titre": "Multiple sclerosis in adults: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng220",
+   "domaine": "Neurologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-demence",
+   "titre": "Dementia: assessment, management and support for people living with dementia and their carers",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng97",
+   "domaine": "Démences et neurogériatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-delirium",
+   "titre": "Delirium: prevention, diagnosis and management in hospital and long-term care",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg103",
+   "domaine": "Démences et neurogériatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-depression",
+   "titre": "Depression in adults: treatment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng222",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-depression-ado",
+   "titre": "Depression in children and young people: identification and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng134",
+   "domaine": "Psychiatrie de l’enfant et de l’adolescent",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-psychose",
+   "titre": "Psychosis and schizophrenia in adults: prevention and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg178",
+   "domaine": "Psychiatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-bipolaire",
+   "titre": "Bipolar disorder: assessment and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg185",
+   "domaine": "Psychiatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-anxiete",
+   "titre": "Generalised anxiety disorder and panic disorder in adults: management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg113",
+   "domaine": "Psychiatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-tspt",
+   "titre": "Post-traumatic stress disorder",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng116",
+   "domaine": "Psychotraumatologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-toc",
+   "titre": "Obsessive-compulsive disorder and body dysmorphic disorder: treatment",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg31",
+   "domaine": "Psychiatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-tca",
+   "titre": "Eating disorders: recognition and treatment",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng69",
+   "domaine": "Psychiatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-suicide",
+   "titre": "Self-harm: assessment, management and preventing recurrence",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng225",
+   "domaine": "Psychiatrie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-tdah",
+   "titre": "Attention deficit hyperactivity disorder: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng87",
+   "domaine": "Psychiatrie de l’enfant et de l’adolescent",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-autisme",
+   "titre": "Autism spectrum disorder in under 19s: recognition, referral and diagnosis",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg128",
+   "domaine": "Psychiatrie de l’enfant et de l’adolescent",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-alcool",
+   "titre": "Alcohol-use disorders: diagnosis, assessment and management of harmful drinking (high-risk drinking) and alcohol dependence",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg115",
+   "domaine": "Addictologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-sevrage-alcool",
+   "titre": "Alcohol-use disorders: diagnosis and management of physical complications",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg100",
+   "domaine": "Addictologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-tabac",
+   "titre": "Tobacco: preventing uptake, promoting quitting and treating dependence",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng209",
+   "domaine": "Addictologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-drogues",
+   "titre": "Drug misuse in over 16s: psychosocial interventions",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg51",
+   "domaine": "Addictologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-anaphylaxie",
+   "titre": "Anaphylaxis: assessment and referral after emergency treatment",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg134",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "nice-hemorragie-meningee",
+   "titre": "Subarachnoid haemorrhage caused by a ruptured aneurysm: diagnosis and management",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng228",
+   "domaine": "AVC",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "nice-syncope",
+   "titre": "Transient loss of consciousness ('blackouts') in over 16s",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/cg109",
+   "domaine": "Médecine interne générale",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "nice-violences",
+   "titre": "Child abuse and neglect",
+   "organisation": "NICE",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nice.org.uk/guidance/ng76",
+   "domaine": "Pédiatrie générale",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-raa-2024",
+   "titre": "WHO guideline on the prevention and diagnosis of rheumatic fever and rheumatic heart disease",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2024,
+   "url": "https://www.who.int/publications/i/item/9789240100077",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-diphterie-2024",
+   "titre": "Clinical management of diphtheria: guideline, 2 February 2024",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2024,
+   "url": "https://www.who.int/publications-detail-redirect/WHO-DIPH-Clinical-2024.1",
+   "domaine": "Infectiologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-mpox-2025",
+   "titre": "Clinical management and infection prevention and control for mpox: living guideline, May 2025",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2025,
+   "url": "https://www.who.int/publications/i/item/B09434",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-arbovirus-2025",
+   "titre": "WHO guidelines for clinical management of arboviral diseases: dengue, chikungunya, Zika and yellow fever",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2025,
+   "url": "https://www.who.int/publications/i/item/9789240111110",
+   "domaine": "Infectiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-rage-2018",
+   "titre": "WHO Expert Consultation on Rabies: WHO TRS N°1012 Third report",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2018,
+   "url": "https://www.who.int/publications/i/item/WHO-TRS-1012",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-peste-2021",
+   "titre": "WHO guidelines for plague management: revised recommendations for the use of rapid diagnostic tests, fluoroquinolones for case management and personal protective equipment for prevention of post-mortem transmission",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2021,
+   "url": "https://www.who.int/publications/i/item/9789240015579",
+   "domaine": "Infectiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-kaposi-peau-vih-2014",
+   "titre": "Guidelines on the treatment of skin and oral HIV-associated conditions in children and adults",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2014,
+   "url": "https://www.who.int/publications/i/item/9789241548915",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-imai-adulte-2011",
+   "titre": "IMAI district clinician manual: hospital care adolescents and adults",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2011,
+   "url": "https://www.who.int/publications/i/item/imai-district-clinician-manual-hospital-care-adolescents-and-adults",
+   "domaine": null,
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-fistule-2006",
+   "titre": "Obstetric fistula: Guiding principles for clinical management and programme development",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2006,
+   "url": "https://www.who.int/publications/i/item/9241593679",
+   "domaine": "Urogynécologie",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "eau-urologie",
+   "titre": "EAU Guidelines - Uroweb",
+   "organisation": "European Association of Urology",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://uroweb.org/guidelines",
+   "domaine": "Urologie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "bts-plevre-2023",
+   "titre": "BTS guideline for pleural disease in adults.",
+   "organisation": "British Thoracic Society",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": 2023,
+   "url": "https://www.brit-thoracic.org.uk/quality-improvement/guidelines/pleural-disease/",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "esvs-vasculaire",
+   "titre": "Vascular Surgery Guidelines | ESVS",
+   "organisation": "European Society for Vascular Surgery",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://esvs.org/guidelines/",
+   "domaine": "Chirurgie vasculaire",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "idsa-neurocysticercose-2017",
+   "titre": "ASTMH/IDSA 2017 Clinical Practice Guideline Update for the Diagnosis and Treatment of Neurocysticercosis",
+   "organisation": "IDSA / ASTMH",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": 2017,
+   "url": "https://www.idsociety.org/practice-guideline/neurocysticercosis/",
+   "domaine": "Neuro-infectiologie",
+   "departement": "neuropsychiatrie",
+   "existante": false
+  },
+  {
+   "code": "rcog-greentop",
+   "titre": "Green-top Guidelines | RCOG",
+   "organisation": "RCOG",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/",
+   "domaine": "Gynécologie",
+   "departement": "gynecologie-obstetrique",
+   "existante": false
+  },
+  {
+   "code": "who-trachome",
+   "titre": "Trachoma control : a guide for programme managers.",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": null,
+   "url": "https://www.who.int/publications/i/item/9241546905",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-transfusion-2001",
+   "titre": "The clinical use of blood in medicine, obstetrics, paediatrics, surgery and anaesthesia, trauma and burns",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2001,
+   "url": "https://iris.who.int/handle/10665/42397",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-leptospirose-2003",
+   "titre": "Human leptospirosis : guidance for diagnosis, surveillance and control",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2003,
+   "url": "https://iris.who.int/handle/10665/42667",
+   "domaine": "Infectiologie",
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "oms-traumatologie-2004",
+   "titre": "Guidelines for essential trauma care / World Health Organization, International Society of Surgery/Société Internationale de Chirurgie and the International Association for the Surgery of Trauma and Surgical Intensive Care (IATSIC)",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2004,
+   "url": "https://iris.who.int/handle/10665/42565",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-maltraitance-2022",
+   "titre": "Responding to child maltreatment: a clinical handbook for health professionals",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.who.int/publications/i/item/9789240048737",
+   "domaine": "Pédiatrie générale",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-vitamine-a-2011",
+   "titre": "Guideline : vitamin A supplementation in infants and children 6-59 months of age",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2011,
+   "url": "https://www.who.int/publications/i/item/9789241501767",
+   "domaine": "Pédiatrie générale",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "oms-anemie-fer-2016",
+   "titre": "Daily iron supplementation in infants and children",
+   "organisation": "OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": 2016,
+   "url": "https://www.who.int/publications/i/item/9789241549523",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "oms-pied-bot",
+   "titre": "Global Clubfoot Initiative",
+   "organisation": "Global Clubfoot Initiative",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://globalclubfoot.com/",
+   "domaine": "Orthopédie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "rdc-plan-cholera-2023",
+   "titre": "Plan stratégique multisectoriel d’élimination du choléra 2023-2027 (RDC)",
+   "organisation": "Ministère de la Santé RDC / PNECHOL-MD (hébergé par le GTFCC)",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2023,
+   "url": "https://www.gtfcc.org/wp-content/uploads/2025/05/national-cholera-plan-dr-congo.pdf",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "cdc-io-vih",
+   "titre": "Guidelines for the Prevention and Treatment of Opportunistic Infections in Adults and Adolescents with HIV",
+   "organisation": "NIH / CDC / HIVMA-IDSA",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://clinicalinfo.hiv.gov/en/guidelines/adult-and-adolescent-opportunistic-infection",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "wfh-hemophilie-2020",
+   "titre": "WFH Guidelines for the Management of Hemophilia, 3rd edition (2020)",
+   "organisation": "World Federation of Hemophilia",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": 2020,
+   "url": "https://www1.wfh.org/publications/files/pdf-1863.pdf",
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "podc-oncopediatrie",
+   "titre": "A framework to develop adapted treatment regimens to manage pediatric cancer in low- and middle-income countries (SIOP PODC)",
+   "organisation": "SIOP — Paediatric Oncology in Developing Countries",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6428601",
+   "domaine": "Hématologie et oncologie pédiatriques",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "ispad-2022",
+   "titre": "ISPAD Clinical Practice Consensus Guidelines 2022 (dont acidocétose et état hyperosmolaire)",
+   "organisation": "International Society for Pediatric and Adolescent Diabetes",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": 2022,
+   "url": "https://www.ispad.org/resources/ispad-clinical-practice-consensus-guidelines/2022-ispad-clinical-practice-consensus-guidelines.html",
+   "domaine": "Endocrinologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "aao-ppp",
+   "titre": "Preferred Practice Pattern® Guidelines",
+   "organisation": "American Academy of Ophthalmology",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://aao.org/about-preferred-practice-patterns",
+   "domaine": "Ophtalmologie",
+   "departement": "chirurgie",
+   "existante": false
+  },
+  {
+   "code": "tif-thalassemie-2021",
+   "titre": "Guidelines for the Management of Transfusion Dependent Thalassaemia, 4th edition (2021)",
+   "organisation": "Thalassaemia International Federation",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": 2021,
+   "url": "https://thalassaemia.org.cy/publications/tif-publications/guidelines-for-the-management-of-transfusion-dependent-thalassaemia-4th-edition-2021-v2/",
+   "domaine": "Hématologie et oncologie pédiatriques",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "rachitisme-consensus-2016",
+   "titre": "Global Consensus Recommendations on Prevention and Management of Nutritional Rickets (2016)",
+   "organisation": "Consensus international (11 sociétés savantes)",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": 2016,
+   "url": "https://pubmed.ncbi.nlm.nih.gov/26745253/",
+   "domaine": "Pédiatrie générale",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "rdc-hgr-t1-2016",
+   "titre": "Guide clinique de l’Hôpital général de référence, Tome 1 : Médecine interne (2016)",
+   "organisation": "Ministère de la Santé RDC",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2016,
+   "url": null,
+   "domaine": null,
+   "departement": "medecine-interne",
+   "existante": false
+  },
+  {
+   "code": "rdc-pnlp-2012",
+   "titre": "Guide technique de prise en charge du paludisme, HGR (2010, révisé 2012) et centre de santé (2010)",
+   "organisation": "PNLP — Ministère de la Santé RDC",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2012,
+   "url": null,
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "rdc-pnls-2019",
+   "titre": "Guide national de prise en charge du VIH (édition 2019, la plus récente trouvée)",
+   "organisation": "PNLS — Ministère de la Santé RDC",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2019,
+   "url": null,
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "rdc-pnlt-2021",
+   "titre": "Guide de prise en charge de la tuberculose — PATI-6 (2021)",
+   "organisation": "PNLT — Ministère de la Santé RDC",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2021,
+   "url": null,
+   "domaine": null,
+   "departement": null,
+   "existante": false
+  },
+  {
+   "code": "rdc-pronanut-2013",
+   "titre": "Fiches techniques PCIMA (2013 ; protocole 2016 non trouvé en ligne)",
+   "organisation": "PRONANUT — Ministère de la Santé RDC",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2013,
+   "url": null,
+   "domaine": "Malnutrition",
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "rdc-smne-2012",
+   "titre": "Normes SMNE — Santé de l’enfant, volume 4 (2012)",
+   "organisation": "Ministère de la Santé RDC",
+   "niveau": 1,
+   "type": "guide",
+   "annee": 2012,
+   "url": null,
+   "domaine": null,
+   "departement": "pediatrie",
+   "existante": false
+  },
+  {
+   "code": "db-1",
+   "titre": "WHO guidelines for malaria",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/publications/i/item/guidelines-for-malaria",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-6",
+   "titre": "WHO consolidated guidelines on tuberculosis (Module 3 : diagnostic ; Module 4 : traitement)",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/teams/global-tuberculosis-programme",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-8",
+   "titre": "Consolidated guidelines on HIV prevention, testing, treatment, service delivery and monitoring",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/publications/i/item/9789240031593",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-10",
+   "titre": "Guidelines for the prevention, diagnosis, care and treatment of people with chronic hepatitis B infection",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/publications/i/item/9789240090903",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-12",
+   "titre": "WHO guidelines on meningitis diagnosis, treatment and care",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/health-topics/meningitis",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-13",
+   "titre": "Cholera Outbreak Response: Field Manual",
+   "organisation": "Global Task Force on Cholera Control (GTFCC) — OMS",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.gtfcc.org",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-16",
+   "titre": "Prise en charge intégrée des maladies de l'enfant (PCIME) — tableaux de prise en charge",
+   "organisation": "OMS / UNICEF",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/teams/maternal-newborn-child-adolescent-health-and-ageing",
+   "domaine": "Pédiatrie générale",
+   "departement": "pediatrie",
+   "existante": true
+  },
+  {
+   "code": "db-17",
+   "titre": "The treatment of diarrhoea: a manual for physicians and other senior health workers",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/publications/i/item/9241593180",
+   "domaine": "Gastro-entérologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": true
+  },
+  {
+   "code": "db-18",
+   "titre": "WHO guideline on the prevention and management of wasting and nutritional oedema",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/publications/i/item/9789240082830",
+   "domaine": "Malnutrition",
+   "departement": "pediatrie",
+   "existante": true
+  },
+  {
+   "code": "db-20",
+   "titre": "WHO recommendations for management of serious bacterial infections in infants aged 0–59 days",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/health-topics/newborn-health",
+   "domaine": "Néonatologie",
+   "departement": "pediatrie",
+   "existante": true
+  },
+  {
+   "code": "db-22",
+   "titre": "WHO recommendations: drug treatment for severe hypertension in pregnancy",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/health-topics/maternal-health",
+   "domaine": "Pathologies obstétricales",
+   "departement": "gynecologie-obstetrique",
+   "existante": true
+  },
+  {
+   "code": "db-23",
+   "titre": "WHO recommendations for the prevention and treatment of postpartum haemorrhage",
+   "organisation": "Organisation mondiale de la Santé",
+   "niveau": 1,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.who.int/publications/i/item/9789241548502",
+   "domaine": "Urgences obstétricales",
+   "departement": "gynecologie-obstetrique",
+   "existante": true
+  },
+  {
+   "code": "db-28",
+   "titre": "2024 ESC Guidelines for the management of elevated blood pressure and hypertension",
+   "organisation": "European Society of Cardiology",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.escardio.org/Guidelines",
+   "domaine": "Cardiologie",
+   "departement": "medecine-interne",
+   "existante": true
+  },
+  {
+   "code": "db-30",
+   "titre": "2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure (mise à jour 2023)",
+   "organisation": "European Society of Cardiology",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": 2023,
+   "url": "https://www.escardio.org/Guidelines",
+   "domaine": "Cardiologie",
+   "departement": "medecine-interne",
+   "existante": true
+  },
+  {
+   "code": "db-32",
+   "titre": "GINA — Global Strategy for Asthma Management and Prevention",
+   "organisation": "Global Initiative for Asthma",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://ginasthma.org",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-35",
+   "titre": "KDIGO Clinical Practice Guideline for Acute Kidney Injury",
+   "organisation": "KDIGO",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://kdigo.org/guidelines/acute-kidney-injury/",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-36",
+   "titre": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+   "organisation": "KDIGO",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://kdigo.org/guidelines/ckd-evaluation-and-management/",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-37",
+   "titre": "ADA — Standards of Care in Diabetes",
+   "organisation": "American Diabetes Association",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://professional.diabetes.org/standards-of-care",
+   "domaine": "Endocrinologie et diabétologie",
+   "departement": "medecine-interne",
+   "existante": true
+  },
+  {
+   "code": "db-38",
+   "titre": "Hyperglycemic Crises in Adults With Diabetes: A Consensus Report",
+   "organisation": "ADA / EASD / JBDS / AACE / DTS",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://diabetesjournals.org/care",
+   "domaine": "Endocrinologie et diabétologie",
+   "departement": "medecine-interne",
+   "existante": true
+  },
+  {
+   "code": "db-39",
+   "titre": "American Society of Hematology 2020 guidelines for sickle cell disease: management of acute and chronic pain",
+   "organisation": "American Society of Hematology",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.hematology.org/education/clinicians/guidelines-and-quality-care/clinical-practice-guidelines/sickle-cell-disease-guidelines",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-40",
+   "titre": "Evidence-Based Management of Sickle Cell Disease: Expert Panel Report",
+   "organisation": "NHLBI — National Institutes of Health",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nhlbi.nih.gov",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-43",
+   "titre": "Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock 2021",
+   "organisation": "Society of Critical Care Medicine / ESICM",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.sccm.org/SurvivingSepsisCampaign",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-46",
+   "titre": "FIGO recommendations on the management of postpartum hemorrhage 2022",
+   "organisation": "International Federation of Gynecology and Obstetrics",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.figo.org",
+   "domaine": "Urgences obstétricales",
+   "departement": "gynecologie-obstetrique",
+   "existante": true
+  },
+  {
+   "code": "db-48",
+   "titre": "RCOG Green-top Guideline No. 21: Diagnosis and Management of Ectopic Pregnancy",
+   "organisation": "Royal College of Obstetricians and Gynaecologists",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.rcog.org.uk/guidance/",
+   "domaine": "Grossesse",
+   "departement": "gynecologie-obstetrique",
+   "existante": true
+  },
+  {
+   "code": "db-49",
+   "titre": "WSES Jerusalem guidelines on acute appendicitis",
+   "organisation": "World Society of Emergency Surgery",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.wses.org.uk",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-50",
+   "titre": "Bologna guidelines for diagnosis and management of adhesive small bowel obstruction (2017 update, WSES)",
+   "organisation": "World Society of Emergency Surgery",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.wses.org.uk",
+   "domaine": "Chirurgie digestive",
+   "departement": "chirurgie",
+   "existante": true
+  },
+  {
+   "code": "db-51",
+   "titre": "The management of intra-abdominal infections from a global perspective: 2017 WSES guidelines",
+   "organisation": "World Society of Emergency Surgery",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.wses.org.uk",
+   "domaine": "Chirurgie viscérale",
+   "departement": "chirurgie",
+   "existante": true
+  },
+  {
+   "code": "db-52",
+   "titre": "Guidelines for the Management of Severe Traumatic Brain Injury (4th edition)",
+   "organisation": "Brain Trauma Foundation",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://braintrauma.org",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-55",
+   "titre": "Guidelines for the Early Management of Patients With Acute Ischemic Stroke: 2019 Update",
+   "organisation": "American Heart Association / American Stroke Association",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://professional.heart.org/en/guidelines-and-statements",
+   "domaine": "AVC",
+   "departement": "neuropsychiatrie",
+   "existante": true
+  },
+  {
+   "code": "db-63",
+   "titre": "AHA — recommandations de pratique clinique",
+   "organisation": "American Heart Association",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://professional.heart.org/en/guidelines-and-statements",
+   "domaine": "Cardiologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": true
+  },
+  {
+   "code": "db-99",
+   "titre": "AAP — recommandations de pratique clinique",
+   "organisation": "American Academy of Pediatrics",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.aap.org",
+   "domaine": "Cardiologie pédiatrique",
+   "departement": "pediatrie",
+   "existante": true
+  },
+  {
+   "code": "db-114",
+   "titre": "ESMO — recommandations de pratique clinique",
+   "organisation": "European Society for Medical Oncology",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.esmo.org/guidelines",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-115",
+   "titre": "NCCN — recommandations de pratique clinique",
+   "organisation": "National Comprehensive Cancer Network",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.nccn.org/guidelines",
+   "domaine": null,
+   "departement": null,
+   "existante": true
+  },
+  {
+   "code": "db-120",
+   "titre": "WSES — recommandations de pratique clinique",
+   "organisation": "World Society of Emergency Surgery",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.wses.org.uk",
+   "domaine": null,
+   "departement": "chirurgie",
+   "existante": true
+  },
+  {
+   "code": "db-126",
+   "titre": "AAOS — recommandations de pratique clinique",
+   "organisation": "American Academy of Orthopaedic Surgeons",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.aaos.org",
+   "domaine": "Traumatologie",
+   "departement": "chirurgie",
+   "existante": true
+  },
+  {
+   "code": "db-128",
+   "titre": "AANS — recommandations de pratique clinique",
+   "organisation": "American Association of Neurological Surgeons",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.aans.org",
+   "domaine": "Neurochirurgie",
+   "departement": "chirurgie",
+   "existante": true
+  },
+  {
+   "code": "db-131",
+   "titre": "SCCM — recommandations de pratique clinique",
+   "organisation": "Society of Critical Care Medicine",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.sccm.org",
+   "domaine": "Anesthésie-réanimation",
+   "departement": "chirurgie",
+   "existante": true
+  },
+  {
+   "code": "db-134",
+   "titre": "EAN — recommandations de pratique clinique",
+   "organisation": "European Academy of Neurology",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://www.ean.org",
+   "domaine": null,
+   "departement": "neuropsychiatrie",
+   "existante": true
+  },
+  {
+   "code": "db-135",
+   "titre": "ESO — recommandations de pratique clinique",
+   "organisation": "European Stroke Organisation",
+   "niveau": 2,
+   "type": "recommandation",
+   "annee": null,
+   "url": "https://eso-stroke.org",
+   "domaine": "AVC",
+   "departement": "neuropsychiatrie",
+   "existante": true
+  }
+ ],
+ "fiches": {
+  "angor-stable": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-angor",
+   "msf-guide-clinique"
+  ],
+  "cardiomyopathie-dilatee": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "cardiomyopathie-du-peripartum": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "embolie-pulmonaire": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-tev",
+   "msf-guide-clinique"
+  ],
+  "endocardite-infectieuse": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "fibrillation-atriale": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-fa",
+   "msf-guide-clinique"
+  ],
+  "hypertension-arterielle": [
+   "rdc-hgr-t1-2016",
+   "oms-hta-2021",
+   "oms-imai-adulte-2011",
+   "nice-hta",
+   "db-28",
+   "msf-guide-clinique"
+  ],
+  "insuffisance-cardiaque": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-ic",
+   "db-30",
+   "msf-guide-clinique"
+  ],
+  "pericardite-aigue-et-tamponnade": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "rhumatisme-articulaire-aigu-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-raa-2024",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "syndrome-coronarien-aigu-st-plus": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-sca",
+   "msf-guide-clinique"
+  ],
+  "syndrome-coronarien-aigu-sans-st": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-sca",
+   "msf-guide-clinique"
+  ],
+  "thrombose-veineuse-profonde": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-tev",
+   "msf-guide-clinique"
+  ],
+  "urgences-hypertensives": [
+   "rdc-hgr-t1-2016",
+   "oms-hta-2021",
+   "oms-imai-adulte-2011",
+   "nice-hta",
+   "db-28",
+   "msf-guide-clinique"
+  ],
+  "valvulopathies-rhumatismales": [
+   "rdc-hgr-t1-2016",
+   "oms-raa-2024",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "acne": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-acne",
+   "msf-guide-clinique"
+  ],
+  "albinisme-protection-cutanee": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "carcinomes-cutanes": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "cheloides": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "complications-depigmentation-volontaire": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "dermatite-atopique-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-eczema-enfant",
+   "msf-guide-clinique"
+  ],
+  "dermatophyties-et-pityriasis-versicolor": [
+   "rdc-hgr-t1-2016",
+   "oms-kaposi-peau-vih-2014",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "dermatoses-associees-au-vih": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-kaposi-peau-vih-2014",
+   "oms-imai-adulte-2011",
+   "cdc-io-vih",
+   "msf-guide-clinique"
+  ],
+  "erysipele-et-cellulite": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-cellulite",
+   "msf-guide-clinique"
+  ],
+  "gale": [
+   "rdc-hgr-t1-2016",
+   "oms-kaposi-peau-vih-2014",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "herpes-cutaneo-muqueux": [
+   "rdc-hgr-t1-2016",
+   "oms-kaposi-peau-vih-2014",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "psoriasis": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-psoriasis",
+   "msf-guide-clinique"
+  ],
+  "pyodermites": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-impetigo",
+   "msf-guide-clinique"
+  ],
+  "toxidermies-graves": [
+   "rdc-hgr-t1-2016",
+   "oms-kaposi-peau-vih-2014",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "tungose": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "urticaire-et-angio-oedeme": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "zona": [
+   "rdc-hgr-t1-2016",
+   "oms-kaposi-peau-vih-2014",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "acidocetose-diabetique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-38",
+   "msf-guide-clinique"
+  ],
+  "diabete-type-1-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-dt1",
+   "db-37",
+   "msf-guide-clinique"
+  ],
+  "diabete-type-2": [
+   "rdc-hgr-t1-2016",
+   "oms-diabete-2018",
+   "oms-imai-adulte-2011",
+   "nice-dt2",
+   "db-37",
+   "msf-guide-clinique"
+  ],
+  "dyskaliemies": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "dyslipidemies": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-lipides",
+   "msf-guide-clinique"
+  ],
+  "etat-hyperosmolaire-hyperglycemique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-38",
+   "msf-guide-clinique"
+  ],
+  "goitre-et-carence-iodee": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-thyroide",
+   "msf-guide-clinique"
+  ],
+  "hyperthyroidie-basedow": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-thyroide",
+   "msf-guide-clinique"
+  ],
+  "hypoglycemie-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-38",
+   "msf-guide-clinique"
+  ],
+  "hyponatremie": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "hypothyroidie-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-thyroide",
+   "msf-guide-clinique"
+  ],
+  "insuffisance-surrenalienne-aigue": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "nephropathie-diabetique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-mrc",
+   "db-37",
+   "msf-guide-clinique"
+  ],
+  "obesite-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-obesite",
+   "msf-guide-clinique"
+  ],
+  "pied-diabetique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-pied-diabetique",
+   "msf-guide-clinique"
+  ],
+  "abces-amibien-du-foie": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "amibiase-intestinale": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "ascite-et-decompensation-cirrhose": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-cirrhose",
+   "msf-guide-clinique"
+  ],
+  "cancer-colorectal": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "cancer-de-l-estomac": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "carcinome-hepatocellulaire": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "cirrhose-hepatique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-cirrhose",
+   "msf-guide-clinique"
+  ],
+  "dyspepsie-et-gastrite": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-dyspepsie",
+   "msf-guide-clinique"
+  ],
+  "encephalopathie-hepatique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-cirrhose",
+   "msf-guide-clinique"
+  ],
+  "hemorragie-digestive-basse": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "hemorragie-digestive-haute": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-hd-haute",
+   "msf-guide-clinique"
+  ],
+  "hepatite-b-chronique": [
+   "rdc-hgr-t1-2016",
+   "db-10",
+   "oms-imai-adulte-2011",
+   "nice-hepb",
+   "msf-guide-clinique"
+  ],
+  "hepatite-c-chronique": [
+   "rdc-hgr-t1-2016",
+   "oms-hepc-2018",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "hepatites-virales-aigues-a-et-e": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "infection-helicobacter-pylori": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-dyspepsie",
+   "msf-guide-clinique"
+  ],
+  "pancreatite-aigue": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-pancreatite",
+   "msf-guide-clinique"
+  ],
+  "reflux-gastro-oesophagien": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "schistosomiase-hepatosplenique": [
+   "rdc-hgr-t1-2016",
+   "oms-schisto-2022",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "ulcere-gastroduodenal": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-dyspepsie",
+   "msf-guide-clinique"
+  ],
+  "anemie-ferriprive": [
+   "rdc-hgr-t1-2016",
+   "oms-anemie-fer-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "anemie-megaloblastique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "crise-vaso-occlusive-drepanocytaire-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "deficit-en-g6pd": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "drepanocytose": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "hemophilie": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "wfh-hemophilie-2020",
+   "msf-guide-clinique"
+  ],
+  "leucemie-myeloide-chronique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "leucemies-aigues-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "lymphomes-non-hodgkiniens-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "myelome-multiple": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "neutropenie-febrile": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "purpura-thrombopenique-immunologique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "syndrome-thoracique-aigu-drepanocytaire": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "transfusion-sanguine-et-reactions-transfusionnelles": [
+   "rdc-hgr-t1-2016",
+   "oms-transfusion-2001",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "accidents-exposition-au-sang": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "candidose-oropharyngee-et-oesophagienne": [
+   "rdc-hgr-t1-2016",
+   "oms-kaposi-peau-vih-2014",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "cholera": [
+   "rdc-hgr-t1-2016",
+   "rdc-plan-cholera-2023",
+   "db-13",
+   "oms-imai-adulte-2011",
+   "msf-cholera",
+   "msf-guide-clinique"
+  ],
+  "coinfection-tuberculose-vih": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnlt-2021",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "db-6",
+   "oms-imai-adulte-2011",
+   "cdc-io-vih",
+   "msf-tuberculose",
+   "msf-guide-clinique"
+  ],
+  "covid-19": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "fievre-jaune": [
+   "rdc-hgr-t1-2016",
+   "oms-arbovirus-2025",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "fievre-typhoide": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "filariose-lymphatique": [
+   "rdc-hgr-t1-2016",
+   "oms-filariose-2017",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "geohelminthiases": [
+   "rdc-hgr-t1-2016",
+   "oms-geohelminthes-2017",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "grippe": [
+   "rdc-hgr-t1-2016",
+   "oms-grippe-2024",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "infection-vih": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-imai-adulte-2011",
+   "cdc-io-vih",
+   "msf-guide-clinique"
+  ],
+  "infections-sexuellement-transmissibles": [
+   "rdc-hgr-t1-2016",
+   "oms-ist-2021",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "lepre": [
+   "rdc-hgr-t1-2016",
+   "oms-lepre-2018",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "leptospirose": [
+   "rdc-hgr-t1-2016",
+   "oms-leptospirose-2003",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "loase": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "maladie-a-virus-ebola": [
+   "rdc-hgr-t1-2016",
+   "oms-ebola-tt-2022",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "meningite-a-cryptocoque": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnls-2019",
+   "oms-cryptocoque-2022",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "meningite-bacterienne": [
+   "rdc-hgr-t1-2016",
+   "db-12",
+   "oms-imai-adulte-2011",
+   "nice-meningite",
+   "msf-guide-clinique"
+  ],
+  "mpox": [
+   "rdc-hgr-t1-2016",
+   "oms-mpox-2025",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "onchocercose": [
+   "rdc-hgr-t1-2016",
+   "oms-oncho-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "paludisme-grave": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnlp-2012",
+   "db-1",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "paludisme-simple": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnlp-2012",
+   "db-1",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "peste": [
+   "rdc-hgr-t1-2016",
+   "oms-peste-2021",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "pian": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "pneumocystose": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-imai-adulte-2011",
+   "cdc-io-vih",
+   "msf-guide-clinique"
+  ],
+  "rage": [
+   "rdc-hgr-t1-2016",
+   "oms-rage-2018",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "sarcome-de-kaposi": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-kaposi-peau-vih-2014",
+   "oms-imai-adulte-2011",
+   "cdc-io-vih",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "schistosomiase-urogenitale": [
+   "rdc-hgr-t1-2016",
+   "oms-schisto-2022",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "sepsis-et-choc-septique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-43",
+   "nice-sepsis",
+   "msf-guide-clinique"
+  ],
+  "shigellose": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "syphilis": [
+   "rdc-hgr-t1-2016",
+   "oms-ist-2021",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "tetanos": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "toxoplasmose-cerebrale": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-imai-adulte-2011",
+   "cdc-io-vih",
+   "msf-guide-clinique"
+  ],
+  "trypanosomiase-humaine-africaine": [
+   "rdc-hgr-t1-2016",
+   "oms-tha-2019",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "tuberculose-extrapulmonaire": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-imai-adulte-2011",
+   "msf-tuberculose",
+   "msf-guide-clinique"
+  ],
+  "tuberculose-pharmacoresistante": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-imai-adulte-2011",
+   "msf-tuberculose",
+   "msf-guide-clinique"
+  ],
+  "ulcere-de-buruli": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "adenopathies-superficielles-demarche": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "choc-anaphylactique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-anaphylaxie",
+   "msf-guide-clinique"
+  ],
+  "coup-de-chaleur": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "envenimation-morsure-de-serpent": [
+   "rdc-hgr-t1-2016",
+   "oms-serpents-afrique-2010",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "intoxication-aux-organophosphores": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "intoxications-aigues-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "oedemes-generalises-demarche": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "piqures-scorpions-hymenopteres": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "syncope-et-malaise": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-syncope",
+   "msf-guide-clinique"
+  ],
+  "glomerulonephrites-aigues-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "infections-urinaires-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-pyelonephrite",
+   "msf-guide-clinique"
+  ],
+  "insuffisance-renale-aigue": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-ira",
+   "db-35",
+   "msf-guide-clinique"
+  ],
+  "maladie-renale-chronique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-mrc",
+   "db-36",
+   "msf-guide-clinique"
+  ],
+  "nephropathie-associee-au-vih": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-imai-adulte-2011",
+   "cdc-io-vih",
+   "msf-guide-clinique"
+  ],
+  "nephropathie-drepanocytaire": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "nephropathie-hypertensive": [
+   "rdc-hgr-t1-2016",
+   "oms-hta-2021",
+   "oms-imai-adulte-2011",
+   "nice-hta",
+   "db-28",
+   "msf-guide-clinique"
+  ],
+  "syndrome-nephrotique-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "urgences-hemodialyse": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "abces-pulmonaire": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "asthme": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-asthme",
+   "db-32",
+   "msf-guide-clinique"
+  ],
+  "asthme-aigu-grave": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-asthme",
+   "db-32",
+   "msf-guide-clinique"
+  ],
+  "bpco": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-bpco",
+   "msf-guide-clinique"
+  ],
+  "cancer-bronchopulmonaire": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "dilatation-des-bronches": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "hemoptysie": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "insuffisance-respiratoire-aigue": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "pleuresie": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-imai-adulte-2011",
+   "bts-plevre-2023",
+   "msf-tuberculose",
+   "msf-guide-clinique"
+  ],
+  "pneumonie-communautaire-adulte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-pneumonie",
+   "msf-guide-clinique"
+  ],
+  "pneumothorax-spontane": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "bts-plevre-2023",
+   "msf-guide-clinique"
+  ],
+  "silicose-pneumoconioses": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "tuberculose-pulmonaire": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-imai-adulte-2011",
+   "msf-tuberculose",
+   "msf-guide-clinique"
+  ],
+  "arthrose": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-arthrose",
+   "msf-guide-clinique"
+  ],
+  "goutte": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-goutte",
+   "msf-guide-clinique"
+  ],
+  "lombalgie-et-sciatique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-lombalgie",
+   "msf-guide-clinique"
+  ],
+  "lupus-erythemateux-systemique": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "osteoporose": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "polyarthrite-rhumatoide": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-pr",
+   "msf-guide-clinique"
+  ],
+  "polymyosite-et-dermatomyosite": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "spondyloarthrites": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "nice-spondylo",
+   "msf-guide-clinique"
+  ],
+  "mal-de-pott": [
+   "rdc-hgr-t1-2016",
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-imai-adulte-2011",
+   "msf-tuberculose",
+   "msf-guide-clinique"
+  ],
+  "tendinopathies-epaule-douloureuse": [
+   "rdc-hgr-t1-2016",
+   "oms-imai-adulte-2011",
+   "msf-guide-clinique"
+  ],
+  "cardiopathies-congenitales": [
+   "oms-pocket-book-2013",
+   "db-99",
+   "db-63",
+   "msf-guide-clinique"
+  ],
+  "endocardite-infectieuse-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "hypertension-arterielle-enfant": [
+   "oms-pocket-book-2013",
+   "db-99",
+   "db-63",
+   "msf-guide-clinique"
+  ],
+  "insuffisance-cardiaque-enfant": [
+   "oms-pocket-book-2013",
+   "db-99",
+   "db-63",
+   "msf-guide-clinique"
+  ],
+  "maladie-de-kawasaki": [
+   "oms-pocket-book-2013",
+   "db-99",
+   "db-63",
+   "msf-guide-clinique"
+  ],
+  "myocardite-enfant": [
+   "oms-pocket-book-2013",
+   "db-99",
+   "db-63",
+   "msf-guide-clinique"
+  ],
+  "pericardite-enfant": [
+   "oms-pocket-book-2013",
+   "db-99",
+   "db-63",
+   "msf-guide-clinique"
+  ],
+  "rhumatisme-articulaire-aigu-enfant": [
+   "oms-raa-2024",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "tetralogie-de-fallot": [
+   "oms-pocket-book-2013",
+   "db-99",
+   "db-63",
+   "msf-guide-clinique"
+  ],
+  "troubles-du-rythme-enfant": [
+   "oms-pocket-book-2013",
+   "db-99",
+   "db-63",
+   "msf-guide-clinique"
+  ],
+  "dermatite-atopique-enfant": [
+   "oms-pocket-book-2013",
+   "nice-eczema-enfant",
+   "msf-guide-clinique"
+  ],
+  "dermite-du-siege": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "gale-enfant": [
+   "oms-kaposi-peau-vih-2014",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "hemangiomes-infantiles": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "impetigo": [
+   "oms-pocket-book-2013",
+   "nice-impetigo",
+   "msf-guide-clinique"
+  ],
+  "molluscum-contagiosum": [
+   "oms-kaposi-peau-vih-2014",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "teigne-cuir-chevelu": [
+   "oms-kaposi-peau-vih-2014",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "verrues": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "acidocetose-diabetique-enfant": [
+   "oms-pocket-book-2013",
+   "ispad-2022",
+   "nice-dt-enfant",
+   "msf-guide-clinique"
+  ],
+  "anomalies-differenciation-sexuelle": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "diabete-type-1-enfant": [
+   "oms-pocket-book-2013",
+   "ispad-2022",
+   "nice-dt-enfant",
+   "msf-guide-clinique"
+  ],
+  "hyperplasie-congenitale-des-surrenales": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "hypothyroidie-congenitale": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "petite-taille-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "puberte-precoce": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "retard-pubertaire": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "ascaridiose-compliquee-enfant": [
+   "rdc-smne-2012",
+   "oms-geohelminthes-2017",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "cholestase-nourrisson-atresie-voies-biliaires": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "constipation-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "nice-constipation-enfant",
+   "msf-guide-clinique"
+  ],
+  "diarrhee-aigue-enfant": [
+   "rdc-smne-2012",
+   "db-17",
+   "oms-pocket-book-2013",
+   "nice-diarrhee-enfant",
+   "msf-guide-clinique"
+  ],
+  "diarrhee-persistante-enfant": [
+   "rdc-smne-2012",
+   "db-17",
+   "oms-pocket-book-2013",
+   "nice-diarrhee-enfant",
+   "msf-guide-clinique"
+  ],
+  "douleurs-abdominales-recurrentes-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "dysenterie-enfant": [
+   "rdc-smne-2012",
+   "db-17",
+   "oms-pocket-book-2013",
+   "nice-diarrhee-enfant",
+   "msf-guide-clinique"
+  ],
+  "hemorragie-digestive-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "hepatites-virales-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "hepatosplenomegalie-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "maladie-coeliaque": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "reflux-gastro-oesophagien-nourrisson": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "vomissements-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "albinisme-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "erreurs-innees-du-metabolisme": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "syndrome-de-turner": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "trisomie-21": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "anemies-hemolytiques-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "avc-enfant-drepanocytaire": [
+   "oms-pocket-book-2013",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "crise-vaso-occlusive-enfant-drepanocytaire": [
+   "oms-pocket-book-2013",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "deficit-en-g6pd-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "hemophilie-enfant": [
+   "oms-pocket-book-2013",
+   "wfh-hemophilie-2020",
+   "msf-guide-clinique"
+  ],
+  "infections-enfant-drepanocytaire": [
+   "oms-pocket-book-2013",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "leucemie-aigue-lymphoblastique-enfant": [
+   "oms-pocket-book-2013",
+   "podc-oncopediatrie",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "lymphome-de-burkitt": [
+   "oms-pocket-book-2013",
+   "podc-oncopediatrie",
+   "db-115",
+   "db-114",
+   "msf-guide-clinique"
+  ],
+  "nephroblastome": [
+   "oms-pocket-book-2013",
+   "podc-oncopediatrie",
+   "msf-guide-clinique"
+  ],
+  "neuroblastome": [
+   "oms-pocket-book-2013",
+   "podc-oncopediatrie",
+   "msf-guide-clinique"
+  ],
+  "purpura-thrombopenique-immunologique-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "retinoblastome": [
+   "oms-pocket-book-2013",
+   "podc-oncopediatrie",
+   "msf-guide-clinique"
+  ],
+  "sequestration-splenique-aigue": [
+   "oms-pocket-book-2013",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "thalassemies": [
+   "oms-pocket-book-2013",
+   "tif-thalassemie-2021",
+   "msf-guide-clinique"
+  ],
+  "transfusion-chez-l-enfant": [
+   "oms-transfusion-2001",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "arthrite-juvenile-idiopathique": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "deficits-immunitaires-primitifs": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "lupus-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "purpura-rhumatoide": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "cholera-enfant": [
+   "rdc-smne-2012",
+   "rdc-plan-cholera-2023",
+   "db-13",
+   "db-17",
+   "oms-pocket-book-2013",
+   "nice-diarrhee-enfant",
+   "msf-cholera",
+   "msf-guide-clinique"
+  ],
+  "coqueluche": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "diphterie": [
+   "rdc-smne-2012",
+   "oms-diphterie-2024",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "encephalites-virales-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "fievre-typhoide-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "infection-vih-enfant": [
+   "rdc-smne-2012",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "cmv-congenital": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "meningite-bacterienne-enfant": [
+   "rdc-smne-2012",
+   "db-12",
+   "oms-pocket-book-2013",
+   "nice-meningite",
+   "msf-guide-clinique"
+  ],
+  "mpox-enfant": [
+   "rdc-smne-2012",
+   "oms-mpox-2025",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "oreillons": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "paludisme-grave-enfant": [
+   "rdc-smne-2012",
+   "rdc-pnlp-2012",
+   "db-1",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "paludisme-simple-enfant": [
+   "rdc-smne-2012",
+   "rdc-pnlp-2012",
+   "db-1",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "pneumonie-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-oxygene-enfant-2016",
+   "db-16",
+   "msf-guide-clinique"
+  ],
+  "poliomyelite-paralysies-flasques-aigues": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "rougeole": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-rougeole",
+   "msf-guide-clinique"
+  ],
+  "rubeole": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "scarlatine": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "schistosomiase-enfant": [
+   "rdc-smne-2012",
+   "oms-schisto-2022",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "sepsis-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "db-43",
+   "nice-sepsis",
+   "msf-guide-clinique"
+  ],
+  "trypanosomiase-enfant": [
+   "rdc-smne-2012",
+   "oms-tha-2019",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "tuberculose-enfant": [
+   "rdc-smne-2012",
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-tb-enfant-2022",
+   "oms-pocket-book-2013",
+   "msf-tuberculose",
+   "msf-guide-clinique"
+  ],
+  "varicelle": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "alimentation-nourrisson-diversification": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "carences-micronutriments-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "kwashiorkor": [
+   "rdc-smne-2012",
+   "rdc-pronanut-2013",
+   "db-18",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "malnutrition-aigue-moderee": [
+   "rdc-smne-2012",
+   "rdc-pronanut-2013",
+   "db-18",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "malnutrition-aigue-severe": [
+   "rdc-smne-2012",
+   "rdc-pronanut-2013",
+   "db-18",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "malnutrition-chronique": [
+   "rdc-smne-2012",
+   "rdc-pronanut-2013",
+   "db-18",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "malnutrition-enfant-vih": [
+   "rdc-smne-2012",
+   "rdc-pronanut-2013",
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "db-18",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "malnutrition-nourrisson-moins-6-mois": [
+   "rdc-smne-2012",
+   "rdc-pronanut-2013",
+   "db-18",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "marasme": [
+   "rdc-smne-2012",
+   "rdc-pronanut-2013",
+   "db-18",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "obesite-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "syndrome-de-renutrition-inappropriee": [
+   "rdc-smne-2012",
+   "rdc-pronanut-2013",
+   "db-18",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "asphyxie-perinatale": [
+   "oms-reanimation-nn-2012",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "conjonctivite-neonatale": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "convulsions-neonatales": [
+   "oms-mhgap-ig-2016",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-epilepsie",
+   "msf-obstetrique"
+  ],
+  "detresse-respiratoire-nouveau-ne": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-respi-nn",
+   "msf-obstetrique"
+  ],
+  "difficultes-alimentation-nouveau-ne": [
+   "oms-postnatal-2022",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "enterocolite-ulcero-necrosante": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "faible-poids-naissance-methode-kangourou": [
+   "oms-premature-2022",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "hypocalcemie-neonatale": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "hypoglycemie-neonatale": [
+   "oms-postnatal-2022",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "hypothermie-neonatale": [
+   "oms-postnatal-2022",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "ictere-neonatal": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-ictere-nn",
+   "msf-obstetrique"
+  ],
+  "sepsis-neonatal": [
+   "db-20",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-infection-nn",
+   "msf-obstetrique"
+  ],
+  "inhalation-meconiale": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-respi-nn",
+   "msf-obstetrique"
+  ],
+  "maladie-des-membranes-hyalines": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-respi-nn",
+   "msf-obstetrique"
+  ],
+  "maladie-hemorragique-du-nouveau-ne": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "malformations-congenitales-majeures": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "meningite-neonatale": [
+   "db-20",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-infection-nn",
+   "msf-obstetrique"
+  ],
+  "nouveau-ne-mere-diabetique": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-diabete-grossesse",
+   "msf-obstetrique"
+  ],
+  "nouveau-ne-mere-hepatite-b": [
+   "db-10",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-hepb",
+   "msf-obstetrique"
+  ],
+  "nouveau-ne-expose-au-vih": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "omphalite": [
+   "db-20",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-infection-nn",
+   "msf-obstetrique"
+  ],
+  "paludisme-congenital": [
+   "rdc-pnlp-2012",
+   "db-1",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "polyglobulie-neonatale": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "prematurite": [
+   "oms-premature-2022",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "syphilis-congenitale": [
+   "oms-ist-2021",
+   "db-20",
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "nice-infection-nn",
+   "msf-obstetrique"
+  ],
+  "tetanos-neonatal": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "traumatismes-obstetricaux-nouveau-ne": [
+   "oms-pb-nouveau-ne-2003",
+   "oms-pocket-book-2013",
+   "msf-obstetrique"
+  ],
+  "glomerulonephrite-aigue-post-streptococcique": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "infection-urinaire-enfant": [
+   "oms-pocket-book-2013",
+   "nice-iu-enfant",
+   "msf-guide-clinique"
+  ],
+  "insuffisance-renale-aigue-enfant": [
+   "oms-pocket-book-2013",
+   "nice-ira",
+   "db-35",
+   "msf-guide-clinique"
+  ],
+  "maladie-renale-chronique-enfant": [
+   "oms-pocket-book-2013",
+   "nice-mrc",
+   "db-36",
+   "msf-guide-clinique"
+  ],
+  "nephropathie-drepanocytaire-enfant": [
+   "oms-pocket-book-2013",
+   "db-40",
+   "db-39",
+   "msf-guide-clinique"
+  ],
+  "syndrome-hemolytique-et-uremique": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "syndrome-nephrotique-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "uropathies-malformatives": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "cephalees-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "convulsions-febriles": [
+   "oms-mhgap-ig-2016",
+   "oms-pocket-book-2013",
+   "nice-epilepsie",
+   "msf-guide-clinique"
+  ],
+  "deficience-intellectuelle": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "dystrophie-musculaire-de-duchenne": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "epilepsie-enfant": [
+   "oms-mhgap-ig-2016",
+   "oms-pocket-book-2013",
+   "nice-epilepsie",
+   "msf-guide-clinique"
+  ],
+  "hydrocephalie-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "konzo": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "meningo-encephalite-enfant": [
+   "db-12",
+   "oms-pocket-book-2013",
+   "nice-meningite",
+   "msf-guide-clinique"
+  ],
+  "paralysie-cerebrale": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "spina-bifida-defauts-tube-neural": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "guillain-barre-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "syndrome-de-west": [
+   "oms-mhgap-ig-2016",
+   "oms-pocket-book-2013",
+   "nice-epilepsie",
+   "msf-guide-clinique"
+  ],
+  "cataracte-congenitale": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "conjonctivite-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "hypertrophie-adenoidienne": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "mastoidite": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "otite-moyenne-chronique": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "sinusite-enfant": [
+   "oms-pocket-book-2013",
+   "nice-sinusite",
+   "msf-guide-clinique"
+  ],
+  "strabisme": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "trachome-enfant": [
+   "who-trachome",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "adenopathies-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "allergie-proteines-lait-vache": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "anaphylaxie-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "nice-anaphylaxie",
+   "msf-guide-clinique"
+  ],
+  "anemie-enfant": [
+   "rdc-smne-2012",
+   "oms-anemie-fer-2016",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "angine-pharyngite-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "nice-angine",
+   "msf-guide-clinique"
+  ],
+  "boiterie-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "carence-en-vitamine-a": [
+   "rdc-smne-2012",
+   "oms-vitamine-a-2011",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "douleur-abdominale-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "enuresie": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "fievre-enfant-pcime": [
+   "rdc-smne-2012",
+   "db-16",
+   "oms-pocket-book-2013",
+   "nice-fievre-enfant",
+   "msf-guide-clinique"
+  ],
+  "fievre-prolongee-enfant": [
+   "rdc-smne-2012",
+   "db-16",
+   "oms-pocket-book-2013",
+   "nice-fievre-enfant",
+   "msf-guide-clinique"
+  ],
+  "maltraitance-enfant": [
+   "rdc-smne-2012",
+   "oms-maltraitance-2022",
+   "oms-pocket-book-2013",
+   "nice-violences",
+   "msf-guide-clinique"
+  ],
+  "manifestations-postvaccinales-indesirables": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "otite-moyenne-aigue": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "nice-otite",
+   "msf-guide-clinique"
+  ],
+  "parasitoses-intestinales-enfant": [
+   "rdc-smne-2012",
+   "oms-geohelminthes-2017",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "pleurs-et-coliques-nourrisson": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "rachitisme-carentiel": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "rachitisme-consensus-2016",
+   "msf-guide-clinique"
+  ],
+  "retard-developpement-psychomoteur": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "retard-staturo-ponderal": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "toux-difficultes-respiratoires-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-oxygene-enfant-2016",
+   "db-16",
+   "msf-guide-clinique"
+  ],
+  "asthme-enfant": [
+   "oms-pocket-book-2013",
+   "nice-asthme",
+   "db-32",
+   "msf-guide-clinique"
+  ],
+  "bronchiolite-aigue-nourrisson": [
+   "oms-pocket-book-2013",
+   "nice-bronchiolite",
+   "msf-guide-clinique"
+  ],
+  "corps-etranger-voies-aeriennes": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "epiglottite": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "laryngite-aigue-croup": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "mucoviscidose": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "pleuresie-purulente-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "pneumonies-recidivantes-enfant": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "pneumopathie-interstitielle-lymphoide": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "staphylococcie-pleuropulmonaire": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "acne-adolescent": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "dysmenorrhee-adolescente": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "grossesse-adolescente": [
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "ist-adolescent": [
+   "oms-ist-2021",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "usage-substances-adolescent": [
+   "oms-mhgap-ig-2016",
+   "oms-pocket-book-2013",
+   "msf-guide-clinique"
+  ],
+  "arret-cardiorespiratoire-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "brulures-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "choc-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "coma-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "deshydratation-severe-enfant": [
+   "rdc-smne-2012",
+   "db-17",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "nice-diarrhee-enfant",
+   "msf-guide-clinique"
+  ],
+  "detresse-respiratoire-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-oxygene-enfant-2016",
+   "db-16",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "etat-de-mal-convulsif-enfant": [
+   "rdc-smne-2012",
+   "oms-mhgap-ig-2016",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "nice-epilepsie",
+   "msf-guide-clinique"
+  ],
+  "hypoglycemie-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "intoxications-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "morsures-de-serpent-enfant": [
+   "rdc-smne-2012",
+   "oms-serpents-afrique-2010",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "noyade": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "msf-guide-clinique"
+  ],
+  "polytraumatisme-enfant": [
+   "rdc-smne-2012",
+   "oms-traumatologie-2004",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "nice-trauma-majeur",
+   "msf-guide-clinique"
+  ],
+  "traumatisme-cranien-enfant": [
+   "rdc-smne-2012",
+   "oms-pocket-book-2013",
+   "oms-etat-2016",
+   "nice-tc",
+   "db-52",
+   "msf-guide-clinique"
+  ],
+  "assistance-medicale-procreation": [
+   "nice-infertilite",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "infertilite-du-couple": [
+   "nice-infertilite",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "infertilite-masculine": [
+   "nice-infertilite",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "infertilite-tubaire": [
+   "nice-infertilite",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "insuffisance-ovarienne-prematuree": [
+   "nice-infertilite",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "allo-immunisation-rhesus": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "anemie-de-la-grossesse": [
+   "oms-cpn-2016",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-cpn",
+   "msf-obstetrique"
+  ],
+  "appendicite-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-49",
+   "msf-obstetrique"
+  ],
+  "asthme-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-asthme",
+   "db-32",
+   "msf-obstetrique"
+  ],
+  "cardiopathies-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "consultation-prenatale": [
+   "oms-cpn-2016",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-cpn",
+   "msf-obstetrique"
+  ],
+  "diabete-gestationnel": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-diabete-grossesse",
+   "msf-obstetrique"
+  ],
+  "douleurs-abdominales-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "drepanocytose-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-40",
+   "db-39",
+   "msf-obstetrique"
+  ],
+  "dysthyroidies-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-thyroide",
+   "msf-obstetrique"
+  ],
+  "epilepsie-et-grossesse": [
+   "oms-mhgap-ig-2016",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-epilepsie",
+   "msf-obstetrique"
+  ],
+  "fievre-pendant-la-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "grossesse-apres-40-ans": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "grossesse-adolescente-suivi-obstetrical": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "grossesse-gemellaire": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-gemellaire",
+   "msf-obstetrique"
+  ],
+  "grossesse-prolongee": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-declenchement",
+   "msf-obstetrique"
+  ],
+  "hepatite-b-et-grossesse": [
+   "db-10",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-hepb",
+   "msf-obstetrique"
+  ],
+  "hepatite-e-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "hyperemesis-gravidarum": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "infections-torch-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "infections-urinaires-de-la-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-pyelonephrite",
+   "msf-obstetrique"
+  ],
+  "lupus-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "maladie-thromboembolique-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-tev",
+   "msf-obstetrique"
+  ],
+  "medicaments-et-grossesse": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "nutrition-supplementation-grossesse": [
+   "oms-cpn-2016",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-cpn",
+   "msf-obstetrique"
+  ],
+  "paludisme-et-grossesse": [
+   "rdc-pnlp-2012",
+   "db-1",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "saignements-premier-trimestre": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-geu",
+   "db-48",
+   "msf-obstetrique"
+  ],
+  "syphilis-et-grossesse": [
+   "oms-ist-2021",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "tuberculose-et-grossesse": [
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-tuberculose",
+   "msf-obstetrique"
+  ],
+  "vaccination-pendant-la-grossesse": [
+   "oms-cpn-2016",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-cpn",
+   "msf-obstetrique"
+  ],
+  "vih-et-grossesse": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "cdc-io-vih",
+   "msf-obstetrique"
+  ],
+  "abces-tubo-ovarien": [
+   "oms-ist-2021",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "adenomyose": [
+   "nice-endometriose",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "amenorrhees-troubles-du-cycle": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "cervicites": [
+   "oms-ist-2021",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "condylomes-genitaux": [
+   "oms-ist-2021",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "douleurs-pelviennes-chroniques": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "dysmenorrhee": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "endometriose": [
+   "nice-endometriose",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "fibromes-uterins": [
+   "nice-menorragies",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "grossesse-extra-uterine": [
+   "nice-geu",
+   "db-48",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "hydrosalpinx": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "infection-genitale-haute": [
+   "oms-ist-2021",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "infections-genitales-basses": [
+   "oms-ist-2021",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "kyste-dermoide-ovaire": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "kyste-abces-bartholin": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "kystes-de-l-ovaire": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "lichen-sclereux-vulvaire": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "malformations-uterines": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "menometrorragies": [
+   "nice-menorragies",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "menopause": [
+   "nice-menopause",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "polypes-hyperplasie-endometre": [
+   "nice-menorragies",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "prolapsus-genital": [
+   "nice-incontinence",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "saignements-apres-menopause": [
+   "nice-menorragies",
+   "nice-menopause",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "syndrome-des-ovaires-polykystiques": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "synechies-uterines": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "torsion-d-annexe": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "ulcerations-genitales": [
+   "oms-ist-2021",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "violences-sexuelles": [
+   "oms-viol-2020",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "cancer-endometre": [
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "cancer-ovaire": [
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "cancer-vulve": [
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "cancer-du-col-de-l-uterus": [
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "cancer-du-sein": [
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "cancer-vagin": [
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "depistage-cancer-du-col": [
+   "oms-col-depistage-2021",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "lesions-precancereuses-col": [
+   "oms-col-depistage-2021",
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "sarcomes-uterins": [
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "tumeurs-trophoblastiques-gestationnelles": [
+   "db-115",
+   "db-114",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "anasarque-foeto-placentaire": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "diagnostic-prenatal": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "echographie-obstetricale-depistage-malformations": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "infections-foetales": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "surveillance-bien-etre-foetal": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "reanimation-nouveau-ne-salle-de-naissance": [
+   "oms-reanimation-nn-2012",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "soins-essentiels-nouveau-ne": [
+   "oms-postnatal-2022",
+   "oms-pb-nouveau-ne-2003",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "avortement-incomplet-soins-apres-avortement": [
+   "oms-avortement-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "avortement-septique": [
+   "oms-avortement-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "avortement-spontane": [
+   "oms-avortement-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "beance-cervico-isthmique": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "cholestase-gravidique": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "chorioamniotite": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "eclampsie": [
+   "oms-pe-e-2011",
+   "db-22",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-hta-grossesse",
+   "msf-obstetrique"
+  ],
+  "grossesse-abdominale": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "hellp-syndrome": [
+   "oms-pe-e-2011",
+   "db-22",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-hta-grossesse",
+   "msf-obstetrique"
+  ],
+  "hematome-retroplacentaire": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "hypertension-gravidique": [
+   "oms-pe-e-2011",
+   "db-22",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-hta-grossesse",
+   "msf-obstetrique"
+  ],
+  "macrosomie-foetale": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "menace-accouchement-premature": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-premature",
+   "msf-obstetrique"
+  ],
+  "mole-hydatiforme": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "mort-foetale-in-utero": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "oligoamnios-et-hydramnios": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "placenta-accreta": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "placenta-praevia": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "pre-eclampsie-severe": [
+   "oms-pe-e-2011",
+   "db-22",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-hta-grossesse",
+   "msf-obstetrique"
+  ],
+  "retard-croissance-intra-uterin": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "rupture-prematuree-membranes": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-premature",
+   "msf-obstetrique"
+  ],
+  "steatose-hepatique-aigue-gravidique": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "vasa-praevia": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "complications-diu-implant": [
+   "oms-cem-2015",
+   "oms-pf-manuel-2022"
+  ],
+  "contraception-choix-methode": [
+   "oms-cem-2015",
+   "oms-pf-manuel-2022"
+  ],
+  "contraception-d-urgence": [
+   "oms-cem-2015",
+   "oms-pf-manuel-2022"
+  ],
+  "contraception-femme-vih": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-cem-2015",
+   "oms-pf-manuel-2022",
+   "cdc-io-vih"
+  ],
+  "contraception-du-post-partum": [
+   "oms-postnatal-2022",
+   "oms-cem-2015",
+   "oms-pf-manuel-2022",
+   "nice-postnatal"
+  ],
+  "methodes-naturelles-planification": [
+   "oms-cem-2015",
+   "oms-pf-manuel-2022"
+  ],
+  "sterilisation-tubaire": [
+   "oms-cem-2015",
+   "oms-pf-manuel-2022"
+  ],
+  "anemie-du-post-partum": [
+   "oms-postnatal-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-postnatal",
+   "msf-obstetrique"
+  ],
+  "depression-du-post-partum": [
+   "oms-postnatal-2022",
+   "oms-mhgap-ig-2016",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-postnatal",
+   "nice-depression",
+   "msf-obstetrique"
+  ],
+  "difficultes-allaitement": [
+   "oms-postnatal-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-postnatal",
+   "msf-obstetrique"
+  ],
+  "hemorragie-secondaire-post-partum": [
+   "oms-hpp-2023",
+   "db-23",
+   "oms-postnatal-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-46",
+   "nice-postnatal",
+   "msf-obstetrique"
+  ],
+  "infection-plaie-cesarienne": [
+   "oms-isc-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-cesarienne",
+   "msf-obstetrique"
+  ],
+  "mastite-abces-du-sein": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "suivi-postnatal-mere": [
+   "oms-postnatal-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-postnatal",
+   "msf-obstetrique"
+  ],
+  "thrombose-veineuse-post-partum": [
+   "oms-postnatal-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-tev",
+   "nice-postnatal",
+   "msf-obstetrique"
+  ],
+  "abces-sein-hors-allaitement": [
+   "oms-postnatal-2022",
+   "nice-postnatal",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "ecoulement-mamelonnaire": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "mastodynies": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "tumeurs-benignes-sein": [
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "accouchement-gemellaire": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-gemellaire",
+   "msf-obstetrique"
+  ],
+  "accouchement-instrumental": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "accouchement-normal": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "analgesie-obstetricale": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "cesarienne": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-cesarienne",
+   "msf-obstetrique"
+  ],
+  "dechirures-perineales": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "declenchement-artificiel-du-travail": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-declenchement",
+   "msf-obstetrique"
+  ],
+  "delivrance-gestion-active": [
+   "oms-hpp-2023",
+   "db-23",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-46",
+   "msf-obstetrique"
+  ],
+  "dystocie-des-epaules": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "dystocie-disproportion-foeto-pelvienne": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "presentation-du-siege": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "presentations-anormales": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "procidence-du-cordon": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "retention-placentaire": [
+   "oms-hpp-2023",
+   "db-23",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-46",
+   "msf-obstetrique"
+  ],
+  "souffrance-foetale-aigue": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "travail-prolonge-partogramme": [
+   "oms-accouchement-2018",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-accouchement",
+   "msf-obstetrique"
+  ],
+  "uterus-cicatriciel": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-cesarienne",
+   "msf-obstetrique"
+  ],
+  "choc-hemorragique-obstetrical": [
+   "oms-hpp-2023",
+   "db-23",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-46",
+   "msf-obstetrique"
+  ],
+  "coagulopathie-obstetricale": [
+   "oms-hpp-2023",
+   "db-23",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-46",
+   "msf-obstetrique"
+  ],
+  "embolie-amniotique": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "hemorragie-post-partum": [
+   "oms-hpp-2023",
+   "db-23",
+   "oms-postnatal-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-46",
+   "nice-postnatal",
+   "msf-obstetrique"
+  ],
+  "hemorragies-troisieme-trimestre": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "inversion-uterine": [
+   "oms-hpp-2023",
+   "db-23",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "db-46",
+   "msf-obstetrique"
+  ],
+  "rupture-uterine": [
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "msf-obstetrique"
+  ],
+  "sepsis-maternel-endometrite": [
+   "oms-postnatal-2022",
+   "oms-mcpc-2017",
+   "oms-pcpnc-2015",
+   "nice-postnatal",
+   "msf-obstetrique"
+  ],
+  "fistules-obstetricales": [
+   "oms-fistule-2006",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "incontinence-urinaire-femme": [
+   "nice-incontinence",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "infections-urinaires-recidivantes-femme": [
+   "nice-pyelonephrite",
+   "rcog-greentop",
+   "msf-guide-clinique"
+  ],
+  "anesthesie-generale-et-locoregionale": [
+   "oms-chirurgie-district-2003",
+   "db-131"
+  ],
+  "antibioprophylaxie-chirurgicale": [
+   "oms-isc-2018",
+   "oms-chirurgie-district-2003",
+   "db-131"
+  ],
+  "douleur-postoperatoire": [
+   "oms-chirurgie-district-2003",
+   "db-131"
+  ],
+  "evaluation-preanesthesique": [
+   "oms-chirurgie-district-2003",
+   "db-131"
+  ],
+  "intubation-difficile": [
+   "oms-chirurgie-district-2003",
+   "db-131"
+  ],
+  "reanimation-du-choc": [
+   "oms-chirurgie-district-2003",
+   "db-131"
+  ],
+  "brulures-adulte": [
+   "oms-chirurgie-district-2003",
+   "oms-transfusion-2001"
+  ],
+  "brulures-chimiques-electriques": [
+   "oms-chirurgie-district-2003",
+   "oms-transfusion-2001"
+  ],
+  "escarres": [
+   "oms-chirurgie-district-2003",
+   "oms-transfusion-2001"
+  ],
+  "fentes-labio-palatines": [
+   "oms-chirurgie-district-2003",
+   "oms-transfusion-2001"
+  ],
+  "greffes-de-peau": [
+   "oms-chirurgie-district-2003",
+   "oms-transfusion-2001"
+  ],
+  "noma": [
+   "oms-chirurgie-district-2003",
+   "oms-transfusion-2001"
+  ],
+  "sequelles-brulures-retractions": [
+   "oms-chirurgie-district-2003",
+   "oms-transfusion-2001"
+  ],
+  "abces-marge-anale": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "angiocholite": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "appendicite-aigue": [
+   "oms-chirurgie-district-2003",
+   "db-49",
+   "db-120"
+  ],
+  "cancer-colorectal-chirurgie": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "db-120"
+  ],
+  "cholecystite-lithiase-biliaire": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "eventration": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "fissure-fistule-anales": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "hemorroides": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "hernie-etranglee": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "hernie-inguinale-adulte": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "hernie-ombilicale-ligne-blanche": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "occlusion-intestinale-aigue": [
+   "oms-chirurgie-district-2003",
+   "db-50",
+   "db-120"
+  ],
+  "occlusion-sur-bride": [
+   "oms-chirurgie-district-2003",
+   "db-50",
+   "db-120"
+  ],
+  "perforation-ulcere-gastroduodenal": [
+   "oms-chirurgie-district-2003",
+   "nice-dyspepsie",
+   "db-120"
+  ],
+  "perforation-typhique-ileon": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "stenose-pylore-adulte": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "volvulus-du-sigmoide": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "abces-phlegmons-parties-molles": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "fasciite-necrosante": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "gangrene-de-fournier": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "lipomes-kystes-sebaces": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "morsures-animales": [
+   "oms-rage-2018",
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "plaies-et-sutures": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "pyomyosite-tropicale": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "ulceres-chroniques-de-jambe": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "appendicite-enfant": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013",
+   "db-49"
+  ],
+  "atresie-oesophage": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013"
+  ],
+  "hernie-inguinale-enfant": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013"
+  ],
+  "ingestion-corps-etrangers": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013"
+  ],
+  "invagination-intestinale-aigue": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013"
+  ],
+  "laparoschisis-omphalocele": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013"
+  ],
+  "maladie-de-hirschsprung": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013"
+  ],
+  "malformations-anorectales": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013"
+  ],
+  "stenose-hypertrophique-pylore": [
+   "oms-chirurgie-district-2003",
+   "oms-pocket-book-2013"
+  ],
+  "empyeme-thoracique": [
+   "oms-chirurgie-district-2003",
+   "bts-plevre-2023",
+   "db-120"
+  ],
+  "hemothorax": [
+   "oms-chirurgie-district-2003",
+   "bts-plevre-2023",
+   "db-120"
+  ],
+  "traumatisme-thoracique": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-120"
+  ],
+  "tumeurs-mediastin": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "db-120"
+  ],
+  "volet-costal": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-120"
+  ],
+  "anevrysme-aorte-abdominale": [
+   "oms-chirurgie-district-2003",
+   "esvs-vasculaire",
+   "db-120"
+  ],
+  "fistule-arterio-veineuse-hemodialyse": [
+   "oms-chirurgie-district-2003",
+   "esvs-vasculaire",
+   "db-120"
+  ],
+  "plaies-vasculaires": [
+   "oms-chirurgie-district-2003",
+   "esvs-vasculaire",
+   "db-120"
+  ],
+  "varices-membres-inferieurs": [
+   "oms-chirurgie-district-2003",
+   "esvs-vasculaire",
+   "db-120"
+  ],
+  "fistules-digestives": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "goitre-nodules-thyroidiens-chirurgie": [
+   "oms-chirurgie-district-2003",
+   "nice-thyroide",
+   "db-120"
+  ],
+  "infection-du-site-operatoire": [
+   "oms-isc-2018",
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "pancreatite-aigue-grave-chirurgie": [
+   "oms-chirurgie-district-2003",
+   "nice-pancreatite",
+   "db-120"
+  ],
+  "peritonite-postoperatoire": [
+   "oms-chirurgie-district-2003",
+   "db-51",
+   "db-120"
+  ],
+  "plaie-abdominale-penetrante": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-120"
+  ],
+  "rupture-de-la-rate": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-120"
+  ],
+  "traumatisme-abdominal-ferme": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-120"
+  ],
+  "abces-cerebral": [
+   "oms-chirurgie-district-2003",
+   "db-128"
+  ],
+  "compression-medullaire": [
+   "oms-chirurgie-district-2003",
+   "nice-rachis",
+   "db-128"
+  ],
+  "embarrure": [
+   "oms-chirurgie-district-2003",
+   "nice-tc",
+   "db-52",
+   "db-128"
+  ],
+  "hematome-extradural": [
+   "oms-chirurgie-district-2003",
+   "nice-tc",
+   "db-52",
+   "db-128"
+  ],
+  "hematome-sous-dural": [
+   "oms-chirurgie-district-2003",
+   "nice-tc",
+   "db-52",
+   "db-128"
+  ],
+  "hernie-discale-lombaire": [
+   "oms-chirurgie-district-2003",
+   "nice-lombalgie",
+   "db-128"
+  ],
+  "lesions-du-plexus-brachial": [
+   "oms-chirurgie-district-2003",
+   "db-128"
+  ],
+  "syndrome-de-la-queue-de-cheval": [
+   "oms-chirurgie-district-2003",
+   "nice-rachis",
+   "db-128"
+  ],
+  "traumatisme-cranien": [
+   "oms-chirurgie-district-2003",
+   "nice-tc",
+   "db-52",
+   "db-128"
+  ],
+  "traumatisme-vertebro-medullaire": [
+   "oms-chirurgie-district-2003",
+   "nice-rachis",
+   "db-128"
+  ],
+  "tumeurs-cerebrales": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "db-128"
+  ],
+  "baisse-brutale-acuite-visuelle": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "cataracte": [
+   "nice-cataracte",
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "conjonctivites-adulte": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "glaucome": [
+   "nice-glaucome",
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "keratite-ulcere-de-cornee": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "oeil-rouge-demarche": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "onchocercose-oculaire": [
+   "oms-oncho-2016",
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "pterygion": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "retinopathies-diabetique-et-hypertensive": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "trachome": [
+   "who-trachome",
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "traumatismes-oculaires": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "troubles-de-la-refraction": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "uveites": [
+   "aao-ppp",
+   "msf-guide-clinique"
+  ],
+  "abces-peri-amygdalien": [
+   "oms-chirurgie-district-2003",
+   "nice-angine",
+   "db-120"
+  ],
+  "cancers-orl": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "db-120"
+  ],
+  "cellulite-cervico-faciale": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "corps-etrangers-orl": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "epistaxis": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "otite-externe": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "sinusites-adulte": [
+   "oms-chirurgie-district-2003",
+   "nice-sinusite",
+   "db-120"
+  ],
+  "surdite": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "arthrite-septique": [
+   "oms-chirurgie-district-2003",
+   "db-126"
+  ],
+  "coxarthrose-gonarthrose-chirurgie": [
+   "oms-chirurgie-district-2003",
+   "nice-arthrose",
+   "db-126"
+  ],
+  "dysplasie-de-la-hanche": [
+   "oms-chirurgie-district-2003",
+   "db-126"
+  ],
+  "genu-varum-genu-valgum": [
+   "oms-chirurgie-district-2003",
+   "db-126"
+  ],
+  "osteoarthrite-tuberculeuse": [
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-chirurgie-district-2003",
+   "db-126",
+   "msf-tuberculose"
+  ],
+  "osteomyelite-aigue": [
+   "oms-chirurgie-district-2003",
+   "db-126"
+  ],
+  "osteomyelite-chronique": [
+   "oms-chirurgie-district-2003",
+   "db-126"
+  ],
+  "osteonecrose-tete-femorale": [
+   "oms-chirurgie-district-2003",
+   "db-40",
+   "db-39",
+   "db-126"
+  ],
+  "pied-bot-congenital": [
+   "oms-chirurgie-district-2003",
+   "oms-pied-bot",
+   "db-126"
+  ],
+  "pseudarthroses-cals-vicieux": [
+   "oms-chirurgie-district-2003",
+   "nice-arthrose",
+   "db-126"
+  ],
+  "syndrome-canal-carpien": [
+   "oms-chirurgie-district-2003",
+   "db-126"
+  ],
+  "tumeurs-osseuses": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "db-126"
+  ],
+  "abces-cellulites-dentaires": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "carie-dentaire": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "fractures-de-la-mandibule": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-120"
+  ],
+  "gingivites-et-parodontites": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "stomatites": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "traumatismes-maxillo-faciaux": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "tumeurs-des-maxillaires": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "db-120"
+  ],
+  "amputations-traumatiques": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-126"
+  ],
+  "entorse-de-la-cheville": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "fracture-extremite-inferieure-radius": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "fracture-diaphyse-femorale": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "fracture-du-bassin": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "fracture-col-du-femur": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "fracture-supracondylienne-humerus-enfant": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "fractures-de-jambe": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "fractures-avant-bras": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "fractures-ouvertes": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "luxation-epaule": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "luxation-de-la-hanche": [
+   "oms-chirurgie-district-2003",
+   "nice-fractures",
+   "db-126"
+  ],
+  "plaies-de-la-main": [
+   "oms-chirurgie-district-2003",
+   "db-126"
+  ],
+  "plaies-par-arme-a-feu": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-126"
+  ],
+  "polytraumatise": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-126"
+  ],
+  "syndrome-des-loges": [
+   "oms-chirurgie-district-2003",
+   "db-126"
+  ],
+  "abdomen-aigu-demarche": [
+   "oms-chirurgie-district-2003",
+   "db-120"
+  ],
+  "choc-hemorragique-traumatique": [
+   "oms-traumatologie-2004",
+   "oms-chirurgie-district-2003",
+   "nice-trauma-majeur",
+   "db-120"
+  ],
+  "ischemie-aigue-de-membre": [
+   "oms-chirurgie-district-2003",
+   "esvs-vasculaire",
+   "db-120"
+  ],
+  "peritonite-aigue": [
+   "oms-chirurgie-district-2003",
+   "db-51",
+   "db-120"
+  ],
+  "cancer-de-la-prostate": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "eau-urologie"
+  ],
+  "cancer-de-la-vessie": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "eau-urologie"
+  ],
+  "cryptorchidie": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "hematurie-demarche": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "hydrocele": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "hypertrophie-benigne-prostate": [
+   "oms-chirurgie-district-2003",
+   "nice-hbp",
+   "eau-urologie"
+  ],
+  "hypospadias": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "lithiase-urinaire-colique-nephretique": [
+   "oms-chirurgie-district-2003",
+   "nice-lithiase",
+   "eau-urologie"
+  ],
+  "orchi-epididymite": [
+   "oms-ist-2021",
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "phimosis-paraphimosis": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "priapisme": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "retention-aigue-urine": [
+   "oms-chirurgie-district-2003",
+   "nice-hbp",
+   "eau-urologie"
+  ],
+  "retrecissement-uretral": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "torsion-du-testicule": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "traumatismes-urologiques": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "tumeurs-du-rein": [
+   "oms-chirurgie-district-2003",
+   "db-115",
+   "db-114",
+   "eau-urologie"
+  ],
+  "varicocele": [
+   "oms-chirurgie-district-2003",
+   "eau-urologie"
+  ],
+  "dependance-aux-benzodiazepines": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-drogues"
+  ],
+  "encephalopathie-de-gayet-wernicke": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-alcool",
+   "nice-sevrage-alcool"
+  ],
+  "intoxication-au-methanol": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-alcool",
+   "nice-sevrage-alcool"
+  ],
+  "jeu-pathologique": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-drogues"
+  ],
+  "sevrage-alcoolique-delirium-tremens": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-alcool",
+   "nice-sevrage-alcool"
+  ],
+  "tabagisme": [
+   "oms-tabac-2024",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tabac"
+  ],
+  "trouble-de-l-usage-de-l-alcool": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-alcool",
+   "nice-sevrage-alcool"
+  ],
+  "usage-d-opioides": [
+   "oms-opioides-2009",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "usage-de-cannabis": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-drogues"
+  ],
+  "usage-de-cocaine-et-d-amphetamines": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-drogues"
+  ],
+  "usage-de-solvants": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-drogues"
+  ],
+  "accident-ischemique-transitoire": [
+   "nice-avc",
+   "db-135",
+   "db-55"
+  ],
+  "avc": [
+   "nice-avc",
+   "db-135",
+   "db-55"
+  ],
+  "avc-du-sujet-jeune": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "cdc-io-vih",
+   "db-40",
+   "db-39",
+   "nice-avc",
+   "db-135",
+   "db-55"
+  ],
+  "avc-hemorragique": [
+   "nice-avc",
+   "db-135",
+   "db-55"
+  ],
+  "avc-ischemique": [
+   "nice-avc",
+   "db-135",
+   "db-55"
+  ],
+  "hemorragie-meningee": [
+   "nice-hemorragie-meningee",
+   "db-135",
+   "db-55"
+  ],
+  "prevention-secondaire-des-avc": [
+   "nice-avc",
+   "db-135",
+   "db-55"
+  ],
+  "reeducation-apres-un-avc": [
+   "nice-avc",
+   "db-135",
+   "db-55"
+  ],
+  "thrombose-veineuse-cerebrale": [
+   "nice-tev",
+   "db-135",
+   "db-55"
+  ],
+  "demence-a-corps-de-lewy": [
+   "oms-demence-2019",
+   "oms-mhgap-2023",
+   "nice-demence",
+   "db-134"
+  ],
+  "demence-fronto-temporale": [
+   "oms-demence-2019",
+   "oms-mhgap-2023",
+   "nice-demence",
+   "db-134"
+  ],
+  "demences-vasculaires": [
+   "oms-demence-2019",
+   "oms-mhgap-2023",
+   "nice-demence",
+   "db-134"
+  ],
+  "hydrocephalie-a-pression-normale": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "maladie-d-alzheimer": [
+   "oms-demence-2019",
+   "oms-mhgap-2023",
+   "nice-demence",
+   "db-134"
+  ],
+  "syndrome-confusionnel-aigu": [
+   "oms-mhgap-2023",
+   "nice-delirium",
+   "db-134"
+  ],
+  "troubles-cognitifs-legers": [
+   "oms-demence-2019",
+   "oms-mhgap-2023",
+   "nice-demence",
+   "db-134"
+  ],
+  "troubles-psychiatriques-du-sujet-age": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "crises-non-epileptiques-psychogenes": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "epilepsie": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "epilepsie-onchocercose": [
+   "oms-oncho-2016",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "epilepsie-et-vih": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "cdc-io-vih",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "epilepsie-pharmacoresistante": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "epilepsie-absences": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "etat-de-mal-epileptique": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "premiere-crise-convulsive-adulte": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "syndrome-de-lennox-gastaut": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie",
+   "db-134"
+  ],
+  "chorees": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "dystonies": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "maladie-de-parkinson": [
+   "oms-mhgap-2023",
+   "nice-parkinson",
+   "db-134"
+  ],
+  "syndrome-des-jambes-sans-repos": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "syndromes-parkinsoniens-medicamenteux": [
+   "oms-mhgap-2023",
+   "nice-parkinson",
+   "db-134"
+  ],
+  "tics": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "tremblement-essentiel": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "botulisme": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "encephalites-virales-adulte": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "leucoencephalopathie-multifocale-progressive": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-mhgap-2023",
+   "cdc-io-vih",
+   "db-134"
+  ],
+  "meningite-tuberculeuse": [
+   "rdc-pnlt-2021",
+   "db-6",
+   "oms-mhgap-2023",
+   "db-134",
+   "msf-tuberculose"
+  ],
+  "neurocysticercose": [
+   "oms-mhgap-2023",
+   "idsa-neurocysticercose-2017",
+   "db-134"
+  ],
+  "neuropaludisme-adulte": [
+   "rdc-pnlp-2012",
+   "db-1",
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "neuropathie-associee-au-vih": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-mhgap-2023",
+   "cdc-io-vih",
+   "db-134"
+  ],
+  "neuropathie-lepreuse": [
+   "oms-lepre-2018",
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "neurosyphilis": [
+   "oms-ist-2021",
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "paraparesie-spastique-tropicale": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "troubles-neurocognitifs-associes-au-vih": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-mhgap-2023",
+   "cdc-io-vih",
+   "db-134"
+  ],
+  "tha-phase-neurologique": [
+   "oms-tha-2019",
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "algie-vasculaire-de-la-face": [
+   "oms-mhgap-2023",
+   "nice-cephalees",
+   "db-134"
+  ],
+  "cephalee-de-tension": [
+   "oms-mhgap-2023",
+   "nice-cephalees",
+   "db-134"
+  ],
+  "cephalees-migraine": [
+   "oms-mhgap-2023",
+   "nice-cephalees",
+   "db-134"
+  ],
+  "coma-demarche": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "hypersomnies": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "hypertension-intracranienne": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "myasthenie": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "myelite-transverse": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "myelopathies": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "myopathies-de-l-adulte": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "myopathies-toxiques-et-medicamenteuses": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "narcolepsie": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "neuromyelite-optique": [
+   "oms-mhgap-2023",
+   "nice-sep",
+   "db-134"
+  ],
+  "neuropathie-alcoolique": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-alcool",
+   "nice-sevrage-alcool",
+   "db-134"
+  ],
+  "neuropathie-ataxique-tropicale": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "neuropathie-diabetique": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "neuropathies-peripheriques": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "nevralgie-du-trijumeau": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "paralysie-faciale-peripherique": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "paralysie-periodique-hypokaliemique": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "parasomnies": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "radiculopathies": [
+   "oms-mhgap-2023",
+   "nice-lombalgie",
+   "db-134"
+  ],
+  "sclerose-en-plaques": [
+   "oms-mhgap-2023",
+   "nice-sep",
+   "db-134"
+  ],
+  "sclerose-laterale-amyotrophique": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "sequelles-de-poliomyelite": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "syndrome-de-guillain-barre": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "vascularites-cerebrales": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "vertiges": [
+   "oms-mhgap-2023",
+   "db-134"
+  ],
+  "commotion-cerebrale": [
+   "oms-mhgap-2023",
+   "nice-tc",
+   "db-52",
+   "db-134"
+  ],
+  "sequelles-de-traumatisme-cranien": [
+   "oms-mhgap-2023",
+   "nice-tc",
+   "db-52",
+   "db-134"
+  ],
+  "syndrome-post-commotionnel": [
+   "oms-mhgap-2023",
+   "nice-tc",
+   "db-52",
+   "db-134"
+  ],
+  "traumatisme-cranien-leger": [
+   "oms-mhgap-2023",
+   "nice-tc",
+   "db-52",
+   "db-134"
+  ],
+  "depression": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-depression"
+  ],
+  "dysfonctions-sexuelles": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "etat-de-stress-post-traumatique": [
+   "oms-mhgap-urgences-2015",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tspt"
+  ],
+  "expressions-culturelles-de-la-detresse": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "insomnie": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "phobies": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-anxiete"
+  ],
+  "psychose-puerperale": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-psychose"
+  ],
+  "risque-suicidaire": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-suicide"
+  ],
+  "schizophrenie": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-psychose"
+  ],
+  "syndrome-malin-des-neuroleptiques": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "trouble-anxieux-generalise": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-anxiete"
+  ],
+  "trouble-bipolaire": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-bipolaire"
+  ],
+  "trouble-delirant-persistant": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-psychose"
+  ],
+  "trouble-obsessionnel-compulsif": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-toc"
+  ],
+  "trouble-panique": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-anxiete"
+  ],
+  "troubles-de-la-personnalite": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-dissociatifs-et-de-conversion": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-du-comportement-alimentaire": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tca"
+  ],
+  "troubles-psychiatriques-associes-au-vih": [
+   "rdc-pnls-2019",
+   "db-8",
+   "oms-vih-avance-2017",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "cdc-io-vih"
+  ],
+  "troubles-psychiatriques-d-origine-organique": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-psychiques-de-l-epilepsie": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-epilepsie"
+  ],
+  "troubles-psychiques-des-maladies-chroniques": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-psychotiques-aigus": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-psychose"
+  ],
+  "troubles-somatoformes": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "depression-de-l-adolescent": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-depression-ado"
+  ],
+  "encopresie": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "enfants-associes-forces-armees": [
+   "oms-mhgap-urgences-2015",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tspt"
+  ],
+  "mutisme-selectif": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "refus-scolaire-anxieux": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-anxiete"
+  ],
+  "trouble-deficit-attention-hyperactivite": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tdah"
+  ],
+  "troubles-anxieux-de-l-enfant": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-de-l-attachement": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-des-apprentissages": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-des-conduites": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-du-sommeil-de-l-enfant": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "troubles-du-spectre-autistique": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-autisme"
+  ],
+  "deuil-complique": [
+   "oms-mhgap-urgences-2015",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tspt"
+  ],
+  "traumatismes-conflits-armes": [
+   "oms-mhgap-urgences-2015",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tspt"
+  ],
+  "trouble-de-l-adaptation": [
+   "oms-mhgap-urgences-2015",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tspt"
+  ],
+  "trouble-de-stress-aigu": [
+   "oms-mhgap-urgences-2015",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tspt"
+  ],
+  "violences-sexuelles-prise-en-charge-psychologique": [
+   "oms-viol-2020",
+   "oms-mhgap-urgences-2015",
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023",
+   "nice-tspt"
+  ],
+  "agitation-aigue": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "catatonie": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "intoxication-aux-psychotropes": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ],
+  "syndrome-serotoninergique": [
+   "oms-mhgap-ig-2016",
+   "oms-mhgap-2023"
+  ]
+ }
+}

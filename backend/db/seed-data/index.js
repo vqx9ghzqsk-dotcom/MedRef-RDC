@@ -33,6 +33,8 @@ const selection = require('./operateurs-retenus');
 const ajouts = require('./pathologies-ajoutees');
 // Posologies ajoutées par lots (molécules citées dans les fiches qui n'en avaient pas)
 const posologiesAjoutees = require('./posologies-ajoutees');
+// Protocoles de prise en charge pour valider les fiches (docs/protocoles-validation)
+const protocolesValidation = require('./protocoles-validation.json');
 
 const pathologies = [
   ...require('./pathologies/infectiologie'),
@@ -66,4 +68,5 @@ module.exports = {
   selection,
   ajouts,
   posologiesAjoutees,
+  protocolesValidation,
 };

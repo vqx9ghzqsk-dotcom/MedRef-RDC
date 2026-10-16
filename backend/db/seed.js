@@ -8,6 +8,7 @@ const { chargerAcorep } = require('./acorep');
 const { appliquerSelection } = require('./selection');
 const { chargerNouvellesFiches } = require('./fiches');
 const { chargerPosologiesAjoutees } = require('./posologiesAjoutees');
+const { chargerProtocolesValidation } = require('./protocolesValidation');
 
 /** Référence à une fiche par son slug (sinon : libellé libre). */
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -385,6 +386,8 @@ async function seed(conn) {
   const fichesAjoutees = await chargerNouvellesFiches(conn, data, data.ajouts);
   // Posologies ajoutées par lots (seulement pour les molécules sans posologie)
   const posologiesAjoutees = await chargerPosologiesAjoutees(conn, data.posologiesAjoutees);
+  // Protocoles de validation rattachés à chaque fiche comme sources (après toutes les fiches)
+  const protocolesValidation = await chargerProtocolesValidation(conn, data.protocolesValidation);
 
   return {
     semiologie,
@@ -393,6 +396,7 @@ async function seed(conn) {
     selection,
     fichesAjoutees,
     posologiesAjoutees,
+    protocolesValidation,
     departements: data.departements.length,
     pathologies: data.pathologies.length,
     molecules: data.molecules.length,

@@ -14,8 +14,8 @@ En cas de désaccord, la directive nationale congolaise en vigueur prime ; la fi
 
 ## Résultat
 
-- **473 fiches** ont au moins un protocole **propre à la maladie** (par exemple « WHO guidelines for plague management » pour la peste).
-- **319 fiches** renvoient au **manuel de référence de leur spécialité**, qui traite la maladie dans un chapitre : *Surgical care at the district hospital* (chirurgie), *Managing complications in pregnancy and childbirth* (obstétrique), *Pocket book of hospital care for children* (pédiatrie), guide HGR et *IMAI district clinician manual* (médecine adulte), mhGAP (santé mentale), Green-top du RCOG (gynécologie), EAU (urologie), AAO (ophtalmologie). Elles sont marquées *(références générales)*.
+- **472 fiches** ont au moins un protocole **propre à la maladie** (par exemple « WHO guidelines for plague management » pour la peste).
+- **320 fiches** renvoient au **manuel de référence de leur spécialité**, qui traite la maladie dans un chapitre : *Surgical care at the district hospital* (chirurgie), *Managing complications in pregnancy and childbirth* (obstétrique), *Pocket book of hospital care for children* (pédiatrie), guide HGR et *IMAI district clinician manual* (médecine adulte), mhGAP (santé mentale), Green-top du RCOG (gynécologie), EAU (urologie), AAO (ophtalmologie). Elles sont marquées *(références générales)*.
 - **218 protocoles** au total : 165 liens **contrôlés** (la page répond et son titre correspond au document attendu ; les liens refusés ont été écartés), 8 liens confirmés par une recherche (sites qui bloquent le contrôle automatique), 6 documents congolais du dossier local, et 39 sources déjà présentes dans l'application, reprises avec leur lien d'origine (non recontrôlé). Voir la colonne « Vérification ».
 - Les fiches pédiatriques ne reçoivent pas de recommandation réservée à l'adulte.
 
@@ -201,7 +201,6 @@ La colonne « Fiches » indique combien de fiches renvoient à chaque protocole.
 | [Twin and triplet pregnancy](https://www.nice.org.uk/guidance/ng137) | NICE | 2 | lien vérifié (titre de la page) |
 | [Urinary incontinence and pelvic organ prolapse in women: management](https://www.nice.org.uk/guidance/ng123) | NICE | 2 | lien vérifié (titre de la page) |
 | [Lower urinary tract symptoms in men: management](https://www.nice.org.uk/guidance/cg97) | NICE | 2 | lien vérifié (titre de la page) |
-| [Cataracts in adults: management](https://www.nice.org.uk/guidance/ng77) | NICE | 2 | lien vérifié (titre de la page) |
 | [Sinusitis (acute): antimicrobial prescribing](https://www.nice.org.uk/guidance/ng79) | NICE | 2 | lien vérifié (titre de la page) |
 | [Sore throat (acute): antimicrobial prescribing](https://www.nice.org.uk/guidance/ng84) | NICE | 2 | lien vérifié (titre de la page) |
 | [Parkinson’s disease in adults](https://www.nice.org.uk/guidance/ng71) | NICE | 2 | lien vérifié (titre de la page) |
@@ -231,6 +230,7 @@ La colonne « Fiches » indique combien de fiches renvoient à chaque protocole.
 | [Acute upper gastrointestinal bleeding in over 16s: management](https://www.nice.org.uk/guidance/cg141) | NICE | 1 | lien vérifié (titre de la page) |
 | [Renal and ureteric stones: assessment and management](https://www.nice.org.uk/guidance/ng118) | NICE | 1 | lien vérifié (titre de la page) |
 | [Glaucoma: diagnosis and management](https://www.nice.org.uk/guidance/ng81) | NICE | 1 | lien vérifié (titre de la page) |
+| [Cataracts in adults: management](https://www.nice.org.uk/guidance/ng77) | NICE | 1 | lien vérifié (titre de la page) |
 | [Otitis media (acute): antimicrobial prescribing](https://www.nice.org.uk/guidance/ng91) | NICE | 1 | lien vérifié (titre de la page) |
 | [Delirium: prevention, diagnosis and management in hospital and long-term care](https://www.nice.org.uk/guidance/cg103) | NICE | 1 | lien vérifié (titre de la page) |
 | [Depression in children and young people: identification and management](https://www.nice.org.uk/guidance/ng134) | NICE | 1 | lien vérifié (titre de la page) |

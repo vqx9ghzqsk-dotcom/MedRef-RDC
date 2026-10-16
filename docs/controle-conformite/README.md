@@ -15,7 +15,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C03](C03-dermatologie-endocrinologie-et-diabetologie.md) | Dermatologie, endocrinologie et diabétologie | 32 | 9 | 17 | 5 |
 | [C04](C04-gastro-enterologie-hepatologie-et-hematologie.md) | Gastro-entérologie, hépatologie et hématologie | 33 | 3 | 6 | 2 |
 | [C05](C05-pneumologie-rhumatologie-et-addictologie.md) | Pneumologie, rhumatologie et addictologie | 34 | 5 | 7 | 1 |
-| **Total** | | **169** | **29** | **45** | **12** |
+| [C06](C06-neurologie-et-accidents-vasculaires-cerebraux.md) | Neurologie et accidents vasculaires cérébraux | 37 | 2 | 4 | 0 |
+| **Total** | | **206** | **31** | **49** | **12** |
 
 ## Points à arbitrer
 

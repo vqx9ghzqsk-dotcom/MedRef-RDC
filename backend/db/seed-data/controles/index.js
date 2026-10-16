@@ -13,6 +13,7 @@ const LOTS = [
   'C04-gastro-enterologie-hematologie',
   'C05-pneumologie-rhumatologie-addictologie',
   'C06-neurologie-avc',
+  'C07-epilepsie-mouvements-demences-neuro-infectiologie',
 ];
 
 module.exports = LOTS.map((lot) => require(`./${lot}`));

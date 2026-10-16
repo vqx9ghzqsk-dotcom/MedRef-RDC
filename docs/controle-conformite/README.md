@@ -16,7 +16,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C04](C04-gastro-enterologie-hepatologie-et-hematologie.md) | Gastro-entérologie, hépatologie et hématologie | 33 | 3 | 6 | 2 |
 | [C05](C05-pneumologie-rhumatologie-et-addictologie.md) | Pneumologie, rhumatologie et addictologie | 34 | 5 | 7 | 1 |
 | [C06](C06-neurologie-et-accidents-vasculaires-cerebraux.md) | Neurologie et accidents vasculaires cérébraux | 37 | 2 | 4 | 0 |
-| **Total** | | **206** | **31** | **49** | **12** |
+| [C07](C07-epilepsie-mouvements-anormaux-demences-et-neuro-infectiologie.md) | Épilepsie, mouvements anormaux, démences et neuro-infectiologie | 36 | 3 | 6 | 1 |
+| **Total** | | **242** | **34** | **55** | **13** |
 
 ## Points à arbitrer
 
@@ -32,3 +33,4 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 - **Dyspepsie et gastrite** (lot C04) : Âge à partir duquel l’endoscopie est d’emblée indiquée : 50–60 ans dans cette fiche (ACG/CAG : 60 ans), 45–55 ans dans les fiches de l’infection à H. pylori et de l’ulcère. Le cancer gastrique survenant plus tôt en Afrique, un seuil commun est à fixer.
 - **Hémophilie** (lot C04) : Dose de facteur IX dans l’hémarthrose : 30–50 UI/kg dans la fiche ; la WFH 2020 vise un pic de 40–60 UI/dL sans contrainte de ressources (soit environ 40–60 UI/kg de facteur IX plasmatique) et des niveaux plus bas en cas de contrainte. À fixer selon les concentrés disponibles.
 - **Goutte** (lot C05) : L’ACR 2020 conseille de rechercher HLA-B*58:01 avant l’allopurinol chez les patients d’ascendance africaine (risque de toxidermie grave). Le test étant rarement disponible en RDC, la fiche s’en tient au démarrage à 100 mg/j : ajouter une consigne d’information sur les signes cutanés et un démarrage à 50 mg/j en cas d’insuffisance rénale ?
+- **Méningite tuberculeuse** (lot C07) : Dexaméthasone chez l’adulte VIH+ atteint de méningite tuberculeuse : l’OMS la recommande sans distinction, l’essai ACT HIV (2023) ne montre pas de bénéfice sur la mortalité. Pratique à fixer pour le service.

@@ -6,6 +6,10 @@
  * chargé par db/controles.js (corrections ciblées, tracées dans l'historique).
  */
 
-const LOTS = ['C01-infectiologie', 'C02-cardiologie-nephrologie-medecine-generale'];
+const LOTS = [
+  'C01-infectiologie',
+  'C02-cardiologie-nephrologie-medecine-generale',
+  'C03-dermatologie-endocrinologie',
+];
 
 module.exports = LOTS.map((lot) => require(`./${lot}`));

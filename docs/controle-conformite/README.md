@@ -12,7 +12,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 |---|---|---:|---:|---:|---:|
 | [C01](C01-infectiologie-medecine-interne.md) | Infectiologie (médecine interne) | 37 | 9 | 12 | 2 |
 | [C02](C02-cardiologie-nephrologie-et-medecine-interne-generale.md) | Cardiologie, néphrologie et médecine interne générale | 33 | 3 | 3 | 2 |
-| **Total** | | **70** | **12** | **15** | **4** |
+| [C03](C03-dermatologie-endocrinologie-et-diabetologie.md) | Dermatologie, endocrinologie et diabétologie | 32 | 9 | 17 | 5 |
+| **Total** | | **102** | **21** | **32** | **9** |
 
 ## Points à arbitrer
 
@@ -20,3 +21,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 - **Grippe** (lot C01) : Les CDC recommandent toujours l’oseltamivir aux personnes à risque atteintes d’une forme non grave ; l’OMS 2024 le déconseille et propose le baloxavir, rarement disponible en RDC. Choisir la ligne à suivre (protocole national) pour les formes non graves à risque.
 - **Fibrillation atriale** (lot C02) : L’ESC 2024 remplace le score CHA2DS2-VASc par le CHA2DS2-VA (sans le sexe : anticoagulation recommandée à partir de 2, à discuter à 1) ; la fiche suit le CHA2DS2-VASc des recommandations américaines et du NICE (seuils 2 chez l’homme, 3 chez la femme). Choisir le score à retenir.
 - **Maladie rénale chronique** (lot C02) : Cible tensionnelle : la fiche retient < 130/80 mmHg (ESC, NICE) ; KDIGO 2021 propose une PAS < 120 mmHg (mesure standardisée) si elle est tolérée. Choisir la cible à afficher.
+- **Dermatophyties et pityriasis versicolor** (lot C03) : Dose de griséofulvine chez l’enfant : la fiche suit 20–25 mg/kg/j (forme microcristalline, teignes à Trichophyton) ; le guide MSF indique 10–20 mg/kg/j (maximum 500 mg/j). Le choix dépend de la forme disponible en RDC.
+- **Érysipèle et cellulite** (lot C03) : Le guide MSF traite érysipèle et cellulite ensemble par céfalexine ou amoxicilline-acide clavulanique pendant 7 à 10 jours (couverture du staphylocoque) ; la fiche suit la HAS (amoxicilline 7 jours pour l’érysipèle, molécule anti-staphylococcique si cellulite suspecte).
+- **Acidocétose diabétique** (lot C03) : Seuil de bicarbonates du diagnostic : la fiche garde < 15 mmol/L (JBDS) ; le consensus 2024 retient < 18 mmol/L (forme légère 15–18).
+- **Néphropathie diabétique** (lot C03) : Cible tensionnelle : la fiche garde < 130/80 mmHg (ADA) ; KDIGO 2021 propose une systolique < 120 mmHg si tolérée (même point que la fiche de maladie rénale chronique, lot C02). La finérénone (KDIGO 2022, ADA) n’est pas citée : peu accessible en RDC.
+- **Obésité de l’adulte** (lot C03) : Seuils de chirurgie bariatrique : la fiche suit NICE (IMC ≥ 40, ou ≥ 35 avec complications) ; l’ASMBS/IFSO (2022) les abaisse à IMC ≥ 35 sans condition et ≥ 30 avec maladie métabolique.

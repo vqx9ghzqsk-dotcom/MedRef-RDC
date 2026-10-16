@@ -17,7 +17,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C05](C05-pneumologie-rhumatologie-et-addictologie.md) | Pneumologie, rhumatologie et addictologie | 34 | 5 | 7 | 1 |
 | [C06](C06-neurologie-et-accidents-vasculaires-cerebraux.md) | Neurologie et accidents vasculaires cérébraux | 37 | 2 | 4 | 0 |
 | [C07](C07-epilepsie-mouvements-anormaux-demences-et-neuro-infectiologie.md) | Épilepsie, mouvements anormaux, démences et neuro-infectiologie | 36 | 3 | 6 | 1 |
-| **Total** | | **242** | **34** | **55** | **13** |
+| [C08](C08-psychiatrie-psychotraumatologie-et-urgences-neuropsychiatriques.md) | Psychiatrie, psychotraumatologie et urgences neuropsychiatriques | 33 | 1 | 2 | 0 |
+| **Total** | | **275** | **35** | **57** | **13** |
 
 ## Points à arbitrer
 

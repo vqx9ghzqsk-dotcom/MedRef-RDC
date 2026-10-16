@@ -227,17 +227,54 @@ function renderApp(path, apiOverrides = {}, user = null) {
 const MEDECIN = { id: 7, nom: 'Dr Test', email: 'dr@test.cd', role: 'medecin' };
 
 describe('Accueil', () => {
-  it('visiteur : page de présentation, sans données, avec connexion et inscription', () => {
+  it('visiteur : page publique avec connexion et inscription, sans données cliniques', () => {
     const api = renderApp('/');
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('pensée pour la RDC');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'la référence clinique au même endroit',
+    );
     expect(screen.getAllByRole('link', { name: 'Se connecter' })[0]).toHaveAttribute('href', '/connexion');
     expect(screen.getAllByRole('link', { name: 'Créer un compte' })[0]).toHaveAttribute(
       'href',
       '/inscription',
     );
-    expect(screen.getByRole('img', { name: /fiche clinique sur écran/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Actualités' })).toBeInTheDocument();
     expect(screen.queryByRole('region', { name: 'Accès rapides' })).toBeNull();
     expect(api.departements).not.toHaveBeenCalled();
+  });
+
+  it('visiteur : actualités publiées avec leur source, nouveautés et chiffres réels', async () => {
+    renderApp('/', {
+      accueil: vi.fn(async () => ({
+        alertes: [
+          {
+            id: 1,
+            type: 'alerte_sanitaire',
+            titre: 'Épidémie de choléra',
+            resume: 'Cas confirmés.',
+            zone: 'Kinshasa',
+            source_titre: 'Ministère de la Santé',
+            source_url: 'https://example.org/communique',
+            publie_le: '2026-10-14',
+          },
+        ],
+        actualites: [],
+        produits: [{ id: 9, nom_commercial: 'Aerius', dci: 'Desloratadine', operateur: 'Organon' }],
+        fiches_validees: [],
+        fiches_mises_a_jour: [],
+        totaux: { fiches: 792, fiches_validees: 0, produits: 1799, amm: 6352, molecules: 702 },
+      })),
+    });
+    expect(await screen.findByRole('heading', { name: 'Épidémie de choléra' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Ministère de la Santé' })).toHaveAttribute(
+      'href',
+      'https://example.org/communique',
+    );
+    expect(screen.getByRole('heading', { name: '792 fiches en relecture médicale' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Aerius · Organon' })).toBeInTheDocument();
+    const chiffres = screen.getByRole('region', { name: 'MedRef RDC en chiffres' });
+    expect(within(chiffres).getByText('6 352')).toBeInTheDocument();
+    // Le carrousel « à la une » propose l'alerte publiée
+    expect(screen.getAllByRole('button', { name: /À la une/ }).length).toBeGreaterThan(2);
   });
 
   it('affiche l’identité, la recherche, les 7 accès rapides et les départements', async () => {

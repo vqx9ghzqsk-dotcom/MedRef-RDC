@@ -209,6 +209,32 @@
 .auth-carte .btn-primary:hover:not(:disabled) {
   background: #12306b;
 }
+/* « Rester connecté » et « Mot de passe oublié ? » sur une ligne, au-dessus du bouton */
+.auth-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -2px 0 18px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+.auth-options a {
+  color: #0b1b3f;
+  font-weight: 700;
+}
+.auth-rester {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.auth-rester input {
+  width: 16px;
+  height: 16px;
+  accent-color: #0b1b3f;
+}
 .auth-carte .auth-switch {
   margin: 18px 0 0;
   text-align: center;

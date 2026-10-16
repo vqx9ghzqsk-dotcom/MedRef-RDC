@@ -34,9 +34,9 @@ export function AuthProvider({ children }) {
   useEffect(() => (onSessionExpired ? onSessionExpired(logout) : undefined), [onSessionExpired, logout]);
 
   const authenticate = useCallback(
-    async (action, payload) => {
+    async (action, payload, { persistant = true } = {}) => {
       const { token, user: u } = await api[action](payload);
-      tokenStore.save(token, u);
+      tokenStore.save(token, u, { persistant });
       setUser(u);
       return u;
     },
@@ -47,10 +47,14 @@ export function AuthProvider({ children }) {
     () => ({
       user,
       isAuthenticated: Boolean(user),
-      login: (payload) => authenticate('login', payload),
+      // options.persistant : « Rester connecté » (session gardée après fermeture du navigateur)
+      login: (payload, options) => authenticate('login', payload, options),
       register: (payload) => authenticate('register', payload),
       // Nouveau jeton : les autres sessions du compte sont déconnectées
-      changePassword: (payload) => authenticate('changePassword', payload),
+      changePassword: (payload) =>
+        authenticate('changePassword', payload, {
+          persistant: tokenStore.estPersistant ? tokenStore.estPersistant() : true,
+        }),
       // Profil modifié côté serveur (même jeton) : met à jour l'utilisateur en cache
       updateUser: (u) => {
         tokenStore.setUser(u);

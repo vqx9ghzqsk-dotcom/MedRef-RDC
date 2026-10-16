@@ -68,6 +68,7 @@ function AuthForm({ mode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({ nom: '', email: '', password: '', profil: '', specialite_exercee: '' });
+  const [resterConnecte, setResterConnecte] = useState(true);
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
   const [busy, setBusy] = useState(false);
@@ -81,7 +82,7 @@ function AuthForm({ mode }) {
     setFieldErrors({});
     try {
       if (isRegister) await register(form);
-      else await login({ email: form.email, password: form.password });
+      else await login({ email: form.email, password: form.password }, { persistant: resterConnecte });
       navigate(location.state?.from || '/', { replace: true });
     } catch (err) {
       setError(err.message);
@@ -93,11 +94,11 @@ function AuthForm({ mode }) {
 
   return (
     <AuthScene>
-      <h1>{isRegister ? 'Créer un compte' : 'Se connecter'}</h1>
+      <h1>{isRegister ? 'Créer un compte' : 'Connexion'}</h1>
       <p className="muted">
         {isRegister
-          ? 'Un compte permet de sauvegarder vos prescriptions et de les retrouver sur vos autres appareils.'
-          : 'Connectez-vous pour synchroniser vos prescriptions.'}
+          ? 'Réservé aux professionnels et étudiants en santé. Vos prescriptions sont sauvegardées et retrouvées sur vos autres appareils.'
+          : 'Accédez à votre accueil MedRef RDC.'}
       </p>
       <form onSubmit={submit} noValidate>
         {isRegister && (
@@ -188,6 +189,19 @@ function AuthForm({ mode }) {
             {error}
           </p>
         )}
+        {!isRegister && (
+          <div className="auth-options">
+            <label className="auth-rester">
+              <input
+                type="checkbox"
+                checked={resterConnecte}
+                onChange={(e) => setResterConnecte(e.target.checked)}
+              />{' '}
+              Rester connecté
+            </label>
+            <Link to="/mot-de-passe-oublie">Mot de passe oublié ?</Link>
+          </div>
+        )}
         <button type="submit" className="btn btn-primary btn-block" disabled={busy}>
           {busy ? 'Patientez…' : isRegister ? 'Créer mon compte' : 'Se connecter'}
         </button>
@@ -199,8 +213,6 @@ function AuthForm({ mode }) {
           </>
         ) : (
           <>
-            <Link to="/mot-de-passe-oublie">Mot de passe oublié ?</Link>
-            <br />
             Pas encore de compte ? <Link to="/inscription">Créer un compte</Link>
           </>
         )}

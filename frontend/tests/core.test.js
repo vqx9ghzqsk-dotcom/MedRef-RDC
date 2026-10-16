@@ -113,6 +113,31 @@ describe('tokenStore', () => {
     expect(store.getToken()).toBeNull();
     expect(store.getUser()).toBeNull();
   });
+
+  it('« Rester connecté » décoché : session dans le stockage de session seulement', () => {
+    const faux = () => {
+      const m = new Map();
+      return {
+        m,
+        getItem: (k) => (m.has(k) ? m.get(k) : null),
+        setItem: (k, v) => m.set(k, v),
+        removeItem: (k) => m.delete(k),
+      };
+    };
+    const durable = faux();
+    const session = faux();
+    const store = createTokenStore(durable, session);
+    store.save('tok', { id: 1 }, { persistant: false });
+    expect(durable.m.size).toBe(0);
+    expect(store.getToken()).toBe('tok');
+    expect(store.estPersistant()).toBe(false);
+    store.save('tok2', { id: 1 });
+    expect(session.m.size).toBe(0);
+    expect(store.getToken()).toBe('tok2');
+    expect(store.estPersistant()).toBe(true);
+    store.clear();
+    expect(durable.m.size + session.m.size).toBe(0);
+  });
 });
 
 describe('utilitaires', () => {

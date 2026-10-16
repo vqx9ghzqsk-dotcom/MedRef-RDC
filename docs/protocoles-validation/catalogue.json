@@ -672,6 +672,14 @@
   "verification": "lien vérifié (titre de la page)"
  },
  {
+  "code": "nice-rgo-enfant",
+  "titre": "Gastro-oesophageal reflux disease in children and young people: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng1",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
   "code": "nice-constipation-enfant",
   "titre": "Constipation in children and young people: diagnosis and management",
   "organisation": "NICE",
@@ -685,6 +693,14 @@
   "organisation": "NICE",
   "niveau": 2,
   "url": "https://www.nice.org.uk/guidance/cg84",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-coeliaque",
+  "titre": "Coeliac disease: recognition, assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng20",
   "verification": "lien vérifié (titre de la page)"
  },
  {
@@ -1318,6 +1334,3380 @@
   "niveau": 2,
   "url": "https://globalclubfoot.com/",
   "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-neutropenie-febrile",
+  "titre": "Neutropenic sepsis: prevention and management in people with cancer",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg151",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-grossesse-pathologies",
+  "titre": "Intrapartum care for women with existing medical conditions or obstetric complications and their babies",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng121",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-grossesse-sociale",
+  "titre": "Pregnancy and complex social factors: a model for service provision for pregnant women with complex social factors",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg110",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-retard-croissance",
+  "titre": "Faltering growth: recognition and management of faltering growth in children",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng75",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-enuresie",
+  "titre": "Bedwetting in under 19s",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg111",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-paralysie-cerebrale",
+  "titre": "Cerebral palsy in under 25s: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng62",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-allergie-alimentaire",
+  "titre": "Food allergy in under 19s: assessment and diagnosis",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg116",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-sla",
+  "titre": "Motor neurone disease: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng42",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-douleur-neuropathique",
+  "titre": "Neuropathic pain in adults: pharmacological management in non-specialist settings",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg173",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-personnalite-borderline",
+  "titre": "Borderline personality disorder: recognition and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg78",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-personnalite-antisociale",
+  "titre": "Antisocial personality disorder: prevention and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg77",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-troubles-conduites",
+  "titre": "Antisocial behaviour and conduct disorders in children and young people: recognition and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg158",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-anxiete-sociale",
+  "titre": "Social anxiety disorder: recognition, assessment and treatment",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg159",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-attachement",
+  "titre": "Children’s attachment: attachment in children and young people who are adopted from care, in care or at high risk of going into care",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng26",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-agressivite",
+  "titre": "Violence and aggression: short-term management in mental health, health and community settings",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng10",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-depression-maladie-chronique",
+  "titre": "Depression in adults with a chronic physical health problem: recognition and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg91",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-escarres",
+  "titre": "Pressure ulcers: prevention and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg179",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-ulcere-jambe",
+  "titre": "Leg ulcer infection: antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng152",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-lithiase-biliaire",
+  "titre": "Gallstone disease: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg188",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-epuration-extrarenale",
+  "titre": "Renal replacement therapy and conservative management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng107",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-ddb",
+  "titre": "Bronchiectasis (non-cystic fibrosis), acute exacerbation: antimicrobial prescribing",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng117",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-mucoviscidose",
+  "titre": "Cystic fibrosis: diagnosis and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng78",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-covid",
+  "titre": "COVID-19 rapid guideline: managing COVID-19",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng191",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-surdite",
+  "titre": "Hearing loss in adults: assessment and management",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng98",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-osteoporose",
+  "titre": "Osteoporosis: assessing the risk of fragility fracture",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/cg146",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-monitoring-foetal",
+  "titre": "Fetal monitoring in labour",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng229",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-deficience-intellectuelle",
+  "titre": "Challenging behaviour and learning disabilities: prevention and interventions for people with learning disabilities whose behaviour challenges",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng11",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "nice-cancer-suspect",
+  "titre": "Suspected cancer: recognition and referral",
+  "organisation": "NICE",
+  "niveau": 2,
+  "url": "https://www.nice.org.uk/guidance/ng12",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-dermite-siege",
+  "titre": "Nappy rash (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Nappy_rash/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-ictere-nourrisson",
+  "titre": "Jaundice in early infancy (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Jaundice_in_early_infancy/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-douleur-abdo-chronique",
+  "titre": "Abdominal pain - chronic (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Abdominal_pain_-_chronic/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-douleur-abdo-aigue",
+  "titre": "Abdominal pain - acute (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Abdominal_pain_-_acute/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-rgo-nourrisson",
+  "titre": "Gastrooesophageal reflux disease in infants (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Gastrooesophageal_reflux_disease_in_infants/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-vomissements",
+  "titre": "Vomiting (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Vomiting/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-maladies-metaboliques",
+  "titre": "Metabolic disorders (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Metabolic_disorders/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-anemie",
+  "titre": "Anaemia (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Anaemia/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-pti",
+  "titre": "Immune thrombocytopenic purpura (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Immune_thrombocytopenic_purpura/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-deficits-immunitaires",
+  "titre": "Primary immunodeficiencies (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Primary_immunodeficiencies/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-purpura-rhumatoide",
+  "titre": "IgA vasculitis (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/HenochSchonlein_Purpura/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-coqueluche",
+  "titre": "Whooping cough (pertussis) (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Whooping_Cough_Pertussis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-meningite-encephalite",
+  "titre": "Meningitis and encephalitis (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Meningitis_encephalitis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-varicelle",
+  "titre": "Chickenpox (varicella) (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Chickenpox_varicella/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-micronutriments",
+  "titre": "Micronutrient deficiency (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Micronutrient_deficiency/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-hypocalcemie",
+  "titre": "Hypocalcaemia (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Hypocalcaemia/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-gna-poststreptococcique",
+  "titre": "Post-streptococcal glomerulonephritis (PSGN) (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Post-streptococcal_glomerulonephritis_(PSGN)/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-syndrome-nephrotique",
+  "titre": "Nephrotic syndrome (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Nephrotic_syndrome/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-dilatation-urinaire-antenatale",
+  "titre": "Antenatal urinary tract dilation (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Antenatal_urinary_tract_dilation/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-cephalees",
+  "titre": "Headache (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Headache/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-paralysie-cerebrale",
+  "titre": "Cerebral palsy (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Cerebral_palsy/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-oeil-rouge",
+  "titre": "Acute red eye (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Acute_red_eye/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-adenopathies-cervicales",
+  "titre": "Cervical lymphadenopathy (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Cervical_lymphadenopathy/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-allergie-non-ige",
+  "titre": "Non-IgE mediated food allergy (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Non-IgE_mediated_food_allergy/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-boiterie",
+  "titre": "The limping or non-weight bearing child (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Child_with_limp/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-enuresie",
+  "titre": "Enuresis - Bed wetting and Monosymptomatic Enuresis (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Enuresis_-_Bed_wetting_and_Monosymptomatic_Enuresis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-pleurs-nourrisson",
+  "titre": "Unsettled or crying babies (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Crying_Baby_Infant_Distress/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-prise-de-poids-lente",
+  "titre": "Slow weight gain (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Slow_weight_gain/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-inhalation-corps-etranger",
+  "titre": "Foreign body inhalation (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Foreign_body_inhalation/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-obstruction-voies-aeriennes",
+  "titre": "Acute upper airway obstruction (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Acute_upper_airway_obstruction/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-croup",
+  "titre": "Croup (Laryngotracheobronchitis) (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Croup_Laryngotracheobronchitis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-epanchement-parapneumonique",
+  "titre": "Parapneumonic effusion (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Parapneumonic_effusion/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-dysmenorrhee",
+  "titre": "Dysmenorrhoea (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Dysmenorrhoea/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-arret-cardiorespiratoire",
+  "titre": "Resuscitation: hospital management of cardiopulmonary arrest (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Resuscitation__hospital_management_of_cardiopulmonary_arrest/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-brulures",
+  "titre": "Burns - acute management (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Burns/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-sepsis",
+  "titre": "Sepsis – assessment and management (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/SEPSIS_assessment_and_management/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-troubles-conscience",
+  "titre": "Altered conscious state (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Altered_conscious_state/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-hypoglycemie",
+  "titre": "Hypoglycaemia (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Hypoglycaemia/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-intoxications",
+  "titre": "Poisoning - Acute Guidelines For Initial Management (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Poisoning_-_Acute_Guidelines_For_Initial_Management/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-hydrocarbures",
+  "titre": "Hydrocarbon poisoning (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Hydrocarbon_poisoning/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-noyade",
+  "titre": "Drowning (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Drowning/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-ingestion-corps-etranger",
+  "titre": "Foreign body ingestion (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Foreign_body_ingestion/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-invagination",
+  "titre": "Intussusception (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Intussusception/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-enterocolite-hirschsprung",
+  "titre": "Hirschsprung associated enterocolitis HAEC (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Hirschsprung_associated_enterocolitis_HAEC/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-stenose-pylore",
+  "titre": "Pyloric stenosis (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Pyloric_stenosis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-traumatisme-oculaire",
+  "titre": "Acute eye injury (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Acute_eye_injury/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-plaie-penetrante-oeil",
+  "titre": "Penetrating eye injury (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Penetrating_eye_injury/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-epistaxis",
+  "titre": "Epistaxis (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Epistaxis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-infections-osteoarticulaires",
+  "titre": "Bone and joint infection (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Bone_and_joint_infection/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-gingivostomatite",
+  "titre": "HSV Gingivostomatitis (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/HSV_Gingivostomatitis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-traumatisme-dentaire",
+  "titre": "Dental trauma (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Dental_trauma/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-plaies",
+  "titre": "Lacerations (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Lacerations/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-plaies-tetanigenes",
+  "titre": "Management of tetanus-prone wounds (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Management_of_tetanusprone_wounds/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-bourse-aigue",
+  "titre": "Acute scrotal pain or swelling (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Acute_scrotal_pain_or_swelling/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-penis-prepuce",
+  "titre": "The penis and foreskin (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/The_penis_and_foreskin/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-anxiete",
+  "titre": "Anxiety: identification and management (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Anxiety__identification_and_management/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-syndrome-serotoninergique",
+  "titre": "Serotonin toxicity (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Serotonin_toxicity/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-mal-de-gorge",
+  "titre": "Sore throat (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Sore_throat/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rch-constipation",
+  "titre": "Constipation (RCH Clinical Practice Guidelines)",
+  "organisation": "Royal Children’s Hospital Melbourne",
+  "niveau": 2,
+  "url": "https://www.rch.org.au/clinicalguide/guideline_index/Constipation/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-hemorragie-antepartum",
+  "titre": "Antepartum Haemorrhage (Green-top Guideline No. 63)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/antepartum-haemorrhage-green-top-guideline-no-63/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-mort-foetale",
+  "titre": "Care of late intrauterine fetal death and stillbirth (Green-top Guideline No. 55)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/care-of-late-intrauterine-fetal-death-and-stillbirth-green-top-guideline-no-55/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-rciu",
+  "titre": "Small-for-Gestational-Age Fetus and a Growth Restricted Fetus, Investigation and Care (Green-top Guideline No. 31)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/small-for-gestational-age-fetus-and-a-growth-restricted-fetus-investigation-and-care-green-top-guideline-no-31/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-cholestase",
+  "titre": "Intrahepatic cholestasis of pregnancy (Green-top Guideline No. 43)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/intrahepatic-cholestasis-of-pregnancy-green-top-guideline-no-43/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-hyperemese",
+  "titre": "The Management of Nausea and Vomiting of Pregnancy and Hyperemesis Gravidarum (Green-top Guideline No.69)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/the-management-of-nausea-and-vomiting-of-pregnancy-and-hyperemesis-gravidarum-green-top-guideline-no-69/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-anticorps-erythrocytaires",
+  "titre": "The Management of Women with Red Cell Antibodies during Pregnancy (Green-top Guideline No. 65)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/the-management-of-women-with-red-cell-antibodies-during-pregnancy-green-top-guideline-no-65/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-anti-d",
+  "titre": "The Use of Anti-D Immunoglobulin for Rhesus D Prophylaxis (Green-top Guideline No. 22)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/the-use-of-anti-d-immunoglobulin-for-rhesus-d-prophylaxis-green-top-guideline-no-22/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-cerclage",
+  "titre": "Cervical cerclage (Green-top Guideline No. 75)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/cervical-cerclage-green-top-guideline-no-75/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-trophoblaste",
+  "titre": "Gestational Trophoblastic Disease (Green-top Guideline No. 38)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/gestational-trophoblastic-disease-green-top-guideline-no-38/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-douleur-pelvienne",
+  "titre": "The Initial Management of Chronic Pelvic Pain (Green-top Guideline No. 41)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/the-initial-management-of-chronic-pelvic-pain-green-top-guideline-no-41/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-masses-ovariennes",
+  "titre": "Ovarian Masses in Premenopausal Women, Management of Suspected (Green-top Guideline No. 62)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/ovarian-masses-in-premenopausal-women-management-of-suspected-green-top-guideline-no-62/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-vulve",
+  "titre": "Vulval Skin Disorders, Management (Green-top Guideline No. 58)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/vulval-skin-disorders-management-green-top-guideline-no-58/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-sepsis-maternel",
+  "titre": "Identification and management of maternal sepsis during and following pregnancy (Green-top Guideline No. 64)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/identification-and-management-of-maternal-sepsis-during-and-following-pregnancy-green-top-guideline-no-64/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-varicelle-grossesse",
+  "titre": "Chickenpox in Pregnancy (Green-top Guideline No. 13)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/chickenpox-in-pregnancy-green-top-guideline-no-13/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-placenta-praevia-accreta",
+  "titre": "Placenta Praevia and Placenta Accreta: Diagnosis and Management (Green-top Guideline No. 27a)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/placenta-praevia-and-placenta-accreta-diagnosis-and-management-green-top-guideline-no-27a/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-vasa-praevia",
+  "titre": "Vasa Praevia: Diagnosis and Management (Green-top Guideline 27b)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/vasa-praevia-diagnosis-and-management-green-top-guideline-27b/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-amniocentese",
+  "titre": "Amniocentesis and Chorionic Villus Sampling (Green-top Guideline No. 8)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/amniocentesis-and-chorionic-villus-sampling-green-top-guideline-no-8/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-mouvements-foetaux",
+  "titre": "Reduced Fetal Movements (Green-top Guideline No. 57)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/reduced-fetal-movements-green-top-guideline-no-57/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-dystocie-epaules",
+  "titre": "Shoulder Dystocia (Green-top Guideline No. 42)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/shoulder-dystocia-green-top-guideline-no-42/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-uterus-cicatriciel",
+  "titre": "Birth after Previous Caesarean Birth (Green-top Guideline No. 45)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/birth-after-previous-caesarean-birth-green-top-guideline-no-45/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-geu",
+  "titre": "Diagnosis and Management of Ectopic Pregnancy (Green-top Guideline No. 21)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/diagnosis-and-management-of-ectopic-pregnancy-green-top-guideline-no-21/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-collapsus-maternel",
+  "titre": "Maternal Collapse in Pregnancy and the Puerperium (Green-top Guideline No. 56)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/maternal-collapse-in-pregnancy-and-the-puerperium-green-top-guideline-no-56/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "rcog-sopk",
+  "titre": "Long-term Consequences of Polycystic Ovary Syndrome (Green-top Guideline No. 33)",
+  "organisation": "RCOG",
+  "niveau": 2,
+  "url": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/long-term-consequences-of-polycystic-ovary-syndrome-green-top-guideline-no-33/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "eau-urologie-pediatrique",
+  "titre": "EAU Guidelines on Paediatric Urology",
+  "organisation": "European Association of Urology",
+  "niveau": 2,
+  "url": "https://uroweb.org/guidelines/paediatric-urology",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "eau-traumatismes",
+  "titre": "EAU Guidelines on Urological Trauma",
+  "organisation": "European Association of Urology",
+  "niveau": 2,
+  "url": "https://uroweb.org/guidelines/urological-trauma",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "eau-retrecissement-uretral",
+  "titre": "EAU Guidelines on Urethral Strictures",
+  "organisation": "European Association of Urology",
+  "niveau": 2,
+  "url": "https://uroweb.org/guidelines/urethral-strictures",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "eau-sante-sexuelle",
+  "titre": "EAU Guidelines on Sexual and Reproductive Health",
+  "organisation": "European Association of Urology",
+  "niveau": 2,
+  "url": "https://uroweb.org/guidelines/sexual-and-reproductive-health",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "eau-douleur-pelvienne",
+  "titre": "EAU Guidelines on Chronic Pelvic Pain",
+  "organisation": "European Association of Urology",
+  "niveau": 2,
+  "url": "https://uroweb.org/guidelines/chronic-pelvic-pain",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "eau-infections",
+  "titre": "EAU Guidelines on Urological Infections",
+  "organisation": "European Association of Urology",
+  "niveau": 2,
+  "url": "https://uroweb.org/guidelines/urological-infections",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "hug-urticaire-2023",
+  "titre": "Urticaire : stratégie de prise en charge (HUG, 2023)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2023-09/strategie_urticaire_2023_avec_lien.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-osteoporose",
+  "titre": "Ostéoporose : stratégie de prise en charge (HUG)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2026-09/strategie-osteoporose-version-finale_0.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-paralysie-faciale-2023",
+  "titre": "Paralysie faciale périphérique (HUG, 2023)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2023-04/paralysie_faciale_peripherique_avril_2023_1.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-vertiges",
+  "titre": "Vertiges : stratégie de prise en charge (HUG)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2024-10/strategie_vertiges_doi.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-dysfonction-sexuelle",
+  "titre": "Dysfonction sexuelle : stratégie de prise en charge (HUG)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2026-01/strategie_dysfonction_sexuelle_1.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-microhematurie",
+  "titre": "Microhématurie : stratégie de prise en charge (HUG)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2024-10/strategie_microhematurie_doi.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-aes-2023",
+  "titre": "Accident d’exposition au sang : conduite à tenir (HUG, 2023)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2023-11/carte_aes_2023_v_21.11.2023_final.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-oeil-rouge-2025",
+  "titre": "Œil rouge : stratégie de prise en charge (HUG, 2025)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2025-09/strategie_oeil_rouge_2025_1.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-personne-agee",
+  "titre": "Personne âgée : stratégie de prise en charge (HUG)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2026-09/strategie-personne-agee-version-finale_0.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "hug-otite-externe-2022",
+  "titre": "Otite externe aiguë (HUG, 2022)",
+  "organisation": "Hôpitaux universitaires de Genève (HUG)",
+  "niveau": 2,
+  "url": "https://www.hug.ch/sites/interhug/files/2022-09/otite_exerne_aigue_14.07.2022.pdf",
+  "verification": "document PDF vérifié (réponse du serveur)"
+ },
+ {
+  "code": "idsa-peau-tissus-mous-2014",
+  "titre": "IDSA 2014 Guidelines for the Diagnosis and Management of Skin and Soft Tissue Infections",
+  "organisation": "Infectious Diseases Society of America",
+  "niveau": 2,
+  "url": "https://www.idsociety.org/practice-guideline/skin-and-soft-tissue-infections/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "idsa-encephalite-2008",
+  "titre": "IDSA Guidelines for the Management of Encephalitis",
+  "organisation": "Infectious Diseases Society of America",
+  "niveau": 2,
+  "url": "https://www.idsociety.org/practice-guideline/encephalitis/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "ukka-hyperkaliemie",
+  "titre": "Treatment of acute hyperkalaemia in adults",
+  "organisation": "UK Kidney Association",
+  "niveau": 2,
+  "url": "https://ukkidney.org/health-professionals/guidelines/treatment-acute-hyperkalaemia-adults",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "sign-ulcere-veineux-2010",
+  "titre": "Management of chronic venous leg ulcers",
+  "organisation": "SIGN (Écosse)",
+  "niveau": 2,
+  "url": "https://www.sign.ac.uk/our-guidelines/management-of-chronic-venous-leg-ulcers/",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-typhoide-2003",
+  "titre": "Background document : the diagnosis, treatment and prevention of typhoid fever",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://iris.who.int/handle/10665/68122",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-tetanos-2010",
+  "titre": "Current recommendations for treatment of tetanus during humanitarian emergencies",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications-detail-redirect/current-recommendations-for-treatment-of-tetanus-during-humanitarian-emergencies",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-noma-2017",
+  "titre": "Information brochure for early detection and management of noma",
+  "organisation": "OMS — Bureau régional de l’Afrique",
+  "niveau": 1,
+  "url": "https://www.who.int/publications-detail-redirect/9789290233541",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pep-2024",
+  "titre": "Guidelines for HIV post-exposure prophylaxis",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240095137",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pian-2018",
+  "titre": "Eradication of yaws – A guide for programme managers",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241512695",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-covid-2025",
+  "titre": "Clinical management of COVID-19: living guideline, June 2025",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/B09467",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-shigellose-2005",
+  "titre": "Guidelines for the control of shigellosis, including epidemics due to Shigella dysenteriae type 1",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9241592330",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-buruli-2012",
+  "titre": "Treatment of Mycobacterium ulcerans disease (Buruli Ulcer) Guidance for health workers",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241503402",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-mastite-2000",
+  "titre": "Mastitis : causes and management",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://iris.who.int/handle/10665/66230",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-otite-chronique-2004",
+  "titre": "Chronic suppurative otitis media : burden of illness and management options",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://iris.who.int/handle/10665/42941",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-audition-2021",
+  "titre": "World report on hearing",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240020481",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-vision-2019",
+  "titre": "World report on vision",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241516570",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-pesticides-2008",
+  "titre": "Clinical management of acute pesticide intoxication: prevention of suicidal behaviours",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241597456",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-grossesse-ado-2011",
+  "titre": "Preventing early pregnancy and poor reproductive outcomes among adolescents in developing countries",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241502214",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-alimentation-complementaire-2023",
+  "titre": "WHO Guideline for complementary feeding of infants and young children 6-23 months of age",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240081864",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-malformations-2020",
+  "titre": "Birth defects surveillance: A manual for programme managers, 2nd Edition",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240015395",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-mapi-2019",
+  "titre": "Causality assessment of an adverse event following immunization (AEFI): user manual for the revised WHO classification, 2nd ed., 2019 update",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789241516990",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-hepb-2024",
+  "titre": "Guidelines for the prevention, diagnosis, care and treatment for people with chronic hepatitis B infection",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://www.who.int/publications/i/item/9789240090903",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-paralysie-flasque-2024",
+  "titre": "Global guidance for conducting acute flaccid paralysis (AFP) surveillance in the context of poliovirus eradication",
+  "organisation": "OMS",
+  "niveau": 1,
+  "url": "https://iris.who.int/handle/10665/376603",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "oms-afro-poliovirus",
+  "titre": "Guidelines for poliovirus surveillance in the WHO African Region",
+  "organisation": "OMS — Bureau régional de l’Afrique",
+  "niveau": 1,
+  "url": "https://www.afro.who.int/publications/guidelines-poliovirus-surveillance-who-african-region",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "boast-loges-2025",
+  "titre": "BOASt : Diagnosis and Management of Compartment Syndrome of the Extremities",
+  "organisation": "British Orthopaedic Association (BOAST)",
+  "niveau": 2,
+  "url": "https://www.boa.ac.uk/resource/boast-10-pdf.html",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "boast-nerfs-peripheriques-2021",
+  "titre": "BOASt : Peripheral Nerve Injury",
+  "organisation": "British Orthopaedic Association (BOAST)",
+  "niveau": 2,
+  "url": "https://www.boa.ac.uk/resource/boast-peripheral-nerve-injury.html",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "bssh-traumatismes-main",
+  "titre": "BSSH standards of care in hand trauma",
+  "organisation": "British Society for Surgery of the Hand",
+  "niveau": 2,
+  "url": "https://www.bssh.ac.uk/bssh_standards_of_care_in_hand_trauma_.aspx",
+  "verification": "lien vérifié (titre de la page)"
+ },
+ {
+  "code": "esc-endocardite-2023",
+  "titre": "2023 ESC Guidelines for the management of endocarditis",
+  "organisation": "European Society of Cardiology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/37622656/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37622656)"
+ },
+ {
+  "code": "esc-cardiomyopathies-2023",
+  "titre": "2023 ESC Guidelines for the management of cardiomyopathies",
+  "organisation": "European Society of Cardiology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/37622657/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37622657)"
+ },
+ {
+  "code": "esc-pericarde-2015",
+  "titre": "2015 ESC Guidelines for the diagnosis and management of pericardial diseases: The Task Force for the Diagnosis and Management of Pericardial Diseases of the European Society of Cardiology (ESC)Endorsed by: The European Association for Cardio-Thoracic Surgery (EACTS)",
+  "organisation": "European Society of Cardiology",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7539677/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26320112)"
+ },
+ {
+  "code": "esc-myopericardite-2025",
+  "titre": "2025 ESC Guidelines for the management of myocarditis and pericarditis",
+  "organisation": "European Society of Cardiology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/40878297/",
+  "annee": 2025,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 40878297)"
+ },
+ {
+  "code": "esc-hfa-cmpp-2019",
+  "titre": "Pathophysiology, diagnosis and management of peripartum cardiomyopathy: a position statement from the Heart Failure Association of the European Society of Cardiology Study Group on peripartum cardiomyopathy",
+  "organisation": "ESC — Heart Failure Association",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31243866/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31243866)"
+ },
+ {
+  "code": "esc-grossesse-2018",
+  "titre": "2018 ESC Guidelines for the management of cardiovascular diseases during pregnancy",
+  "organisation": "European Society of Cardiology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30165544/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30165544)"
+ },
+ {
+  "code": "esc-grossesse-2025",
+  "titre": "2025 ESC Guidelines for the management of cardiovascular disease and pregnancy",
+  "organisation": "European Society of Cardiology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/40878294/",
+  "annee": 2025,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 40878294)"
+ },
+ {
+  "code": "aha-endocardite-enfant-2015",
+  "titre": "Infective Endocarditis in Childhood: 2015 Update: A Scientific Statement From the American Heart Association",
+  "organisation": "American Heart Association",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26373317/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26373317)"
+ },
+ {
+  "code": "jsw-cheloides-2018",
+  "titre": "Diagnosis and Treatment of Keloids and Hypertrophic Scars-Japan Scar Workshop Consensus Document 2018",
+  "organisation": "Japan Scar Workshop",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6933735/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31890718)"
+ },
+ {
+  "code": "cicatrices-intl-2014",
+  "titre": "Updated international clinical recommendations on scar management: part 2--algorithms for scar prevention and treatment",
+  "organisation": "Panel international sur les cicatrices",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/25068544/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25068544)"
+ },
+ {
+  "code": "revue-depigmentation-2022",
+  "titre": "Skin lightening: causes and complications",
+  "organisation": "Clinical and Experimental Dermatology (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34637158/",
+  "annee": 2022,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 34637158)"
+ },
+ {
+  "code": "revue-tungose-2014",
+  "titre": "Tungiasis--a neglected disease with many challenges for global public health",
+  "organisation": "PLoS Neglected Tropical Diseases (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4214674/",
+  "annee": 2014,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 25356978)"
+ },
+ {
+  "code": "eaaci-urticaire-2022",
+  "titre": "The international EAACI/GA²LEN/EuroGuiDerm/APAAACI guideline for the definition, classification, diagnosis, and management of urticaria",
+  "organisation": "EAACI / GA²LEN / EuroGuiDerm / APAAACI",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34536239/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34536239)"
+ },
+ {
+  "code": "aap-hemangiomes-2019",
+  "titre": "Clinical Practice Guideline for the Management of Infantile Hemangiomas",
+  "organisation": "American Academy of Pediatrics",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30584062/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30584062)"
+ },
+ {
+  "code": "bad-verrues-2014",
+  "titre": "British Association of Dermatologists' guidelines for the management of cutaneous warts 2014",
+  "organisation": "British Association of Dermatologists",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/25273231/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25273231)"
+ },
+ {
+  "code": "bad-lichen-sclereux-2018",
+  "titre": "British Association of Dermatologists guidelines for the management of lichen sclerosus, 2018",
+  "organisation": "British Association of Dermatologists",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29313888/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29313888)"
+ },
+ {
+  "code": "ese-hyponatremie-2014",
+  "titre": "Clinical practice guideline on diagnosis and treatment of hyponatraemia",
+  "organisation": "ESE / ESICM / ERBP",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/24569125/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 24569125)"
+ },
+ {
+  "code": "endo-insuffisance-surrenale-2016",
+  "titre": "Diagnosis and Treatment of Primary Adrenal Insufficiency: An Endocrine Society Clinical Practice Guideline",
+  "organisation": "Endocrine Society",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4880116/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26760044)"
+ },
+ {
+  "code": "endo-hcs-2018",
+  "titre": "Congenital Adrenal Hyperplasia Due to Steroid 21-Hydroxylase Deficiency: An Endocrine Society Clinical Practice Guideline",
+  "organisation": "Endocrine Society",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6456929/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30272171)"
+ },
+ {
+  "code": "espe-hypothyroidie-congenitale-2021",
+  "titre": "Congenital Hypothyroidism: A 2020-2021 Consensus Guidelines Update-An ENDO-European Reference Network Initiative Endorsed by the European Society for Pediatric Endocrinology and the European Society for Endocrinology",
+  "organisation": "ESPE / ENDO-ERN",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8001676/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33272083)"
+ },
+ {
+  "code": "pes-croissance-2016",
+  "titre": "Guidelines for Growth Hormone and Insulin-Like Growth Factor-I Treatment in Children and Adolescents: Growth Hormone Deficiency, Idiopathic Short Stature, and Primary Insulin-Like Growth Factor-I Deficiency",
+  "organisation": "Pediatric Endocrine Society",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/27884013/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 27884013)"
+ },
+ {
+  "code": "gnrh-puberte-2019",
+  "titre": "Use of Gonadotropin-Releasing Hormone Analogs in Children: Update by an International Consortium",
+  "organisation": "Consortium international d’endocrinologie pédiatrique",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31319416/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31319416)"
+ },
+ {
+  "code": "revue-retard-pubertaire-2022",
+  "titre": "An Approach to the Patient With Delayed Puberty",
+  "organisation": "Journal of Clinical Endocrinology & Metabolism (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/35100608/",
+  "annee": 2022,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 35100608)"
+ },
+ {
+  "code": "sfe-ddsd-2021",
+  "titre": "Society for Endocrinology UK Guidance on the initial evaluation of a suspected difference or disorder of sex development (Revised 2021)",
+  "organisation": "Society for Endocrinology (Royaume-Uni)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34031907/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34031907)"
+ },
+ {
+  "code": "turner-2024",
+  "titre": "Clinical practice guidelines for the care of girls and women with Turner syndrome",
+  "organisation": "International Turner Syndrome Consensus Group",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11759048/",
+  "annee": 2024,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 38748847)"
+ },
+ {
+  "code": "aap-trisomie21-2022",
+  "titre": "Health Supervision for Children and Adolescents With Down Syndrome",
+  "organisation": "American Academy of Pediatrics",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/35490285/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35490285)"
+ },
+ {
+  "code": "albinisme-france-2021",
+  "titre": "Management of albinism: French guidelines for diagnosis and care",
+  "organisation": "Centre de référence (recommandations françaises)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34042219/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34042219)"
+ },
+ {
+  "code": "bsg-hdb-2019",
+  "titre": "Diagnosis and management of acute lower gastrointestinal bleeding: guidelines from the British Society of Gastroenterology",
+  "organisation": "British Society of Gastroenterology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30792244/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30792244)"
+ },
+ {
+  "code": "easl-vhe-2018",
+  "titre": "EASL Clinical Practice Guidelines on hepatitis E virus infection",
+  "organisation": "EASL",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29609832/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29609832)"
+ },
+ {
+  "code": "easl-grossesse-2023",
+  "titre": "EASL Clinical Practice Guidelines on the management of liver diseases in pregnancy",
+  "organisation": "EASL",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/37394016/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37394016)"
+ },
+ {
+  "code": "acg-foie-grossesse-2016",
+  "titre": "ACG Clinical Guideline: Liver Disease and Pregnancy",
+  "organisation": "American College of Gastroenterology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26832651/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26832651)"
+ },
+ {
+  "code": "espghan-coeliaque-2020",
+  "titre": "European Society Paediatric Gastroenterology, Hepatology and Nutrition Guidelines for Diagnosing Coeliac Disease 2020",
+  "organisation": "ESPGHAN",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31568151/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31568151)"
+ },
+ {
+  "code": "naspghan-cholestase-2017",
+  "titre": "Guideline for the Evaluation of Cholestatic Jaundice in Infants: Joint Recommendations of the North American Society for Pediatric Gastroenterology, Hepatology, and Nutrition and the European Society for Pediatric Gastroenterology, Hepatology, and Nutrition",
+  "organisation": "NASPGHAN / ESPGHAN",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/27429428/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 27429428)"
+ },
+ {
+  "code": "espghan-aplv-2024",
+  "titre": "An ESPGHAN Position Paper on the Diagnosis, Management, and Prevention of Cow's Milk Allergy",
+  "organisation": "ESPGHAN",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/38374567/",
+  "annee": 2024,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 38374567)"
+ },
+ {
+  "code": "revue-amibiase-2003",
+  "titre": "Amoebiasis",
+  "organisation": "The Lancet (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/12660071/",
+  "annee": 2003,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 12660071)"
+ },
+ {
+  "code": "espghan-atresie-oesophage-2016",
+  "titre": "ESPGHAN-NASPGHAN Guidelines for the Evaluation and Treatment of Gastrointestinal and Nutritional Complications in Children With Esophageal Atresia-Tracheoesophageal Fistula",
+  "organisation": "ESPGHAN / NASPGHAN",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/27579697/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 27579697)"
+ },
+ {
+  "code": "ernica-hirschsprung-2020",
+  "titre": "ERNICA guidelines for the management of rectosigmoid Hirschsprung's disease",
+  "organisation": "ERNICA",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7318734/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 32586397)"
+ },
+ {
+  "code": "armnet-malformations-anorectales-2015",
+  "titre": "European consensus meeting of ARM-Net members concerning diagnosis and early management of newborns with anorectal malformations",
+  "organisation": "ARM-Net",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4369584/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25609592)"
+ },
+ {
+  "code": "ernica-laparoschisis-2024",
+  "titre": "European reference network for rare inherited congenital anomalies (ERNICA) evidence based guideline on the management of gastroschisis",
+  "organisation": "ERNICA",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10860293/",
+  "annee": 2024,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 38347519)"
+ },
+ {
+  "code": "revue-omphalocele-2019",
+  "titre": "Prenatal diagnosis and management of omphalocele",
+  "organisation": "Seminars in Pediatric Surgery (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31072463/",
+  "annee": 2019,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 31072463)"
+ },
+ {
+  "code": "nec-zero-2017",
+  "titre": "NEC-zero recommendations from scoping review of evidence to prevent and foster timely recognition of necrotizing enterocolitis",
+  "organisation": "NEC-Zero (recommandations de consensus)",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5733736/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29270303)"
+ },
+ {
+  "code": "espghan-vitamine-k-2016",
+  "titre": "Prevention of Vitamin K Deficiency Bleeding in Newborn Infants: A Position Paper by the ESPGHAN Committee on Nutrition",
+  "organisation": "ESPGHAN",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/27050049/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 27050049)"
+ },
+ {
+  "code": "abm-mastite-2022",
+  "titre": "Academy of Breastfeeding Medicine Clinical Protocol #36: The Mastitis Spectrum, Revised 2022",
+  "organisation": "Academy of Breastfeeding Medicine",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/35576513/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35576513)"
+ },
+ {
+  "code": "tg18-cholecystite-2018",
+  "titre": "Tokyo Guidelines 2018: flowchart for the management of acute cholecystitis",
+  "organisation": "Tokyo Guidelines",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29045062/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29045062)"
+ },
+ {
+  "code": "tg18-angiocholite-2018",
+  "titre": "Tokyo Guidelines 2018: initial management of acute biliary infection and flowchart for acute cholangitis",
+  "organisation": "Tokyo Guidelines",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28941329/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28941329)"
+ },
+ {
+  "code": "wses-cholecystite-2020",
+  "titre": "2020 World Society of Emergency Surgery updated guidelines for the diagnosis and treatment of acute calculus cholecystitis",
+  "organisation": "WSES",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7643471/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33153472)"
+ },
+ {
+  "code": "herniasurge-2018",
+  "titre": "International guidelines for groin hernia management",
+  "organisation": "HerniaSurge Group",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5809582/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29330835)"
+ },
+ {
+  "code": "ehs-ahs-ombilicale-2020",
+  "titre": "Guidelines for treatment of umbilical and epigastric hernias from the European Hernia Society and Americas Hernia Society",
+  "organisation": "European Hernia Society / Americas Hernia Society",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31916607/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31916607)"
+ },
+ {
+  "code": "iehs-eventration-2019",
+  "titre": "Update of Guidelines for laparoscopic treatment of ventral and incisional abdominal wall hernias (International Endohernia Society (IEHS))-Part A",
+  "organisation": "International Endohernia Society",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6722153/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31250243)"
+ },
+ {
+  "code": "wses-hernie-compliquee-2017",
+  "titre": "2017 update of the WSES guidelines for emergency repair of complicated abdominal wall hernias",
+  "organisation": "WSES",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5545868/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28804507)"
+ },
+ {
+  "code": "eupsa-hernie-inguinale-enfant-2022",
+  "titre": "Surgical Management of Pediatric Inguinal Hernia: A Systematic Review and Guideline from the European Pediatric Surgeons' Association Evidence and Guideline Committee",
+  "organisation": "European Paediatric Surgeons’ Association",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/33567466/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33567466)"
+ },
+ {
+  "code": "ascrs-hemorroides-2018",
+  "titre": "The American Society of Colon and Rectal Surgeons Clinical Practice Guidelines for the Management of Hemorrhoids",
+  "organisation": "ASCRS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29420423/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29420423)"
+ },
+ {
+  "code": "ascrs-fissure-2023",
+  "titre": "The American Society of Colon and Rectal Surgeons Clinical Practice Guidelines for the Management of Anal Fissures",
+  "organisation": "ASCRS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/36321851/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 36321851)"
+ },
+ {
+  "code": "ascrs-abces-fistule-2022",
+  "titre": "The American Society of Colon and Rectal Surgeons Clinical Practice Guidelines for the Management of Anorectal Abscess, Fistula-in-Ano, and Rectovaginal Fistula",
+  "organisation": "ASCRS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/35732009/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35732009)"
+ },
+ {
+  "code": "ascrs-volvulus-2021",
+  "titre": "The American Society of Colon and Rectal Surgeons Clinical Practice Guidelines for the Management of Colonic Volvulus and Acute Colonic Pseudo-Obstruction",
+  "organisation": "ASCRS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34016826/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34016826)"
+ },
+ {
+  "code": "wses-infections-abdominales-2017",
+  "titre": "The management of intra-abdominal infections from a global perspective: 2017 WSES guidelines for management of intra-abdominal infections",
+  "organisation": "WSES",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5504840/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28702076)"
+ },
+ {
+  "code": "nswocc-fistules-2019",
+  "titre": "Executive Summary: Nurses Specialized in Wound, Ostomy and Continence Canada (NSWOCC) Nursing Best Practice Recommendations: Enterocutaneous Fistula and Enteroatmospheric Fistula",
+  "organisation": "NSWOCC (Canada)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31274860/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31274860)"
+ },
+ {
+  "code": "wses-peau-tissus-mous-2018",
+  "titre": "2018 WSES/SIS-E consensus conference: recommendations for the management of skin and soft-tissue infections",
+  "organisation": "WSES / SIS-E",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6295010/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30564282)"
+ },
+ {
+  "code": "douleur-abdominale-aigue-2015",
+  "titre": "Guideline for the diagnostic pathway in patients with acute abdominal pain",
+  "organisation": "Société néerlandaise de chirurgie",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/25659265/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25659265)"
+ },
+ {
+  "code": "escmid-abces-cerebral-2024",
+  "titre": "European society of Clinical Microbiology and Infectious Diseases guidelines on diagnosis and treatment of brain abscess in children and adults",
+  "organisation": "ESCMID",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/37648062/",
+  "annee": 2024,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37648062)"
+ },
+ {
+  "code": "bsh-b12-folates-2014",
+  "titre": "Guidelines for the diagnosis and treatment of cobalamin and folate disorders",
+  "organisation": "British Society for Haematology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/24942828/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 24942828)"
+ },
+ {
+  "code": "cpic-g6pd-2022",
+  "titre": "Expanded Clinical Pharmacogenetics Implementation Consortium Guideline for Medication Use in the Context of G6PD Genotype",
+  "organisation": "CPIC",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10281211/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 36049896)"
+ },
+ {
+  "code": "asco-idsa-neutropenie-2018",
+  "titre": "Outpatient Management of Fever and Neutropenia in Adults Treated for Malignancy: American Society of Clinical Oncology and Infectious Diseases Society of America Clinical Practice Guideline Update",
+  "organisation": "ASCO / IDSA",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29461916/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29461916)"
+ },
+ {
+  "code": "ash-pti-2019",
+  "titre": "American Society of Hematology 2019 guidelines for immune thrombocytopenia",
+  "organisation": "American Society of Hematology",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6963252/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31794604)"
+ },
+ {
+  "code": "icr-pti-2019",
+  "titre": "Updated international consensus report on the investigation and management of primary immune thrombocytopenia",
+  "organisation": "Consensus international sur le PTI",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6880896/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31770441)"
+ },
+ {
+  "code": "abn-encephalite-adulte-2012",
+  "titre": "Management of suspected viral encephalitis in adults--Association of British Neurologists and British Infection Association National Guidelines",
+  "organisation": "Association of British Neurologists / British Infection Association",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/22120595/",
+  "annee": 2012,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 22120595)"
+ },
+ {
+  "code": "abn-encephalite-enfant-2012",
+  "titre": "Management of suspected viral encephalitis in children - Association of British Neurologists and British Paediatric Allergy, Immunology and Infection Group national guidelines",
+  "organisation": "BPAIIG / Association of British Neurologists",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/22120594/",
+  "annee": 2012,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 22120594)"
+ },
+ {
+  "code": "cmv-congenital-2017",
+  "titre": "Congenital cytomegalovirus infection in pregnancy and the neonate: consensus recommendations for prevention, diagnosis, and therapy",
+  "organisation": "Consensus international sur le CMV congénital",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28291720/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28291720)"
+ },
+ {
+  "code": "cdc-botulisme-2021",
+  "titre": "Clinical Guidelines for Diagnosis and Treatment of Botulism, 2021",
+  "organisation": "CDC",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8112830/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33956777)"
+ },
+ {
+  "code": "htlv-ham-tsp-2019",
+  "titre": "Management of HAM/TSP: Systematic Review and Consensus-based Recommendations 2019",
+  "organisation": "Consensus international sur la HAM/TSP",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8101298/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33968472)"
+ },
+ {
+  "code": "acip-ror-2013",
+  "titre": "Prevention of measles, rubella, congenital rubella syndrome, and mumps, 2013: summary recommendations of the Advisory Committee on Immunization Practices (ACIP)",
+  "organisation": "CDC — ACIP",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/23760231/",
+  "annee": 2013,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 23760231)"
+ },
+ {
+  "code": "scorpion-consensus-2011",
+  "titre": "Classification of clinical consequences of scorpion stings: consensus development",
+  "organisation": "Consensus international sur les piqûres de scorpion",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/21601228/",
+  "annee": 2011,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 21601228)"
+ },
+ {
+  "code": "eaaci-venin-2018",
+  "titre": "EAACI guidelines on allergen immunotherapy: Hymenoptera venom allergy",
+  "organisation": "EAACI",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28748641/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28748641)"
+ },
+ {
+  "code": "wms-chaleur-2019",
+  "titre": "Wilderness Medical Society Clinical Practice Guidelines for the Prevention and Treatment of Heat Illness: 2019 Update",
+  "organisation": "Wilderness Medical Society",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31221601/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31221601)"
+ },
+ {
+  "code": "revue-loase-2012",
+  "titre": "Loiasis: new epidemiologic insights and proposed treatment strategy",
+  "organisation": "Journal of Travel Medicine (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/22530819/",
+  "annee": 2012,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 22530819)"
+ },
+ {
+  "code": "kdigo-glomerulopathies-2021",
+  "titre": "KDIGO 2021 Clinical Practice Guideline for the Management of Glomerular Diseases",
+  "organisation": "KDIGO",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34556256/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34556256)"
+ },
+ {
+  "code": "ipna-nephrotique-2023",
+  "titre": "IPNA clinical practice recommendations for the diagnosis and management of children with steroid-sensitive nephrotic syndrome",
+  "organisation": "IPNA",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9589698/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 36269406)"
+ },
+ {
+  "code": "shu-atypique-2016",
+  "titre": "An international consensus approach to the management of atypical hemolytic uremic syndrome in children",
+  "organisation": "HUS International",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/25859752/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25859752)"
+ },
+ {
+  "code": "bts-ddb-2019",
+  "titre": "British Thoracic Society Guideline for bronchiectasis in adults",
+  "organisation": "British Thoracic Society",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30545985/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30545985)"
+ },
+ {
+  "code": "ers-ddb-2017",
+  "titre": "European Respiratory Society guidelines for the management of adult bronchiectasis",
+  "organisation": "European Respiratory Society",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28889110/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28889110)"
+ },
+ {
+  "code": "scii-hemoptysie-2023",
+  "titre": "Society of Chest Imaging and Interventions Consensus Guidelines for the Interventional Radiology Management of Hemoptysis",
+  "organisation": "Society of Chest Imaging and Interventions",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10289864/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37362365)"
+ },
+ {
+  "code": "revue-abces-pulmonaire-2011",
+  "titre": "Management of pleural effusion, empyema, and lung abscess",
+  "organisation": "Seminars in Interventional Radiology (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3140254/",
+  "annee": 2011,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 22379278)"
+ },
+ {
+  "code": "bts-ics-ventilation-2016",
+  "titre": "BTS/ICS guideline for the ventilatory management of acute hypercapnic respiratory failure in adults",
+  "organisation": "BTS / ICS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26976648/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26976648)"
+ },
+ {
+  "code": "bts-oxygene-2017",
+  "titre": "BTS guideline for oxygen use in adults in healthcare and emergency settings",
+  "organisation": "British Thoracic Society",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28507176/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28507176)"
+ },
+ {
+  "code": "separ-silicose-2015",
+  "titre": "Guidelines for the diagnosis and monitoring of silicosis",
+  "organisation": "SEPAR",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/25479706/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25479706)"
+ },
+ {
+  "code": "bts-pleurale-enfant-2005",
+  "titre": "BTS guidelines for the management of pleural infection in children",
+  "organisation": "British Thoracic Society",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1766040/",
+  "annee": 2005,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 15681514)"
+ },
+ {
+  "code": "bts-pneumonie-enfant-2011",
+  "titre": "British Thoracic Society guidelines for the management of community acquired pneumonia in children: update 2011",
+  "organisation": "British Thoracic Society",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/21903691/",
+  "annee": 2011,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 21903691)"
+ },
+ {
+  "code": "ecfs-mucoviscidose-2018",
+  "titre": "ECFS best practice guidelines: the 2018 revision",
+  "organisation": "ECFS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29506920/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29506920)"
+ },
+ {
+  "code": "eular-lupus-2023",
+  "titre": "EULAR recommendations for the management of systemic lupus erythematosus: 2023 update",
+  "organisation": "EULAR",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/37827694/",
+  "annee": 2024,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37827694)"
+ },
+ {
+  "code": "nogg-osteoporose-2022",
+  "titre": "UK clinical guideline for the prevention and treatment of osteoporosis",
+  "organisation": "NOGG (Royaume-Uni)",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8979902/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35378630)"
+ },
+ {
+  "code": "bsr-myosites-2022",
+  "titre": "British Society for Rheumatology guideline on management of paediatric, adolescent and adult patients with idiopathic inflammatory myopathy",
+  "organisation": "British Society for Rheumatology",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9398208/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35355064)"
+ },
+ {
+  "code": "noa-epaule-2014",
+  "titre": "Guideline for diagnosis and treatment of subacromial pain syndrome: a multidisciplinary review by the Dutch Orthopaedic Association",
+  "organisation": "Dutch Orthopaedic Association",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4062801/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 24847788)"
+ },
+ {
+  "code": "acr-aji-2021",
+  "titre": "2021 American College of Rheumatology Guideline for the Treatment of Juvenile Idiopathic Arthritis: Therapeutic Approaches for Oligoarthritis, Temporomandibular Joint Arthritis, and Systemic Juvenile Idiopathic Arthritis",
+  "organisation": "American College of Rheumatology",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10161784/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35233993)"
+ },
+ {
+  "code": "acr-aji-2019",
+  "titre": "2019 American College of Rheumatology/Arthritis Foundation Guideline for the Treatment of Juvenile Idiopathic Arthritis: Therapeutic Approaches for Non-Systemic Polyarthritis, Sacroiliitis, and Enthesitis",
+  "organisation": "American College of Rheumatology / Arthritis Foundation",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6561114/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31021537)"
+ },
+ {
+  "code": "share-lupus-enfant-2017",
+  "titre": "European evidence-based recommendations for diagnosis and treatment of childhood-onset systemic lupus erythematosus: the SHARE initiative",
+  "organisation": "SHARE (consensus européen)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28630236/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28630236)"
+ },
+ {
+  "code": "share-vasculite-iga-2019",
+  "titre": "European consensus-based recommendations for diagnosis and treatment of immunoglobulin A vasculitis-the SHARE initiative",
+  "organisation": "SHARE (consensus européen)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30879080/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30879080)"
+ },
+ {
+  "code": "eular-lupus-grossesse-2017",
+  "titre": "EULAR recommendations for women's health and the management of family planning, assisted reproduction, pregnancy and menopause in patients with systemic lupus erythematosus and/or antiphospholipid syndrome",
+  "organisation": "EULAR",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5446003/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 27457513)"
+ },
+ {
+  "code": "acr-sante-reproductive-2020",
+  "titre": "2020 American College of Rheumatology Guideline for the Management of Reproductive Health in Rheumatic and Musculoskeletal Diseases",
+  "organisation": "American College of Rheumatology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/32090480/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 32090480)"
+ },
+ {
+  "code": "bsr-arthrite-septique-2006",
+  "titre": "BSR & BHPR, BOA, RCGP and BSAC guidelines for management of the hot swollen joint in adults",
+  "organisation": "BSR / BHPR / BOA / RCGP / BSAC",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/16829534/",
+  "annee": 2006,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 16829534)"
+ },
+ {
+  "code": "pids-idsa-osteomyelite-2021",
+  "titre": "Clinical Practice Guideline by the Pediatric Infectious Diseases Society and the Infectious Diseases Society of America: 2021 Guideline on Diagnosis and Management of Acute Hematogenous Osteomyelitis in Pediatrics",
+  "organisation": "PIDS / IDSA",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34350458/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34350458)"
+ },
+ {
+  "code": "aaos-dysplasie-hanche-2015",
+  "titre": "AAOS Clinical Practice Guideline: Detection and Nonoperative Management of Pediatric Developmental Dysplasia of the Hip in Infants up to Six Months of Age",
+  "organisation": "AAOS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/25716003/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25716003)"
+ },
+ {
+  "code": "aaos-canal-carpien-2016",
+  "titre": "The American Academy of Orthopaedic Surgeons Evidence-Based Clinical Practice Guideline on: Management of Carpal Tunnel Syndrome",
+  "organisation": "AAOS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/27869627/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 27869627)"
+ },
+ {
+  "code": "ean-pns-gbs-2023",
+  "titre": "European Academy of Neurology/Peripheral Nerve Society Guideline on diagnosis and treatment of Guillain-Barré syndrome",
+  "organisation": "EAN / PNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/37814552/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37814552)"
+ },
+ {
+  "code": "gbs-dix-etapes-2019",
+  "titre": "Diagnosis and management of Guillain-Barré syndrome in ten steps",
+  "organisation": "Consensus international (Leonhard et al.)",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6821638/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31541214)"
+ },
+ {
+  "code": "myasthenie-consensus-2020",
+  "titre": "International Consensus Guidance for Management of Myasthenia Gravis: 2020 Update",
+  "organisation": "MGFA — consensus international",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7884987/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33144515)"
+ },
+ {
+  "code": "aan-myelite-2011",
+  "titre": "Evidence-based guideline: clinical evaluation and treatment of transverse myelitis: report of the Therapeutics and Technology Assessment Subcommittee of the American Academy of Neurology",
+  "organisation": "American Academy of Neurology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/22156988/",
+  "annee": 2011,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 22156988)"
+ },
+ {
+  "code": "aospine-myelopathie-2017",
+  "titre": "A Clinical Practice Guideline for the Management of Patients With Degenerative Cervical Myelopathy: Recommendations for Patients With Mild, Moderate, and Severe Disease and Nonmyelopathic Patients With Evidence of Cord Compression",
+  "organisation": "AO Spine",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5684840/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29164035)"
+ },
+ {
+  "code": "eas-statines-muscle-2015",
+  "titre": "Statin-associated muscle symptoms: impact on statin therapy-European Atherosclerosis Society Consensus Panel Statement on Assessment, Aetiology and Management",
+  "organisation": "European Atherosclerosis Society",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4416140/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25694464)"
+ },
+ {
+  "code": "ada-neuropathie-2017",
+  "titre": "Diabetic Neuropathy: A Position Statement by the American Diabetes Association",
+  "organisation": "American Diabetes Association",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6977405/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 27999003)"
+ },
+ {
+  "code": "aan-polyneuropathie-2009",
+  "titre": "Practice Parameter: evaluation of distal symmetric polyneuropathy: role of laboratory and genetic testing (an evidence-based review)",
+  "organisation": "AAN / AANEM / AAPM&R",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/19056666/",
+  "annee": 2009,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 19056666)"
+ },
+ {
+  "code": "ean-trijumeau-2019",
+  "titre": "European Academy of Neurology guideline on trigeminal neuralgia",
+  "organisation": "European Academy of Neurology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30860637/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30860637)"
+ },
+ {
+  "code": "aaohns-bell-2013",
+  "titre": "Clinical practice guideline: Bell's palsy",
+  "organisation": "AAO-HNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/24189771/",
+  "annee": 2013,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 24189771)"
+ },
+ {
+  "code": "revue-paralysie-periodique-2018",
+  "titre": "Review of the Diagnosis and Treatment of Periodic Paralysis",
+  "organisation": "Muscle & Nerve (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5867231/",
+  "annee": 2018,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 29125635)"
+ },
+ {
+  "code": "aasm-parasomnie-2023",
+  "titre": "Management of REM sleep behavior disorder: an American Academy of Sleep Medicine clinical practice guideline",
+  "organisation": "American Academy of Sleep Medicine",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10071384/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 36515157)"
+ },
+ {
+  "code": "efns-sla-2012",
+  "titre": "EFNS guidelines on the clinical management of amyotrophic lateral sclerosis (MALS)--revised report of an EFNS task force",
+  "organisation": "EFNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/21914052/",
+  "annee": 2012,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 21914052)"
+ },
+ {
+  "code": "efns-post-polio-2006",
+  "titre": "EFNS guideline on diagnosis and management of post-polio syndrome",
+  "organisation": "EFNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/16879288/",
+  "annee": 2006,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 16879288)"
+ },
+ {
+  "code": "eso-angeite-snc-2023",
+  "titre": "European Stroke Organisation (ESO) guidelines on Primary Angiitis of the Central Nervous System (PACNS)",
+  "organisation": "European Stroke Organisation",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10683718/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37903069)"
+ },
+ {
+  "code": "aaohns-vppb-2017",
+  "titre": "Clinical Practice Guideline: Benign Paroxysmal Positional Vertigo (Update)",
+  "organisation": "AAO-HNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28248609/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28248609)"
+ },
+ {
+  "code": "hpn-japon-2021",
+  "titre": "Guidelines for Management of Idiopathic Normal Pressure Hydrocephalus (Third Edition): Endorsed by the Japanese Society of Normal Pressure Hydrocephalus",
+  "organisation": "Japanese Society of Normal Pressure Hydrocephalus",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7905302/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33455998)"
+ },
+ {
+  "code": "huntington-2019",
+  "titre": "International Guidelines for the Treatment of Huntington's Disease",
+  "organisation": "Consensus international (Bachoud-Lévi et al.)",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6618900/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31333565)"
+ },
+ {
+  "code": "efns-dystonies-2011",
+  "titre": "EFNS guidelines on diagnosis and treatment of primary dystonias",
+  "organisation": "EFNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/20482602/",
+  "annee": 2011,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 20482602)"
+ },
+ {
+  "code": "aasm-jambes-sans-repos-2024",
+  "titre": "Treatment of restless legs syndrome and periodic limb movement disorder: an American Academy of Sleep Medicine clinical practice guideline",
+  "organisation": "American Academy of Sleep Medicine",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11701286/",
+  "annee": 2025,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 39324694)"
+ },
+ {
+  "code": "essts-tics-2022",
+  "titre": "European clinical guidelines for Tourette syndrome and other tic disorders-version 2.0. Part II: psychological interventions",
+  "organisation": "ESSTS",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8314030/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34313861)"
+ },
+ {
+  "code": "aan-tremblement-2011",
+  "titre": "Evidence-based guideline update: treatment of essential tremor: report of the Quality Standards subcommittee of the American Academy of Neurology",
+  "organisation": "American Academy of Neurology",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3208950/",
+  "annee": 2011,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 22013182)"
+ },
+ {
+  "code": "enls-coma",
+  "titre": "Emergency neurological life support: approach to the patient with coma",
+  "organisation": "Neurocritical Care Society (ENLS)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/22932989/",
+  "annee": 2012,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 22932989)"
+ },
+ {
+  "code": "ean-narcolepsie-2021",
+  "titre": "European guideline and expert statements on the management of narcolepsy in adults and children",
+  "organisation": "European Academy of Neurology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34173695/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34173695)"
+ },
+ {
+  "code": "aasm-hypersomnie-2021",
+  "titre": "Treatment of central disorders of hypersomnolence: an American Academy of Sleep Medicine clinical practice guideline",
+  "organisation": "American Academy of Sleep Medicine",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8636351/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34743789)"
+ },
+ {
+  "code": "hic-idiopathique-2018",
+  "titre": "Idiopathic intracranial hypertension: consensus guidelines on management",
+  "organisation": "Consensus britannique (Mollan et al.)",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6166610/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29903905)"
+ },
+ {
+  "code": "duchenne-2018",
+  "titre": "Diagnosis and management of Duchenne muscular dystrophy, part 1: diagnosis, and neuromuscular, rehabilitation, endocrine, and gastrointestinal and nutritional management",
+  "organisation": "DMD Care Considerations Working Group",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5869704/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29395989)"
+ },
+ {
+  "code": "cns-hydrocephalie-2014",
+  "titre": "Pediatric hydrocephalus: systematic literature review and evidence-based guidelines. Part 4: Cerebrospinal fluid shunt or endoscopic third ventriculostomy for the treatment of hydrocephalus in children",
+  "organisation": "Congress of Neurological Surgeons / AANS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/25988780/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25988780)"
+ },
+ {
+  "code": "sba-spina-bifida-2020",
+  "titre": "Neurosurgery guidelines for the care of people with spina bifida",
+  "organisation": "Spina Bifida Association",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7838965/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33325414)"
+ },
+ {
+  "code": "aap-deficience-intellectuelle-2014",
+  "titre": "Comprehensive evaluation of the child with intellectual disability or global developmental delays",
+  "organisation": "American Academy of Pediatrics",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9923626/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25157020)"
+ },
+ {
+  "code": "aap-developpement-2020",
+  "titre": "Promoting Optimal Development: Identifying Infants and Young Children With Developmental Disorders Through Developmental Surveillance and Screening",
+  "organisation": "American Academy of Pediatrics",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31843861/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31843861)"
+ },
+ {
+  "code": "revue-konzo-2011",
+  "titre": "Konzo: from poverty, cassava, and cyanogen intake to toxico-nutritional neurological disease",
+  "organisation": "PLoS Neglected Tropical Diseases (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3125150/",
+  "annee": 2011,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 21738800)"
+ },
+ {
+  "code": "insomnie-europe-2023",
+  "titre": "The European Insomnia Guideline: An update on the diagnosis and treatment of insomnia 2023",
+  "organisation": "European Sleep Research Society",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/38016484/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 38016484)"
+ },
+ {
+  "code": "bap-catatonie-2023",
+  "titre": "Evidence-based consensus guidelines for the management of catatonia: Recommendations from the British Association for Psychopharmacology",
+  "organisation": "British Association for Psychopharmacology",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10101189/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37039129)"
+ },
+ {
+  "code": "tnf-australie-2025",
+  "titre": "Managing functional neurological disorder: treatment recommendations for health professionals in Australia",
+  "organisation": "Consensus australien sur les troubles neurologiques fonctionnels",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12184360/",
+  "annee": 2025,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 40552010)"
+ },
+ {
+  "code": "mutisme-selectif-2008",
+  "titre": "Selective mutism: a consensus based care pathway of good practice",
+  "organisation": "Archives of Disease in Childhood (consensus)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/18456696/",
+  "annee": 2008,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 18456696)"
+ },
+ {
+  "code": "aacap-anxiete-2020",
+  "titre": "Clinical Practice Guideline for the Assessment and Treatment of Children and Adolescents With Anxiety Disorders",
+  "organisation": "AACAP",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/32439401/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 32439401)"
+ },
+ {
+  "code": "dyslexie-delphi-2025",
+  "titre": "Toward a consensus on dyslexia: findings from a Delphi study",
+  "organisation": "Consensus Delphi international",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12198935/",
+  "annee": 2025,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 39996533)"
+ },
+ {
+  "code": "aasm-sommeil-enfant-2006",
+  "titre": "Practice parameters for behavioral treatment of bedtime problems and night wakings in infants and young children",
+  "organisation": "American Academy of Sleep Medicine",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/17068980/",
+  "annee": 2006,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 17068980)"
+ },
+ {
+  "code": "sns-consensus-2011",
+  "titre": "An international consensus study of neuroleptic malignant syndrome diagnostic criteria using the Delphi method",
+  "organisation": "Consensus international (Gurrera et al.)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/21733489/",
+  "annee": 2011,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 21733489)"
+ },
+ {
+  "code": "aaohns-amygdalectomie-2019",
+  "titre": "Clinical Practice Guideline: Tonsillectomy in Children (Update)",
+  "organisation": "AAO-HNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30798778/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30798778)"
+ },
+ {
+  "code": "aaohns-epistaxis-2020",
+  "titre": "Clinical Practice Guideline: Nosebleed (Epistaxis)",
+  "organisation": "AAO-HNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31910111/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31910111)"
+ },
+ {
+  "code": "aaohns-otite-externe-2014",
+  "titre": "Clinical practice guideline: acute otitis externa",
+  "organisation": "AAO-HNS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/24491310/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 24491310)"
+ },
+ {
+  "code": "aao-conjonctivite",
+  "titre": "Conjunctivitis Preferred Practice Pattern®",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30366797/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30366797)"
+ },
+ {
+  "code": "aao-keratite",
+  "titre": "Bacterial Keratitis Preferred Practice Pattern®",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30366799/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30366799)"
+ },
+ {
+  "code": "aao-retinopathie-diabetique",
+  "titre": "Diabetic Retinopathy Preferred Practice Pattern®",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31757498/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31757498)"
+ },
+ {
+  "code": "aao-strabisme",
+  "titre": "Esotropia and Exotropia Preferred Practice Pattern®",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29108746/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29108746)"
+ },
+ {
+  "code": "aao-refraction",
+  "titre": "Refractive Errors Preferred Practice Pattern®",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/36543603/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 36543603)"
+ },
+ {
+  "code": "aao-examen-enfant",
+  "titre": "Pediatric Eye Evaluations Preferred Practice Pattern®: I. Vision Screening in the Primary Care and Community Setting; II. Comprehensive Ophthalmic Examination",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29108745/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29108745)"
+ },
+ {
+  "code": "aao-occlusion-veineuse",
+  "titre": "Retinal Vein Occlusions Preferred Practice Pattern®",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31757503/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31757503)"
+ },
+ {
+  "code": "aao-occlusion-arterielle",
+  "titre": "Retinal and Ophthalmic Artery Occlusions Preferred Practice Pattern®",
+  "organisation": "American Academy of Ophthalmology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31757501/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31757501)"
+ },
+ {
+  "code": "uveites-experts-2017",
+  "titre": "Uveitis: Diagnostic work-up. A literature review and recommendations from an expert committee",
+  "organisation": "Comité d’experts (Autoimmunity Reviews)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29037906/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29037906)"
+ },
+ {
+  "code": "revue-pterygion-2021",
+  "titre": "Pterygium: an update on pathophysiology, clinical features, and management",
+  "organisation": "Therapeutic Advances in Ophthalmology (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8170279/",
+  "annee": 2021,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 34104871)"
+ },
+ {
+  "code": "cataracte-enfant-delphi-2016",
+  "titre": "Use of the Delphi process in paediatric cataract management",
+  "organisation": "Consensus Delphi (British Journal of Ophthalmology)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26420824/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26420824)"
+ },
+ {
+  "code": "ada-antibiotiques-dentaires-2019",
+  "titre": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association",
+  "organisation": "American Dental Association",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8270006/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31668170)"
+ },
+ {
+  "code": "revue-infections-odontogenes-2020",
+  "titre": "Management of odontogenic infections and sepsis: an update",
+  "organisation": "British Dental Journal (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7517749/",
+  "annee": 2020,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 32978579)"
+ },
+ {
+  "code": "carie-consensus-2022",
+  "titre": "Expert consensus on dental caries management",
+  "organisation": "Consensus d’experts (International Journal of Oral Science)",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8971510/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35361749)"
+ },
+ {
+  "code": "efp-parodontite-2020",
+  "titre": "Treatment of stage I-III periodontitis-The EFP S3 level clinical practice guideline",
+  "organisation": "European Federation of Periodontology",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7891343/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 32383274)"
+ },
+ {
+  "code": "iadt-traumatismes-2020",
+  "titre": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations",
+  "organisation": "IADT",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/32475015/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 32475015)"
+ },
+ {
+  "code": "wfsa-normes-2018",
+  "titre": "World Health Organization-World Federation of Societies of Anaesthesiologists (WHO-WFSA) International Standards for a Safe Practice of Anesthesia",
+  "organisation": "WFSA / OMS",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29734240/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29734240)"
+ },
+ {
+  "code": "aps-douleur-postoperatoire-2016",
+  "titre": "Management of Postoperative Pain: A Clinical Practice Guideline From the American Pain Society, the American Society of Regional Anesthesia and Pain Medicine, and the American Society of Anesthesiologists' Committee on Regional Anesthesia, Executive Committee, and Administrative Council",
+  "organisation": "American Pain Society / ASA",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26827847/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26827847)"
+ },
+ {
+  "code": "esaic-preoperatoire-2018",
+  "titre": "Pre-operative evaluation of adults undergoing elective noncardiac surgery: Updated guideline from the European Society of Anaesthesiology",
+  "organisation": "ESAIC",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/29708905/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 29708905)"
+ },
+ {
+  "code": "das-intubation-2015",
+  "titre": "Difficult Airway Society 2015 guidelines for management of unanticipated difficult intubation in adults",
+  "organisation": "Difficult Airway Society",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4650961/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26556848)"
+ },
+ {
+  "code": "esicm-choc-2014",
+  "titre": "Consensus on circulatory shock and hemodynamic monitoring. Task force of the European Society of Intensive Care Medicine",
+  "organisation": "ESICM",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4239778/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25392034)"
+ },
+ {
+  "code": "ssc-enfant-2020",
+  "titre": "Surviving Sepsis Campaign International Guidelines for the Management of Septic Shock and Sepsis-Associated Organ Dysfunction in Children",
+  "organisation": "Surviving Sepsis Campaign (SCCM / ESICM)",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/32032273/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 32032273)"
+ },
+ {
+  "code": "erc-pediatrie-2021",
+  "titre": "European Resuscitation Council Guidelines 2021: Paediatric Life Support",
+  "organisation": "European Resuscitation Council",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/33773830/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33773830)"
+ },
+ {
+  "code": "isbi-brulures-2016",
+  "titre": "ISBI Practice Guidelines for Burn Care",
+  "organisation": "ISBI",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/27542292/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 27542292)"
+ },
+ {
+  "code": "isbi-brulures-2018",
+  "titre": "ISBI Practice Guidelines for Burn Care, Part 2",
+  "organisation": "ISBI",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30343831/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30343831)"
+ },
+ {
+  "code": "acpa-fentes-2018",
+  "titre": "Parameters For Evaluation and Treatment of Patients With Cleft Lip/Palate or Other Craniofacial Differences",
+  "organisation": "ACPA",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34162066/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 34162066)"
+ },
+ {
+  "code": "smfm-anasarque-2015",
+  "titre": "Society for maternal-fetal medicine (SMFM) clinical guideline #7: nonimmune hydrops fetalis",
+  "organisation": "SMFM",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/25557883/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25557883)"
+ },
+ {
+  "code": "isuog-t2-2022",
+  "titre": "ISUOG Practice Guidelines (updated): performance of the routine mid-trimester fetal ultrasound scan",
+  "organisation": "ISUOG",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/35592929/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35592929)"
+ },
+ {
+  "code": "acog-chorioamniotite-2017",
+  "titre": "Committee Opinion No. 712: Intrapartum Management of Intraamniotic Infection",
+  "organisation": "ACOG",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28742677/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28742677)"
+ },
+ {
+  "code": "acog-macrosomie-2020",
+  "titre": "Macrosomia: ACOG Practice Bulletin, Number 216",
+  "organisation": "ACOG",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31856124/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31856124)"
+ },
+ {
+  "code": "smfm-hydramnios-2018",
+  "titre": "SMFM Consult Series #46: Evaluation and management of polyhydramnios",
+  "organisation": "SMFM",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30048635/",
+  "annee": 2018,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 30048635)"
+ },
+ {
+  "code": "smfm-embolie-amniotique-2016",
+  "titre": "Amniotic fluid embolism: diagnosis and management",
+  "organisation": "SMFM",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26987420/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26987420)"
+ },
+ {
+  "code": "figo-rcf-2015",
+  "titre": "FIGO consensus guidelines on intrapartum fetal monitoring: Cardiotocography",
+  "organisation": "FIGO",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26433401/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26433401)"
+ },
+ {
+  "code": "sopk-international-2023",
+  "titre": "Recommendations From the 2023 International Evidence-based Guideline for the Assessment and Management of Polycystic Ovary Syndrome",
+  "organisation": "Réseau international SOPK (Monash University)",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10505534/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 37580314)"
+ },
+ {
+  "code": "asrm-amenorrhee-2008",
+  "titre": "Current evaluation of amenorrhea",
+  "organisation": "ASRM",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/19007635/",
+  "annee": 2008,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 19007635)"
+ },
+ {
+  "code": "sogc-dysmenorrhee-2017",
+  "titre": "No. 345-Primary Dysmenorrhea Consensus Guideline",
+  "organisation": "SOGC",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28625286/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28625286)"
+ },
+ {
+  "code": "eshre-esge-malformations-2013",
+  "titre": "The ESHRE/ESGE consensus on the classification of female genital tract congenital anomalies",
+  "organisation": "ESHRE / ESGE",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3712660/",
+  "annee": 2013,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 23771171)"
+ },
+ {
+  "code": "aagl-synechies-2017",
+  "titre": "AAGL practice report: practice guidelines on intrauterine adhesions developed in collaboration with the European Society of Gynaecological Endoscopy (ESGE)",
+  "organisation": "AAGL / ESGE",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5440524/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28603474)"
+ },
+ {
+  "code": "acog-torsion-annexe-2019",
+  "titre": "Adnexal Torsion in Adolescents: ACOG Committee Opinion No, 783",
+  "organisation": "ACOG",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/31348225/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31348225)"
+ },
+ {
+  "code": "asrm-chirurgie-tubaire-2021",
+  "titre": "Role of tubal surgery in the era of assisted reproductive technology: a committee opinion",
+  "organisation": "ASRM",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/33642065/",
+  "annee": 2021,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 33642065)"
+ },
+ {
+  "code": "revue-bartholin-2009",
+  "titre": "Management of Bartholin duct cysts and abscesses: a systematic review",
+  "organisation": "Obstetrical & Gynecological Survey (revue systématique)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/19445813/",
+  "annee": 2009,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 19445813)"
+ },
+ {
+  "code": "cngof-tumeurs-sein-2016",
+  "titre": "Clinical practice guidelines from the French College of Gynecologists and Obstetricians (CNGOF): benign breast tumors - short text",
+  "organisation": "CNGOF",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26967341/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26967341)"
+ },
+ {
+  "code": "acr-ecoulement-mamelonnaire-2022",
+  "titre": "ACR Appropriateness Criteria® Evaluation of Nipple Discharge: 2022 Update",
+  "organisation": "American College of Radiology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/36436958/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 36436958)"
+ },
+ {
+  "code": "revue-mastodynie-2020",
+  "titre": "A Review of Breast Pain: Causes, Imaging Recommendations, and Treatment",
+  "organisation": "Journal of Breast Imaging (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/38424883/",
+  "annee": 2020,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 38424883)"
+ },
+ {
+  "code": "acog-age-maternel-2022",
+  "titre": "Pregnancy at Age 35 Years or Older: ACOG Obstetric Care Consensus No. 11",
+  "organisation": "ACOG / SMFM",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/35852294/",
+  "annee": 2022,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 35852294)"
+ },
+ {
+  "code": "aap-obesite-enfant-2023",
+  "titre": "Clinical Practice Guideline for the Evaluation and Treatment of Children and Adolescents With Obesity",
+  "organisation": "American Academy of Pediatrics",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/36622115/",
+  "annee": 2023,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 36622115)"
+ },
+ {
+  "code": "aact-lavage-gastrique-2013",
+  "titre": "Position paper update: gastric lavage for gastrointestinal decontamination",
+  "organisation": "AACT / EAPCCT",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/23418938/",
+  "annee": 2013,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 23418938)"
+ },
+ {
+  "code": "aact-charbon-active-2005",
+  "titre": "Position paper: Single-dose activated charcoal",
+  "organisation": "AACT / EAPCCT",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/15822758/",
+  "annee": 2005,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 15822758)"
+ },
+ {
+  "code": "revue-oedemes-2013",
+  "titre": "Edema: diagnosis and management",
+  "organisation": "American Family Physician (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/23939641/",
+  "annee": 2013,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 23939641)"
+ },
+ {
+  "code": "revue-hemorragie-digestive-enfant-2024",
+  "titre": "Gastrointestinal bleeding in children: diagnostic approach",
+  "organisation": "Italian Journal of Pediatrics (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10807079/",
+  "annee": 2024,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 38263189)"
+ },
+ {
+  "code": "revue-hepatosplenomegalie-2011",
+  "titre": "Chronic hepatosplenomegaly in African school children: a common but neglected morbidity associated with schistosomiasis and malaria",
+  "organisation": "PLoS Neglected Tropical Diseases (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3166045/",
+  "annee": 2011,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 21912707)"
+ },
+ {
+  "code": "revue-polyglobulie-2008",
+  "titre": "Neonatal polycythemia and hyperviscosity",
+  "organisation": "Seminars in Fetal and Neonatal Medicine (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/18424246/",
+  "annee": 2008,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 18424246)"
+ },
+ {
+  "code": "revue-traumatismes-naissance-2016",
+  "titre": "Birth Injuries in Neonates",
+  "organisation": "Pediatrics in Review (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/27803142/",
+  "annee": 2016,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 27803142)"
+ },
+ {
+  "code": "revue-mastoidite-2018",
+  "titre": "Management of paediatric acute mastoiditis: systematic review",
+  "organisation": "Journal of Laryngology & Otology (revue systématique)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28879826/",
+  "annee": 2018,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 28879826)"
+ },
+ {
+  "code": "acog-imagerie-grossesse-2017",
+  "titre": "Committee Opinion No. 723: Guidelines for Diagnostic Imaging During Pregnancy and Lactation",
+  "organisation": "ACOG",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28937575/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28937575)"
+ },
+ {
+  "code": "sages-coelioscopie-grossesse-2024",
+  "titre": "SAGES guidelines for the use of laparoscopy during pregnancy",
+  "organisation": "SAGES",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11133165/",
+  "annee": 2024,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 38700549)"
+ },
+ {
+  "code": "bap-psychotropes-grossesse-2017",
+  "titre": "British Association for Psychopharmacology consensus guidance on the use of psychotropic medication preconception, in pregnancy and postpartum 2017",
+  "organisation": "British Association for Psychopharmacology",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/28440103/",
+  "annee": 2017,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 28440103)"
+ },
+ {
+  "code": "bsr-medicaments-grossesse-2016",
+  "titre": "BSR and BHPR guideline on prescribing drugs in pregnancy and breastfeeding-Part II: analgesics and other drugs used in rheumatology practice",
+  "organisation": "BSR / BHPR",
+  "niveau": 2,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/26750125/",
+  "annee": 2016,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 26750125)"
+ },
+ {
+  "code": "revue-stenose-pylorique-adulte-2011",
+  "titre": "Benign gastric outlet obstruction--spectrum and management",
+  "organisation": "Tropical Gastroenterology (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/22696905/",
+  "annee": 2011,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 22696905)"
+ },
+ {
+  "code": "revue-tumeurs-cutanees-benignes-2024",
+  "titre": "Diagnosing Common Benign Skin Tumors",
+  "organisation": "American Family Physician (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/39418568/",
+  "annee": 2024,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 39418568)"
+ },
+ {
+  "code": "revue-plexus-brachial-2013",
+  "titre": "Adult brachial plexus injury: evaluation and management",
+  "organisation": "Orthopedic Clinics of North America (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/24095074/",
+  "annee": 2013,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 24095074)"
+ },
+ {
+  "code": "revue-corps-etrangers-oreille-2020",
+  "titre": "The aural foreign body space: A review of pediatric ear foreign bodies and a management paradigm",
+  "organisation": "International Journal of Pediatric Otorhinolaryngology (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/32050118/",
+  "annee": 2020,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 32050118)"
+ },
+ {
+  "code": "revue-membres-inferieurs-enfant-2025",
+  "titre": "Lower Extremity Abnormalities in Children",
+  "organisation": "American Family Physician (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/39964924/",
+  "annee": 2025,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 39964924)"
+ },
+ {
+  "code": "fri-traitement-2020",
+  "titre": "General treatment principles for fracture-related infection: recommendations from an international expert group",
+  "organisation": "Groupe international d’experts sur les infections après fracture",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7351827/",
+  "annee": 2020,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31659475)"
+ },
+ {
+  "code": "revue-manioc-neurologie-2011",
+  "titre": "Neurological disorders associated with cassava diet: a review of putative etiological mechanisms",
+  "organisation": "Metabolic Brain Disease (revue)",
+  "niveau": 3,
+  "url": "https://pubmed.ncbi.nlm.nih.gov/21327546/",
+  "annee": 2011,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 21327546)"
+ },
+ {
+  "code": "revue-concepts-culturels-detresse-2014",
+  "titre": "Cultural concepts of distress and psychiatric disorders: literature review and research recommendations for global mental health epidemiology",
+  "organisation": "International Journal of Epidemiology (revue)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3997373/",
+  "annee": 2014,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 24366490)"
+ },
+ {
+  "code": "revue-idiomes-detresse-2019",
+  "titre": "The integration of idioms of distress into mental health assessments and interventions: a systematic review",
+  "organisation": "Global Mental Health (revue systématique)",
+  "niveau": 3,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6521171/",
+  "annee": 2019,
+  "type": "revue",
+  "verification": "titre confirmé par Europe PMC (PMID 31143467)"
+ },
+ {
+  "code": "awmf-symptomes-somatiques-2019",
+  "titre": "Functional Somatic Symptoms",
+  "organisation": "AWMF (recommandation allemande S3)",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6794707/",
+  "annee": 2019,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 31554544)"
+ },
+ {
+  "code": "extrip-lithium-2015",
+  "titre": "Extracorporeal Treatment for Lithium Poisoning: Systematic Review and Recommendations from the EXTRIP Workgroup",
+  "organisation": "EXTRIP Workgroup",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4422246/",
+  "annee": 2015,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 25583292)"
+ },
+ {
+  "code": "extrip-tricycliques-2014",
+  "titre": "Extracorporeal treatment for tricyclic antidepressant poisoning: recommendations from the EXTRIP Workgroup",
+  "organisation": "EXTRIP Workgroup",
+  "niveau": 2,
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4282541/",
+  "annee": 2014,
+  "type": "recommandation",
+  "verification": "titre confirmé par Europe PMC (PMID 24712820)"
  },
  {
   "code": "rdc-plan-cholera-2023",

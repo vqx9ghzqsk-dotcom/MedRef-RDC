@@ -26,15 +26,26 @@ describe('Protocoles de validation des fiches', () => {
     }
   });
 
+  it('chaque fiche a au moins deux protocoles : sa référence propre et le manuel de sa spécialité', () => {
+    for (const [slug, codes] of Object.entries(data.fiches)) {
+      expect([slug, codes.length >= 2]).toEqual([slug, true]);
+    }
+  });
+
   it('refuse des données incohérentes', () => {
     const pb = verifierDonnees({
-      sources: [{ code: 'a', titre: 'A', niveau: 7, type: 'guide', url: 'javascript:x' }],
+      sources: [
+        { code: 'a', titre: 'A', niveau: 7, type: 'guide', url: 'javascript:x' },
+        { code: 'b2', titre: 'a', niveau: 2, type: 'revue', url: null },
+      ],
       fiches: { paludisme: ['b'], vide: [] },
     });
     expect(pb).toEqual(
       expect.arrayContaining([
         'a : niveau 7',
         'a : adresse invalide',
+        'b2 : titre en double',
+        'b2 : une revue est de niveau 3',
         'paludisme : source inconnue b',
         'vide : aucun protocole',
       ]),

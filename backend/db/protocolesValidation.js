@@ -22,8 +22,11 @@ function verifierDonnees(data) {
     if (!s.code || codes.has(s.code)) pb.push(`source : code absent ou en double (${s.code})`);
     codes.add(s.code);
     if (!s.titre || s.titre.length > 300) pb.push(`${s.code} : titre absent ou trop long`);
-    if (titres.has(s.titre)) pb.push(`${s.code} : titre en double`);
-    titres.add(s.titre);
+    // Le chargement retrouve les sources par titre sans tenir compte de la casse
+    const cle = String(s.titre || '').toLowerCase();
+    if (titres.has(cle)) pb.push(`${s.code} : titre en double`);
+    titres.add(cle);
+    if (s.type === 'revue' && s.niveau !== 3) pb.push(`${s.code} : une revue est de niveau 3`);
     if (!NIVEAUX.includes(s.niveau)) pb.push(`${s.code} : niveau ${s.niveau}`);
     if (!TYPES.includes(s.type)) pb.push(`${s.code} : type ${s.type}`);
     if (s.url && !/^https?:\/\/\S+$/.test(s.url)) pb.push(`${s.code} : adresse invalide`);

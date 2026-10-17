@@ -21,7 +21,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C09](C09-neurochirurgie-neurotraumatologie-psychiatrie-de-l-enfant-et-sante-de-l-adolescent.md) | Neurochirurgie, neurotraumatologie, psychiatrie de l’enfant et santé de l’adolescent | 32 | 2 | 6 | 0 |
 | [C10](C10-grossesse-et-medecine-materno-foetale.md) | Grossesse et médecine materno-fœtale | 36 | 3 | 9 | 0 |
 | [C11](C11-pathologies-obstetricales-et-urgences-obstetricales.md) | Pathologies obstétricales et urgences obstétricales | 31 | 7 | 9 | 0 |
-| **Total** | | **374** | **47** | **81** | **13** |
+| [C12](C12-travail-et-accouchement-post-partum-planification-familiale.md) | Travail et accouchement, post-partum, planification familiale | 32 | 4 | 7 | 0 |
+| **Total** | | **406** | **51** | **88** | **13** |
 
 ## Points à arbitrer
 

@@ -24,7 +24,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C12](C12-travail-et-accouchement-post-partum-planification-familiale.md) | Travail et accouchement, post-partum, planification familiale | 32 | 4 | 7 | 0 |
 | [C13](C13-gynecologie-et-urogynecologie.md) | Gynécologie et urogynécologie | 31 | 5 | 13 | 0 |
 | [C14](C14-gynecologie-oncologique-senologie-fertilite-genetique-immuno-rhumatologie-pediatrique.md) | Gynécologie oncologique, sénologie, fertilité, génétique, immuno-rhumatologie pédiatrique | 27 | 3 | 8 | 1 |
-| **Total** | | **464** | **59** | **109** | **14** |
+| [C15](C15-neonatologie.md) | Néonatologie | 29 | 3 | 3 | 0 |
+| **Total** | | **493** | **62** | **112** | **14** |
 
 ## Points à arbitrer
 

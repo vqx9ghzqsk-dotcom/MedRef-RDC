@@ -20,6 +20,8 @@ const nomFichier = (lot) =>
     .toLowerCase()
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
+    .replace(/œ/g, 'oe')
+    .replace(/æ/g, 'ae')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')}.md`;
 

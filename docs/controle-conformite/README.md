@@ -19,7 +19,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C07](C07-epilepsie-mouvements-anormaux-demences-et-neuro-infectiologie.md) | Épilepsie, mouvements anormaux, démences et neuro-infectiologie | 36 | 3 | 6 | 1 |
 | [C08](C08-psychiatrie-psychotraumatologie-et-urgences-neuropsychiatriques.md) | Psychiatrie, psychotraumatologie et urgences neuropsychiatriques | 33 | 1 | 2 | 0 |
 | [C09](C09-neurochirurgie-neurotraumatologie-psychiatrie-de-l-enfant-et-sante-de-l-adolescent.md) | Neurochirurgie, neurotraumatologie, psychiatrie de l’enfant et santé de l’adolescent | 32 | 2 | 6 | 0 |
-| **Total** | | **307** | **37** | **63** | **13** |
+| [C10](C10-grossesse-et-medecine-materno-foetale.md) | Grossesse et médecine materno-fœtale | 36 | 3 | 9 | 0 |
+| **Total** | | **343** | **40** | **72** | **13** |
 
 ## Points à arbitrer
 

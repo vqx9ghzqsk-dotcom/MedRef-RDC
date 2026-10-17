@@ -15,6 +15,7 @@ const LOTS = [
   'C06-neurologie-avc',
   'C07-epilepsie-mouvements-demences-neuro-infectiologie',
   'C08-psychiatrie-psychotraumatologie',
+  'C09-neurochirurgie-pedopsychiatrie-adolescent',
 ];
 
 module.exports = LOTS.map((lot) => require(`./${lot}`));

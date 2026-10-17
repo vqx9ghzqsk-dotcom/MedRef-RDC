@@ -28,7 +28,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C16](C16-infectiologie-pediatrique-et-malnutrition.md) | Infectiologie pédiatrique et malnutrition | 33 | 3 | 3 | 0 |
 | [C17](C17-pediatrie-generale-et-urgences-pediatriques.md) | Pédiatrie générale et urgences pédiatriques | 33 | 2 | 3 | 0 |
 | [C18](C18-hematologie-oncologie-nephrologie-et-cardiologie-pediatriques.md) | Hématologie-oncologie, néphrologie et cardiologie pédiatriques | 33 | 3 | 3 | 0 |
-| **Total** | | **592** | **71** | **122** | **14** |
+| [C19](C19-neurologie-pneumologie-et-gastro-enterologie-pediatriques.md) | Neurologie, pneumologie et gastro-entérologie pédiatriques | 35 | 3 | 3 | 0 |
+| **Total** | | **627** | **74** | **125** | **14** |
 
 ## Points à arbitrer
 

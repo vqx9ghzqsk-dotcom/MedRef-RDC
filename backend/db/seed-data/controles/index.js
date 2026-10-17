@@ -17,6 +17,7 @@ const LOTS = [
   'C08-psychiatrie-psychotraumatologie',
   'C09-neurochirurgie-pedopsychiatrie-adolescent',
   'C10-grossesse-materno-foetale',
+  'C11-pathologies-urgences-obstetricales',
 ];
 
 module.exports = LOTS.map((lot) => require(`./${lot}`));

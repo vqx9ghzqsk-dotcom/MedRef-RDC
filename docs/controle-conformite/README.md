@@ -10,7 +10,7 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 
 | Lot | Domaine | Fiches | Fiches corrigées | Corrections | À arbitrer |
 |---|---|---:|---:|---:|---:|
-| [C01](C01-infectiologie-medecine-interne.md) | Infectiologie (médecine interne) | 37 | 9 | 12 | 2 |
+| [C01](C01-infectiologie-medecine-interne.md) | Infectiologie (médecine interne) | 37 | 10 | 13 | 2 |
 | [C02](C02-cardiologie-nephrologie-et-medecine-interne-generale.md) | Cardiologie, néphrologie et médecine interne générale | 33 | 3 | 3 | 2 |
 | [C03](C03-dermatologie-endocrinologie-et-diabetologie.md) | Dermatologie, endocrinologie et diabétologie | 32 | 9 | 17 | 5 |
 | [C04](C04-gastro-enterologie-hepatologie-et-hematologie.md) | Gastro-entérologie, hépatologie et hématologie | 33 | 3 | 6 | 2 |
@@ -25,7 +25,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C13](C13-gynecologie-et-urogynecologie.md) | Gynécologie et urogynécologie | 31 | 5 | 13 | 0 |
 | [C14](C14-gynecologie-oncologique-senologie-fertilite-genetique-immuno-rhumatologie-pediatrique.md) | Gynécologie oncologique, sénologie, fertilité, génétique, immuno-rhumatologie pédiatrique | 27 | 3 | 8 | 1 |
 | [C15](C15-neonatologie.md) | Néonatologie | 29 | 3 | 3 | 0 |
-| **Total** | | **493** | **62** | **112** | **14** |
+| [C16](C16-infectiologie-pediatrique-et-malnutrition.md) | Infectiologie pédiatrique et malnutrition | 33 | 3 | 3 | 0 |
+| **Total** | | **526** | **66** | **116** | **14** |
 
 ## Points à arbitrer
 

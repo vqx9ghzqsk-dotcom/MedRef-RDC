@@ -261,6 +261,19 @@ module.exports = {
       ],
       verifie:
         'Ceftriaxone dans l’heure (2 g toutes les 12 h chez l’adulte, 100 mg/kg/j chez l’enfant), première dose avant le transfert et immédiate en cas de purpura ; ampicilline + gentamicine chez le nouveau-né ou en cas de suspicion de Listeria ; dexaméthasone 0,15 mg/kg toutes les 6 h pendant 4 jours avant ou avec la 1re dose, pas chez le nouveau-né ; critères du scanner avant ponction ; durées selon le germe ; prophylaxie des contacts.',
+      // Ajout du 2026-10-16 (relu avec le lot C16) : recommandation OMS 2025 sur les corticoïdes
+      corrige:
+        'Corticothérapie alignée sur les recommandations OMS de 2025 : dexaméthasone recommandée (recommandation forte) avec la 1re dose d’antibiotique, mais pas de corticoïdes systématiques devant une méningite à méningocoque suspectée en contexte d’épidémie ; le moindre bénéfice observé dans les essais en zone de forte prévalence du VIH ou de malnutrition reste mentionné.',
+      corrections: [
+        {
+          principe: 'Corticothérapie adjuvante',
+          champ: 'details',
+          remplacer: [
+            '- Pas chez le nouveau-né ; bénéfice moindre dans les contextes de forte prévalence du VIH ou de malnutrition',
+            '- Recommandée par l’OMS (2025) ; **pas** de corticoïdes systématiques devant une méningite à méningocoque suspectée en contexte d’épidémie\n- Pas chez le nouveau-né ; bénéfice moindre dans les essais menés en zone de forte prévalence du VIH ou de malnutrition',
+          ],
+        },
+      ],
     },
     {
       slug: 'mpox',

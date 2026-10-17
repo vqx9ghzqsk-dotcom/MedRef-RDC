@@ -23,7 +23,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C11](C11-pathologies-obstetricales-et-urgences-obstetricales.md) | Pathologies obstétricales et urgences obstétricales | 31 | 7 | 9 | 0 |
 | [C12](C12-travail-et-accouchement-post-partum-planification-familiale.md) | Travail et accouchement, post-partum, planification familiale | 32 | 4 | 7 | 0 |
 | [C13](C13-gynecologie-et-urogynecologie.md) | Gynécologie et urogynécologie | 31 | 5 | 13 | 0 |
-| **Total** | | **437** | **56** | **101** | **13** |
+| [C14](C14-gynecologie-oncologique-senologie-fertilite-genetique-immuno-rhumatologie-pediatrique.md) | Gynécologie oncologique, sénologie, fertilité, génétique, immuno-rhumatologie pédiatrique | 27 | 3 | 8 | 1 |
+| **Total** | | **464** | **59** | **109** | **14** |
 
 ## Points à arbitrer
 
@@ -40,3 +41,4 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 - **Hémophilie** (lot C04) : Dose de facteur IX dans l’hémarthrose : 30–50 UI/kg dans la fiche ; la WFH 2020 vise un pic de 40–60 UI/dL sans contrainte de ressources (soit environ 40–60 UI/kg de facteur IX plasmatique) et des niveaux plus bas en cas de contrainte. À fixer selon les concentrés disponibles.
 - **Goutte** (lot C05) : L’ACR 2020 conseille de rechercher HLA-B*58:01 avant l’allopurinol chez les patients d’ascendance africaine (risque de toxidermie grave). Le test étant rarement disponible en RDC, la fiche s’en tient au démarrage à 100 mg/j : ajouter une consigne d’information sur les signes cutanés et un démarrage à 50 mg/j en cas d’insuffisance rénale ?
 - **Méningite tuberculeuse** (lot C07) : Dexaméthasone chez l’adulte VIH+ atteint de méningite tuberculeuse : l’OMS la recommande sans distinction, l’essai ACT HIV (2023) ne montre pas de bénéfice sur la mortalité. Pratique à fixer pour le service.
+- **Tumeurs trophoblastiques gestationnelles** (lot C14) : La fiche retient encore la β-hCG « persistante > 6 mois » parmi les critères de tumeur. Des travaux du centre de Charing Cross (Agarwal et al., 2012) montrent qu’une β-hCG encore positive mais en baisse à 6 mois se normalise le plus souvent sans chimiothérapie, et ce critère a été abandonné par plusieurs équipes. Je n’ai pas pu vérifier la formulation exacte du RCOG (2020) : faut-il retirer ce critère ou le nuancer (« sauf si la β-hCG continue de baisser ») ?

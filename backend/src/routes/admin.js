@@ -396,7 +396,7 @@ function parsePathologie(body, refs) {
   const v = createValidator();
   const out = {
     nom: v.text(body.nom, 190, 'nom', { required: true }),
-    resume: v.text(body.resume, 500, 'resume'),
+    resume: v.text(body.resume, 1000, 'resume'),
     statut: v.oneOf(body.statut, STATUTS, 'statut', { required: true }),
   };
   for (const champ of PATHOLOGIE_TEXTES) out[champ] = v.text(body[champ], LONG, champ);

@@ -931,12 +931,14 @@ function PathologieEditor({ id, initial, onSaved }) {
             nom.
           </p>
         )}
-        <TextField
+        <TextArea
           label="Résumé"
+          rows={4}
+          markdown={false}
           value={form.resume}
           onChange={(resume) => set({ resume })}
           error={err('resume')}
-          maxLength={500}
+          maxLength={1000}
         />
       </section>
 

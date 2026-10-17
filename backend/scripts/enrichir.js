@@ -22,6 +22,7 @@ const { chargerNouvellesFiches } = require('../db/fiches');
 const { chargerPosologiesAjoutees } = require('../db/posologiesAjoutees');
 const { chargerProtocolesValidation } = require('../db/protocolesValidation');
 const { chargerControles } = require('../db/controles');
+const { completerResumesTronques } = require('../db/resumes');
 const data = require('../db/seed-data');
 
 async function main() {
@@ -35,6 +36,8 @@ async function main() {
     const acorep = await chargerAcorep(conn, data.acorep);
     const selection = await appliquerSelection(conn, data.selection);
     const fiches = await chargerNouvellesFiches(conn, data, data.ajouts);
+    // Résumés coupés à 500 caractères avant la migration 015 : complétés depuis les sources
+    const resumes = await completerResumesTronques(conn, [...data.pathologies, ...data.ajouts.fiches]);
     const posologies = await chargerPosologiesAjoutees(conn, data.posologiesAjoutees);
     const protocoles = await chargerProtocolesValidation(conn, data.protocolesValidation);
     // Corrections du contrôle de conformité : une fiche retouchée depuis par un médecin n'est pas écrasée
@@ -47,6 +50,7 @@ async function main() {
       acorep,
       selection,
       fiches,
+      resumes,
       posologies,
       protocoles,
       controles,

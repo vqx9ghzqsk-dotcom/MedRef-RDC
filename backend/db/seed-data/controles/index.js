@@ -24,6 +24,7 @@ const LOTS = [
   'C15-neonatologie',
   'C16-infectiologie-pediatrique-malnutrition',
   'C17-pediatrie-generale-urgences',
+  'C18-hemato-onco-nephro-cardio-pediatriques',
 ];
 
 module.exports = LOTS.map((lot) => require(`./${lot}`));

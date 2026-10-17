@@ -26,7 +26,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C14](C14-gynecologie-oncologique-senologie-fertilite-genetique-immuno-rhumatologie-pediatrique.md) | Gynécologie oncologique, sénologie, fertilité, génétique, immuno-rhumatologie pédiatrique | 27 | 3 | 8 | 1 |
 | [C15](C15-neonatologie.md) | Néonatologie | 29 | 3 | 3 | 0 |
 | [C16](C16-infectiologie-pediatrique-et-malnutrition.md) | Infectiologie pédiatrique et malnutrition | 33 | 3 | 3 | 0 |
-| **Total** | | **526** | **66** | **116** | **14** |
+| [C17](C17-pediatrie-generale-et-urgences-pediatriques.md) | Pédiatrie générale et urgences pédiatriques | 33 | 2 | 3 | 0 |
+| **Total** | | **559** | **68** | **119** | **14** |
 
 ## Points à arbitrer
 

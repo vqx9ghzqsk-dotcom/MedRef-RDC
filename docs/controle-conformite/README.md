@@ -35,7 +35,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C23](C23-orthopedie-chirurgie-thoracique-et-vasculaire-brulures-anesthesie-reanimation.md) | Orthopédie, chirurgie thoracique et vasculaire, brûlures, anesthésie-réanimation | 34 | 3 | 6 | 0 |
 | [C24](C24-ophtalmologie-orl-et-stomatologie.md) | Ophtalmologie, ORL et stomatologie | 28 | 3 | 5 | 0 |
 | [M01](M01-molecules-antibiotiques.md) | Molécules : antibiotiques | 63 | 3 | 4 | 0 |
-| **Total** | | **855** | **99** | **168** | **14** |
+| [M02](M02-molecules-antipaludiques-et-antiparasitaires.md) | Molécules : antipaludiques et antiparasitaires | 31 | 0 | 0 | 1 |
+| **Total** | | **886** | **99** | **168** | **15** |
 
 ## Points à arbitrer
 
@@ -53,3 +54,4 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 - **Goutte** (lot C05) : L’ACR 2020 conseille de rechercher HLA-B*58:01 avant l’allopurinol chez les patients d’ascendance africaine (risque de toxidermie grave). Le test étant rarement disponible en RDC, la fiche s’en tient au démarrage à 100 mg/j : ajouter une consigne d’information sur les signes cutanés et un démarrage à 50 mg/j en cas d’insuffisance rénale ?
 - **Méningite tuberculeuse** (lot C07) : Dexaméthasone chez l’adulte VIH+ atteint de méningite tuberculeuse : l’OMS la recommande sans distinction, l’essai ACT HIV (2023) ne montre pas de bénéfice sur la mortalité. Pratique à fixer pour le service.
 - **Tumeurs trophoblastiques gestationnelles** (lot C14) : La fiche retient encore la β-hCG « persistante > 6 mois » parmi les critères de tumeur. Des travaux du centre de Charing Cross (Agarwal et al., 2012) montrent qu’une β-hCG encore positive mais en baisse à 6 mois se normalise le plus souvent sans chimiothérapie, et ce critère a été abandonné par plusieurs équipes. Je n’ai pas pu vérifier la formulation exacte du RCOG (2020) : faut-il retirer ce critère ou le nuancer (« sauf si la β-hCG continue de baisser ») ?
+- **Primaquine** (lot M02) : L’OMS a assoupli les exclusions de la dose unique faible (versions de novembre 2024 puis 2025 : seule la grossesse reste exclue, plus les nourrissons de moins de 6 mois ni l’allaitement) et l’a étendue aux zones de transmission modérée à forte (version de septembre 2026) ; la fiche maintient « ≥ 6 mois » et l’exclusion de l’allaitement d’un enfant < 6 mois. À aligner sur la version OMS en vigueur et le programme national (PNLP).

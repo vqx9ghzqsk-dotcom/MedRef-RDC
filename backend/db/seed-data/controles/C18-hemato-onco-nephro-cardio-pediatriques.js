@@ -103,6 +103,17 @@ module.exports = {
       protocoles: ['OMS — Global Initiative for Childhood Cancer : rétinoblastome (cancer traceur)', 'AAP — Red reflex examination in neonates, infants and children (2008)'],
       verifie:
         'Leucocorie et strabisme récent, test du reflet rouge à chaque visite ; fond d’œil et échographie ; énucléation des formes unilatérales avancées, chimiothérapie (carboplatine, étoposide, vincristine), traitements focaux ; conseil génétique.',
+      corrige:
+        'L’échographie oculaire était rattachée à l’échographie des parties molles : remplacée par l’échographie oculaire (mode B) du référentiel (correction du 19 octobre 2026).',
+      corrections: [
+        { retirer: 'examen', examen: 'echographie-parties-molles', categorie: 'confirmation' },
+        {
+          ajouter: 'examen',
+          examen: 'echographie-oculaire',
+          categorie: 'confirmation',
+          interpretation: 'Masse intraoculaire calcifiée.',
+        },
+      ],
     },
     {
       slug: 'sequestration-splenique-aigue',

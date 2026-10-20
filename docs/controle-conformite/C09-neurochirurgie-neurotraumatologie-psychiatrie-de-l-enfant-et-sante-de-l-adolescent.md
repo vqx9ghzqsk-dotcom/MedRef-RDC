@@ -1,6 +1,6 @@
 # Lot C09 — Neurochirurgie, neurotraumatologie, psychiatrie de l’enfant et santé de l’adolescent
 
-Contrôle du 16/10/2026 : 32 fiches, 6 corrections. Chaque correction d’une fiche est aussi visible dans son historique (administration, « Voir les changements »).
+Contrôle du 16/10/2026 : 32 fiches, 8 corrections. Chaque correction d’une fiche est aussi visible dans son historique (administration, « Voir les changements »).
 
 ## Abcès cérébral
 
@@ -162,7 +162,17 @@ Après :
 
 **Points vérifiés** : Immobilisation dès le ramassage, échelle ASIA ; PAM > 85 mmHg, choc neurogénique (noradrénaline, atropine) ; pas de corticoïdes à forte dose en routine ; décompression précoce si déficit incomplet ; prévention des escarres, des thromboses et des complications urinaires.
 
-**Écarts corrigés** : aucun.
+**Écarts corrigés**
+
+Le scanner du rachis était rattaché au scanner abdomino-pelvien : remplacé par le scanner du rachis, ajouté au référentiel des examens (correction du 19 octobre 2026).
+
+*retrait de l’examen scanner-abdominal (deuxieme_intention)*
+
+> {"retirer":"examen","examen":"scanner-abdominal","categorie":"deuxieme_intention"}
+
+*ajout (examen)*
+
+> {"ajouter":"examen","examen":"scanner-rachis","categorie":"deuxieme_intention","interpretation":"Si disponible : fractures, recul du mur postérieur, instabilité."}
 
 ## Tumeurs cérébrales
 

@@ -115,6 +115,17 @@ module.exports = {
       ],
       verifie:
         'Immobilisation dès le ramassage, échelle ASIA ; PAM > 85 mmHg, choc neurogénique (noradrénaline, atropine) ; pas de corticoïdes à forte dose en routine ; décompression précoce si déficit incomplet ; prévention des escarres, des thromboses et des complications urinaires.',
+      corrige:
+        'Le scanner du rachis était rattaché au scanner abdomino-pelvien : remplacé par le scanner du rachis, ajouté au référentiel des examens (correction du 19 octobre 2026).',
+      corrections: [
+        { retirer: 'examen', examen: 'scanner-abdominal', categorie: 'deuxieme_intention' },
+        {
+          ajouter: 'examen',
+          examen: 'scanner-rachis',
+          categorie: 'deuxieme_intention',
+          interpretation: 'Si disponible : fractures, recul du mur postérieur, instabilité.',
+        },
+      ],
     },
     {
       slug: 'tumeurs-cerebrales',

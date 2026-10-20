@@ -173,6 +173,17 @@ module.exports = {
       ],
       verifie:
         'Diagnostic clinique, test VIH, rhumatisme psoriasique, facteurs aggravants ; dermocorticoïde fort ± calcipotriol, kératolytiques ; méthotrexate 7,5–25 mg une fois par semaine + acide folique 5 mg par semaine, bilan préalable et surveillance ; jamais de corticoïdes par voie générale.',
+      corrige:
+        'La biopsie cutanée « si doute » était rattachée à la biopsie cutanée exsangue de l’onchocercose : remplacée par la biopsie avec examen anatomopathologique (correction du 19 octobre 2026).',
+      corrections: [
+        { retirer: 'examen', examen: 'biopsie-cutanee-exsangue', categorie: 'deuxieme_intention' },
+        {
+          ajouter: 'examen',
+          examen: 'biopsie-histologie',
+          categorie: 'deuxieme_intention',
+          interpretation: 'Biopsie cutanée si doute diagnostique (formes atypiques).',
+        },
+      ],
     },
     {
       slug: 'pyodermites',

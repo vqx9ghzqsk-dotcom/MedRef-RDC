@@ -1,6 +1,6 @@
 # Lot C18 — Hématologie-oncologie, néphrologie et cardiologie pédiatriques
 
-Contrôle du 16/10/2026 : 33 fiches, 3 corrections. Chaque correction d’une fiche est aussi visible dans son historique (administration, « Voir les changements »).
+Contrôle du 16/10/2026 : 33 fiches, 5 corrections. Chaque correction d’une fiche est aussi visible dans son historique (administration, « Voir les changements »).
 
 ## Anémies hémolytiques de l’enfant
 
@@ -167,7 +167,17 @@ Après :
 
 **Points vérifiés** : Leucocorie et strabisme récent, test du reflet rouge à chaque visite ; fond d’œil et échographie ; énucléation des formes unilatérales avancées, chimiothérapie (carboplatine, étoposide, vincristine), traitements focaux ; conseil génétique.
 
-**Écarts corrigés** : aucun.
+**Écarts corrigés**
+
+L’échographie oculaire était rattachée à l’échographie des parties molles : remplacée par l’échographie oculaire (mode B) du référentiel (correction du 19 octobre 2026).
+
+*retrait de l’examen echographie-parties-molles (confirmation)*
+
+> {"retirer":"examen","examen":"echographie-parties-molles","categorie":"confirmation"}
+
+*ajout (examen)*
+
+> {"ajouter":"examen","examen":"echographie-oculaire","categorie":"confirmation","interpretation":"Masse intraoculaire calcifiée."}
 
 ## Séquestration splénique aiguë
 

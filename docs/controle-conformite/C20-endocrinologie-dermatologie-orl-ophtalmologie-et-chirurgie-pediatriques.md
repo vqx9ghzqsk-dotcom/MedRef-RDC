@@ -1,6 +1,6 @@
 # Lot C20 — Endocrinologie, dermatologie, ORL-ophtalmologie et chirurgie pédiatriques
 
-Contrôle du 16/10/2026 : 33 fiches, 7 corrections. Chaque correction d’une fiche est aussi visible dans son historique (administration, « Voir les changements »).
+Contrôle du 16/10/2026 : 33 fiches, 9 corrections. Chaque correction d’une fiche est aussi visible dans son historique (administration, « Voir les changements »).
 
 ## Acidocétose diabétique de l’enfant
 
@@ -229,7 +229,7 @@ Après :
 
 **Écarts corrigés**
 
-Recherche des infections congénitales : l’examen « IgM rougeole » (sans rapport avec la cataracte congénitale) est remplacé par les sérologies toxoplasmose, rubéole, CMV.
+Recherche des infections congénitales : l’examen « IgM rougeole » (sans rapport avec la cataracte congénitale) est remplacé par les sérologies toxoplasmose, rubéole, CMV ; l’échographie oculaire, rattachée à l’échographie des parties molles, est rattachée à l’échographie oculaire (mode B).
 
 *retrait de l’examen serologie-rougeole (etiologique)*
 
@@ -238,6 +238,14 @@ Recherche des infections congénitales : l’examen « IgM rougeole » (sans rap
 *ajout (examen)*
 
 > {"ajouter":"examen","examen":"serologies-torch","categorie":"etiologique","interpretation":"Rubéole, toxoplasmose, CMV congénitaux (IgM chez le nourrisson), selon disponibilité."}
+
+*retrait de l’examen echographie-parties-molles (deuxieme_intention)*
+
+> {"retirer":"examen","examen":"echographie-parties-molles","categorie":"deuxieme_intention"}
+
+*ajout (examen)*
+
+> {"ajouter":"examen","examen":"echographie-oculaire","categorie":"deuxieme_intention","interpretation":"Si le fond d’œil est impossible : rétinoblastome, décollement de rétine."}
 
 ## Conjonctivite de l’enfant
 

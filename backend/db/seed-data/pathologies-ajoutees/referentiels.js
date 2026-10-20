@@ -1479,6 +1479,15 @@ const examens = [
     valeurs_normales:
       '- Index d’apnées-hypopnées < 5/h\n- Latence moyenne d’endormissement > 8 min, pas d’endormissement en sommeil paradoxal\n- Narcolepsie : latence ≤ 8 min et au moins 2 endormissements en sommeil paradoxal',
   },
+  // --- Contrôle de conformité (examens jusque-là rattachés à un autre examen)
+  {
+    slug: 'scanner-rachis',
+    nom: 'Scanner du rachis',
+    type: 'imagerie',
+    description:
+      'Coupes fines du rachis avec reconstructions : fractures, déplacements, recul du mur postérieur, instabilité ; examen de référence des lésions osseuses du traumatisé du rachis lorsqu’il est disponible (l’IRM précise les lésions médullaires, discales et ligamentaires).',
+    valeurs_normales: '- Alignement vertébral conservé, pas de fracture, canal rachidien libre',
+  },
 ];
 
 const symptomes = [

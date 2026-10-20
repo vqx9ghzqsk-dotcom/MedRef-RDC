@@ -12,13 +12,13 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 |---|---|---:|---:|---:|---:|
 | [C01](C01-infectiologie-medecine-interne.md) | Infectiologie (médecine interne) | 37 | 10 | 13 | 2 |
 | [C02](C02-cardiologie-nephrologie-et-medecine-interne-generale.md) | Cardiologie, néphrologie et médecine interne générale | 33 | 3 | 3 | 2 |
-| [C03](C03-dermatologie-endocrinologie-et-diabetologie.md) | Dermatologie, endocrinologie et diabétologie | 32 | 9 | 17 | 5 |
+| [C03](C03-dermatologie-endocrinologie-et-diabetologie.md) | Dermatologie, endocrinologie et diabétologie | 32 | 10 | 19 | 5 |
 | [C04](C04-gastro-enterologie-hepatologie-et-hematologie.md) | Gastro-entérologie, hépatologie et hématologie | 33 | 3 | 6 | 2 |
 | [C05](C05-pneumologie-rhumatologie-et-addictologie.md) | Pneumologie, rhumatologie et addictologie | 34 | 5 | 7 | 1 |
 | [C06](C06-neurologie-et-accidents-vasculaires-cerebraux.md) | Neurologie et accidents vasculaires cérébraux | 37 | 2 | 4 | 0 |
 | [C07](C07-epilepsie-mouvements-anormaux-demences-et-neuro-infectiologie.md) | Épilepsie, mouvements anormaux, démences et neuro-infectiologie | 36 | 3 | 6 | 1 |
 | [C08](C08-psychiatrie-psychotraumatologie-et-urgences-neuropsychiatriques.md) | Psychiatrie, psychotraumatologie et urgences neuropsychiatriques | 33 | 1 | 2 | 0 |
-| [C09](C09-neurochirurgie-neurotraumatologie-psychiatrie-de-l-enfant-et-sante-de-l-adolescent.md) | Neurochirurgie, neurotraumatologie, psychiatrie de l’enfant et santé de l’adolescent | 32 | 2 | 6 | 0 |
+| [C09](C09-neurochirurgie-neurotraumatologie-psychiatrie-de-l-enfant-et-sante-de-l-adolescent.md) | Neurochirurgie, neurotraumatologie, psychiatrie de l’enfant et santé de l’adolescent | 32 | 3 | 8 | 0 |
 | [C10](C10-grossesse-et-medecine-materno-foetale.md) | Grossesse et médecine materno-fœtale | 36 | 3 | 9 | 0 |
 | [C11](C11-pathologies-obstetricales-et-urgences-obstetricales.md) | Pathologies obstétricales et urgences obstétricales | 31 | 7 | 9 | 0 |
 | [C12](C12-travail-et-accouchement-post-partum-planification-familiale.md) | Travail et accouchement, post-partum, planification familiale | 32 | 4 | 7 | 0 |
@@ -27,10 +27,10 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C15](C15-neonatologie.md) | Néonatologie | 29 | 3 | 3 | 0 |
 | [C16](C16-infectiologie-pediatrique-et-malnutrition.md) | Infectiologie pédiatrique et malnutrition | 33 | 3 | 3 | 0 |
 | [C17](C17-pediatrie-generale-et-urgences-pediatriques.md) | Pédiatrie générale et urgences pédiatriques | 33 | 2 | 3 | 0 |
-| [C18](C18-hematologie-oncologie-nephrologie-et-cardiologie-pediatriques.md) | Hématologie-oncologie, néphrologie et cardiologie pédiatriques | 33 | 3 | 3 | 0 |
+| [C18](C18-hematologie-oncologie-nephrologie-et-cardiologie-pediatriques.md) | Hématologie-oncologie, néphrologie et cardiologie pédiatriques | 33 | 4 | 5 | 0 |
 | [C19](C19-neurologie-pneumologie-et-gastro-enterologie-pediatriques.md) | Neurologie, pneumologie et gastro-entérologie pédiatriques | 35 | 3 | 3 | 0 |
-| [C20](C20-endocrinologie-dermatologie-orl-ophtalmologie-et-chirurgie-pediatriques.md) | Endocrinologie, dermatologie, ORL-ophtalmologie et chirurgie pédiatriques | 33 | 4 | 7 | 0 |
-| **Total** | | **660** | **78** | **132** | **14** |
+| [C20](C20-endocrinologie-dermatologie-orl-ophtalmologie-et-chirurgie-pediatriques.md) | Endocrinologie, dermatologie, ORL-ophtalmologie et chirurgie pédiatriques | 33 | 4 | 9 | 0 |
+| **Total** | | **660** | **81** | **140** | **14** |
 
 ## Points à arbitrer
 

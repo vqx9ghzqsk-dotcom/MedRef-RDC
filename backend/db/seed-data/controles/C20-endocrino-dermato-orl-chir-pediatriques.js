@@ -129,7 +129,7 @@ module.exports = {
       verifie:
         'Leucocorie, reflet rouge absent, nystagmus ; fond d’œil pour éliminer le rétinoblastome ; recherche de la cause (rubéole, toxoplasmose, CMV, syphilis, galactosémie) ; chirurgie avant 6–8 semaines (unilatérale) ou 10 semaines (bilatérale), implant après 1–2 ans ; correction optique, occlusion ; vaccin RR, test du reflet rouge.',
       corrige:
-        'Recherche des infections congénitales : l’examen « IgM rougeole » (sans rapport avec la cataracte congénitale) est remplacé par les sérologies toxoplasmose, rubéole, CMV.',
+        'Recherche des infections congénitales : l’examen « IgM rougeole » (sans rapport avec la cataracte congénitale) est remplacé par les sérologies toxoplasmose, rubéole, CMV ; l’échographie oculaire, rattachée à l’échographie des parties molles, est rattachée à l’échographie oculaire (mode B).',
       corrections: [
         { retirer: 'examen', examen: 'serologie-rougeole', categorie: 'etiologique' },
         {
@@ -137,6 +137,13 @@ module.exports = {
           examen: 'serologies-torch',
           categorie: 'etiologique',
           interpretation: 'Rubéole, toxoplasmose, CMV congénitaux (IgM chez le nourrisson), selon disponibilité.',
+        },
+        { retirer: 'examen', examen: 'echographie-parties-molles', categorie: 'deuxieme_intention' },
+        {
+          ajouter: 'examen',
+          examen: 'echographie-oculaire',
+          categorie: 'deuxieme_intention',
+          interpretation: 'Si le fond d’œil est impossible : rétinoblastome, décollement de rétine.',
         },
       ],
     },

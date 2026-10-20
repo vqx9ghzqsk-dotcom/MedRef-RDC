@@ -16,6 +16,15 @@ describe('opérateurs retenus', () => {
       'MACLEODS PHARMACEUTICALS LTD. Atlanta Arcade',
       'Générique multisource',
       'Organon',
+      'Nutriset Hameau du Bois Richard',
+      'AstraZeneca',
+      'Eli Lilly',
+      'Guilin Pharmaceutical Co. Ltd',
+      'KBN-ZHEJIANG PHARMACEUTICAL CO. LTD',
+      'OPELLA HEALTHCARE INTERNATIONAL SAS',
+      'Shanhai Fosun Pharmaceutical Development Co',
+      'Laboratoire PhatkinN°',
+      'Cooperation Pharmaceutique Francaise Place Lucien Auvert',
     ]) {
       expect(retenu(nom)).toBe(true);
     }
@@ -29,6 +38,10 @@ describe('opérateurs retenus', () => {
       'SaintSun Pharmaco Ltd',
       'Rochem International',
       'SP LABO N.V',
+      'GUILIN ZIZHU LATEX CO.,LTDNo',
+      'COOPER PHARMA LIMITED',
+      'Delpharm Dijon',
+      'Exphar',
     ]) {
       expect(retenu(nom)).toBe(false);
     }

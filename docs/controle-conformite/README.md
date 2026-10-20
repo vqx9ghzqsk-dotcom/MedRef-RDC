@@ -30,7 +30,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C18](C18-hematologie-oncologie-nephrologie-et-cardiologie-pediatriques.md) | Hématologie-oncologie, néphrologie et cardiologie pédiatriques | 33 | 4 | 5 | 0 |
 | [C19](C19-neurologie-pneumologie-et-gastro-enterologie-pediatriques.md) | Neurologie, pneumologie et gastro-entérologie pédiatriques | 35 | 3 | 3 | 0 |
 | [C20](C20-endocrinologie-dermatologie-orl-ophtalmologie-et-chirurgie-pediatriques.md) | Endocrinologie, dermatologie, ORL-ophtalmologie et chirurgie pédiatriques | 33 | 4 | 9 | 0 |
-| **Total** | | **660** | **81** | **140** | **14** |
+| [C21](C21-chirurgie-digestive-viscerale-generale-et-urgences-chirurgicales.md) | Chirurgie digestive, viscérale, générale et urgences chirurgicales | 37 | 5 | 6 | 0 |
+| **Total** | | **697** | **86** | **146** | **14** |
 
 ## Points à arbitrer
 

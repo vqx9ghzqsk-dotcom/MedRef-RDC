@@ -378,7 +378,7 @@ async function seed(conn) {
   // Formes cliniques, sémiologie, syndromes, glossaire, signes d'alerte des urgences
   const semiologie = await chargerSemiologie(conn, data);
   // Produits des catalogues de firmes (photos, fiches), liés aux molécules quand c'est sûr
-  const catalogues = await chargerCatalogues(conn, data.catalogues);
+  const catalogues = await chargerCatalogues(conn, [...data.catalogues, ...data.repertoire]);
   // Répertoire des AMM de l'ACOREP et fiches des substances (à valider)
   const acorep = await chargerAcorep(conn, data.acorep);
   // Opérateurs affichés (les autres restent en base, masqués)

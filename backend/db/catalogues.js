@@ -9,6 +9,8 @@
  *
  * `firme.ajoute_par_ia` : catalogue constitué par l’IA (internet) et non fourni par la
  * firme ; ses produits ne s’affichent qu’avec une AMM, même s’ils ont une photo.
+ * `produit.source` : provenance propre au produit (répertoire fourni par le médecin), à la place
+ * de la mention du catalogue de la firme.
  */
 
 const { construireIndex, rapprocher, doseCompatible } = require('./correspondance');
@@ -81,7 +83,7 @@ async function chargerCatalogues(conn, catalogues) {
           p.posologie || null,
           p.photo || null,
           f.ajoute_par_ia ? 1 : 0,
-          `Catalogue ${f.nom} — ${AVERTISSEMENT}.`,
+          p.source || `Catalogue ${f.nom} — ${AVERTISSEMENT}.`,
           p.ref,
           tronquer(p.classe, 190),
           tronquer(p.sous_classe, 190),

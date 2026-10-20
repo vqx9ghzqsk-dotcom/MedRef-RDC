@@ -32,7 +32,7 @@ async function main() {
     console.log(`✔ Sauvegarde préalable : ${s.file}`);
     await conn.beginTransaction();
     const semiologie = await chargerSemiologie(conn, data);
-    const catalogues = await chargerCatalogues(conn, data.catalogues);
+    const catalogues = await chargerCatalogues(conn, [...data.catalogues, ...data.repertoire]);
     const acorep = await chargerAcorep(conn, data.acorep);
     const selection = await appliquerSelection(conn, data.selection);
     const fiches = await chargerNouvellesFiches(conn, data, data.ajouts);

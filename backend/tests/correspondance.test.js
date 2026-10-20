@@ -108,4 +108,19 @@ describe('rapprochement produit de catalogue → molécules', () => {
       data.catalogues.every((c) => c.produits.every((p) => /^\/medias\/produits\/.+\.webp$/.test(p.photo))),
     ).toBe(true);
   });
+
+  it('le répertoire fourni par le médecin : marques sans photo, références propres, source indiquée', () => {
+    const produits = data.repertoire.flatMap((c) => c.produits);
+    const refs = [...produits, ...data.catalogues.flatMap((c) => c.produits)].map((p) => p.ref);
+    expect(new Set(refs).size).toBe(refs.length);
+    expect(produits.length).toBeGreaterThan(150);
+    for (const p of produits) {
+      expect(p.ref).toMatch(/^repertoire-[a-z0-9-]+$/);
+      expect(p.photo).toBeUndefined();
+      expect(p.dci).toBeTruthy();
+      expect(p.source).toMatch(/Dr Mingalu/);
+    }
+    // Pas « ajouté par l'IA » : la photo ajoutée par le médecin suffira à l'afficher
+    expect(data.repertoire.every((c) => c.firme.ajoute_par_ia === false && c.firme.nom)).toBe(true);
+  });
 });

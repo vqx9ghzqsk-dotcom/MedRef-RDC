@@ -28,6 +28,7 @@ const LOTS = [
   'C19-neuro-pneumo-gastro-pediatriques',
   'C20-endocrino-dermato-orl-chir-pediatriques',
   'C21-chirurgie-digestive-viscerale-generale',
+  'C22-urologie-traumatologie',
 ];
 
 module.exports = LOTS.map((lot) => require(`./${lot}`));

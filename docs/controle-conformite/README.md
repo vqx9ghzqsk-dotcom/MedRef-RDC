@@ -36,7 +36,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C24](C24-ophtalmologie-orl-et-stomatologie.md) | Ophtalmologie, ORL et stomatologie | 28 | 3 | 5 | 0 |
 | [M01](M01-molecules-antibiotiques.md) | Molécules : antibiotiques | 63 | 3 | 4 | 0 |
 | [M02](M02-molecules-antipaludiques-et-antiparasitaires.md) | Molécules : antipaludiques et antiparasitaires | 31 | 0 | 0 | 1 |
-| **Total** | | **886** | **99** | **168** | **15** |
+| [M03](M03-molecules-antituberculeux-antiretroviraux-antiviraux-antifongiques.md) | Molécules : antituberculeux, antirétroviraux, antiviraux, antifongiques | 43 | 3 | 4 | 0 |
+| **Total** | | **929** | **102** | **172** | **15** |
 
 ## Points à arbitrer
 

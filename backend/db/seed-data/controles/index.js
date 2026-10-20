@@ -33,6 +33,7 @@ const LOTS = [
   'C24-ophtalmologie-orl-stomatologie',
   'M01-antibiotiques',
   'M02-antipaludiques-antiparasitaires',
+  'M03-antituberculeux-antiretroviraux-antiviraux-antifongiques',
 ];
 
 module.exports = LOTS.map((lot) => require(`./${lot}`));

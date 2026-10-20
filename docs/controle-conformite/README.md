@@ -29,7 +29,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C17](C17-pediatrie-generale-et-urgences-pediatriques.md) | Pédiatrie générale et urgences pédiatriques | 33 | 2 | 3 | 0 |
 | [C18](C18-hematologie-oncologie-nephrologie-et-cardiologie-pediatriques.md) | Hématologie-oncologie, néphrologie et cardiologie pédiatriques | 33 | 3 | 3 | 0 |
 | [C19](C19-neurologie-pneumologie-et-gastro-enterologie-pediatriques.md) | Neurologie, pneumologie et gastro-entérologie pédiatriques | 35 | 3 | 3 | 0 |
-| **Total** | | **627** | **74** | **125** | **14** |
+| [C20](C20-endocrinologie-dermatologie-orl-ophtalmologie-et-chirurgie-pediatriques.md) | Endocrinologie, dermatologie, ORL-ophtalmologie et chirurgie pédiatriques | 33 | 4 | 7 | 0 |
+| **Total** | | **660** | **78** | **132** | **14** |
 
 ## Points à arbitrer
 

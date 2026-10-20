@@ -12,7 +12,8 @@
  *    retouchée depuis par un médecin), c'est un conflit : la correction n'est pas
  *    appliquée et elle est signalée ;
  *  - `valeur` (avec `ancienne`) fixe une valeur, sous la même condition ;
- *  - `ajouter` crée un élément absent ; `retirer` enlève un lien molécule → fiche.
+ *  - `ajouter` crée un élément absent ; `retirer` enlève un lien molécule → fiche,
+ *    ou un examen mal rattaché (`examen` + `categorie`).
  * Un lot peut aussi corriger le référentiel des examens (`examens`), commun à
  * toutes les fiches ; le motif et le passage avant / après figurent dans son rapport.
  *
@@ -139,6 +140,7 @@ const CIBLE_EXAMEN = {
 
 const AJOUTS_PATHOLOGIE = ['principe', 'complication', 'examen', 'differentiel', 'molecule'];
 const AJOUTS_MOLECULE = ['posologie'];
+const RETRAITS = ['molecule', 'examen'];
 
 /** Type d'une opération : la clé de cible présente (ou `ajouter` / `retirer`). */
 function cibleDe(op, cibles) {
@@ -203,7 +205,10 @@ function verifierDonnees(lots) {
             continue;
           }
           if (type === 'retirer') {
-            if (op.retirer !== 'molecule' || entite !== 'pathologie') pb.push(`${ici} : retrait inconnu`);
+            if (!RETRAITS.includes(op.retirer) || entite !== 'pathologie' || !op[op.retirer])
+              pb.push(`${ici} : retrait inconnu`);
+            else if (op.retirer === 'examen' && !CATEGORIES.includes(op.categorie))
+              pb.push(`${ici} : catégorie ${op.categorie}`);
             continue;
           }
           const cible = cibles[type];
@@ -263,6 +268,23 @@ async function modifierChamp(q, cible, id, op) {
   }
   await q(`UPDATE ${cible.table} SET ${op.champ} = ? WHERE ${where}`, [nouvelle, id, ...params]);
   return 'applique';
+}
+
+/** Retire un lien d'une fiche pathologie : molécule, ou examen dans une catégorie. */
+async function retirerLien(q, id, op) {
+  const r =
+    op.retirer === 'examen'
+      ? await q(
+          `DELETE FROM pathologie_examens
+            WHERE pathologie_id = ? AND categorie = ? AND examen_id = (SELECT id FROM examens WHERE slug = ?)`,
+          [id, op.categorie, op.examen],
+        )
+      : await q(
+          `DELETE FROM molecule_pathologies
+            WHERE pathologie_id = ? AND molecule_id = (SELECT id FROM molecules WHERE slug = ?)`,
+          [id, op.molecule],
+        );
+  return r.affectedRows ? 'applique' : 'deja';
 }
 
 /** Ajoute un élément absent d'une fiche pathologie. */
@@ -440,7 +462,8 @@ const LIBELLES_CHAMPS = {
 function libelle(op, type) {
   if (type === 'ajouter')
     return `ajout ${op.ajouter} « ${op.titre || op.nom || op.examen || op.molecule || op.indication || ''} »`;
-  if (type === 'retirer') return `retrait du lien ${op.molecule}`;
+  if (type === 'retirer')
+    return `retrait du lien ${op.retirer === 'examen' ? `examen ${op.examen}` : op.molecule}`;
   const qui =
     type === 'champ' ? '' : ` ${type} « ${type === 'posologie' ? JSON.stringify(op.posologie) : op[type]} »`;
   return `${LIBELLES_CHAMPS[op.champ] || op.champ.replace(/_/g, ' ')}${qui}`;
@@ -483,12 +506,7 @@ async function chargerControles(conn, lots, { strict = false } = {}) {
                 ? await ajouterPathologie(q, id, op)
                 : await ajouterPosologie(q, id, op);
           } else if (type === 'retirer') {
-            const r = await q(
-              `DELETE FROM molecule_pathologies
-                WHERE pathologie_id = ? AND molecule_id = (SELECT id FROM molecules WHERE slug = ?)`,
-              [id, op.molecule],
-            );
-            resultat = r.affectedRows ? 'applique' : 'deja';
+            resultat = await retirerLien(q, id, op);
           } else {
             resultat = await modifierChamp(q, cibles[type], id, op);
           }

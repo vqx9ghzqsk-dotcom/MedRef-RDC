@@ -28,6 +28,7 @@ const nomFichier = (lot) =>
 /** Cible lisible d'une correction. */
 function cible(op) {
   if (op.ajouter) return `ajout (${op.ajouter})`;
+  if (op.retirer === 'examen') return `retrait de l’examen ${op.examen} (${op.categorie})`;
   if (op.retirer) return `retrait du lien avec ${op.molecule}`;
   for (const [cle, libelle] of [
     ['principe', 'principe'],

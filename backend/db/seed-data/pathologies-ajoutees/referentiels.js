@@ -1488,6 +1488,22 @@ const examens = [
       'Coupes fines du rachis avec reconstructions : fractures, déplacements, recul du mur postérieur, instabilité ; examen de référence des lésions osseuses du traumatisé du rachis lorsqu’il est disponible (l’IRM précise les lésions médullaires, discales et ligamentaires).',
     valeurs_normales: '- Alignement vertébral conservé, pas de fracture, canal rachidien libre',
   },
+  {
+    slug: 'echographie-pleurale',
+    nom: 'Échographie pleurale et pulmonaire',
+    type: 'imagerie',
+    description:
+      'Échographie du thorax au lit du malade : épanchement pleural (volume, cloisons, échogénicité), repérage avant ponction ou drainage, pneumothorax (abolition du glissement pleural), volet thoracique de l’eFAST ; plus sensible que la radiographie couchée pour les petits épanchements.',
+    valeurs_normales: '- Pas d’épanchement, glissement pleural présent',
+  },
+  {
+    slug: 'echo-doppler-membre-superieur',
+    nom: 'Écho-Doppler vasculaire du membre supérieur',
+    type: 'imagerie',
+    description:
+      'Cartographie artérielle et veineuse du bras avant la création d’une fistule artério-veineuse (diamètres, perméabilité) ; surveillance de la fistule (débit, sténose, thrombose) ; thrombose veineuse du membre supérieur.',
+    valeurs_normales: '- Artères et veines perméables, sans sténose ni thrombose',
+  },
 ];
 
 const symptomes = [

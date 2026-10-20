@@ -34,7 +34,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C22](C22-urologie-et-traumatologie.md) | Urologie et traumatologie | 33 | 4 | 7 | 0 |
 | [C23](C23-orthopedie-chirurgie-thoracique-et-vasculaire-brulures-anesthesie-reanimation.md) | Orthopédie, chirurgie thoracique et vasculaire, brûlures, anesthésie-réanimation | 34 | 3 | 6 | 0 |
 | [C24](C24-ophtalmologie-orl-et-stomatologie.md) | Ophtalmologie, ORL et stomatologie | 28 | 3 | 5 | 0 |
-| **Total** | | **792** | **96** | **164** | **14** |
+| [M01](M01-molecules-antibiotiques.md) | Molécules : antibiotiques | 63 | 3 | 4 | 0 |
+| **Total** | | **855** | **99** | **168** | **14** |
 
 ## Points à arbitrer
 

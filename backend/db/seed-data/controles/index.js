@@ -31,6 +31,7 @@ const LOTS = [
   'C22-urologie-traumatologie',
   'C23-orthopedie-thoracique-vasculaire-brulures-anesthesie',
   'C24-ophtalmologie-orl-stomatologie',
+  'M01-antibiotiques',
 ];
 
 module.exports = LOTS.map((lot) => require(`./${lot}`));

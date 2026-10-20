@@ -33,7 +33,8 @@ Chaque fiche de MedRef RDC est relue contre ses protocoles de prise en charge (d
 | [C21](C21-chirurgie-digestive-viscerale-generale-et-urgences-chirurgicales.md) | Chirurgie digestive, viscérale, générale et urgences chirurgicales | 37 | 5 | 6 | 0 |
 | [C22](C22-urologie-et-traumatologie.md) | Urologie et traumatologie | 33 | 4 | 7 | 0 |
 | [C23](C23-orthopedie-chirurgie-thoracique-et-vasculaire-brulures-anesthesie-reanimation.md) | Orthopédie, chirurgie thoracique et vasculaire, brûlures, anesthésie-réanimation | 34 | 3 | 6 | 0 |
-| **Total** | | **764** | **93** | **159** | **14** |
+| [C24](C24-ophtalmologie-orl-et-stomatologie.md) | Ophtalmologie, ORL et stomatologie | 28 | 3 | 5 | 0 |
+| **Total** | | **792** | **96** | **164** | **14** |
 
 ## Points à arbitrer
 

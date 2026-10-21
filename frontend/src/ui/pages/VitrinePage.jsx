@@ -129,30 +129,39 @@ function diapositives(accueil) {
 
 const CLASSES_TYPE = {
   alerte_sanitaire: 'v-actu-alerte',
-  pharmacovigilance: 'v-actu-alerte',
+  pharmacovigilance: 'v-actu-pharmaco',
   protocole: 'v-actu-protocole',
   innovation: 'v-actu-innovation',
   information: 'v-actu-info',
 };
 
-/** Cartes d'actualités : publications des administrateurs d'abord, puis nouveautés de la base. */
-export function cartesActualites(accueil) {
-  if (!accueil) return [];
+/** Rubriques de la section Actualités, dans l'ordre d'affichage. */
+const RUBRIQUES = [
+  { type: 'alerte_sanitaire', titre: 'Alertes sanitaires' },
+  { type: 'pharmacovigilance', titre: 'Pharmacovigilance et retraits de lots' },
+  { type: 'protocole', titre: 'Protocoles et recommandations' },
+  { type: 'innovation', titre: 'Innovations' },
+  { type: 'information', titre: 'Informations' },
+];
+
+/** Carte d'une actualité publiée (veille automatique ou administrateurs). */
+function carteActualite(a) {
+  return {
+    cle: `actu-${a.id}`,
+    classe: CLASSES_TYPE[a.type] || 'v-actu-info',
+    etiquette:
+      [a.zone, date(a.publie_le)].filter(Boolean).join(' · ') || TYPES_ACTUALITE[a.type] || 'Actualité',
+    titre: a.titre,
+    lien: lienActualite(a),
+    texte: a.resume,
+    note: a.traduction_auto ? 'traduit automatiquement' : '',
+    source: { titre: a.source_titre, url: a.source_url },
+  };
+}
+
+/** Nouveautés calculées à partir de la base : fiches validées, produits en photo, mises à jour. */
+function cartesNouveautes(accueil) {
   const cartes = [];
-  for (const a of [...(accueil.alertes || []), ...(accueil.actualites || [])]) {
-    cartes.push({
-      cle: `actu-${a.id}`,
-      classe: CLASSES_TYPE[a.type] || 'v-actu-info',
-      etiquette: TYPES_ACTUALITE[a.type] || 'Actualité',
-      titre: a.titre,
-      lien: lienActualite(a),
-      texte: a.resume,
-      note: [a.zone, date(a.publie_le), a.traduction_auto ? 'traduit automatiquement' : null]
-        .filter(Boolean)
-        .join(' · '),
-      source: { titre: a.source_titre, url: a.source_url },
-    });
-  }
   const t = accueil.totaux || {};
   const validees = accueil.fiches_validees || [];
   if (validees.length) {
@@ -205,7 +214,34 @@ export function cartesActualites(accueil) {
       note: date(majs[0].updated_at),
     });
   }
-  return cartes.slice(0, 5);
+  return cartes;
+}
+
+/**
+ * Rubriques de la section Actualités : une par type d'actualité publiée (vides omises), puis
+ * les nouveautés de MedRef RDC. Chaque rubrique fait défiler ses cartes toute seule.
+ */
+export function rubriquesActualites(accueil) {
+  if (!accueil) return [];
+  const toutes = [...(accueil.alertes || []), ...(accueil.actualites || [])].sort(
+    (x, y) => String(y.publie_le || '').localeCompare(String(x.publie_le || '')) || y.id - x.id,
+  );
+  const rubriques = RUBRIQUES.map((r) => ({
+    cle: r.type,
+    titre: r.titre,
+    classe: CLASSES_TYPE[r.type],
+    cartes: toutes.filter((a) => a.type === r.type).map(carteActualite),
+  })).filter((r) => r.cartes.length);
+  const nouveautes = cartesNouveautes(accueil);
+  if (nouveautes.length) {
+    rubriques.push({
+      cle: 'medref',
+      titre: 'Nouveautés de MedRef RDC',
+      classe: 'v-actu-fiches',
+      cartes: nouveautes,
+    });
+  }
+  return rubriques;
 }
 
 // ------------------------------------------------------------------ blocs
@@ -319,24 +355,23 @@ function Ecrans({ cote, totaux }) {
 
 const DECOS = {
   'v-actu-alerte': <path d="M12 3l9 16H3zM12 10v4M12 17h.01" />,
+  'v-actu-pharmaco': <path d="M4.5 12.5l8-8a4.2 4.2 0 0 1 6 6l-8 8a4.2 4.2 0 0 1-6-6zM8.5 8.5l7 7" />,
   'v-actu-protocole': <path d="M9 4h6v3H9zM7 5H5v16h14V5h-2M9 12h6M9 16h4" />,
   'v-actu-innovation': (
     <path d="M12 3v3M5.6 5.6l2.1 2.1M3 12h3M18.4 5.6l-2.1 2.1M21 12h-3M9 18h6M10 21h4M12 8a4 4 0 0 0-2 7.5V18h4v-2.5A4 4 0 0 0 12 8z" />
   ),
-  'v-actu-produits': <path d="M4.5 12.5l8-8a4.2 4.2 0 0 1 6 6l-8 8a4.2 4.2 0 0 1-6-6zM8.5 8.5l7 7" />,
   'v-actu-fiches': <path d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4" />,
-  'v-actu-maj': <path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4" />,
   'v-actu-info': <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01" />,
 };
 
-/** Grande icône décorative de la carte « à la une », selon le type d'actualité. */
+/** Grande icône décorative d'une rubrique, selon son type. */
 function DecoActu({ classe }) {
   return (
     <svg
       className="v-actu-deco"
       viewBox="0 0 24 24"
-      width="200"
-      height="200"
+      width="170"
+      height="170"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.1"
@@ -349,52 +384,123 @@ function DecoActu({ classe }) {
   );
 }
 
+/** Contenu d'une carte d'actualité dans sa rubrique. */
+function Carte({ c }) {
+  return (
+    <>
+      {c.photo && <img className="v-actu-photo" src={c.photo} alt="" loading="lazy" />}
+      <p className="v-carte-quand">{c.etiquette}</p>
+      <h4>{c.lien ? <Link to={c.lien}>{c.titre}</Link> : c.titre}</h4>
+      {c.texte && <p className="v-actu-texte">{c.texte}</p>}
+      {c.liste?.length > 0 && (
+        <ul className="v-actu-liste">
+          {c.liste.map((x) => (
+            <li key={x.lien}>
+              <Link to={x.lien}>{x.nom}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
+      {(c.note || c.source?.titre) && (
+        <p className="v-actu-note">
+          {c.source?.titre && (
+            <>
+              Source :{' '}
+              {c.source.url ? (
+                <a href={c.source.url} target="_blank" rel="noopener noreferrer">
+                  {c.source.titre}
+                </a>
+              ) : (
+                c.source.titre
+              )}
+              {c.note && ' · '}
+            </>
+          )}
+          {c.note}
+        </p>
+      )}
+    </>
+  );
+}
+
+/**
+ * Rubrique qui fait défiler ses cartes toute seule (une toutes les 8 secondes, décalée d'une
+ * rubrique à l'autre). Pause au survol et au clavier ; boutons précédente / suivante ;
+ * pas de défilement automatique si l'utilisateur a demandé moins d'animations.
+ */
+function Rubrique({ r, rang }) {
+  const [i, setI] = useState(0);
+  const [pause, setPause] = useState(false);
+  const n = r.cartes.length;
+  const k = Math.min(i, n - 1);
+  const duree = 8 + rang * 1.3;
+
+  useEffect(() => {
+    const reduit = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    if (pause || reduit || n < 2) return undefined;
+    const minuterie = setInterval(() => setI((x) => (x + 1) % n), duree * 1000);
+    return () => clearInterval(minuterie);
+  }, [pause, n, duree]);
+
+  const aller = (pas) => setI((x) => (x + pas + n) % n);
+  const titreId = `rubrique-${r.cle}`;
+  return (
+    <li
+      className={`v-actu v-rubrique ${r.classe}`}
+      aria-labelledby={titreId}
+      onMouseEnter={() => setPause(true)}
+      onMouseLeave={() => setPause(false)}
+      onFocus={() => setPause(true)}
+      onBlur={() => setPause(false)}
+    >
+      <DecoActu classe={r.classe} />
+      <div className="v-rubrique-tete">
+        <h3 id={titreId} className="v-rubrique-titre">
+          {r.titre}
+        </h3>
+        {n > 1 && (
+          <div className="v-rubrique-nav">
+            <button type="button" onClick={() => aller(-1)} aria-label={`${r.titre} : actualité précédente`}>
+              ‹
+            </button>
+            <span>
+              {k + 1} / {n}
+            </span>
+            <button type="button" onClick={() => aller(1)} aria-label={`${r.titre} : actualité suivante`}>
+              ›
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="v-rubrique-corps">
+        {r.cartes.map((c, x) => (
+          <article key={c.cle} className="v-rubrique-carte" hidden={x !== k}>
+            <Carte c={c} />
+          </article>
+        ))}
+      </div>
+      {n > 1 && (
+        <div className="v-rubrique-barre" aria-hidden="true">
+          <i key={k} className={pause ? 'is-pause' : undefined} style={{ animationDuration: `${duree}s` }} />
+        </div>
+      )}
+    </li>
+  );
+}
+
 function Actualites({ accueil, erreur }) {
-  const cartes = cartesActualites(accueil);
+  const rubriques = rubriquesActualites(accueil);
   return (
     <section id="actualites" className="v-section">
       <h2 className="v-titre">Actualités</h2>
       <p className="v-sous-titre">
-        Publiées avec leur source par les administrateurs, et nouveautés de MedRef RDC mises à jour
-        automatiquement
+        Relevées automatiquement sur les sources officielles ou publiées par les administrateurs, chacune avec
+        sa source ; chaque rubrique défile toute seule
       </p>
-      {cartes.length > 0 ? (
-        <ul className="v-actus" data-nombre={cartes.length}>
-          {cartes.map((c, k) => (
-            <li key={c.cle} className={`v-actu ${c.classe}${k === 0 ? ' v-actu-une' : ''}`}>
-              {k === 0 && <DecoActu classe={c.classe} />}
-              <span className="v-actu-type">{c.etiquette}</span>
-              {c.photo && <img className="v-actu-photo" src={c.photo} alt="" loading="lazy" />}
-              <h3>{c.lien ? <Link to={c.lien}>{c.titre}</Link> : c.titre}</h3>
-              {c.texte && <p className="v-actu-texte">{c.texte}</p>}
-              {c.liste?.length > 0 && (
-                <ul className="v-actu-liste">
-                  {c.liste.map((x) => (
-                    <li key={x.lien}>
-                      <Link to={x.lien}>{x.nom}</Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {(c.note || c.source) && (
-                <p className="v-actu-note">
-                  {c.source?.titre && (
-                    <>
-                      Source :{' '}
-                      {c.source.url ? (
-                        <a href={c.source.url} target="_blank" rel="noopener noreferrer">
-                          {c.source.titre}
-                        </a>
-                      ) : (
-                        c.source.titre
-                      )}
-                      {c.note && ' · '}
-                    </>
-                  )}
-                  {c.note}
-                </p>
-              )}
-            </li>
+      {rubriques.length > 0 ? (
+        <ul className="v-rubriques" data-impair={rubriques.length % 2 === 1 ? '' : undefined}>
+          {rubriques.map((r, rang) => (
+            <Rubrique key={r.cle} r={r} rang={rang} />
           ))}
         </ul>
       ) : (

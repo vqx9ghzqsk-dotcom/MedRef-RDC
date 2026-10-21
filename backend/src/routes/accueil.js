@@ -19,18 +19,26 @@ const router = express.Router();
 
 const LIMITE = 8;
 
-/** Actualités publiées et non expirées, les plus récentes d'abord (les alertes sont séparées plus bas). */
-const ACTUALITES_PUBLIEES = `SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.zone,
-       a.publie_le, a.expire_le, a.origine, a.traduction_auto, a.langue_originale, a.titre_original,
-       p.nom AS pathologie_nom, p.slug AS pathologie_slug,
-       mo.dci AS molecule_dci, mo.slug AS molecule_slug
-  FROM actualites a
-  LEFT JOIN pathologies p ON p.id = a.pathologie_id
-  LEFT JOIN molecules mo ON mo.id = a.molecule_id
- WHERE a.statut = 'publie' AND a.publie_le <= CURDATE()
-   AND (a.expire_le IS NULL OR a.expire_le >= CURDATE())
- ORDER BY a.publie_le DESC, a.id DESC
- LIMIT 40`;
+/**
+ * Actualités publiées et non expirées : les 10 plus récentes de chaque type, pour que chaque
+ * rubrique de l'accueil (alertes, pharmacovigilance, protocoles, innovations, informations)
+ * ait de quoi défiler ; les plus récentes d'abord.
+ */
+const PAR_TYPE = 10;
+const ACTUALITES_PUBLIEES = `SELECT * FROM (
+  SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.zone,
+         a.publie_le, a.expire_le, a.origine, a.traduction_auto, a.langue_originale, a.titre_original,
+         p.nom AS pathologie_nom, p.slug AS pathologie_slug,
+         mo.dci AS molecule_dci, mo.slug AS molecule_slug,
+         ROW_NUMBER() OVER (PARTITION BY a.type ORDER BY a.publie_le DESC, a.id DESC) AS rang
+    FROM actualites a
+    LEFT JOIN pathologies p ON p.id = a.pathologie_id
+    LEFT JOIN molecules mo ON mo.id = a.molecule_id
+   WHERE a.statut = 'publie' AND a.publie_le <= CURDATE()
+     AND (a.expire_le IS NULL OR a.expire_le >= CURDATE())
+) t
+ WHERE t.rang <= ${PAR_TYPE}
+ ORDER BY t.publie_le DESC, t.id DESC`;
 
 router.get(
   '/accueil',

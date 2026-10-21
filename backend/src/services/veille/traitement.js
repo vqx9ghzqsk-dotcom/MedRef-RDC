@@ -66,7 +66,8 @@ const MOTS_HORS_SUJET =
   /\b(in memoriam|hommage|obituary|accord de coop[ée]ration|signent un accord|sign an agreement|gaza|ukraine|soudan du sud|settlers|colons|fundraising|collecte de fonds|nomination|appointed|diplomacy|diplomatie|cosm[ée]tique|cosmetic)/i;
 const MOTS_ALERTE =
   /\b(outbreak|[ée]pid[ée]mie|flamb[ée]e|disease outbreak|alerte|urgence de sant[ée] publique|emergency)/i;
-const MOTS_PHARMACO = /\b(retrait|recall|falsifi|counterfeit|substandard|pharmacovigilance|lot\b|batch)/i;
+const MOTS_PHARMACO =
+  /\b(retraits? (de|du|des) (lot|lots|produit|march[ée])|recall|falsifi|counterfeit|substandard|pharmacovigilance|lots?\b|batch)/i;
 const MOTS_PROTOCOLE = /\b(guideline|recommandation|protocole|protocol|lignes directrices)/i;
 
 function trierSansModele(item) {

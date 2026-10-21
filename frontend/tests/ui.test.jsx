@@ -243,6 +243,7 @@ describe('Accueil', () => {
   });
 
   it('visiteur : actualités publiées avec leur source, nouveautés et chiffres réels', async () => {
+    const user = userEvent.setup();
     renderApp('/', {
       accueil: vi.fn(async () => ({
         alertes: [
@@ -269,7 +270,12 @@ describe('Accueil', () => {
       'href',
       'https://example.org/communique',
     );
+    // Une rubrique par type d'actualité, puis les nouveautés de MedRef RDC
+    expect(screen.getByRole('heading', { name: 'Alertes sanitaires' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '792 fiches en relecture médicale' })).toBeInTheDocument();
+    // La carte suivante de la rubrique s'affiche avec la flèche (ou toute seule après quelques secondes)
+    expect(screen.queryByRole('heading', { name: 'Aerius · Organon' })).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Nouveautés de MedRef RDC : actualité suivante' }));
     expect(screen.getByRole('heading', { name: 'Aerius · Organon' })).toBeInTheDocument();
     const chiffres = screen.getByRole('region', { name: 'MedRef RDC en chiffres' });
     expect(within(chiffres).getByText('6 352')).toBeInTheDocument();
@@ -278,6 +284,7 @@ describe('Accueil', () => {
   });
 
   it('visiteur : cartes reliées aux fiches et produits, médecin validateur nommé, lien vers l’archive', async () => {
+    const user = userEvent.setup();
     renderApp('/', {
       accueil: vi.fn(async () => ({
         alertes: [],
@@ -319,8 +326,11 @@ describe('Accueil', () => {
     );
     expect(screen.getByText(/par Dr Kabasele, Pédiatrie\./)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Rougeole' })).toHaveAttribute('href', '/pathologies/rougeole');
+    const suivante = screen.getByRole('button', { name: 'Nouveautés de MedRef RDC : actualité suivante' });
+    await user.click(suivante);
     expect(screen.getByRole('link', { name: 'Aerius · Organon' })).toHaveAttribute('href', '/medicaments/9');
     expect(screen.getByRole('link', { name: 'Xyzall' })).toHaveAttribute('href', '/medicaments/10');
+    await user.click(suivante);
     expect(screen.getByRole('link', { name: 'Choléra' })).toHaveAttribute('href', '/pathologies/cholera');
     expect(screen.getByRole('link', { name: 'Toutes les actualités' })).toHaveAttribute(
       'href',

@@ -390,41 +390,34 @@ function DecoActu({ classe }) {
 }
 
 /**
- * Visuel d'une carte : la photo que la source associe à son article (hébergée chez elle, avec son
- * crédit), sinon un visuel sobre au nom de la source — jamais une image sans rapport.
+ * Photo d'une carte, en arrière-plan de son texte sous un voile sombre : la photo que la source
+ * associe à son article (hébergée chez elle, avec son crédit). Sans photo, la carte garde la
+ * couleur de sa rubrique — jamais une image sans rapport. Les photos de produits, sur fond
+ * blanc, restent en vignette à côté du texte.
  */
-function Visuel({ c }) {
+function FondPhoto({ c }) {
   const [echec, setEchec] = useState(false);
-  if (c.image && !echec) {
-    return (
-      <figure className={`v-visuel${c.contenir ? ' is-contenir' : ''}`}>
-        <img
-          src={c.image}
-          alt=""
-          loading="lazy"
-          referrerPolicy="no-referrer"
-          onError={() => setEchec(true)}
-        />
-        {c.credit && <figcaption>{c.contenir ? c.credit : `Photo : ${c.credit}`}</figcaption>}
-      </figure>
-    );
-  }
+  if (!c.image || c.contenir || echec) return null;
   return (
-    <div className="v-visuel v-visuel-vide" aria-hidden="true">
-      <span>{c.credit || 'MedRef RDC'}</span>
-    </div>
+    <figure className="v-fond-photo">
+      <img src={c.image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setEchec(true)} />
+      {c.credit && <figcaption>Photo : {c.credit}</figcaption>}
+    </figure>
   );
 }
 
-/** Contenu d'une carte d'actualité dans sa rubrique : visuel à gauche, texte à droite. */
+/** Contenu d'une carte d'actualité dans sa rubrique : photo en arrière-plan, texte par-dessus. */
 function Carte({ c }) {
   return (
-    <div className="v-carte-grille">
-      <Visuel c={c} />
+    <>
+      <FondPhoto c={c} />
       <div className="v-carte-texte">
+        {c.image && c.contenir && (
+          <img className="v-actu-photo" src={c.image} alt="" loading="lazy" referrerPolicy="no-referrer" />
+        )}
         <CarteTexte c={c} />
       </div>
-    </div>
+    </>
   );
 }
 
@@ -516,7 +509,11 @@ function Rubrique({ r, rang }) {
       </div>
       <div className="v-rubrique-corps">
         {r.cartes.map((c, x) => (
-          <article key={c.cle} className="v-rubrique-carte" hidden={x !== k}>
+          <article
+            key={c.cle}
+            className={`v-rubrique-carte${c.image && !c.contenir ? ' avec-photo' : ''}`}
+            hidden={x !== k}
+          >
             <Carte c={c} />
           </article>
         ))}

@@ -1104,74 +1104,105 @@ button.v-btn {
   }
 }
 
-/* Carte d'actualité : visuel (photo de la source, ou nom de la source) à gauche, texte à droite */
-.v-carte-grille {
-  display: grid;
-  grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
-  gap: 16px;
-  align-items: stretch;
-}
-.v-rubriques[data-impair] > .v-rubrique:first-child .v-carte-grille {
-  grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
+/* Carte d'actualité : photo de la source en arrière-plan de la rubrique, sous un voile sombre */
+.v-rubrique-corps {
+  position: static !important;
 }
 .v-carte-texte {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-width: 0;
-}
-.v-visuel {
   position: relative;
-  margin: 0;
-  min-height: 180px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.12);
+  z-index: 1;
 }
-.v-visuel img {
+.v-rubrique-tete,
+.v-rubrique-barre {
+  position: relative;
+  z-index: 2;
+}
+.v-fond-photo {
   position: absolute;
   inset: 0;
+  z-index: 0;
+  margin: 0;
+  overflow: hidden;
+  animation: v-fond-entree 0.8s ease;
+}
+.v-fond-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transform: scale(1.02);
 }
-.v-visuel.is-contenir img {
-  object-fit: contain;
-  background: #fff;
-  padding: 10px;
-}
-.v-visuel figcaption {
+/* Voile : sombre en bas où se trouve le texte, plus léger en haut pour laisser voir la photo */
+.v-fond-photo::after {
+  content: '';
   position: absolute;
-  left: 6px;
-  bottom: 6px;
-  max-width: calc(100% - 12px);
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.55);
-  font-size: 0.66rem;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(4, 16, 32, 0.92) 0%,
+    rgba(4, 16, 32, 0.72) 45%,
+    rgba(4, 16, 32, 0.35) 100%
+  );
+}
+.v-fond-photo figcaption {
+  position: absolute;
+  right: 12px;
+  bottom: 22px;
+  z-index: 1;
+  max-width: 45%;
+  font-size: 0.64rem;
+  opacity: 0.8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.v-visuel-vide {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
-  font-family: var(--v-serif);
-  font-size: 1.1rem;
-  line-height: 1.3;
+.v-rubrique-carte.avec-photo .v-actu-texte,
+.v-rubrique-carte.avec-photo h4 {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+.v-rubrique-carte.avec-photo .v-actu-note {
+  padding-right: 46%;
+}
+@keyframes v-fond-entree {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v-fond-photo {
+    animation: none;
+  }
 }
 @media (max-width: 780px) {
-  .v-carte-grille,
-  .v-rubriques[data-impair] > .v-rubrique:first-child .v-carte-grille {
-    grid-template-columns: 1fr;
+  .v-fond-photo figcaption {
+    top: 54px;
+    bottom: auto;
+    max-width: 70%;
   }
-  .v-visuel {
-    min-height: 160px;
+  .v-rubrique-carte.avec-photo .v-actu-note {
+    padding-right: 0;
   }
+}
+
+/* L'entrée animée porte sur le texte seul : un déplacement de la carte entière enfermerait la
+   photo d'arrière-plan dans le bloc de texte le temps de l'animation */
+.v-rubrique-carte {
+  animation: none;
+}
+.v-rubrique-carte .v-carte-texte {
+  animation: v-carte-entree 0.5s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v-rubrique-carte .v-carte-texte {
+    animation: none;
+  }
+}
+
+/* L'icône décorative dépasse volontairement du coin : « clip » empêche la carte de devenir
+   défilable (sinon le focus clavier la décale et découvre une bande sous la photo) */
+.v-actu {
+  overflow: clip;
 }

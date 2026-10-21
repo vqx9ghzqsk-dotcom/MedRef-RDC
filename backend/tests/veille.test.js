@@ -281,3 +281,61 @@ describe('veille : nettoyage des résumés', () => {
     );
   });
 });
+
+describe('veille : photos des articles', () => {
+  const { imageDePage, completerImages } = require('../src/services/veille/images');
+
+  it('retient la photo og:image de l’article, en adresse https absolue', () => {
+    expect(
+      imageDePage(
+        '<meta content="/images/ebola-ituri.jpg" property="og:image">',
+        'https://www.ecdc.europa.eu/en/news/ebola',
+      ),
+    ).toBe('https://www.ecdc.europa.eu/images/ebola-ituri.jpg');
+    expect(
+      imageDePage('<meta name="twitter:image" content="https://img.msf.org/a.jpg">', 'https://msf.org/x'),
+    ).toBe('https://img.msf.org/a.jpg');
+  });
+
+  it('écarte logos, sceaux, images SVG et adresses non sécurisées', () => {
+    const page = (src) => `<meta property="og:image" content="${src}">`;
+    expect(
+      imageDePage(page('/images/fallback/header-logos/h-logo-blue.svg'), 'https://www.who.int/'),
+    ).toBeNull();
+    expect(
+      imageDePage(page('https://africacdc.org/uploads/Africa-CDC-SEAL-1024x586.png'), 'https://x.org'),
+    ).toBeNull();
+    expect(imageDePage(page('http://exemple.org/photo.jpg'), 'http://exemple.org')).toBeNull();
+    expect(imageDePage('<p>sans balise</p>', 'https://x.org')).toBeNull();
+  });
+
+  it('ne consulte pas les sources sans photo et retire une image commune à plusieurs articles', async () => {
+    const charger = jest.fn(async () => '<meta property="og:image" content="https://who.int/photo.jpg">');
+    const maj = [];
+    const db = {
+      query: jest.fn(async (sql, params) => {
+        if (/SELECT id, source_url/.test(sql))
+          return [
+            { id: 1, source_url: 'https://who.int/a', veille_source: 'oms-fr' },
+            { id: 2, source_url: 'https://pubmed.ncbi.nlm.nih.gov/1/', veille_source: 'pubmed' },
+          ];
+        if (/GROUP BY veille_source, image_url/.test(sql)) return [];
+        if (/UPDATE actualites SET image_url = \?, image_cherchee = 1/.test(sql)) maj.push(params);
+        return [];
+      }),
+    };
+    const bilan = await completerImages(db, {
+      sources: [{ slug: 'pubmed', images: false }],
+      charger,
+      log: { error: () => {} },
+    });
+    expect(charger).toHaveBeenCalledTimes(1);
+    expect(bilan).toMatchObject({ examinees: 2, trouvees: 1 });
+    expect(maj).toEqual(
+      expect.arrayContaining([
+        ['https://who.int/photo.jpg', 1],
+        [null, 2],
+      ]),
+    );
+  });
+});

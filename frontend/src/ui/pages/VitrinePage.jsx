@@ -156,6 +156,9 @@ function carteActualite(a) {
     texte: a.resume,
     note: a.traduction_auto ? 'traduit automatiquement' : '',
     source: { titre: a.source_titre, url: a.source_url },
+    // Photo associée par la source à son article, affichée avec son crédit
+    image: a.image_url || null,
+    credit: a.source_titre,
   };
 }
 
@@ -197,7 +200,9 @@ function cartesNouveautes(accueil) {
       etiquette: 'Produits en photo',
       titre: [p.nom_commercial, p.operateur].filter(Boolean).join(' · '),
       lien: `/medicaments/${p.id}`,
-      photo: p.photo_url,
+      image: p.photo_url,
+      contenir: true,
+      credit: p.operateur,
       texte: court(p.dci, 90),
       liste: autres.slice(0, 3).map((x) => ({ nom: x.nom_commercial, lien: `/medicaments/${x.id}` })),
       note: 'Au catalogue des firmes',
@@ -384,11 +389,48 @@ function DecoActu({ classe }) {
   );
 }
 
-/** Contenu d'une carte d'actualité dans sa rubrique. */
+/**
+ * Visuel d'une carte : la photo que la source associe à son article (hébergée chez elle, avec son
+ * crédit), sinon un visuel sobre au nom de la source — jamais une image sans rapport.
+ */
+function Visuel({ c }) {
+  const [echec, setEchec] = useState(false);
+  if (c.image && !echec) {
+    return (
+      <figure className={`v-visuel${c.contenir ? ' is-contenir' : ''}`}>
+        <img
+          src={c.image}
+          alt=""
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => setEchec(true)}
+        />
+        {c.credit && <figcaption>{c.contenir ? c.credit : `Photo : ${c.credit}`}</figcaption>}
+      </figure>
+    );
+  }
+  return (
+    <div className="v-visuel v-visuel-vide" aria-hidden="true">
+      <span>{c.credit || 'MedRef RDC'}</span>
+    </div>
+  );
+}
+
+/** Contenu d'une carte d'actualité dans sa rubrique : visuel à gauche, texte à droite. */
 function Carte({ c }) {
   return (
+    <div className="v-carte-grille">
+      <Visuel c={c} />
+      <div className="v-carte-texte">
+        <CarteTexte c={c} />
+      </div>
+    </div>
+  );
+}
+
+function CarteTexte({ c }) {
+  return (
     <>
-      {c.photo && <img className="v-actu-photo" src={c.photo} alt="" loading="lazy" />}
       <p className="v-carte-quand">{c.etiquette}</p>
       <h4>{c.lien ? <Link to={c.lien}>{c.titre}</Link> : c.titre}</h4>
       {c.texte && <p className="v-actu-texte">{c.texte}</p>}

@@ -14,6 +14,8 @@
  * `langue` est la langue des textes de la source ; tout ce qui n'est pas en français est traduit.
  * `max` limite le nombre d'actualités nouvelles retenues par relève (flux très abondants).
  * `officielle` : source institutionnelle (OMS, ministère…) — ses alertes passent en priorité.
+ * `images: false` : la source n'associe pas de photo à ses articles (ou bloque la lecture des pages) ;
+ * ses actualités s'affichent sans photo, sans tentative inutile.
  */
 const SOURCES = [
   {
@@ -41,6 +43,7 @@ const SOURCES = [
     url: 'https://www.who.int/api/news/diseaseoutbreaknews?sf_culture=en&$orderby=PublicationDateAndTime%20desc&$top=10',
     langue: 'en',
     officielle: true,
+    images: false,
   },
   {
     slug: 'oms-fr',
@@ -90,6 +93,7 @@ const SOURCES = [
     url: 'https://www.nice.org.uk/guidance/published',
     langue: 'en',
     max: 5,
+    images: false,
   },
   {
     slug: 'esc',
@@ -98,6 +102,7 @@ const SOURCES = [
     url: 'https://www.escardio.org/news/press/press-releases/',
     langue: 'en',
     max: 5,
+    images: false,
   },
   {
     slug: 'pubmed-recommandations',
@@ -108,6 +113,7 @@ const SOURCES = [
     jours: 7,
     langue: 'en',
     max: 8,
+    images: false,
   },
   {
     slug: 'lancet',
@@ -115,7 +121,8 @@ const SOURCES = [
     type: 'rss',
     url: 'https://www.thelancet.com/rssfeed/lancet_current.xml',
     langue: 'en',
-    max: 4,
+    max: 2,
+    images: false,
   },
   {
     slug: 'nejm',
@@ -123,7 +130,8 @@ const SOURCES = [
     type: 'rss',
     url: 'https://www.nejm.org/action/showFeed?jc=nejm&type=etoc&feed=rss',
     langue: 'en',
-    max: 4,
+    max: 2,
+    images: false,
   },
 ];
 

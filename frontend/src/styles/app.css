@@ -3451,3 +3451,27 @@ details.forme {
   text-transform: uppercase;
   color: var(--ink-soft);
 }
+
+/* Archive des actualités : photo de la source à droite */
+.actu-avec-photo::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.actu-vignette {
+  float: right;
+  width: 180px;
+  height: 120px;
+  margin: 0 0 0.5rem 1rem;
+  border-radius: 10px;
+  object-fit: cover;
+}
+@media (max-width: 640px) {
+  .actu-vignette {
+    float: none;
+    display: block;
+    width: 100%;
+    height: 160px;
+    margin: 0 0 0.6rem;
+  }
+}

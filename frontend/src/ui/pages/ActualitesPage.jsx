@@ -80,7 +80,20 @@ export function ActualitesPage() {
             <>
               <ul className="actu-liste">
                 {r.data.map((a) => (
-                  <li key={a.id} className={`actu actu-${a.type}`}>
+                  <li key={a.id} className={`actu actu-${a.type}${a.image_url ? ' actu-avec-photo' : ''}`}>
+                    {a.image_url && (
+                      <img
+                        className="actu-vignette"
+                        src={a.image_url}
+                        alt=""
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        title={`Photo : ${a.source_titre}`}
+                        onError={(e) => {
+                          e.currentTarget.hidden = true;
+                        }}
+                      />
+                    )}
                     <p className="actu-type">
                       {TYPES_ACTUALITE[a.type] || 'Actualité'}
                       {a.zone ? ` · ${a.zone}` : ''} · {date(a.publie_le)}

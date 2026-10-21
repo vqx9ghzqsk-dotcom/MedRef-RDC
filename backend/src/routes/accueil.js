@@ -26,7 +26,7 @@ const LIMITE = 8;
  */
 const PAR_TYPE = 10;
 const ACTUALITES_PUBLIEES = `SELECT * FROM (
-  SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.zone,
+  SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.image_url, a.zone,
          a.publie_le, a.expire_le, a.origine, a.traduction_auto, a.langue_originale, a.titre_original,
          p.nom AS pathologie_nom, p.slug AS pathologie_slug,
          mo.dci AS molecule_dci, mo.slug AS molecule_slug,
@@ -115,7 +115,7 @@ router.get(
     const page = Math.max(1, Math.min(500, Number.parseInt(req.query.page, 10) || 1));
     const [lignes, total] = await Promise.all([
       db.query(
-        `SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.zone, a.publie_le, a.expire_le,
+        `SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.image_url, a.zone, a.publie_le, a.expire_le,
                 a.origine, a.traduction_auto, a.langue_originale, a.titre_original,
                 (a.expire_le IS NOT NULL AND a.expire_le < CURDATE()) AS expiree,
                 p.nom AS pathologie_nom, p.slug AS pathologie_slug, mo.dci AS molecule_dci, mo.slug AS molecule_slug

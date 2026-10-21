@@ -225,4 +225,5 @@ module.exports = {
   texte,
   jour,
   decoder,
+  telecharger,
 };

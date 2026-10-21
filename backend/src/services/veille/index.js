@@ -14,6 +14,7 @@ const config = require('../../config');
 const { SOURCES } = require('./sources');
 const { collecter } = require('./collecte');
 const { trierSansModele, traiterParModele, creerClient } = require('./traitement');
+const { completerImages } = require('./images');
 
 const HEURE = 60 * 60 * 1000;
 const PAR_SOURCE = 10;
@@ -52,7 +53,8 @@ async function noterEtat(db, slug, etat) {
 
 /**
  * Exécute une relève complète. Options injectables pour les tests : `sources`, `collecter`,
- * `client` (client Claude, null pour le tri par mots-clés), `log`.
+ * `client` (client Claude, null pour le tri par mots-clés), `photos` (false : pas de recherche de
+ * photos), `chargerPage` (lecture des pages d'articles), `log`.
  */
 async function executerVeille(db, options = {}) {
   const {
@@ -60,6 +62,8 @@ async function executerVeille(db, options = {}) {
     lire = collecter,
     client = creerClient(),
     modele = config.veille.modele,
+    photos = true,
+    chargerPage,
     log = console,
   } = options;
   const bilan = { sources: 0, erreurs: 0, nouveaux: 0, publies: 0, ecartes: 0, traduction: Boolean(client) };
@@ -158,6 +162,16 @@ async function executerVeille(db, options = {}) {
   }
 
   for (const [slug, etat] of etats) await noterEtat(db, slug, etat);
+
+  // 4. Photos : l'image que chaque source associe à son article (actualités sans photo cherchée)
+  if (photos) {
+    try {
+      const p = await completerImages(db, { sources, log, ...(chargerPage ? { charger: chargerPage } : {}) });
+      bilan.photos = p.trouvees;
+    } catch (err) {
+      log.error?.(`✖ Veille : recherche des photos impossible (${err.message})`);
+    }
+  }
   log.log?.(
     `✔ Veille : ${bilan.publies} actualité(s) publiée(s), ${bilan.ecartes} écartée(s), ${bilan.erreurs} source(s) en erreur` +
       (client ? '' : ' (sans traduction : ANTHROPIC_API_KEY absente)'),

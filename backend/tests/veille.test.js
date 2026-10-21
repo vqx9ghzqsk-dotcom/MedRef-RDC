@@ -326,6 +326,7 @@ describe('veille : photos des articles', () => {
     };
     const bilan = await completerImages(db, {
       sources: [{ slug: 'pubmed', images: false }],
+      verifier: async () => true,
       charger,
       log: { error: () => {} },
     });
@@ -388,45 +389,44 @@ describe('veille : retour du réseau', () => {
   });
 });
 
-describe('veille : une image pour chaque actualité', () => {
-  const { IMAGES, THEMES, illustrationPour, illustrer } = require('../src/services/veille/illustrations');
+describe('veille : bulletins de l’OMS', () => {
   const { imageArticle } = require('../src/services/veille/images');
 
-  it('chaque illustration est libre de droits, avec son crédit et sa page Wikimedia Commons', () => {
-    for (const [cle, i] of Object.entries(IMAGES)) {
-      expect(i.image).toMatch(/^https:\/\/(thumb|upload)\.wikimedia\.org\//);
-      expect(i.page).toMatch(/^https:\/\/commons\.wikimedia\.org\/wiki\/File:/);
-      expect(i.credit).toMatch(/domaine public|CC0|CC BY/);
-      expect(cle).toBeTruthy();
-    }
-    for (const [cle] of THEMES) expect(IMAGES[cle]).toBeDefined();
-  });
-
-  it('choisit l’illustration selon le sujet, puis la source, puis le type', () => {
-    expect(illustrationPour({ titre: 'Ebola : le Nord-Ubangi 8e province touchée' }).theme).toBe('ebola');
-    expect(illustrationPour({ titre: 'Spinal Tuberculosis' }).theme).toBe('tuberculose');
-    expect(illustrationPour({ titre: 'L’épidémie de paludisme recule' }).theme).toBe('paludisme');
-    expect(illustrationPour({ titre: 'What I See before Anyone Speaks', veille_source: 'nejm' }).theme).toBe(
-      'recherche',
-    );
-    expect(illustrationPour({ titre: 'Sans mot-clé', type: 'pharmacovigilance' }).theme).toBe('medicaments');
-  });
-
-  it('ajoute une illustration aux seules actualités sans photo', () => {
-    const [avec, sans] = illustrer([
-      { id: 1, titre: 'Choléra', image_url: 'https://x.org/photo.jpg' },
-      { id: 2, titre: 'Choléra au Nord-Kivu' },
-    ]);
-    expect(avec.illustration).toBeUndefined();
-    expect(sans.illustration.theme).toBe('cholera');
-  });
-
-  it('bulletins de l’OMS : la carte publiée dans l’article, pas le logo', () => {
+  it('la carte publiée dans l’article, pas le logo', () => {
     const html =
       '<img src="/images/logo.svg"><img sf-image-responsive="true" src="https://cdn.who.int/media/images/default-source/emergencies/disease-outbreak-news/carte-rdc.png">';
     expect(imageArticle(html, 'https://www.who.int/x', /\/emergencies\/disease-outbreak-news\//)).toBe(
       'https://cdn.who.int/media/images/default-source/emergencies/disease-outbreak-news/carte-rdc.png',
     );
     expect(imageArticle(html, 'https://www.who.int/x', null)).toBeNull();
+  });
+});
+
+describe('veille : photo réellement disponible', () => {
+  const { imageAccessible } = require('../src/services/veille/images');
+  const reponse =
+    (status, type, octets = []) =>
+    async () => ({
+      ok: status >= 200 && status < 300,
+      status,
+      headers: { get: () => type },
+      arrayBuffer: async () => new Uint8Array(octets).buffer,
+    });
+
+  it('accepte une image déclarée, ou un JPEG envoyé sans type (Radio Okapi)', async () => {
+    expect(await imageAccessible('https://x/a.jpg', reponse(200, 'image/jpeg'))).toBe(true);
+    expect(
+      await imageAccessible(
+        'https://x/a.jfif',
+        reponse(206, 'application/octet-stream', [0xff, 0xd8, 0xff, 0xe0]),
+      ),
+    ).toBe(true);
+  });
+
+  it('refuse une photo retirée (404) ou une page d’erreur', async () => {
+    expect(await imageAccessible('https://x/a.jpg', reponse(404, 'application/xml'))).toBe(false);
+    expect(await imageAccessible('https://x/a.jpg', reponse(200, 'text/html', [0x3c, 0x21, 0x44]))).toBe(
+      false,
+    );
   });
 });

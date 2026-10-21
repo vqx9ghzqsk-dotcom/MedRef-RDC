@@ -16,7 +16,6 @@ const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middlewar
 const { asyncHandler } = require('../utils/http');
 const { PERIMETRE } = require('./medicaments');
 const veille = require('../services/veille');
-const { IMAGES, illustrer } = require('../services/veille/illustrations');
 
 const router = express.Router();
 
@@ -25,7 +24,9 @@ const LIMITE = 8;
 /**
  * Actualités publiées et non expirées : les 10 plus récentes de chaque type, pour que chaque
  * rubrique de l'accueil (alertes, pharmacovigilance, protocoles, innovations, informations)
- * ait de quoi défiler ; les plus récentes d'abord.
+ * ait de quoi défiler ; les plus récentes d'abord. Une actualité de la veille ne paraît sur
+ * l'accueil qu'avec sa propre photo (celle que la source publie pour cet article) ; les autres
+ * restent dans l'archive. Les actualités saisies par les administrateurs paraissent toujours.
  */
 const PAR_TYPE = 10;
 const ACTUALITES_PUBLIEES = `SELECT * FROM (
@@ -39,6 +40,7 @@ const ACTUALITES_PUBLIEES = `SELECT * FROM (
     LEFT JOIN molecules mo ON mo.id = a.molecule_id
    WHERE a.statut = 'publie' AND a.publie_le <= CURDATE()
      AND (a.expire_le IS NULL OR a.expire_le >= CURDATE())
+     AND (a.image_url IS NOT NULL OR a.origine = 'manuelle')
 ) t
  WHERE t.rang <= ${PAR_TYPE}
  ORDER BY t.publie_le DESC, t.id DESC`;
@@ -83,17 +85,13 @@ router.get(
       ),
     ]);
     const t = totaux[0] || {};
-    // Chaque actualité a son image : la photo de l'article, sinon une illustration libre de droits
-    const illustrees = illustrer(actualites);
     res.json({
       data: {
-        alertes: illustrees.filter((a) => a.type === 'alerte_sanitaire' || a.type === 'pharmacovigilance'),
-        actualites: illustrees.filter((a) => a.type !== 'alerte_sanitaire' && a.type !== 'pharmacovigilance'),
+        alertes: actualites.filter((a) => a.type === 'alerte_sanitaire' || a.type === 'pharmacovigilance'),
+        actualites: actualites.filter((a) => a.type !== 'alerte_sanitaire' && a.type !== 'pharmacovigilance'),
         produits,
         fiches_validees: validees,
         fiches_mises_a_jour: misesAJour,
-        // Illustrations des nouveautés de MedRef RDC (fiches validées, fiches mises à jour)
-        illustrations: { fiches: IMAGES.consultation, mises_a_jour: IMAGES.laboratoire },
         totaux: Object.fromEntries(Object.entries(t).map(([k, v]) => [k, Number(v)])),
       },
     });
@@ -137,7 +135,7 @@ router.get(
       db.query(`SELECT COUNT(*) AS n FROM actualites a WHERE ${where.join(' AND ')}`, params),
     ]);
     res.json({
-      data: illustrer(lignes).map((a) => ({ ...a, expiree: Boolean(Number(a.expiree)) })),
+      data: lignes.map((a) => ({ ...a, expiree: Boolean(Number(a.expiree)) })),
       page,
       par_page: PAR_PAGE,
       total: Number(total[0]?.n || 0),

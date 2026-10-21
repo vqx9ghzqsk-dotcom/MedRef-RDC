@@ -10,6 +10,8 @@
 const { telecharger, decoder } = require('./collecte');
 
 const PARALLELE = 4;
+const AGENT_IMAGE =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) MedRefRDC-veille/1.0';
 const PAR_RELEVE = 40;
 // Logos, sceaux, icônes et images par défaut : pas une photo de l'actualité
 const GENERIQUE = /(logo|favicon|sprite|placeholder|default-share|fallback|seal|icon)[^/]*$|\.svg(\?|$)/i;
@@ -53,11 +55,41 @@ function imageArticle(html, adresse, motif) {
 }
 
 /**
+ * La photo existe-t-elle vraiment ? L'adresse doit renvoyer une image : on lit les premiers octets
+ * (une photo retirée du site de la source renvoie 404 ou une page d'erreur ; certains sites, comme
+ * Radio Okapi, envoient leurs JPEG sans type d'image déclaré).
+ */
+const SIGNATURES = [
+  [0xff, 0xd8, 0xff], // JPEG (y compris .jfif)
+  [0x89, 0x50, 0x4e, 0x47], // PNG
+  [0x47, 0x49, 0x46, 0x38], // GIF
+  [0x52, 0x49, 0x46, 0x46], // RIFF (WebP)
+];
+
+async function imageAccessible(url, charger = fetch) {
+  try {
+    const res = await charger(url, {
+      headers: { 'User-Agent': AGENT_IMAGE, Range: 'bytes=0-63' },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return false;
+    if (/^image\//i.test(res.headers.get('content-type') || '')) return true;
+    const debut = new Uint8Array(await res.arrayBuffer()).slice(0, 8);
+    return SIGNATURES.some((sig) => sig.every((octet, i) => debut[i] === octet));
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Cherche la photo des actualités publiées qui n'en ont pas encore été pourvues (les plus
  * récentes d'abord). Une image reprise par plusieurs articles d'une même source est une image
  * générique : elle est retirée de tous.
  */
-async function completerImages(db, { sources = [], charger = telecharger, log = console } = {}) {
+async function completerImages(
+  db,
+  { sources = [], charger = telecharger, verifier = imageAccessible, log = console } = {},
+) {
   const sansImages = new Set(sources.filter((s) => s.images === false).map((s) => s.slug));
   const parSlug = new Map(sources.map((s) => [s.slug, s]));
   const lignes = await db.query(
@@ -77,6 +109,7 @@ async function completerImages(db, { sources = [], charger = telecharger, log = 
           image =
             imageDePage(html, a.source_url) ||
             imageArticle(html, a.source_url, parSlug.get(a.veille_source)?.imageArticle);
+          if (image && !(await verifier(image))) image = null;
         } catch (err) {
           log.error?.(`✖ Photo introuvable (${a.source_url}) : ${err.message}`);
         }
@@ -101,4 +134,4 @@ async function completerImages(db, { sources = [], charger = telecharger, log = 
   return { examinees: lignes.length, trouvees, generiques: communes.length };
 }
 
-module.exports = { imageDePage, imageArticle, completerImages };
+module.exports = { imageDePage, imageArticle, imageAccessible, completerImages };

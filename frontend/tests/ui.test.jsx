@@ -259,7 +259,23 @@ describe('Accueil', () => {
           },
         ],
         actualites: [],
-        produits: [{ id: 9, nom_commercial: 'Aerius', dci: 'Desloratadine', operateur: 'Organon' }],
+        produits: [
+          {
+            id: 9,
+            nom_commercial: 'Aerius',
+            dci: 'Desloratadine',
+            operateur: 'Organon',
+            photo_url: '/m/a.webp',
+          },
+          {
+            id: 10,
+            nom_commercial: 'Xyzall',
+            dci: 'Lévocétirizine',
+            operateur: 'UCB',
+            photo_url: '/m/x.webp',
+          },
+          { id: 11, nom_commercial: 'Sans photo', dci: 'X', operateur: 'Y' },
+        ],
         fiches_validees: [],
         fiches_mises_a_jour: [],
         totaux: { fiches: 792, fiches_validees: 0, produits: 1799, amm: 6352, molecules: 702 },
@@ -270,20 +286,24 @@ describe('Accueil', () => {
       'href',
       'https://example.org/communique',
     );
-    // Une rubrique par type d'actualité, puis les nouveautés de MedRef RDC
+    // Une rubrique par type d'actualité, puis les produits en photo (un produit par carte)
     expect(screen.getByRole('heading', { name: 'Alertes sanitaires' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: '792 fiches en relecture médicale' })).toBeInTheDocument();
-    // La carte suivante de la rubrique s'affiche avec la flèche (ou toute seule après quelques secondes)
-    expect(screen.queryByRole('heading', { name: 'Aerius · Organon' })).toBeNull();
-    await user.click(screen.getByRole('button', { name: 'Nouveautés de MedRef RDC : actualité suivante' }));
     expect(screen.getByRole('heading', { name: 'Aerius · Organon' })).toBeInTheDocument();
+    // La carte suivante de la rubrique s'affiche avec la flèche (ou toute seule après quelques secondes)
+    expect(screen.queryByRole('heading', { name: 'Xyzall · UCB' })).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Nouveaux produits en photo : actualité suivante' }));
+    expect(screen.getByRole('heading', { name: 'Xyzall · UCB' })).toBeInTheDocument();
+    // Un produit sans photo n'a pas de carte sur l'accueil
+    expect(
+      screen.getByText((_, el) => el?.tagName === 'SPAN' && /^2\s*\/\s*2$/.test(el.textContent.trim())),
+    ).toBeInTheDocument();
     const chiffres = screen.getByRole('region', { name: 'MedRef RDC en chiffres' });
     expect(within(chiffres).getByText('6 352')).toBeInTheDocument();
     // Le carrousel « à la une » propose l'alerte publiée
     expect(screen.getAllByRole('button', { name: /À la une/ }).length).toBeGreaterThan(2);
   });
 
-  it('visiteur : cartes reliées aux fiches et produits, médecin validateur nommé, lien vers l’archive', async () => {
+  it('visiteur : seules les nouveautés avec photo sur l’accueil, cartes reliées aux produits, lien vers l’archive', async () => {
     const user = userEvent.setup();
     renderApp('/', {
       accueil: vi.fn(async () => ({
@@ -320,18 +340,15 @@ describe('Accueil', () => {
         totaux: { fiches: 792, fiches_validees: 2 },
       })),
     });
-    expect(await screen.findByRole('link', { name: 'Paludisme grave' })).toHaveAttribute(
+    expect(await screen.findByRole('link', { name: 'Aerius · Organon' })).toHaveAttribute(
       'href',
-      '/pathologies/paludisme-grave',
+      '/medicaments/9',
     );
-    expect(screen.getByText(/par Dr Kabasele, Pédiatrie\./)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Rougeole' })).toHaveAttribute('href', '/pathologies/rougeole');
-    const suivante = screen.getByRole('button', { name: 'Nouveautés de MedRef RDC : actualité suivante' });
-    await user.click(suivante);
-    expect(screen.getByRole('link', { name: 'Aerius · Organon' })).toHaveAttribute('href', '/medicaments/9');
-    expect(screen.getByRole('link', { name: 'Xyzall' })).toHaveAttribute('href', '/medicaments/10');
-    await user.click(suivante);
-    expect(screen.getByRole('link', { name: 'Choléra' })).toHaveAttribute('href', '/pathologies/cholera');
+    await user.click(screen.getByRole('button', { name: 'Nouveaux produits en photo : actualité suivante' }));
+    expect(screen.getByRole('link', { name: 'Xyzall · UCB' })).toHaveAttribute('href', '/medicaments/10');
+    // Fiches validées et mises à jour : sans photo possible, présentées dans Mon espace
+    expect(screen.queryByRole('link', { name: 'Paludisme grave' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Choléra' })).toBeNull();
     expect(screen.getByRole('link', { name: 'Toutes les actualités' })).toHaveAttribute(
       'href',
       '/actualites',

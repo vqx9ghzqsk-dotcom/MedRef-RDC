@@ -31,13 +31,6 @@ const nombre = (n) => Number(n || 0).toLocaleString('fr-FR');
 const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
 const court = (t, n) => (t && t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t);
 
-/** « Dr Nom, spécialité » pour un médecin validateur, sinon le nom du compte. */
-export const signataire = (f) => {
-  if (!f?.valide_par) return '';
-  const dr = /^medecin/.test(f.valide_par_profil || '') && !/^dr\.? /i.test(f.valide_par) ? 'Dr ' : '';
-  return `${dr}${f.valide_par}${f.valide_par_specialite ? `, ${f.valide_par_specialite}` : ''}`;
-};
-
 /** Page de la fiche ou de la molécule liée à une actualité publiée, si elle en a une. */
 const lienActualite = (a) =>
   a.pathologie_slug
@@ -157,83 +150,33 @@ function carteActualite(a) {
     texte: a.resume,
     note: a.traduction_auto ? 'traduit automatiquement' : '',
     source: { titre: a.source_titre, url: a.source_url },
-    // Photo associée par la source à son article, affichée avec son crédit
-    // Photo de l'article, sinon illustration libre de droits choisie selon le sujet
-    image: a.image_url || a.illustration?.image || null,
-    legende: a.image_url
-      ? `Photo : ${a.source_titre}`
-      : a.illustration
-        ? `Illustration : ${a.illustration.credit}`
-        : '',
-    lienLegende: a.image_url ? null : a.illustration?.page,
+    // Photo que la source publie pour cet article, avec son crédit (jamais d'image sans rapport)
+    image: a.image_url || null,
+    legende: a.image_url ? `Photo : ${a.source_titre}` : '',
   };
 }
 
-/** Illustration d'une nouveauté de MedRef RDC (fournie par l'API avec son crédit). */
-const illustrationMedref = (i) =>
-  i ? { image: i.image, legende: `Illustration : ${i.credit}`, lienLegende: i.page } : {};
-
-/** Nouveautés calculées à partir de la base : fiches validées, produits en photo, mises à jour. */
+/**
+ * Nouveautés de MedRef RDC montrées sur l'accueil : les derniers produits en photo, une carte par
+ * produit (chacune avec sa photo). Les fiches validées et mises à jour, sans photo possible, sont
+ * présentées dans Mon espace.
+ */
 function cartesNouveautes(accueil) {
-  const cartes = [];
-  const t = accueil.totaux || {};
-  const validees = accueil.fiches_validees || [];
-  if (validees.length) {
-    const f = validees[0];
-    cartes.push({
-      cle: 'fiches-validees',
-      ...illustrationMedref(accueil.illustrations?.fiches),
-      classe: 'v-actu-fiches',
-      etiquette: 'Fiches validées',
-      titre: f.nom,
-      lien: `/pathologies/${f.slug}`,
-      texte: `Validée le ${date(f.valide_le)}${f.valide_par ? ` par ${signataire(f)}` : ''}.`,
-      liste: validees.slice(1, 5).map((x) => ({ nom: x.nom, lien: `/pathologies/${x.slug}` })),
-      note: `${nombre(t.fiches_validees)} fiches validées sur ${nombre(t.fiches)}`,
-    });
-  } else if (t.fiches) {
-    cartes.push({
-      cle: 'fiches-relecture',
-      ...illustrationMedref(accueil.illustrations?.fiches),
-      classe: 'v-actu-fiches',
-      etiquette: 'Fiches',
-      titre: `${nombre(t.fiches)} fiches en relecture médicale`,
-      texte: 'Chaque fiche validée apparaîtra ici avec sa date et le nom du médecin relecteur.',
-      note: 'Mis à jour automatiquement',
-    });
-  }
-  const produits = accueil.produits || [];
-  if (produits.length) {
-    const p = produits[0];
-    const vus = new Set([p.nom_commercial]);
-    const autres = produits.slice(1).filter((x) => !vus.has(x.nom_commercial) && vus.add(x.nom_commercial));
-    cartes.push({
-      cle: 'produits',
+  const vus = new Set();
+  return (accueil.produits || [])
+    .filter((p) => p.photo_url && !vus.has(p.nom_commercial) && vus.add(p.nom_commercial))
+    .slice(0, 6)
+    .map((p) => ({
+      cle: `produit-${p.id}`,
       classe: 'v-actu-produits',
-      etiquette: 'Produits en photo',
+      etiquette: 'Produit en photo',
       titre: [p.nom_commercial, p.operateur].filter(Boolean).join(' · '),
       lien: `/medicaments/${p.id}`,
       image: p.photo_url,
       contenir: true,
-      credit: p.operateur,
       texte: court(p.dci, 90),
-      liste: autres.slice(0, 3).map((x) => ({ nom: x.nom_commercial, lien: `/medicaments/${x.id}` })),
       note: 'Au catalogue des firmes',
-    });
-  }
-  const majs = accueil.fiches_mises_a_jour || [];
-  if (majs.length) {
-    cartes.push({
-      cle: 'mises-a-jour',
-      ...illustrationMedref(accueil.illustrations?.mises_a_jour),
-      classe: 'v-actu-maj',
-      etiquette: 'Mises à jour',
-      titre: 'Fiches mises à jour',
-      liste: majs.slice(0, 4).map((f) => ({ nom: f.nom, lien: `/pathologies/${f.slug}` })),
-      note: date(majs[0].updated_at),
-    });
-  }
-  return cartes;
+    }));
 }
 
 /**
@@ -255,7 +198,7 @@ export function rubriquesActualites(accueil) {
   if (nouveautes.length) {
     rubriques.push({
       cle: 'medref',
-      titre: 'Nouveautés de MedRef RDC',
+      titre: 'Nouveaux produits en photo',
       classe: 'v-actu-fiches',
       cartes: nouveautes,
     });
@@ -415,17 +358,7 @@ function FondPhoto({ c }) {
   return (
     <figure className="v-fond-photo">
       <img src={c.image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setEchec(true)} />
-      {c.legende && (
-        <figcaption>
-          {c.lienLegende ? (
-            <a href={c.lienLegende} target="_blank" rel="noopener noreferrer">
-              {c.legende}
-            </a>
-          ) : (
-            c.legende
-          )}
-        </figcaption>
-      )}
+      {c.legende && <figcaption>{c.legende}</figcaption>}
     </figure>
   );
 }

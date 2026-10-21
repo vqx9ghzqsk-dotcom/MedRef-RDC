@@ -8,10 +8,9 @@ import { PROVINCES, TYPES_ACTUALITE } from '../../core/labels.js';
 import { noteTraduction } from '../components/BandeauActualites.jsx';
 import { dateLocale } from '../../core/dates.js';
 
-/** Photo de l'article, sinon illustration libre de droits choisie selon le sujet. */
-const vignette = (a) => a.image_url || a.illustration?.image || null;
-const legende = (a) =>
-  a.image_url ? `Photo : ${a.source_titre}` : a.illustration ? `Illustration : ${a.illustration.credit}` : '';
+/** Photo que la source publie pour cet article ; sans photo, pas d'image plutôt qu'une image sans rapport. */
+const vignette = (a) => a.image_url || null;
+const legende = (a) => (a.image_url ? `Photo : ${a.source_titre}` : '');
 
 const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'long' }) : '');
 

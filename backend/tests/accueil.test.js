@@ -45,6 +45,8 @@ describe('Accueil (lot D)', () => {
     // Seules les actualités publiées, déjà parues et non expirées sont lues
     expect(db.query.mock.calls[0][0]).toMatch(/statut = 'publie'.*publie_le <= CURDATE\(\)/s);
     expect(db.query.mock.calls[0][0]).toMatch(/expire_le IS NULL OR a.expire_le >= CURDATE\(\)/);
+    // Sur l'accueil, la veille ne montre que les actualités qui ont leur propre photo
+    expect(db.query.mock.calls[0][0]).toMatch(/image_url IS NOT NULL OR a.origine = 'manuelle'/);
     // Mêmes règles de visibilité des produits que la page Médicaments
     expect(db.query.mock.calls[1][0]).toMatch(/m.nature = 'medicament'/);
     // Seuls les produits avec photo, et le titre du médecin qui a validé

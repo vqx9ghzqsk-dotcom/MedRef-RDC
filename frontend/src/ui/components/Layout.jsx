@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
 import { useOnline } from '../hooks/useOnline.js';
 import { isEditor } from './AdminForm.jsx';
@@ -21,6 +22,34 @@ export const QUICK_ACCESS = [
   { to: '/sources', label: 'Sources', hint: 'OMS, programmes nationaux, références' },
 ];
 
+/**
+ * Pastille « N alertes en cours » : les alertes sanitaires ne s'affichent que sur la page
+ * d'accueil ; ailleurs, seule leur présence est signalée, avec un lien vers l'accueil.
+ */
+function PastilleAlertes() {
+  const { api } = useServices();
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (typeof api.accueil !== 'function') return undefined;
+    let actif = true;
+    Promise.resolve()
+      .then(() => api.accueil())
+      .then((a) => actif && setN((a?.alertes || []).filter((x) => x.type === 'alerte_sanitaire').length))
+      .catch(() => {});
+    return () => {
+      actif = false;
+    };
+  }, [api]);
+  if (!n) return null;
+  return (
+    <Link to="/" className="pastille-alertes" title="Alertes sanitaires en cours : voir la page d’accueil">
+      <span className="pastille-point" aria-hidden="true" />
+      {n} alerte{n > 1 ? 's' : ''}
+      <span className="visually-hidden"> en cours</span>
+    </Link>
+  );
+}
+
 export function Layout() {
   const { user, logout } = useAuth();
   const online = useOnline();
@@ -31,8 +60,8 @@ export function Layout() {
     if (typeof window.scrollTo === 'function') window.scrollTo(0, 0);
   }, [pathname]);
 
-  // Visiteur non connecté sur « / » : page de présentation, sans l'en-tête de l'application.
-  if (!user && pathname === '/') return <VitrinePage />;
+  // « / » : page d'accueil pour tous, connectés ou non, sans l'en-tête de l'application.
+  if (pathname === '/') return <VitrinePage />;
   // Connexion, inscription et mot de passe : fenêtre ouverte par-dessus la page de présentation.
   if (!user && PAGES_AUTH.includes(pathname)) {
     return (
@@ -54,8 +83,13 @@ export function Layout() {
         Aller au contenu
       </a>
       <header className="topbar">
-        <div className="topbar-inner">
-          <Link to="/" className="brand" aria-label="MedRef RDC, accueil">
+        <div className={`topbar-inner${user ? ' is-connecte' : ''}`}>
+          <Link
+            to="/"
+            className="brand"
+            aria-label="MedRef RDC, retour à l’accueil"
+            title="Retour à l’accueil"
+          >
             <span className="brand-mark" aria-hidden="true">
               <svg viewBox="0 0 32 32" width="28" height="28">
                 <rect width="32" height="32" rx="7" fill="currentColor" />
@@ -69,6 +103,11 @@ export function Layout() {
             <span className="brand-name">MedRef RDC</span>
           </Link>
           <nav aria-label="Navigation principale" className="mainnav">
+            {user && (
+              <NavLink to="/espace" className="nav-espace">
+                Mon espace
+              </NavLink>
+            )}
             {QUICK_ACCESS.map((q) => (
               <NavLink key={q.to} to={q.to} className={q.tone === 'urgence' ? 'nav-urgence' : undefined}>
                 {q.label}
@@ -80,6 +119,7 @@ export function Layout() {
           <div className="account">
             {user ? (
               <>
+                <PastilleAlertes />
                 <Link to="/compte" className="account-name" title={`${user.email} — mon compte`}>
                   {user.nom}
                 </Link>

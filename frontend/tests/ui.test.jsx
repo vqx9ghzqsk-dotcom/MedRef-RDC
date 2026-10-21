@@ -394,7 +394,7 @@ describe('Accueil', () => {
   });
 
   it('affiche l’identité, la recherche, les 7 accès rapides et les départements', async () => {
-    renderApp('/', {}, MEDECIN);
+    renderApp('/espace', {}, MEDECIN);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('MedRef RDC');
     expect(screen.getByText('par le Dr Ben Mingalu')).toBeInTheDocument();
     expect(screen.getAllByRole('search').length).toBeGreaterThan(0);
@@ -1248,7 +1248,7 @@ describe('Liste des médicaments', () => {
 
 describe('Accès aux produits depuis le bouton Médicaments', () => {
   it('l’accueil garde une seule barre de recherche, sans recherche de produits à part', async () => {
-    renderApp('/', {}, MEDECIN);
+    renderApp('/espace', {}, MEDECIN);
     await screen.findByText('Accès rapides');
     expect(screen.queryByRole('combobox')).toBeNull();
   });
@@ -1608,9 +1608,9 @@ describe('Ordonnance guidée (lot C)', () => {
 });
 
 describe('Accueil personnalisé (lot D)', () => {
-  it('affiche les alertes avec leur source, les nouveautés et le bloc personnel', async () => {
+  it('Mon espace : nouveautés et bloc personnel ; les alertes restent sur l’accueil (pastille seule)', async () => {
     renderApp(
-      '/',
+      '/espace',
       {
         accueil: vi.fn(async () => ({
           alertes: [
@@ -1643,17 +1643,34 @@ describe('Accueil personnalisé (lot D)', () => {
       },
       { id: 7, nom: 'Admin', role: 'admin', email: 'a@b.cd' },
     );
-    expect(await screen.findByRole('heading', { name: 'Alertes sanitaires' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Épidémie de choléra' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Ministère de la Santé' })).toHaveAttribute(
-      'href',
-      'https://example.org/communique',
-    );
     expect(await screen.findByText(/792 fiches en relecture médicale/)).toBeInTheDocument();
+    // Aucune alerte dans l'espace : seulement la pastille qui renvoie vers l'accueil
+    expect(screen.queryByRole('heading', { name: 'Alertes sanitaires' })).toBeNull();
+    expect(screen.queryByText('Épidémie de choléra')).toBeNull();
+    expect(screen.queryByRole('region', { name: /Fil d’actualités/ })).toBeNull();
+    expect(await screen.findByRole('link', { name: /1 alerte en cours/ })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /retour à l’accueil/ })).toHaveAttribute('href', '/');
     expect(screen.getByRole('link', { name: 'Aerius' })).toHaveAttribute('href', '/medicaments/9');
     expect(await screen.findByRole('link', { name: '792 fiches à valider' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '2 comptes à vérifier' })).toBeInTheDocument();
     expect(screen.getByText(/faites vérifier votre numéro d’ordre/)).toBeInTheDocument();
+  });
+});
+
+describe('Accueil et Mon espace', () => {
+  it('connecté, l’accueil reste accessible avec « Mon espace » et « Se déconnecter »', async () => {
+    renderApp('/', {}, MEDECIN);
+    expect(await screen.findByRole('heading', { name: 'Actualités' })).toBeInTheDocument();
+    const entete = screen.getByRole('navigation', { name: 'Navigation principale' });
+    expect(within(entete).getByRole('link', { name: 'Mon espace' })).toHaveAttribute('href', '/espace');
+    expect(within(entete).getByRole('button', { name: 'Se déconnecter' })).toBeInTheDocument();
+    expect(within(entete).queryByRole('link', { name: 'Créer un compte' })).toBeNull();
+    expect(screen.getAllByRole('link', { name: 'Ouvrir mon espace' })[0]).toHaveAttribute('href', '/espace');
+  });
+
+  it('sans compte, Mon espace mène à la connexion', async () => {
+    renderApp('/espace');
+    expect(await screen.findByRole('heading', { name: 'Connexion' })).toBeInTheDocument();
   });
 });
 

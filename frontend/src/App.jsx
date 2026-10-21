@@ -37,7 +37,9 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<HomePage />} />
+        {/* « / » : page d'accueil pour tous (rendue par Layout) ; l'espace de travail est sur /espace */}
+        <Route index element={null} />
+        <Route path="espace" element={<HomePage />} />
         <Route path="connexion" element={<LoginPage />} />
         <Route path="inscription" element={<RegisterPage />} />
         <Route path="mot-de-passe-oublie" element={<MotDePasseOubliePage />} />

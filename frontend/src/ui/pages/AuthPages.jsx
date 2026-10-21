@@ -83,7 +83,8 @@ function AuthForm({ mode }) {
     try {
       if (isRegister) await register(form);
       else await login({ email: form.email, password: form.password }, { persistant: resterConnecte });
-      navigate(location.state?.from || '/', { replace: true });
+      // Après connexion ou inscription : la page demandée, sinon Mon espace
+      navigate(location.state?.from || '/espace', { replace: true });
     } catch (err) {
       setError(err.message);
       setFieldErrors(err.details || {});

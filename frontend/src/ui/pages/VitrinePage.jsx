@@ -1,15 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
+import { useAuth } from '../context/auth.jsx';
 import { TYPES_ACTUALITE } from '../../core/labels.js';
 import { BandeauActualites } from '../components/BandeauActualites.jsx';
 import '../../styles/vitrine.css';
 import { dateLocale } from '../../core/dates.js';
 
 /**
- * Page publique affichée aux visiteurs non connectés (route « / »), d'après la maquette
+ * Page d'accueil (route « / »), pour tous, connectés ou non, d'après la maquette
  * docs/maquettes/accueil-public.html : bandeau, en-tête en verre, héros avec carrousel
  * « à la une », actualités, contenus, chiffres réels, publics visés, appel à l'inscription.
+ *
+ * Connecté, l'en-tête montre le nom, « Mon espace » et « Se déconnecter » au lieu de l'inscription.
+ * C'est la seule page où paraissent les alertes sanitaires (fil défilant, carrousel, cartes).
  *
  * Les actualités et les chiffres viennent de GET /api/accueil (publiques, mises en cache
  * hors ligne). Sans réponse, la page reste complète avec ses textes fixes : rien n'est inventé.
@@ -206,7 +210,7 @@ export function cartesActualites(accueil) {
 
 // ------------------------------------------------------------------ blocs
 
-function Carrousel({ diapos }) {
+function Carrousel({ diapos, connecte }) {
   const [i, setI] = useState(0);
   const [pause, setPause] = useState(false);
   const n = diapos.length;
@@ -234,9 +238,15 @@ function Carrousel({ diapos }) {
         {courante.source && <p className="v-diapo-source">Source : {courante.source}</p>}
       </div>
       <div className="v-actions">
-        <Link to="/connexion" className="v-btn v-btn-plein">
-          Se connecter
-        </Link>
+        {connecte ? (
+          <Link to="/espace" className="v-btn v-btn-plein">
+            Ouvrir mon espace
+          </Link>
+        ) : (
+          <Link to="/connexion" className="v-btn v-btn-plein">
+            Se connecter
+          </Link>
+        )}
         <a href="#actualites" className="v-btn v-btn-contour">
           Lire les actualités
         </a>
@@ -492,6 +502,7 @@ const ATOUTS = [
 
 export function VitrinePage() {
   const { api } = useServices();
+  const { user, logout } = useAuth();
   const [ouvert, setOuvert] = useState(false);
   const [accueil, setAccueil] = useState(null);
   const [erreur, setErreur] = useState(false);
@@ -541,15 +552,38 @@ export function VitrinePage() {
                   {l.label}
                 </a>
               ))}
-              <Link to="/inscription" className="v-btn v-btn-contour v-nav-cta" onClick={fermer}>
-                Créer un compte
-              </Link>
-              <Link to="/connexion" className="v-btn v-btn-plein v-nav-cta" onClick={fermer}>
-                Se connecter
-              </Link>
+              {user ? (
+                <>
+                  <span className="v-nav-nom" title={user.email}>
+                    {user.nom}
+                  </span>
+                  <button
+                    type="button"
+                    className="v-btn v-btn-contour v-nav-cta"
+                    onClick={() => {
+                      fermer();
+                      logout();
+                    }}
+                  >
+                    Se déconnecter
+                  </button>
+                  <Link to="/espace" className="v-btn v-btn-plein v-nav-cta" onClick={fermer}>
+                    Mon espace
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/inscription" className="v-btn v-btn-contour v-nav-cta" onClick={fermer}>
+                    Créer un compte
+                  </Link>
+                  <Link to="/connexion" className="v-btn v-btn-plein v-nav-cta" onClick={fermer}>
+                    Se connecter
+                  </Link>
+                </>
+              )}
             </nav>
-            <Link to="/connexion" className="v-btn v-btn-plein v-nav-mobile">
-              Se connecter
+            <Link to={user ? '/espace' : '/connexion'} className="v-btn v-btn-plein v-nav-mobile">
+              {user ? 'Mon espace' : 'Se connecter'}
             </Link>
             <button
               type="button"
@@ -566,7 +600,7 @@ export function VitrinePage() {
 
         <div className="v-heros-corps">
           <Ecrans cote="gauche" totaux={t} />
-          <Carrousel diapos={diapos} />
+          <Carrousel diapos={diapos} connecte={Boolean(user)} />
           <Ecrans cote="droite" totaux={t} />
         </div>
       </header>
@@ -654,16 +688,30 @@ export function VitrinePage() {
 
         <section className="v-appel" aria-labelledby="v-appel-titre">
           <div className="v-appel-in">
-            <h2 id="v-appel-titre">Rejoignez les soignants de MedRef RDC</h2>
-            <p>Inscription gratuite, réservée aux professionnels et étudiants en santé.</p>
-            <div className="v-actions v-actions-centre">
-              <Link to="/inscription" className="v-btn v-btn-plein">
-                Créer un compte
-              </Link>
-              <Link to="/connexion" className="v-btn v-btn-contour">
-                J’ai déjà un compte
-              </Link>
-            </div>
+            {user ? (
+              <>
+                <h2 id="v-appel-titre">Reprendre votre travail</h2>
+                <p>Recherche, fiches, ordonnances et suivi de votre compte dans votre espace.</p>
+                <div className="v-actions v-actions-centre">
+                  <Link to="/espace" className="v-btn v-btn-plein">
+                    Ouvrir mon espace
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 id="v-appel-titre">Rejoignez les soignants de MedRef RDC</h2>
+                <p>Inscription gratuite, réservée aux professionnels et étudiants en santé.</p>
+                <div className="v-actions v-actions-centre">
+                  <Link to="/inscription" className="v-btn v-btn-plein">
+                    Créer un compte
+                  </Link>
+                  <Link to="/connexion" className="v-btn v-btn-contour">
+                    J’ai déjà un compte
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </section>
       </main>
@@ -694,17 +742,28 @@ export function VitrinePage() {
           </nav>
           <div>
             <h3>Compte</h3>
-            <ul>
-              <li>
-                <Link to="/connexion">Se connecter</Link>
-              </li>
-              <li>
-                <Link to="/inscription">Créer un compte</Link>
-              </li>
-              <li>
-                <Link to="/mot-de-passe-oublie">Mot de passe oublié</Link>
-              </li>
-            </ul>
+            {user ? (
+              <ul>
+                <li>
+                  <Link to="/espace">Mon espace</Link>
+                </li>
+                <li>
+                  <Link to="/compte">Mon compte</Link>
+                </li>
+              </ul>
+            ) : (
+              <ul>
+                <li>
+                  <Link to="/connexion">Se connecter</Link>
+                </li>
+                <li>
+                  <Link to="/inscription">Créer un compte</Link>
+                </li>
+                <li>
+                  <Link to="/mot-de-passe-oublie">Mot de passe oublié</Link>
+                </li>
+              </ul>
+            )}
           </div>
           <div>
             <h3>Contact</h3>

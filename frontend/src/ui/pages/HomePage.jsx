@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { SearchBar } from '../components/SearchBar.jsx';
-import { BandeauActualites, noteTraduction } from '../components/BandeauActualites.jsx';
 import { AsyncView } from '../components/Status.jsx';
 import { QUICK_ACCESS } from '../components/Layout.jsx';
-import { PROFILS, TYPES_ACTUALITE, VERIFICATIONS } from '../../core/labels.js';
+import { PROFILS, VERIFICATIONS } from '../../core/labels.js';
 import { PROFILS_PRESCRIPTEURS } from '../../core/prescription.js';
 import { dateLocale } from '../../core/dates.js';
 
@@ -31,44 +30,6 @@ function useFacultatif(charger, deps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
   return valeur;
-}
-
-function Source({ a }) {
-  return (
-    <p className="actu-source">
-      Source :{' '}
-      {a.source_url ? (
-        <a href={a.source_url} target="_blank" rel="noopener noreferrer">
-          {a.source_titre}
-        </a>
-      ) : (
-        a.source_titre
-      )}
-      {a.publie_le && ` · ${date(a.publie_le)}`}
-    </p>
-  );
-}
-
-function Actualite({ a }) {
-  return (
-    <li className={`actu actu-${a.type}`}>
-      <p className="actu-type">
-        {TYPES_ACTUALITE[a.type]}
-        {a.zone && ` · ${a.zone}`}
-      </p>
-      <h3>{a.titre}</h3>
-      <p className="actu-resume">{a.resume}</p>
-      {a.traduction_auto ? <p className="row-sub">{noteTraduction(a)}</p> : null}
-      {(a.pathologie_slug || a.molecule_slug) && (
-        <p>
-          {a.pathologie_slug && <Link to={`/pathologies/${a.pathologie_slug}`}>{a.pathologie_nom}</Link>}
-          {a.pathologie_slug && a.molecule_slug && ' · '}
-          {a.molecule_slug && <Link to={`/molecules/${a.molecule_slug}`}>{a.molecule_dci}</Link>}
-        </p>
-      )}
-      <Source a={a} />
-    </li>
-  );
 }
 
 function PourVous({ moi, derniere }) {
@@ -240,12 +201,15 @@ export function HomePage() {
       repo && typeof repo.list === 'function' ? (await repo.list(user ? user.id : null))[0] : null,
     [repo, user?.id],
   );
-  const alertes = accueil?.alertes || [];
-  const actualites = accueil?.actualites || [];
 
+  // Mon espace est réservé aux comptes connectés
+  if (!user) return <Navigate to="/connexion" state={{ from: '/espace' }} replace />;
+
+  // Les alertes sanitaires et le fil d'actualités ne paraissent que sur la page d'accueil (« / »)
   return (
     <>
       <section className="hero" aria-labelledby="hero-title">
+        <p className="hero-espace">Mon espace · {user.nom}</p>
         <h1 id="hero-title">
           MedRef RDC
           <span className="hero-byline">par le Dr Ben Mingalu</span>
@@ -256,26 +220,6 @@ export function HomePage() {
         </p>
         <SearchBar size="large" />
       </section>
-
-      <BandeauActualites actualites={[...alertes, ...actualites]} />
-
-      {alertes.length > 0 && (
-        <section aria-labelledby="alertes-title" className="section">
-          <h2 id="alertes-title" className="section-title alertes-titre">
-            Alertes sanitaires
-          </h2>
-          <ul className="actu-liste">
-            {alertes.slice(0, 3).map((a) => (
-              <Actualite key={a.id} a={a} />
-            ))}
-          </ul>
-          {alertes.length > 3 && (
-            <p>
-              <Link to="/actualites?type=alerte_sanitaire">Toutes les alertes ({alertes.length})</Link>
-            </p>
-          )}
-        </section>
-      )}
 
       <section aria-labelledby="acces-title" className="section">
         <h2 id="acces-title" className="section-title">
@@ -296,22 +240,6 @@ export function HomePage() {
       <PourVous moi={moi} derniere={derniere} />
 
       {accueil && <Nouveautes accueil={accueil} />}
-
-      {actualites.length > 0 && (
-        <section aria-labelledby="actu-title" className="section">
-          <h2 id="actu-title" className="section-title">
-            Actualités médicales
-          </h2>
-          <ul className="actu-liste">
-            {actualites.slice(0, 6).map((a) => (
-              <Actualite key={a.id} a={a} />
-            ))}
-          </ul>
-          <p>
-            <Link to="/actualites">Toutes les actualités</Link>
-          </p>
-        </section>
-      )}
 
       <section aria-labelledby="dep-title" className="section">
         <h2 id="dep-title" className="section-title">

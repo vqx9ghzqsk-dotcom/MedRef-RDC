@@ -231,6 +231,16 @@ a {
     flex: 1 1 auto;
   }
 }
+/* Connecté : le menu (Mon espace, Administration…) est trop long pour une ligne. En haut le logo et
+   le compte, en dessous le menu complet. */
+.topbar-inner.is-connecte .mainnav {
+  order: 3;
+  flex: 1 1 100%;
+}
+.brand-name,
+.account .btn {
+  white-space: nowrap;
+}
 
 .offline-banner {
   margin: 0;
@@ -3399,4 +3409,45 @@ details.forme {
   .ba-tout {
     margin-left: auto;
   }
+}
+
+/* Pastille des alertes en cours (renvoie vers la page d'accueil) */
+.pastille-alertes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--urgence);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.pastille-alertes:hover,
+.pastille-alertes:focus-visible {
+  text-decoration: underline;
+}
+.pastille-point {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  animation: ba-pouls 2s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pastille-point {
+    animation: none;
+  }
+}
+
+/* Mon espace : rappel du compte au-dessus du titre */
+.hero-espace {
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
 }

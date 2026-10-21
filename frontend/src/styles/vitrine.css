@@ -936,3 +936,18 @@
   margin: 0;
   box-shadow: 0 10px 26px rgba(6, 33, 63, 0.25);
 }
+
+/* Compte connecté : nom affiché dans l'en-tête */
+.v-nav-nom {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+button.v-btn {
+  font-family: inherit;
+  cursor: pointer;
+}

@@ -352,3 +352,38 @@ describe('veille : rubrique santé d’un média', () => {
     expect(items.map((it) => it.titre)).toEqual(['Ebola : 8e province touchée']);
   });
 });
+
+describe('veille : retour du réseau', () => {
+  const { surveillerConnexion, actualiserSiAncienne } = require('../src/services/veille');
+  const silencieux = { log: () => {}, error: () => {} };
+
+  it('relève les actualités seulement quand internet revient après une coupure', async () => {
+    const etats = [true, false, false, true, true];
+    const relever = jest.fn(async () => ({ statut: 'faite' }));
+    const verifier = surveillerConnexion(
+      {},
+      { verifier: async () => etats.shift(), relever, log: silencieux },
+    );
+    const retours = [];
+    for (let i = 0; i < 5; i += 1) retours.push(await verifier());
+    // en ligne au départ, coupure, coupure, retour (relève), toujours en ligne
+    expect(retours).toEqual([false, false, false, true, false]);
+    expect(relever).toHaveBeenCalledTimes(1);
+  });
+
+  it('une relève récente n’est pas relancée', async () => {
+    const db = { query: jest.fn(async () => []) };
+    const options = { sources: [], client: null, photos: false, log: silencieux };
+    const premiere = await actualiserSiAncienne(db, { ...options, ageMinutes: 15 });
+    expect(premiere.statut).toBe('faite');
+    const seconde = await actualiserSiAncienne(db, { ...options, ageMinutes: 15 });
+    expect(seconde.statut).toBe('recente');
+    // Plus tard que le délai : nouvelle relève
+    const tard = await actualiserSiAncienne(db, {
+      ...options,
+      ageMinutes: 15,
+      maintenant: Date.now() + 16 * 60000,
+    });
+    expect(tard.statut).toBe('faite');
+  });
+});

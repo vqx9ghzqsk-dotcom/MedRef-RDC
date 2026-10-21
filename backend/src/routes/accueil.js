@@ -5,6 +5,7 @@
  *   GET /api/accueil          : blocs publics (actualités publiées, nouveaux produits, fiches validées
  *                               ou mises à jour, innovations et protocoles) — mis en cache hors ligne.
  *   GET /api/actualites       : toutes les actualités publiées (archive filtrable par type et zone).
+ *   POST /api/actualites/actualiser : relève des sources au retour du réseau (si la dernière a plus de 15 min).
  *   GET /api/accueil/pour-moi : bloc personnel selon le rôle (fiches à valider, comptes à vérifier,
  *                               fiches à revoir, état de la vérification du compte).
  */
@@ -14,6 +15,7 @@ const db = require('../db');
 const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middleware/auth');
 const { asyncHandler } = require('../utils/http');
 const { PERIMETRE } = require('./medicaments');
+const veille = require('../services/veille');
 
 const router = express.Router();
 
@@ -134,6 +136,25 @@ router.get(
       page,
       par_page: PAR_PAGE,
       total: Number(total[0]?.n || 0),
+    });
+  }),
+);
+
+/**
+ * Appelé par l'application quand l'appareil retrouve internet : relève les sources si la dernière
+ * relève a plus de 15 minutes (sinon répond aussitôt), puis renvoie le bilan. Public : une relève
+ * récente n'est jamais relancée, quel que soit le nombre d'appels.
+ */
+router.post(
+  '/actualites/actualiser',
+  asyncHandler(async (_req, res) => {
+    const r = await veille.actualiserSiAncienne(db);
+    res.json({
+      data: {
+        statut: r.statut,
+        derniere: r.derniere || null,
+        publiees: r.bilan?.publies ?? 0,
+      },
     });
   }),
 );

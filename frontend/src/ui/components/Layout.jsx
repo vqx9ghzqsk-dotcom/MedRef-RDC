@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useServices } from '../context/services.jsx';
+import { useActualisationAuRetour } from '../hooks/useActualisationAuRetour.js';
 import { useAuth } from '../context/auth.jsx';
 import { useOnline } from '../hooks/useOnline.js';
 import { isEditor } from './AdminForm.jsx';
@@ -29,6 +30,10 @@ export const QUICK_ACCESS = [
 function PastilleAlertes() {
   const { api } = useServices();
   const [n, setN] = useState(0);
+  const [version, setVersion] = useState(0);
+  // Retour d'internet : nombre d'alertes recompté après la relève des sources
+  const recompter = useCallback(() => setVersion((v) => v + 1), []);
+  useActualisationAuRetour(recompter);
   useEffect(() => {
     if (typeof api.accueil !== 'function') return undefined;
     let actif = true;
@@ -39,7 +44,7 @@ function PastilleAlertes() {
     return () => {
       actif = false;
     };
-  }, [api]);
+  }, [api, version]);
   if (!n) return null;
   return (
     <Link to="/" className="pastille-alertes" title="Alertes sanitaires en cours : voir la page d’accueil">

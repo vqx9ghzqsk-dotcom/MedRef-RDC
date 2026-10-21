@@ -27,6 +27,8 @@ export function createMedRefApi(client) {
     accueilPourMoi: () => data(client.get('/api/accueil/pour-moi')),
     /** Archive publique : { data, page, par_page, total }. */
     actualites: (filtres = {}) => client.get('/api/actualites', filtres),
+    /** Relève des sources demandée au retour du réseau : { statut, derniere, publiees }. */
+    actualiserActualites: () => data(client.post('/api/actualites/actualiser', {})),
 
     // Avis sur les produits et traitements (lot E)
     avisPublics: (cibleType, cible) => data(client.get('/api/avis', { cible_type: cibleType, cible })),

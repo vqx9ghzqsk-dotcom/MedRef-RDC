@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
+import { useActualisationAuRetour } from '../hooks/useActualisationAuRetour.js';
 import { TYPES_ACTUALITE } from '../../core/labels.js';
 import { BandeauActualites } from '../components/BandeauActualites.jsx';
 import '../../styles/vitrine.css';
@@ -653,17 +654,29 @@ export function VitrinePage() {
   const [erreur, setErreur] = useState(false);
   const fermer = () => setOuvert(false);
 
-  useEffect(() => {
-    let actif = true;
-    if (typeof api.accueil !== 'function') return undefined;
+  const monte = useRef(true);
+  const charger = useCallback(() => {
+    if (typeof api.accueil !== 'function') return;
     api
       .accueil()
-      .then((d) => actif && setAccueil(d || null))
-      .catch(() => actif && setErreur(true));
-    return () => {
-      actif = false;
-    };
+      .then((d) => {
+        if (!monte.current) return;
+        setAccueil(d || null);
+        setErreur(false);
+      })
+      .catch(() => monte.current && setErreur(true));
   }, [api]);
+
+  useEffect(() => {
+    monte.current = true;
+    charger();
+    return () => {
+      monte.current = false;
+    };
+  }, [charger]);
+
+  // Retour d'internet : actualités rechargées, puis relevées sur les sources officielles
+  useActualisationAuRetour(charger);
 
   const diapos = useMemo(() => diapositives(accueil), [accueil]);
   const t = accueil?.totaux;

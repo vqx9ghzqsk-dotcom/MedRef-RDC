@@ -373,6 +373,27 @@ describe('Accueil', () => {
     );
   });
 
+  it('retour d’internet : actualités rechargées, relève demandée au serveur, puis rechargées encore', async () => {
+    const accueil = vi.fn(async () => ({
+      alertes: [],
+      actualites: [],
+      produits: [],
+      fiches_validees: [],
+      fiches_mises_a_jour: [],
+      totaux: { fiches: 792 },
+    }));
+    const actualiserActualites = vi.fn(async () => ({ statut: 'faite', publiees: 2 }));
+    renderApp('/', { accueil, actualiserActualites });
+    await screen.findByRole('heading', { name: 'Actualités' });
+    await waitFor(() => expect(accueil).toHaveBeenCalled());
+    const avant = accueil.mock.calls.length;
+    expect(actualiserActualites).not.toHaveBeenCalled();
+    window.dispatchEvent(new Event('online'));
+    await waitFor(() => expect(actualiserActualites).toHaveBeenCalledTimes(1));
+    // aussitôt, puis une fois la relève terminée
+    await waitFor(() => expect(accueil).toHaveBeenCalledTimes(avant + 2));
+  });
+
   it('archive des actualités : filtres par type et province, source et fiche liées', async () => {
     const actualites = vi.fn(async () => ({
       data: [

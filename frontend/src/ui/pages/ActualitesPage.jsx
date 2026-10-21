@@ -1,6 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
+import { useActualisationAuRetour } from '../hooks/useActualisationAuRetour.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { PROVINCES, TYPES_ACTUALITE } from '../../core/labels.js';
@@ -21,6 +22,8 @@ export function ActualitesPage() {
   const page = Math.max(1, Number(params.get('page')) || 1);
 
   const state = useAsync(() => api.actualites({ type, zone, page }), [api, type, zone, page]);
+  // Retour d'internet : liste rechargée, puis relève des sources officielles
+  useActualisationAuRetour(state.reload);
 
   const update = (changes) => {
     const next = new URLSearchParams(params);

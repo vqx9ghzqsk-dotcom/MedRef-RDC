@@ -179,14 +179,61 @@ async function executerVeille(db, options = {}) {
   return bilan;
 }
 
+let derniereFin = null;
+
 /** Une seule relève à la fois : un appel pendant une relève renvoie la relève en cours. */
 function relancer(db, options) {
   if (!enCours) {
     enCours = executerVeille(db, options).finally(() => {
       enCours = null;
+      derniereFin = Date.now();
     });
   }
   return enCours;
+}
+
+/**
+ * Relève demandée au retour du réseau (par l'application ou par la surveillance de la
+ * connexion) : lancée seulement si la dernière a plus de `ageMinutes`, pour qu'une série de
+ * reconnexions ne relise pas les sources en boucle.
+ */
+async function actualiserSiAncienne(db, { ageMinutes = 15, maintenant = Date.now(), ...options } = {}) {
+  if (enCours) return { statut: 'en_cours', bilan: await enCours };
+  if (derniereFin && maintenant - derniereFin < ageMinutes * 60 * 1000) {
+    return { statut: 'recente', derniere: new Date(derniereFin).toISOString() };
+  }
+  return { statut: 'faite', bilan: await relancer(db, options) };
+}
+
+/** Accès à internet : une page officielle répond-elle (en-têtes seulement, 8 s au plus) ? */
+async function internetDisponible(charger = fetch) {
+  try {
+    const res = await charger('https://www.who.int/', { method: 'HEAD', signal: AbortSignal.timeout(8000) });
+    return res.status > 0;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Surveille la connexion de l'ordinateur qui héberge l'API : à chaque retour d'internet après
+ * une coupure, les actualités sont relevées aussitôt, sans attendre la relève périodique.
+ * Renvoie la fonction de vérification (appelée par le minuteur, et par les tests).
+ */
+function surveillerConnexion(
+  db,
+  { verifier = internetDisponible, relever = actualiserSiAncienne, log = console } = {},
+) {
+  let enLigne = null;
+  return async function verifierConnexion() {
+    const maintenant = await verifier();
+    const retour = enLigne === false && maintenant;
+    enLigne = maintenant;
+    if (!retour) return false;
+    log.log?.('✔ Connexion internet retrouvée : actualisation des actualités');
+    await relever(db, { ageMinutes: 5 }).catch((err) => log.error?.(`✖ Veille : ${err.message}`));
+    return true;
+  };
 }
 
 function demarrer(db) {
@@ -196,7 +243,18 @@ function demarrer(db) {
   premier.unref();
   const timer = setInterval(lancer, config.veille.intervalleHeures * HEURE);
   timer.unref();
+  const verifierConnexion = surveillerConnexion(db);
+  const surveillance = setInterval(verifierConnexion, config.veille.verificationMinutes * 60 * 1000);
+  surveillance.unref();
   return timer;
 }
 
-module.exports = { executerVeille, relancer, demarrer, cle };
+module.exports = {
+  executerVeille,
+  relancer,
+  actualiserSiAncienne,
+  internetDisponible,
+  surveillerConnexion,
+  demarrer,
+  cle,
+};

@@ -32,6 +32,8 @@ const config = {
   veille: {
     auto: process.env.VEILLE_AUTO ? process.env.VEILLE_AUTO !== '0' : env !== 'test',
     intervalleHeures: Number(process.env.VEILLE_INTERVALLE_HEURES) || 3,
+    // Vérification de l'accès à internet : au retour du réseau, relève immédiate des actualités
+    verificationMinutes: Number(process.env.VEILLE_VERIFICATION_MINUTES) || 2,
     // Traduction et tri : nécessite ANTHROPIC_API_KEY ; sinon tri par mots-clés sans traduction
     modele: process.env.VEILLE_MODELE || 'claude-opus-5-5',
   },

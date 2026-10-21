@@ -1,6 +1,10 @@
 'use strict';
 
 jest.mock('../src/db', () => ({ query: jest.fn(), transaction: jest.fn(), close: jest.fn() }));
+jest.mock('../src/services/veille', () => ({
+  actualiserSiAncienne: jest.fn(async () => ({ statut: 'faite', bilan: { publies: 3 } })),
+  relancer: jest.fn(),
+}));
 
 const request = require('supertest');
 const db = require('../src/db');
@@ -62,6 +66,12 @@ describe('Accueil (lot D)', () => {
     expect(sql).toMatch(/statut = 'publie'/);
     expect(sql).toMatch(/OFFSET 20/);
     expect(params).toEqual(['alerte_sanitaire', '%Ituri%']);
+  });
+
+  it('actualisation au retour du réseau : relève lancée et bilan renvoyé', async () => {
+    const res = await request(app).post('/api/actualites/actualiser');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toEqual({ statut: 'faite', derniere: null, publiees: 3 });
   });
 
   it('archive des actualités : un type inconnu est ignoré', async () => {

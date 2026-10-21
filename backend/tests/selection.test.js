@@ -48,3 +48,34 @@ describe('opérateurs retenus', () => {
     }
   });
 });
+
+describe('firme retenue pour certaines marques seulement', () => {
+  const { appliquerSelection } = require('../db/selection');
+
+  it('Biocodex : seul Acupan (néfopam, fiche Douleur postopératoire) est affiché', async () => {
+    const biocodex = OPERATEURS_RETENUS.find((r) => r.nom === 'Biocodex');
+    expect(biocodex.marques).toEqual(['Acupan']);
+    expect(retenu('Biocodex')).toBe(true);
+
+    const requetes = [];
+    const conn = {
+      execute: jest.fn(async (sql, params) => {
+        requetes.push([sql, params]);
+        if (/SELECT id, nom FROM operateurs/.test(sql)) return [[{ id: 54, nom: 'Biocodex' }]];
+        if (/SELECT id FROM operateurs WHERE nom = \?/.test(sql)) return [[]];
+        return [{ affectedRows: 0 }];
+      }),
+      query: jest.fn(async (sql, params) => {
+        requetes.push([sql, params]);
+        return [{ affectedRows: /masque = 1/.test(sql) ? 1 : 0 }];
+      }),
+    };
+    const r = await appliquerSelection(conn, {
+      OPERATEURS_RETENUS: [biocodex],
+      TITULAIRES: [],
+    });
+    expect(r.produits_masques).toBe(1);
+    const masquage = requetes.find(([sql]) => /SET masque = 1/.test(sql));
+    expect(masquage[1]).toEqual([[54], ['Acupan']]);
+  });
+});

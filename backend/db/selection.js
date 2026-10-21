@@ -75,7 +75,25 @@ async function appliquerSelection(conn, { OPERATEURS_RETENUS, TITULAIRES }) {
       }
     }
   }
-  return { visibles: retenus.length, masques: operateurs.length - retenus.length, regroupes, rattaches };
+  // Firmes retenues pour certaines marques seulement (`marques`) : leurs autres produits sont masqués
+  await conn.execute('UPDATE medicaments SET masque = 0 WHERE masque = 1');
+  let produitsMasques = 0;
+  for (const r of OPERATEURS_RETENUS.filter((x) => Array.isArray(x.marques) && x.marques.length)) {
+    const ids = retenus.filter((o) => r.motif.test(nomNormalise(o.nom))).map((o) => o.id);
+    if (!ids.length) continue;
+    const [res] = await conn.query(
+      'UPDATE medicaments SET masque = 1 WHERE operateur_id IN (?) AND nom_commercial NOT IN (?)',
+      [ids, r.marques],
+    );
+    produitsMasques += res.affectedRows;
+  }
+  return {
+    visibles: retenus.length,
+    masques: operateurs.length - retenus.length,
+    regroupes,
+    rattaches,
+    produits_masques: produitsMasques,
+  };
 }
 
 module.exports = { appliquerSelection, nomNormalise };

@@ -4,6 +4,7 @@
  * Opérateurs affichés dans MedRef RDC (choix du Dr Mingalu, 9 octobre 2026). Les autres
  * opérateurs et leurs produits restent en base mais sont masqués. Chaque entrée reconnaît
  * les écritures du nom rencontrées dans le répertoire des AMM (motif sur le nom normalisé).
+ * `marques` (facultatif) : seules ces marques de la firme sont affichées, les autres sont masquées.
  */
 const OPERATEURS_RETENUS = [
   // Firmes implantées en RDC (catalogues avec photos)
@@ -105,6 +106,9 @@ const OPERATEURS_RETENUS = [
   { nom: 'Zenufa Laboratories', motif: /^zenufa/ },
   // Filiale de Sanofi qui fabrique Doliprane suspension et Toplexil (photos fournies le 20 octobre 2026)
   { nom: 'Nattermann (Sanofi)', motif: /^(a )?nattermann/ },
+  // Retenue le 21 octobre 2026 pour les seuls produits utiles aux fiches : Acupan (néfopam,
+  // fiche « Douleur postopératoire ») ; Ultra-Levure (Saccharomyces boulardii) n'est cité par aucune fiche
+  { nom: 'Biocodex', motif: /^biocodex$/, marques: ['Acupan'] },
 ];
 
 /**

@@ -16,7 +16,7 @@
 const { slugify } = require('../../src/utils/slugify');
 
 const SOURCE = 'Répertoire général des produits pharmaceutiques fourni par le Dr Mingalu (19 octobre 2026)';
-const SOURCE_PRODUIT = `${SOURCE} — pas d’AMM ACOREP enregistrée à cette date ; marque, firme et composition à vérifier sur la notice.`;
+const SOURCE_PRODUIT = `${SOURCE} — sur le marché en RDC selon le Dr Mingalu, absent du répertoire des AMM ACOREP importé (numéro d’AMM à compléter) ; firme et composition à vérifier sur la notice.`;
 
 const P = (nom, dci, firme, pays, classe, presentation = null) => ({
   nom,

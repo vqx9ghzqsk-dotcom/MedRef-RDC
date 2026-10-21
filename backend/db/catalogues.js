@@ -64,6 +64,14 @@ async function chargerCatalogues(conn, catalogues) {
     for (const p of produits) {
       const [[deja]] = await conn.execute('SELECT id FROM medicaments WHERE catalogue_ref = ?', [p.ref]);
       if (deja) {
+        // La source d'un produit du répertoire suit le fichier (le reste n'est jamais modifié)
+        if (p.source) {
+          await conn.execute('UPDATE medicaments SET sources_text = ? WHERE id = ? AND sources_text <> ?', [
+            p.source,
+            deja.id,
+            p.source,
+          ]);
+        }
         compte.conserves += 1;
         continue;
       }

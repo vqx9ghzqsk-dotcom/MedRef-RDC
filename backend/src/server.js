@@ -5,6 +5,7 @@ const { createApp } = require('./app');
 const db = require('./db');
 const journal = require('./journal');
 const sauvegardeAuto = require('./sauvegardeAuto');
+const veille = require('./services/veille');
 
 process.on('unhandledRejection', (err) => {
   journal.ecrire('erreur', `Promesse rejetée non gérée : ${err?.message || err}`, { pile: err?.stack });
@@ -20,6 +21,7 @@ const server = app.listen(config.port, () => {
   journal.ecrire('info', 'Démarrage de l’API', { port: config.port, env: config.env });
   journal.nettoyer();
   sauvegardeAuto.demarrer();
+  veille.demarrer(db);
 });
 
 async function shutdown(signal) {

@@ -328,6 +328,41 @@ describe('Accueil', () => {
     );
   });
 
+  it('visiteur : fil d’actualités défilant, traduit, avec lien vers la source', async () => {
+    renderApp('/', {
+      accueil: vi.fn(async () => ({
+        alertes: [],
+        actualites: [
+          {
+            id: 7,
+            type: 'protocole',
+            titre: 'Nouvelles recommandations sur l’insuffisance cardiaque',
+            titre_original: 'New heart failure guidelines',
+            langue_originale: 'en',
+            traduction_auto: 1,
+            source_titre: 'Société européenne de cardiologie (ESC)',
+            source_url: 'https://www.escardio.org/hf',
+            publie_le: '2026-10-20',
+          },
+        ],
+        produits: [],
+        fiches_validees: [],
+        fiches_mises_a_jour: [],
+        totaux: {},
+      })),
+    });
+    const fil = await screen.findByRole('region', { name: /Fil d’actualités/ });
+    // La copie qui assure le défilement continu est cachée des lecteurs d'écran
+    const liens = within(fil).getAllByRole('link', { name: /insuffisance cardiaque/ });
+    expect(liens).toHaveLength(1);
+    expect(liens[0]).toHaveAttribute('href', 'https://www.escardio.org/hf');
+    expect(liens[0]).toHaveAttribute('title', expect.stringMatching(/Traduit automatiquement de l’anglais/));
+    expect(within(fil).getByRole('link', { name: 'Toutes les actualités' })).toHaveAttribute(
+      'href',
+      '/actualites',
+    );
+  });
+
   it('archive des actualités : filtres par type et province, source et fiche liées', async () => {
     const actualites = vi.fn(async () => ({
       data: [
@@ -1609,7 +1644,7 @@ describe('Accueil personnalisé (lot D)', () => {
       { id: 7, nom: 'Admin', role: 'admin', email: 'a@b.cd' },
     );
     expect(await screen.findByRole('heading', { name: 'Alertes sanitaires' })).toBeInTheDocument();
-    expect(screen.getByText('Épidémie de choléra')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Épidémie de choléra' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Ministère de la Santé' })).toHaveAttribute(
       'href',
       'https://example.org/communique',

@@ -21,6 +21,8 @@ const db = require('../db');
 const config = require('../config');
 const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middleware/auth');
 const { asyncHandler, HttpError, notFound, toInt } = require('../utils/http');
+const veille = require('../services/veille');
+const { SOURCES: SOURCES_VEILLE } = require('../services/veille/sources');
 const {
   etatPathologie,
   etatMolecule,
@@ -1727,7 +1729,8 @@ router.get(
   '/admin/actualites',
   asyncHandler(async (_req, res) => {
     const rows = await db.query(
-      `SELECT a.id, a.type, a.titre, a.statut, a.publie_le, a.expire_le, a.updated_at, u.nom AS auteur
+      `SELECT a.id, a.type, a.titre, a.statut, a.publie_le, a.expire_le, a.updated_at, u.nom AS auteur,
+              a.origine, a.veille_source, a.source_titre, a.traduction_auto
          FROM actualites a LEFT JOIN users u ON u.id = a.auteur_id
         ORDER BY FIELD(a.statut, 'brouillon', 'publie', 'archive'), a.publie_le DESC, a.id DESC`,
     );
@@ -1752,7 +1755,8 @@ async function lireCorpsActualite(body, editor) {
   const v = createValidator();
   const type = v.oneOf(body.type, TYPES_ACTUALITE, 'type', { required: true });
   const titre = v.text(body.titre, 190, 'titre', { required: true });
-  const resume = v.text(body.resume, 4000, 'resume', { required: true });
+  // Résumé facultatif : certaines sources de la veille ne publient qu'un titre
+  const resume = v.text(body.resume, 4000, 'resume') || '';
   const sourceTitre = v.text(body.source_titre, 255, 'source_titre', { required: true });
   const sourceUrl = v.text(body.source_url, 500, 'source_url');
   if (sourceUrl && !/^https?:\/\/\S+$/i.test(sourceUrl)) v.errors.source_url = 'Adresse http(s) attendue';
@@ -1866,6 +1870,47 @@ const sauverActualite = (creation) =>
 
 router.post('/admin/actualites', sauverActualite(true));
 router.put('/admin/actualites/:id', sauverActualite(false));
+
+// ------------------------------------------------------------------ Veille automatique
+
+/** État des sources relevées automatiquement (dernière relève, erreurs, volumes). */
+router.get(
+  '/admin/veille',
+  asyncHandler(async (_req, res) => {
+    const etats = await db.query('SELECT * FROM veille_sources');
+    const parSlug = new Map(etats.map((e) => [e.slug, e]));
+    res.json({
+      data: {
+        traduction: Boolean(process.env.ANTHROPIC_API_KEY),
+        automatique: config.veille.auto,
+        intervalle_heures: config.veille.intervalleHeures,
+        sources: SOURCES_VEILLE.map((s) => {
+          const e = parSlug.get(s.slug) || {};
+          return {
+            slug: s.slug,
+            nom: s.nom,
+            langue: s.langue,
+            derniere_releve: e.derniere_releve || null,
+            dernier_succes: e.dernier_succes || null,
+            derniere_erreur: e.derniere_erreur || null,
+            items_publies: Number(e.items_publies || 0),
+            items_ecartes: Number(e.items_ecartes || 0),
+          };
+        }),
+      },
+    });
+  }),
+);
+
+/** Relève immédiate (administrateurs) : renvoie le bilan une fois la relève terminée. */
+router.post(
+  '/admin/veille/relancer',
+  requireAdmin,
+  asyncHandler(async (_req, res) => {
+    const bilan = await veille.relancer(db);
+    res.json({ data: bilan });
+  }),
+);
 
 module.exports = router;
 module.exports.parsePathologie = parsePathologie;

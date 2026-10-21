@@ -179,11 +179,103 @@ function EditeurActualite({ initial, estAdmin, onFini }) {
   );
 }
 
+const quand = (d) =>
+  d ? new Date(d.replace(' ', 'T')).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+
+/** Veille automatique : état de chaque source officielle et relève à la demande. */
+function VeilleAdmin({ estAdmin, onReleve }) {
+  const { api } = useServices();
+  const [etat, setEtat] = useState(null);
+  const [erreur, setErreur] = useState(null);
+  const [releve, setReleve] = useState({ enCours: false, bilan: null });
+
+  const charger = useCallback(() => {
+    if (typeof api.adminVeille !== 'function') return;
+    api
+      .adminVeille()
+      .then(setEtat)
+      .catch((e) => setErreur(e.message));
+  }, [api]);
+  useEffect(() => charger(), [charger]);
+
+  const relever = async () => {
+    setReleve({ enCours: true, bilan: null });
+    setErreur(null);
+    try {
+      const bilan = await api.adminRelancerVeille();
+      setReleve({ enCours: false, bilan });
+      charger();
+      onReleve();
+    } catch (e) {
+      setReleve({ enCours: false, bilan: null });
+      setErreur(e.message);
+    }
+  };
+
+  if (!etat) return erreur ? <p className="form-error">{erreur}</p> : null;
+  return (
+    <section className="card veille-admin" aria-labelledby="veille-titre">
+      <h2 id="veille-titre">Veille automatique des sources officielles</h2>
+      <p>
+        Relève {etat.automatique ? `toutes les ${etat.intervalle_heures} h` : 'désactivée (VEILLE_AUTO=0)'} ;
+        les actualités retenues sont publiées sans validation et défilent sur l’accueil. Vous pouvez en
+        retirer une (statut « Archivée ») ou en republier une écartée.
+      </p>
+      <p className={etat.traduction ? 'form-success' : 'alerte-dose'}>
+        {etat.traduction
+          ? 'Tri et traduction en français par Claude : activés.'
+          : 'Tri et traduction inactifs : ajoutez ANTHROPIC_API_KEY dans backend/.env puis redémarrez l’API. En attendant, tri par mots-clés et textes dans leur langue d’origine.'}
+      </p>
+      {estAdmin && (
+        <button type="button" className="btn btn-ghost" onClick={relever} disabled={releve.enCours}>
+          {releve.enCours ? 'Relève en cours…' : 'Relever maintenant'}
+        </button>
+      )}
+      {releve.bilan && (
+        <p className="form-success" role="status">
+          {releve.bilan.publies} actualité(s) publiée(s), {releve.bilan.ecartes} écartée(s)
+          {releve.bilan.erreurs ? `, ${releve.bilan.erreurs} source(s) en erreur` : ''}.
+        </p>
+      )}
+      {erreur && <p className="form-error">{erreur}</p>}
+      <div className="table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">Source</th>
+              <th scope="col">Dernière relève</th>
+              <th scope="col">Publiées</th>
+              <th scope="col">Écartées</th>
+            </tr>
+          </thead>
+          <tbody>
+            {etat.sources.map((s) => (
+              <tr key={s.slug}>
+                <td>
+                  {s.nom}
+                  {s.langue !== 'fr' && <span className="row-sub">traduite depuis {s.langue}</span>}
+                  {s.derniere_erreur && (
+                    <span className="row-sub form-error">Erreur : {s.derniere_erreur}</span>
+                  )}
+                </td>
+                <td>{quand(s.derniere_releve)}</td>
+                <td>{s.items_publies}</td>
+                <td>{s.items_ecartes}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 export function ActualitesAdmin({ user }) {
   const { api } = useServices();
   const [liste, setListe] = useState(null);
   const [erreur, setErreur] = useState(null);
   const [edition, setEdition] = useState(null);
+  const [origine, setOrigine] = useState('');
   const estAdmin = user?.role === 'admin';
 
   const charger = useCallback(() => {
@@ -218,9 +310,20 @@ export function ActualitesAdmin({ user }) {
         innovations : affichées sur l’accueil avec leur source. Les nouveautés produits et fiches s’affichent
         automatiquement.
       </p>
-      <button type="button" className="btn btn-primary" onClick={() => setEdition(vide())}>
-        Nouvelle actualité
-      </button>
+      <VeilleAdmin estAdmin={estAdmin} onReleve={charger} />
+      <div className="filter-bar">
+        <button type="button" className="btn btn-primary" onClick={() => setEdition(vide())}>
+          Nouvelle actualité
+        </button>
+        <div className="field">
+          <label htmlFor="actu-origine">Origine</label>
+          <select id="actu-origine" value={origine} onChange={(e) => setOrigine(e.target.value)}>
+            <option value="">Toutes</option>
+            <option value="manuelle">Saisies à la main</option>
+            <option value="veille">Veille automatique</option>
+          </select>
+        </div>
+      </div>
       {erreur && <p className="form-error">{erreur}</p>}
       {liste && !liste.length && <p className="muted">Aucune actualité pour l’instant.</p>}
       {liste && liste.length > 0 && (
@@ -231,26 +334,30 @@ export function ActualitesAdmin({ user }) {
                 <th scope="col">Titre</th>
                 <th scope="col">Type</th>
                 <th scope="col">Statut</th>
+                <th scope="col">Origine</th>
                 <th scope="col">Publication</th>
               </tr>
             </thead>
             <tbody>
-              {liste.map((a) => (
-                <tr key={a.id}>
-                  <td>
-                    <button type="button" className="btn-link" onClick={() => ouvrir(a.id)}>
-                      {a.titre}
-                    </button>
-                    {a.auteur && <span className="row-sub">{a.auteur}</span>}
-                  </td>
-                  <td>{TYPES_ACTUALITE[a.type]}</td>
-                  <td>{STATUTS_ACTUALITE[a.statut]}</td>
-                  <td>
-                    {a.publie_le}
-                    {a.expire_le && <span className="row-sub">jusqu’au {a.expire_le}</span>}
-                  </td>
-                </tr>
-              ))}
+              {liste
+                .filter((a) => !origine || (a.origine || 'manuelle') === origine)
+                .map((a) => (
+                  <tr key={a.id}>
+                    <td>
+                      <button type="button" className="btn-link" onClick={() => ouvrir(a.id)}>
+                        {a.titre}
+                      </button>
+                      {a.auteur && <span className="row-sub">{a.auteur}</span>}
+                    </td>
+                    <td>{TYPES_ACTUALITE[a.type]}</td>
+                    <td>{STATUTS_ACTUALITE[a.statut]}</td>
+                    <td>{a.origine === 'veille' ? `Veille · ${a.source_titre}` : 'Manuelle'}</td>
+                    <td>
+                      {a.publie_le}
+                      {a.expire_le && <span className="row-sub">jusqu’au {a.expire_le}</span>}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

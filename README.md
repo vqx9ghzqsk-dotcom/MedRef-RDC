@@ -229,6 +229,28 @@ Le rôle est relu en base à chaque requête d'administration : un retrait de dr
 
 ---
 
+
+### Veille automatique des actualités
+
+L'API relève elle-même les actualités de 13 sources officielles, au démarrage puis toutes les 3 heures, et les publie
+sans validation manuelle. Elles défilent sur l'accueil (« En direct des sources officielles ») et sont archivées
+sur la page **/actualites**, filtrable par type et par province.
+
+| Source | Lecture |
+| --- | --- |
+| Ministère de la Santé (RDC), ACOREP | interface WordPress, flux RSS |
+| OMS (actualités en français, bulletins d'épidémies, OMS Afrique), Africa CDC, ECDC, MSF | flux RSS, interface de l'OMS |
+| NICE, ESC | pages de publications |
+| PubMed (recommandations des sociétés savantes de la semaine), The Lancet, NEJM | E-utilities, flux RSS |
+
+Seuls le titre, la date, le court résumé publié par la source et le lien sont conservés : jamais l'article.
+Avec une clé API Claude (`ANTHROPIC_API_KEY` dans `backend/.env`), chaque actualité est triée (ce qui n'intéresse
+pas un soignant est écarté), traduite fidèlement en français, classée (alerte, pharmacovigilance, recommandation,
+innovation, information), située (provinces de la RDC) et reliée à la fiche MedRef concernée. Sans clé, un tri par
+mots-clés prend le relais et les textes restent dans leur langue d'origine. Les sources se configurent dans
+`backend/src/services/veille/sources.js` ; l'onglet Administration → Actualités montre l'état de chaque source et
+permet une relève immédiate. Relève manuelle : `npm run veille`. Arrêt : `VEILLE_AUTO=0`.
+
 ## API
 
 Toutes les réponses sont en JSON. Les listes sont dans `data`. Les erreurs ont la forme

@@ -28,6 +28,13 @@ const config = {
     auto: process.env.BACKUP_AUTO ? process.env.BACKUP_AUTO !== '0' : env !== 'test',
     intervalHours: Number(process.env.BACKUP_INTERVAL_HOURS) || 24,
   },
+  // Veille automatique des actualités (sources officielles), publiée sans validation manuelle
+  veille: {
+    auto: process.env.VEILLE_AUTO ? process.env.VEILLE_AUTO !== '0' : env !== 'test',
+    intervalleHeures: Number(process.env.VEILLE_INTERVALLE_HEURES) || 3,
+    // Traduction et tri : nécessite ANTHROPIC_API_KEY ; sinon tri par mots-clés sans traduction
+    modele: process.env.VEILLE_MODELE || 'claude-opus-5-5',
+  },
   contenu: {
     // Délai avant qu'une fiche validée soit signalée « à revoir »
     revisionMois: Number(process.env.REVISION_MOIS) || 24,

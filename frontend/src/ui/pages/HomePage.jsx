@@ -4,15 +4,17 @@ import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { SearchBar } from '../components/SearchBar.jsx';
+import { BandeauActualites, noteTraduction } from '../components/BandeauActualites.jsx';
 import { AsyncView } from '../components/Status.jsx';
 import { QUICK_ACCESS } from '../components/Layout.jsx';
 import { PROFILS, TYPES_ACTUALITE, VERIFICATIONS } from '../../core/labels.js';
 import { PROFILS_PRESCRIPTEURS } from '../../core/prescription.js';
+import { dateLocale } from '../../core/dates.js';
 
 const plural = (n, one, many) => `${n} ${n > 1 ? many : one}`;
 const nombre = (n) => Number(n || 0).toLocaleString('fr-FR');
 const court = (t, n) => (t && t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t);
-const date = (d) => (d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
+const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
 
 /** Charge une donnée facultative de l'accueil : un bloc absent ne bloque jamais la page. */
 function useFacultatif(charger, deps) {
@@ -56,6 +58,7 @@ function Actualite({ a }) {
       </p>
       <h3>{a.titre}</h3>
       <p className="actu-resume">{a.resume}</p>
+      {a.traduction_auto ? <p className="row-sub">{noteTraduction(a)}</p> : null}
       {(a.pathologie_slug || a.molecule_slug) && (
         <p>
           {a.pathologie_slug && <Link to={`/pathologies/${a.pathologie_slug}`}>{a.pathologie_nom}</Link>}
@@ -254,16 +257,23 @@ export function HomePage() {
         <SearchBar size="large" />
       </section>
 
+      <BandeauActualites actualites={[...alertes, ...actualites]} />
+
       {alertes.length > 0 && (
         <section aria-labelledby="alertes-title" className="section">
           <h2 id="alertes-title" className="section-title alertes-titre">
             Alertes sanitaires
           </h2>
           <ul className="actu-liste">
-            {alertes.map((a) => (
+            {alertes.slice(0, 3).map((a) => (
               <Actualite key={a.id} a={a} />
             ))}
           </ul>
+          {alertes.length > 3 && (
+            <p>
+              <Link to="/actualites?type=alerte_sanitaire">Toutes les alertes ({alertes.length})</Link>
+            </p>
+          )}
         </section>
       )}
 
@@ -290,13 +300,16 @@ export function HomePage() {
       {actualites.length > 0 && (
         <section aria-labelledby="actu-title" className="section">
           <h2 id="actu-title" className="section-title">
-            Protocoles et innovations
+            Actualités médicales
           </h2>
           <ul className="actu-liste">
-            {actualites.map((a) => (
+            {actualites.slice(0, 6).map((a) => (
               <Actualite key={a.id} a={a} />
             ))}
           </ul>
+          <p>
+            <Link to="/actualites">Toutes les actualités</Link>
+          </p>
         </section>
       )}
 

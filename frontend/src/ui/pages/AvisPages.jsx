@@ -7,11 +7,12 @@ import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { AsyncView, Empty, Loading } from '../components/Status.jsx';
 import { CarteAvis, LienCible, Pharmacovigilance } from '../components/Avis.jsx';
 import { CIBLES_AVIS, PROFILS, STATUTS_AVIS, TYPES_AVIS, TYPES_SOURCE_AVIS } from '../../core/labels.js';
+import { dateLocale } from '../../core/dates.js';
 
 /** Profils pouvant donner un avis et examiner ceux des autres (le serveur vérifie aussi). */
 const PROFILS_AVIS = ['medecin_generaliste', 'medecin_specialiste', 'pharmacien', 'infirmier', 'sage_femme'];
 const peutContribuer = (u) => Boolean(u) && u.verification === 'verifie' && PROFILS_AVIS.includes(u.profil);
-const date = (d) => (d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
+const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
 const PHOTOS_MAX = 4;
 
 /** Réduit une photo à 1280 px (JPEG) avant l'envoi : connexions lentes, 900 Ko maximum côté serveur. */

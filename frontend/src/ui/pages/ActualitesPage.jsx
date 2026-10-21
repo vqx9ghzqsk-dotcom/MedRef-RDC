@@ -4,8 +4,10 @@ import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { PROVINCES, TYPES_ACTUALITE } from '../../core/labels.js';
+import { noteTraduction } from '../components/BandeauActualites.jsx';
+import { dateLocale } from '../../core/dates.js';
 
-const date = (d) => (d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'long' }) : '');
+const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'long' }) : '');
 
 /**
  * Archive publique des actualités (GET /api/actualites) : alertes sanitaires, pharmacovigilance,
@@ -35,8 +37,9 @@ export function ActualitesPage() {
       <header className="page-header">
         <h1>Actualités</h1>
         <p className="lead">
-          Alertes sanitaires, retraits de lots, protocoles nationaux et informations publiés par les
-          administrateurs, chacun avec sa source.
+          Alertes sanitaires, retraits de lots, recommandations et innovations relevés automatiquement sur les
+          sites officiels (OMS, Africa CDC, ministère de la Santé, ACOREP, NICE, ESC, PubMed…) ou publiés par
+          les administrateurs, chacun avec sa source.
         </p>
       </header>
 
@@ -85,6 +88,7 @@ export function ActualitesPage() {
                     </p>
                     <h2>{a.titre}</h2>
                     {a.resume && <p className="actu-resume">{a.resume}</p>}
+                    {a.traduction_auto ? <p className="row-sub">{noteTraduction(a)}</p> : null}
                     <p className="row-sub">
                       {a.source_titre && (
                         <>

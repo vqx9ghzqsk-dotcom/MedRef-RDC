@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { PROFILS, STATUTS_AVIS, TYPES_AVIS } from '../../core/labels.js';
+import { dateLocale } from '../../core/dates.js';
 
-const date = (d) => (d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
+const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
 
 /** Lien vers la cible d'un avis (produit, molécule ou fiche). */
 export function LienCible({ cible }) {

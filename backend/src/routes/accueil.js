@@ -19,18 +19,18 @@ const router = express.Router();
 
 const LIMITE = 8;
 
-/** Actualités publiées et non expirées : alertes d'abord, puis les plus récentes. */
+/** Actualités publiées et non expirées, les plus récentes d'abord (les alertes sont séparées plus bas). */
 const ACTUALITES_PUBLIEES = `SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.zone,
-       a.publie_le, a.expire_le, p.nom AS pathologie_nom, p.slug AS pathologie_slug,
+       a.publie_le, a.expire_le, a.origine, a.traduction_auto, a.langue_originale, a.titre_original,
+       p.nom AS pathologie_nom, p.slug AS pathologie_slug,
        mo.dci AS molecule_dci, mo.slug AS molecule_slug
   FROM actualites a
   LEFT JOIN pathologies p ON p.id = a.pathologie_id
   LEFT JOIN molecules mo ON mo.id = a.molecule_id
  WHERE a.statut = 'publie' AND a.publie_le <= CURDATE()
    AND (a.expire_le IS NULL OR a.expire_le >= CURDATE())
- ORDER BY FIELD(a.type, 'alerte_sanitaire', 'pharmacovigilance', 'protocole', 'innovation', 'information'),
-          a.publie_le DESC, a.id DESC
- LIMIT 30`;
+ ORDER BY a.publie_le DESC, a.id DESC
+ LIMIT 40`;
 
 router.get(
   '/accueil',
@@ -108,6 +108,7 @@ router.get(
     const [lignes, total] = await Promise.all([
       db.query(
         `SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.zone, a.publie_le, a.expire_le,
+                a.origine, a.traduction_auto, a.langue_originale, a.titre_original,
                 (a.expire_le IS NOT NULL AND a.expire_le < CURDATE()) AS expiree,
                 p.nom AS pathologie_nom, p.slug AS pathologie_slug, mo.dci AS molecule_dci, mo.slug AS molecule_slug
            FROM actualites a

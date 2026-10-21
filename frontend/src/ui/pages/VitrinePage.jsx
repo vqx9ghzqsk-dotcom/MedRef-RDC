@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { TYPES_ACTUALITE } from '../../core/labels.js';
+import { BandeauActualites } from '../components/BandeauActualites.jsx';
 import '../../styles/vitrine.css';
+import { dateLocale } from '../../core/dates.js';
 
 /**
  * Page publique affichée aux visiteurs non connectés (route « / »), d'après la maquette
@@ -21,7 +23,7 @@ const LIENS = [
 ];
 
 const nombre = (n) => Number(n || 0).toLocaleString('fr-FR');
-const date = (d) => (d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
+const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
 const court = (t, n) => (t && t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t);
 
 /** « Dr Nom, spécialité » pour un médecin validateur, sinon le nom du compte. */
@@ -141,7 +143,9 @@ export function cartesActualites(accueil) {
       titre: a.titre,
       lien: lienActualite(a),
       texte: a.resume,
-      note: [a.zone, date(a.publie_le)].filter(Boolean).join(' · '),
+      note: [a.zone, date(a.publie_le), a.traduction_auto ? 'traduit automatiquement' : null]
+        .filter(Boolean)
+        .join(' · '),
       source: { titre: a.source_titre, url: a.source_url },
     });
   }
@@ -566,6 +570,12 @@ export function VitrinePage() {
           <Ecrans cote="droite" totaux={t} />
         </div>
       </header>
+
+      {accueil && (
+        <div className="v-fil">
+          <BandeauActualites actualites={[...(accueil.alertes || []), ...(accueil.actualites || [])]} />
+        </div>
+      )}
 
       <main>
         <Actualites accueil={accueil} erreur={erreur} />

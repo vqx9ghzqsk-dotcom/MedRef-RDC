@@ -407,7 +407,7 @@
 .v-actu-une {
   grid-column: span 2;
   grid-row: span 2;
-  padding: 24px;
+  padding: 56px 24px 24px;
 }
 /* La grille s'adapte au nombre de cartes pour ne laisser aucun trou */
 .v-actus[data-nombre='4'] .v-actu:last-child,
@@ -922,4 +922,17 @@
   .v-pied-grille {
     grid-template-columns: 1fr;
   }
+}
+
+/* Fil d'actualités défilant, à cheval sur le bas du bandeau photo */
+.v-fil {
+  position: relative;
+  z-index: 3;
+  max-width: 1180px;
+  margin: -26px auto 0;
+  padding: 0 20px;
+}
+.v-fil .bandeau-actu {
+  margin: 0;
+  box-shadow: 0 10px 26px rgba(6, 33, 63, 0.25);
 }

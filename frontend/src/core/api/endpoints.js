@@ -90,6 +90,8 @@ export function createMedRefApi(client) {
     adminSavePharmacovigilance: (contact) =>
       data(client.put('/api/admin/parametres/pharmacovigilance', { contact })),
     adminActualites: () => data(client.get('/api/admin/actualites')),
+    adminVeille: () => data(client.get('/api/admin/veille')),
+    adminRelancerVeille: () => data(client.post('/api/admin/veille/relancer', {})),
     adminActualite: (id) => data(client.get(`/api/admin/actualites/${enc(id)}`)),
     adminSaveActualite: (id, payload) =>
       id

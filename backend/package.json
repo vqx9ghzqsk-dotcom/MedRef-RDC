@@ -23,14 +23,17 @@
     "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
     "user:role": "node scripts/role.js",
     "user:password": "node scripts/password.js",
-    "posologies:structurer": "node scripts/structurer-posologies.js"
+    "posologies:structurer": "node scripts/structurer-posologies.js",
+    "veille": "node scripts/veille.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
     "express-rate-limit": "^7.4.1",
+    "fast-xml-parser": "^5.11.2",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.5",

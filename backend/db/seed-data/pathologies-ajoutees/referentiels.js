@@ -3959,6 +3959,6 @@ const molecules = [
 ];
 
 // Molécules des marques du répertoire fourni par le Dr Mingalu (19 octobre 2026)
-const moleculesRepertoire = ['a', 'b', 'c', 'd'].flatMap((x) => require(`./molecules-repertoire-${x}`));
+const moleculesRepertoire = ['a', 'b', 'c', 'd', 'e'].flatMap((x) => require(`./molecules-repertoire-${x}`));
 
 module.exports = { specialites, examens, symptomes, molecules: [...molecules, ...moleculesRepertoire] };

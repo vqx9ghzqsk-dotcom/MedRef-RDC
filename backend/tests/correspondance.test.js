@@ -124,3 +124,28 @@ describe('rapprochement produit de catalogue → molécules', () => {
     expect(data.repertoire.every((c) => c.firme.ajoute_par_ia === false && c.firme.nom)).toBe(true);
   });
 });
+
+describe('photos de produits fournies par le médecin', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const { PHOTOS, CATALOGUE } = require('../db/seed-data/photos-produits');
+  const fichier = (url) => path.join(__dirname, '..', url.replace(/^\//, ''));
+
+  it('chaque photo existe sur le disque, avec sa vignette, et chaque produit a une référence propre', () => {
+    const produits = CATALOGUE.flatMap((c) => c.produits);
+    const toutes = [...PHOTOS.map((p) => p.photo), ...produits.map((p) => p.photo)];
+    for (const url of toutes) {
+      expect(url).toMatch(/^\/medias\/produits\/[a-z-]+\/[a-z0-9-]+\.webp$/);
+      expect(fs.existsSync(fichier(url))).toBe(true);
+      expect(fs.existsSync(fichier(url.replace(/\.webp$/, '-mini.webp')))).toBe(true);
+    }
+    expect(new Set(produits.map((p) => p.ref)).size).toBe(produits.length);
+    for (const p of produits) {
+      expect(p.ref).toMatch(/^photo-[a-z0-9-]+$/);
+      expect(p.dci).toBeTruthy();
+      expect(p.source).toMatch(/Dr Mingalu/);
+    }
+    // Chaque photo attribuée vise un produit précis : une référence, ou un nom de fiche de départ
+    for (const p of PHOTOS) expect(Boolean(p.ref) !== Boolean(p.nom)).toBe(true);
+  });
+});

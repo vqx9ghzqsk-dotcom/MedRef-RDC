@@ -25,6 +25,7 @@ describe('opérateurs retenus', () => {
       'Shanhai Fosun Pharmaceutical Development Co',
       'Laboratoire PhatkinN°',
       'Cooperation Pharmaceutique Francaise Place Lucien Auvert',
+      'A. Nattermann & Cie. GmbH Nattermannallee',
     ]) {
       expect(retenu(nom)).toBe(true);
     }

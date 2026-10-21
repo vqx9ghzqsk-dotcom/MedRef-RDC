@@ -27,6 +27,7 @@ const semiologie = require('./semiologie');
 const catalogues = require('./catalogues');
 // Marques du répertoire fourni par le Dr Mingalu (19 octobre 2026), sans AMM ACOREP ni photo
 const repertoire = require('./repertoire-produits');
+const photosProduits = require('./photos-produits');
 // Répertoire des AMM de l'ACOREP + fiches des substances (scripts/catalogues/extraire_acorep.py)
 const acorep = require('./acorep.json');
 // Opérateurs affichés dans l'application et titulaires des marques
@@ -69,6 +70,7 @@ module.exports = {
   semiologie,
   catalogues,
   repertoire,
+  photosProduits,
   acorep,
   selection,
   ajouts,

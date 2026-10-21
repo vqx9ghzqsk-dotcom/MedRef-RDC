@@ -15,7 +15,7 @@ const config = require('../src/config');
 const { connect, analyserTables } = require('../db/connexion');
 const { backup } = require('../db/sauvegarde');
 const { chargerSemiologie } = require('../db/semiologie');
-const { chargerCatalogues } = require('../db/catalogues');
+const { attribuerPhotos, chargerCatalogues } = require('../db/catalogues');
 const { chargerAcorep } = require('../db/acorep');
 const { appliquerSelection } = require('../db/selection');
 const { chargerNouvellesFiches } = require('../db/fiches');
@@ -32,8 +32,14 @@ async function main() {
     console.log(`✔ Sauvegarde préalable : ${s.file}`);
     await conn.beginTransaction();
     const semiologie = await chargerSemiologie(conn, data);
-    const catalogues = await chargerCatalogues(conn, [...data.catalogues, ...data.repertoire]);
+    const catalogues = await chargerCatalogues(conn, [
+      ...data.catalogues,
+      ...data.repertoire,
+      ...data.photosProduits.CATALOGUE,
+    ]);
     const acorep = await chargerAcorep(conn, data.acorep);
+    // Photos fournies pour des produits déjà en base (après l'ACOREP, dont certains produits viennent)
+    const photos = await attribuerPhotos(conn, data.photosProduits.PHOTOS);
     const selection = await appliquerSelection(conn, data.selection);
     const fiches = await chargerNouvellesFiches(conn, data, data.ajouts);
     // Résumés coupés à 500 caractères avant la migration 015 : complétés depuis les sources
@@ -47,6 +53,7 @@ async function main() {
     console.log('✔ Contenu ajouté', {
       semiologie,
       catalogues,
+      photos,
       acorep,
       selection,
       fiches,

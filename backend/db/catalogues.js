@@ -184,4 +184,25 @@ async function retirerLiensIncompatibles(conn, index) {
   return retires;
 }
 
-module.exports = { chargerCatalogues, relierAutomatiquement };
+/**
+ * Photos fournies pour des produits déjà en base : par référence de catalogue, ou par nom pour une
+ * fiche de départ sans référence. Une photo déjà présente n'est jamais remplacée.
+ */
+async function attribuerPhotos(conn, photos) {
+  let attribuees = 0;
+  for (const p of photos) {
+    const [r] = p.ref
+      ? await conn.execute(
+          'UPDATE medicaments SET photo_url = ? WHERE catalogue_ref = ? AND photo_url IS NULL',
+          [p.photo, p.ref],
+        )
+      : await conn.execute(
+          'UPDATE medicaments SET photo_url = ? WHERE nom_commercial = ? AND catalogue_ref IS NULL AND photo_url IS NULL',
+          [p.photo, p.nom],
+        );
+    attribuees += r.affectedRows;
+  }
+  return { attribuees };
+}
+
+module.exports = { chargerCatalogues, relierAutomatiquement, attribuerPhotos };

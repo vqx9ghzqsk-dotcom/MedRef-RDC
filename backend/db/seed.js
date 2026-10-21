@@ -3,7 +3,7 @@
 const data = require('./seed-data');
 const { slugify } = require('../src/utils/slugify');
 const { chargerSemiologie } = require('./semiologie');
-const { chargerCatalogues } = require('./catalogues');
+const { attribuerPhotos, chargerCatalogues } = require('./catalogues');
 const { chargerAcorep } = require('./acorep');
 const { appliquerSelection } = require('./selection');
 const { chargerNouvellesFiches } = require('./fiches');
@@ -378,9 +378,15 @@ async function seed(conn) {
   // Formes cliniques, sémiologie, syndromes, glossaire, signes d'alerte des urgences
   const semiologie = await chargerSemiologie(conn, data);
   // Produits des catalogues de firmes (photos, fiches), liés aux molécules quand c'est sûr
-  const catalogues = await chargerCatalogues(conn, [...data.catalogues, ...data.repertoire]);
+  const catalogues = await chargerCatalogues(conn, [
+    ...data.catalogues,
+    ...data.repertoire,
+    ...data.photosProduits.CATALOGUE,
+  ]);
   // Répertoire des AMM de l'ACOREP et fiches des substances (à valider)
   const acorep = await chargerAcorep(conn, data.acorep);
+  // Photos fournies pour des produits déjà en base (après l'ACOREP, dont certains produits viennent)
+  const photos = await attribuerPhotos(conn, data.photosProduits.PHOTOS);
   // Opérateurs affichés (les autres restent en base, masqués)
   const selection = await appliquerSelection(conn, data.selection);
   // Fiches ajoutées par lots (références résolues dans la base, molécules ACOREP comprises)
@@ -395,6 +401,7 @@ async function seed(conn) {
   return {
     semiologie,
     catalogues,
+    photos,
     acorep,
     selection,
     fichesAjoutees,

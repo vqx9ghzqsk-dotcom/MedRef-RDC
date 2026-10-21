@@ -103,6 +103,8 @@ const OPERATEURS_RETENUS = [
   { nom: 'Warner Chilcott', motif: /^warner chilcott/ },
   { nom: 'Zambon', motif: /^zambon/ },
   { nom: 'Zenufa Laboratories', motif: /^zenufa/ },
+  // Filiale de Sanofi qui fabrique Doliprane suspension et Toplexil (photos fournies le 20 octobre 2026)
+  { nom: 'Nattermann (Sanofi)', motif: /^(a )?nattermann/ },
 ];
 
 /**

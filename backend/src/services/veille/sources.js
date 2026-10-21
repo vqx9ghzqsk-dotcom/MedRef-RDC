@@ -14,6 +14,8 @@
  * `langue` est la langue des textes de la source ; tout ce qui n'est pas en français est traduit.
  * `max` limite le nombre d'actualités nouvelles retenues par relève (flux très abondants).
  * `officielle` : source institutionnelle (OMS, ministère…) — ses alertes passent en priorité.
+ * `imageArticle` : sans image de partage, première image du corps de l'article dont l'adresse
+ * correspond (cartes et courbes des bulletins de l'OMS).
  * `filtreUrl` : ne garder que les articles dont l'adresse correspond (rubrique santé d'un média).
  * `images: false` : la source n'associe pas de photo à ses articles (ou bloque la lecture des pages) ;
  * ses actualités s'affichent sans photo, sans tentative inutile.
@@ -54,7 +56,8 @@ const SOURCES = [
     url: 'https://www.who.int/api/news/diseaseoutbreaknews?sf_culture=en&$orderby=PublicationDateAndTime%20desc&$top=10',
     langue: 'en',
     officielle: true,
-    images: false,
+    // Pas d'image de partage : la carte ou la courbe épidémique publiée dans le bulletin
+    imageArticle: /\/emergencies\/disease-outbreak-news\//,
   },
   {
     slug: 'oms-fr',

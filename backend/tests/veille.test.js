@@ -387,3 +387,46 @@ describe('veille : retour du réseau', () => {
     expect(tard.statut).toBe('faite');
   });
 });
+
+describe('veille : une image pour chaque actualité', () => {
+  const { IMAGES, THEMES, illustrationPour, illustrer } = require('../src/services/veille/illustrations');
+  const { imageArticle } = require('../src/services/veille/images');
+
+  it('chaque illustration est libre de droits, avec son crédit et sa page Wikimedia Commons', () => {
+    for (const [cle, i] of Object.entries(IMAGES)) {
+      expect(i.image).toMatch(/^https:\/\/(thumb|upload)\.wikimedia\.org\//);
+      expect(i.page).toMatch(/^https:\/\/commons\.wikimedia\.org\/wiki\/File:/);
+      expect(i.credit).toMatch(/domaine public|CC0|CC BY/);
+      expect(cle).toBeTruthy();
+    }
+    for (const [cle] of THEMES) expect(IMAGES[cle]).toBeDefined();
+  });
+
+  it('choisit l’illustration selon le sujet, puis la source, puis le type', () => {
+    expect(illustrationPour({ titre: 'Ebola : le Nord-Ubangi 8e province touchée' }).theme).toBe('ebola');
+    expect(illustrationPour({ titre: 'Spinal Tuberculosis' }).theme).toBe('tuberculose');
+    expect(illustrationPour({ titre: 'L’épidémie de paludisme recule' }).theme).toBe('paludisme');
+    expect(illustrationPour({ titre: 'What I See before Anyone Speaks', veille_source: 'nejm' }).theme).toBe(
+      'recherche',
+    );
+    expect(illustrationPour({ titre: 'Sans mot-clé', type: 'pharmacovigilance' }).theme).toBe('medicaments');
+  });
+
+  it('ajoute une illustration aux seules actualités sans photo', () => {
+    const [avec, sans] = illustrer([
+      { id: 1, titre: 'Choléra', image_url: 'https://x.org/photo.jpg' },
+      { id: 2, titre: 'Choléra au Nord-Kivu' },
+    ]);
+    expect(avec.illustration).toBeUndefined();
+    expect(sans.illustration.theme).toBe('cholera');
+  });
+
+  it('bulletins de l’OMS : la carte publiée dans l’article, pas le logo', () => {
+    const html =
+      '<img src="/images/logo.svg"><img sf-image-responsive="true" src="https://cdn.who.int/media/images/default-source/emergencies/disease-outbreak-news/carte-rdc.png">';
+    expect(imageArticle(html, 'https://www.who.int/x', /\/emergencies\/disease-outbreak-news\//)).toBe(
+      'https://cdn.who.int/media/images/default-source/emergencies/disease-outbreak-news/carte-rdc.png',
+    );
+    expect(imageArticle(html, 'https://www.who.int/x', null)).toBeNull();
+  });
+});

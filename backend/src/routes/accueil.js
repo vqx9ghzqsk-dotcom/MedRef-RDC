@@ -16,6 +16,7 @@ const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middlewar
 const { asyncHandler } = require('../utils/http');
 const { PERIMETRE } = require('./medicaments');
 const veille = require('../services/veille');
+const { IMAGES, illustrer } = require('../services/veille/illustrations');
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ const LIMITE = 8;
 const PAR_TYPE = 10;
 const ACTUALITES_PUBLIEES = `SELECT * FROM (
   SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.image_url, a.zone,
-         a.publie_le, a.expire_le, a.origine, a.traduction_auto, a.langue_originale, a.titre_original,
+         a.publie_le, a.expire_le, a.origine, a.veille_source, a.traduction_auto, a.langue_originale, a.titre_original,
          p.nom AS pathologie_nom, p.slug AS pathologie_slug,
          mo.dci AS molecule_dci, mo.slug AS molecule_slug,
          ROW_NUMBER() OVER (PARTITION BY a.type ORDER BY a.publie_le DESC, a.id DESC) AS rang
@@ -82,13 +83,17 @@ router.get(
       ),
     ]);
     const t = totaux[0] || {};
+    // Chaque actualité a son image : la photo de l'article, sinon une illustration libre de droits
+    const illustrees = illustrer(actualites);
     res.json({
       data: {
-        alertes: actualites.filter((a) => a.type === 'alerte_sanitaire' || a.type === 'pharmacovigilance'),
-        actualites: actualites.filter((a) => a.type !== 'alerte_sanitaire' && a.type !== 'pharmacovigilance'),
+        alertes: illustrees.filter((a) => a.type === 'alerte_sanitaire' || a.type === 'pharmacovigilance'),
+        actualites: illustrees.filter((a) => a.type !== 'alerte_sanitaire' && a.type !== 'pharmacovigilance'),
         produits,
         fiches_validees: validees,
         fiches_mises_a_jour: misesAJour,
+        // Illustrations des nouveautés de MedRef RDC (fiches validées, fiches mises à jour)
+        illustrations: { fiches: IMAGES.consultation, mises_a_jour: IMAGES.laboratoire },
         totaux: Object.fromEntries(Object.entries(t).map(([k, v]) => [k, Number(v)])),
       },
     });
@@ -118,7 +123,7 @@ router.get(
     const [lignes, total] = await Promise.all([
       db.query(
         `SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.image_url, a.zone, a.publie_le, a.expire_le,
-                a.origine, a.traduction_auto, a.langue_originale, a.titre_original,
+                a.origine, a.veille_source, a.traduction_auto, a.langue_originale, a.titre_original,
                 (a.expire_le IS NOT NULL AND a.expire_le < CURDATE()) AS expiree,
                 p.nom AS pathologie_nom, p.slug AS pathologie_slug, mo.dci AS molecule_dci, mo.slug AS molecule_slug
            FROM actualites a
@@ -132,7 +137,7 @@ router.get(
       db.query(`SELECT COUNT(*) AS n FROM actualites a WHERE ${where.join(' AND ')}`, params),
     ]);
     res.json({
-      data: lignes.map((a) => ({ ...a, expiree: Boolean(Number(a.expiree)) })),
+      data: illustrer(lignes).map((a) => ({ ...a, expiree: Boolean(Number(a.expiree)) })),
       page,
       par_page: PAR_PAGE,
       total: Number(total[0]?.n || 0),

@@ -8,6 +8,11 @@ import { PROVINCES, TYPES_ACTUALITE } from '../../core/labels.js';
 import { noteTraduction } from '../components/BandeauActualites.jsx';
 import { dateLocale } from '../../core/dates.js';
 
+/** Photo de l'article, sinon illustration libre de droits choisie selon le sujet. */
+const vignette = (a) => a.image_url || a.illustration?.image || null;
+const legende = (a) =>
+  a.image_url ? `Photo : ${a.source_titre}` : a.illustration ? `Illustration : ${a.illustration.credit}` : '';
+
 const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'long' }) : '');
 
 /**
@@ -83,15 +88,15 @@ export function ActualitesPage() {
             <>
               <ul className="actu-liste">
                 {r.data.map((a) => (
-                  <li key={a.id} className={`actu actu-${a.type}${a.image_url ? ' actu-avec-photo' : ''}`}>
-                    {a.image_url && (
+                  <li key={a.id} className={`actu actu-${a.type}${vignette(a) ? ' actu-avec-photo' : ''}`}>
+                    {vignette(a) && (
                       <img
                         className="actu-vignette"
-                        src={a.image_url}
+                        src={vignette(a)}
                         alt=""
                         loading="lazy"
                         referrerPolicy="no-referrer"
-                        title={`Photo : ${a.source_titre}`}
+                        title={legende(a)}
                         onError={(e) => {
                           e.currentTarget.hidden = true;
                         }}

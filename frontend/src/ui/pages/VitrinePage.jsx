@@ -158,10 +158,20 @@ function carteActualite(a) {
     note: a.traduction_auto ? 'traduit automatiquement' : '',
     source: { titre: a.source_titre, url: a.source_url },
     // Photo associée par la source à son article, affichée avec son crédit
-    image: a.image_url || null,
-    credit: a.source_titre,
+    // Photo de l'article, sinon illustration libre de droits choisie selon le sujet
+    image: a.image_url || a.illustration?.image || null,
+    legende: a.image_url
+      ? `Photo : ${a.source_titre}`
+      : a.illustration
+        ? `Illustration : ${a.illustration.credit}`
+        : '',
+    lienLegende: a.image_url ? null : a.illustration?.page,
   };
 }
+
+/** Illustration d'une nouveauté de MedRef RDC (fournie par l'API avec son crédit). */
+const illustrationMedref = (i) =>
+  i ? { image: i.image, legende: `Illustration : ${i.credit}`, lienLegende: i.page } : {};
 
 /** Nouveautés calculées à partir de la base : fiches validées, produits en photo, mises à jour. */
 function cartesNouveautes(accueil) {
@@ -172,6 +182,7 @@ function cartesNouveautes(accueil) {
     const f = validees[0];
     cartes.push({
       cle: 'fiches-validees',
+      ...illustrationMedref(accueil.illustrations?.fiches),
       classe: 'v-actu-fiches',
       etiquette: 'Fiches validées',
       titre: f.nom,
@@ -183,6 +194,7 @@ function cartesNouveautes(accueil) {
   } else if (t.fiches) {
     cartes.push({
       cle: 'fiches-relecture',
+      ...illustrationMedref(accueil.illustrations?.fiches),
       classe: 'v-actu-fiches',
       etiquette: 'Fiches',
       titre: `${nombre(t.fiches)} fiches en relecture médicale`,
@@ -213,6 +225,7 @@ function cartesNouveautes(accueil) {
   if (majs.length) {
     cartes.push({
       cle: 'mises-a-jour',
+      ...illustrationMedref(accueil.illustrations?.mises_a_jour),
       classe: 'v-actu-maj',
       etiquette: 'Mises à jour',
       titre: 'Fiches mises à jour',
@@ -402,7 +415,17 @@ function FondPhoto({ c }) {
   return (
     <figure className="v-fond-photo">
       <img src={c.image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setEchec(true)} />
-      {c.credit && <figcaption>Photo : {c.credit}</figcaption>}
+      {c.legende && (
+        <figcaption>
+          {c.lienLegende ? (
+            <a href={c.lienLegende} target="_blank" rel="noopener noreferrer">
+              {c.legende}
+            </a>
+          ) : (
+            c.legende
+          )}
+        </figcaption>
+      )}
     </figure>
   );
 }

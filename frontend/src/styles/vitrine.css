@@ -1206,3 +1206,13 @@ button.v-btn {
 .v-actu {
   overflow: clip;
 }
+
+/* Crédit d'une illustration : lien vers sa page Wikimedia Commons (licence et auteur) */
+.v-fond-photo figcaption a {
+  color: inherit;
+  text-decoration: none;
+}
+.v-fond-photo figcaption a:hover,
+.v-fond-photo figcaption a:focus-visible {
+  text-decoration: underline;
+}

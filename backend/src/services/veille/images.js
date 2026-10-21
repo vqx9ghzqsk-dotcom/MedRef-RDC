@@ -35,12 +35,31 @@ function imageDePage(html, adresse) {
 }
 
 /**
+ * Première image du corps de l'article dont l'adresse correspond au motif de la source (cartes et
+ * courbes épidémiques des bulletins de l'OMS, qui n'ont pas d'image de partage).
+ */
+function imageArticle(html, adresse, motif) {
+  if (!motif) return null;
+  for (const m of String(html).matchAll(/<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)) {
+    try {
+      const url = new URL(decoder(m[1]).trim(), adresse);
+      if (url.protocol === 'https:' && motif.test(url.pathname) && !GENERIQUE.test(url.pathname))
+        return url.href.slice(0, 500);
+    } catch {
+      // adresse illisible : image suivante
+    }
+  }
+  return null;
+}
+
+/**
  * Cherche la photo des actualités publiées qui n'en ont pas encore été pourvues (les plus
  * récentes d'abord). Une image reprise par plusieurs articles d'une même source est une image
  * générique : elle est retirée de tous.
  */
 async function completerImages(db, { sources = [], charger = telecharger, log = console } = {}) {
   const sansImages = new Set(sources.filter((s) => s.images === false).map((s) => s.slug));
+  const parSlug = new Map(sources.map((s) => [s.slug, s]));
   const lignes = await db.query(
     `SELECT id, source_url, veille_source FROM actualites
       WHERE statut = 'publie' AND image_cherchee = 0 AND source_url IS NOT NULL
@@ -54,7 +73,10 @@ async function completerImages(db, { sources = [], charger = telecharger, log = 
       let image = null;
       if (!sansImages.has(a.veille_source)) {
         try {
-          image = imageDePage(await charger(a.source_url), a.source_url);
+          const html = await charger(a.source_url);
+          image =
+            imageDePage(html, a.source_url) ||
+            imageArticle(html, a.source_url, parSlug.get(a.veille_source)?.imageArticle);
         } catch (err) {
           log.error?.(`✖ Photo introuvable (${a.source_url}) : ${err.message}`);
         }
@@ -79,4 +101,4 @@ async function completerImages(db, { sources = [], charger = telecharger, log = 
   return { examinees: lignes.length, trouvees, generiques: communes.length };
 }
 
-module.exports = { imageDePage, completerImages };
+module.exports = { imageDePage, imageArticle, completerImages };

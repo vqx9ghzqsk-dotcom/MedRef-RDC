@@ -245,6 +245,9 @@ sur la page **/actualites**, filtrable par type et par province.
 | PubMed (recommandations des sociétés savantes de la semaine), The Lancet, NEJM | E-utilities, flux RSS |
 
 Seuls le titre, la date, le court résumé publié par la source et le lien sont conservés : jamais l'article.
+Chaque actualité a une image : la photo que la source associe à l'article (balise og:image, ou carte
+épidémique des bulletins de l'OMS), sinon une illustration libre de droits de Wikimedia Commons choisie selon le
+sujet (domaine public, CC0 ou CC BY, auteur cité) dans `backend/src/services/veille/illustrations.js`.
 Avec une clé API Claude (`ANTHROPIC_API_KEY` dans `backend/.env`), chaque actualité est triée (ce qui n'intéresse
 pas un soignant est écarté), traduite fidèlement en français, classée (alerte, pharmacovigilance, recommandation,
 innovation, information), située (provinces de la RDC) et reliée à la fiche MedRef concernée. Sans clé, un tri par

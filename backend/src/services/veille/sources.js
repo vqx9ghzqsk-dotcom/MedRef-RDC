@@ -14,6 +14,7 @@
  * `langue` est la langue des textes de la source ; tout ce qui n'est pas en français est traduit.
  * `max` limite le nombre d'actualités nouvelles retenues par relève (flux très abondants).
  * `officielle` : source institutionnelle (OMS, ministère…) — ses alertes passent en priorité.
+ * `filtreUrl` : ne garder que les articles dont l'adresse correspond (rubrique santé d'un média).
  * `images: false` : la source n'associe pas de photo à ses articles (ou bloque la lecture des pages) ;
  * ses actualités s'affichent sans photo, sans tentative inutile.
  */
@@ -35,6 +36,16 @@ const SOURCES = [
     url: 'https://acorep.gouv.cd/feed/',
     langue: 'fr',
     officielle: true,
+  },
+  {
+    slug: 'radio-okapi',
+    nom: 'Radio Okapi',
+    type: 'rss',
+    // Flux général : seuls les articles de la rubrique Santé sont retenus
+    url: 'https://www.radiookapi.net/feed',
+    filtreUrl: /\/actualite\/sante\//,
+    langue: 'fr',
+    max: 6,
   },
   {
     slug: 'oms-epidemies',

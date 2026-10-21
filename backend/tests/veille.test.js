@@ -339,3 +339,16 @@ describe('veille : photos des articles', () => {
     );
   });
 });
+
+describe('veille : rubrique santé d’un média', () => {
+  it('Radio Okapi : seuls les articles de la rubrique Santé sont retenus', async () => {
+    const flux = `<rss version="2.0"><channel>
+      <item><title>Ebola : 8e province touchée</title><link>https://www.radiookapi.net/2026/10/19/actualite/sante/ebola</link></item>
+      <item><title>Match de football</title><link>https://www.radiookapi.net/2026/10/19/actualite/sport/match</link></item>
+    </channel></rss>`;
+    const source = SOURCES.find((s) => s.slug === 'radio-okapi');
+    expect(source).toMatchObject({ langue: 'fr', type: 'rss' });
+    const items = await collecter(source, { charger: async () => flux });
+    expect(items.map((it) => it.titre)).toEqual(['Ebola : 8e province touchée']);
+  });
+});

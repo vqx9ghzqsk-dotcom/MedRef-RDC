@@ -232,13 +232,14 @@ Le rôle est relu en base à chaque requête d'administration : un retrait de dr
 
 ### Veille automatique des actualités
 
-L'API relève elle-même les actualités de 13 sources officielles, au démarrage puis toutes les 3 heures, et les publie
+L'API relève elle-même les actualités de 14 sources (officielles et Radio Okapi), au démarrage puis toutes les 3 heures, et les publie
 sans validation manuelle. Elles défilent sur l'accueil (« En direct des sources officielles ») et sont archivées
 sur la page **/actualites**, filtrable par type et par province.
 
 | Source | Lecture |
 | --- | --- |
 | Ministère de la Santé (RDC), ACOREP | interface WordPress, flux RSS |
+| Radio Okapi (rubrique Santé seulement) | flux RSS filtré |
 | OMS (actualités en français, bulletins d'épidémies, OMS Afrique), Africa CDC, ECDC, MSF | flux RSS, interface de l'OMS |
 | NICE, ESC | pages de publications |
 | PubMed (recommandations des sociétés savantes de la semaine), The Lancet, NEJM | E-utilities, flux RSS |

@@ -210,6 +210,7 @@ async function collecter(source, { charger = telecharger } = {}) {
   else throw new Error(`type de source inconnu : ${source.type}`);
   return items
     .filter((it) => /^https?:\/\//.test(it.url) && it.titre)
+    .filter((it) => !source.filtreUrl || source.filtreUrl.test(it.url))
     .map((it) => ({ ...it, titre: couper(it.titre, 480), resume: nettoyerResume(it.resume, it.titre) }))
     .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
 }

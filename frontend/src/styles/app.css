@@ -3093,6 +3093,7 @@ details.forme {
   border-radius: var(--radius-small);
   padding: 0.7rem 0.9rem;
 }
+.actu h2,
 .actu h3 {
   margin: 0.15rem 0 0.3rem;
   font-size: 1.05rem;
@@ -3247,4 +3248,13 @@ details.forme {
 .field-error {
   color: var(--urgence);
   font-size: 0.88rem;
+}
+
+/* Archive des actualités : pages précédente / suivante */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.2rem 0;
 }

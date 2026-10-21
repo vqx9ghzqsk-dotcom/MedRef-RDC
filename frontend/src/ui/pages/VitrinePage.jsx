@@ -24,6 +24,21 @@ const nombre = (n) => Number(n || 0).toLocaleString('fr-FR');
 const date = (d) => (d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
 const court = (t, n) => (t && t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t);
 
+/** « Dr Nom, spécialité » pour un médecin validateur, sinon le nom du compte. */
+export const signataire = (f) => {
+  if (!f?.valide_par) return '';
+  const dr = /^medecin/.test(f.valide_par_profil || '') && !/^dr\.? /i.test(f.valide_par) ? 'Dr ' : '';
+  return `${dr}${f.valide_par}${f.valide_par_specialite ? `, ${f.valide_par_specialite}` : ''}`;
+};
+
+/** Page de la fiche ou de la molécule liée à une actualité publiée, si elle en a une. */
+const lienActualite = (a) =>
+  a.pathologie_slug
+    ? `/pathologies/${a.pathologie_slug}`
+    : a.molecule_slug
+      ? `/molecules/${a.molecule_slug}`
+      : null;
+
 const Icone = ({ children, taille = 26 }) => (
   <svg
     viewBox="0 0 24 24"
@@ -124,6 +139,7 @@ export function cartesActualites(accueil) {
       classe: CLASSES_TYPE[a.type] || 'v-actu-info',
       etiquette: TYPES_ACTUALITE[a.type] || 'Actualité',
       titre: a.titre,
+      lien: lienActualite(a),
       texte: a.resume,
       note: [a.zone, date(a.publie_le)].filter(Boolean).join(' · '),
       source: { titre: a.source_titre, url: a.source_url },
@@ -138,14 +154,9 @@ export function cartesActualites(accueil) {
       classe: 'v-actu-fiches',
       etiquette: 'Fiches validées',
       titre: f.nom,
-      texte: `Validée le ${date(f.valide_le)}${f.valide_par ? ` par ${f.valide_par}` : ''}.${
-        validees.length > 1
-          ? ` Aussi : ${validees
-              .slice(1, 4)
-              .map((x) => x.nom)
-              .join(', ')}.`
-          : ''
-      }`,
+      lien: `/pathologies/${f.slug}`,
+      texte: `Validée le ${date(f.valide_le)}${f.valide_par ? ` par ${signataire(f)}` : ''}.`,
+      liste: validees.slice(1, 5).map((x) => ({ nom: x.nom, lien: `/pathologies/${x.slug}` })),
       note: `${nombre(t.fiches_validees)} fiches validées sur ${nombre(t.fiches)}`,
     });
   } else if (t.fiches) {
@@ -161,16 +172,18 @@ export function cartesActualites(accueil) {
   const produits = accueil.produits || [];
   if (produits.length) {
     const p = produits[0];
-    const autres = [...new Set(produits.slice(1).map((x) => x.nom_commercial))]
-      .filter((nom) => nom !== p.nom_commercial)
-      .slice(0, 3);
+    const vus = new Set([p.nom_commercial]);
+    const autres = produits.slice(1).filter((x) => !vus.has(x.nom_commercial) && vus.add(x.nom_commercial));
     cartes.push({
       cle: 'produits',
       classe: 'v-actu-produits',
-      etiquette: 'Nouveaux produits',
+      etiquette: 'Produits en photo',
       titre: [p.nom_commercial, p.operateur].filter(Boolean).join(' · '),
-      texte: autres.length ? `Aussi : ${autres.join(', ')}.` : court(p.dci, 90),
-      note: 'Ajoutés au catalogue',
+      lien: `/medicaments/${p.id}`,
+      photo: p.photo_url,
+      texte: court(p.dci, 90),
+      liste: autres.slice(0, 3).map((x) => ({ nom: x.nom_commercial, lien: `/medicaments/${x.id}` })),
+      note: 'Au catalogue des firmes',
     });
   }
   const majs = accueil.fiches_mises_a_jour || [];
@@ -180,10 +193,7 @@ export function cartesActualites(accueil) {
       classe: 'v-actu-maj',
       etiquette: 'Mises à jour',
       titre: 'Fiches mises à jour',
-      texte: majs
-        .slice(0, 4)
-        .map((f) => f.nom)
-        .join(' · '),
+      liste: majs.slice(0, 4).map((f) => ({ nom: f.nom, lien: `/pathologies/${f.slug}` })),
       note: date(majs[0].updated_at),
     });
   }
@@ -340,8 +350,18 @@ function Actualites({ accueil, erreur }) {
             <li key={c.cle} className={`v-actu ${c.classe}${k === 0 ? ' v-actu-une' : ''}`}>
               {k === 0 && <DecoActu classe={c.classe} />}
               <span className="v-actu-type">{c.etiquette}</span>
-              <h3>{c.titre}</h3>
+              {c.photo && <img className="v-actu-photo" src={c.photo} alt="" loading="lazy" />}
+              <h3>{c.lien ? <Link to={c.lien}>{c.titre}</Link> : c.titre}</h3>
               {c.texte && <p className="v-actu-texte">{c.texte}</p>}
+              {c.liste?.length > 0 && (
+                <ul className="v-actu-liste">
+                  {c.liste.map((x) => (
+                    <li key={x.lien}>
+                      <Link to={x.lien}>{x.nom}</Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
               {(c.note || c.source) && (
                 <p className="v-actu-note">
                   {c.source?.titre && (
@@ -372,6 +392,11 @@ function Actualites({ accueil, erreur }) {
               : 'Chargement des actualités…'}
         </p>
       )}
+      <p className="v-actus-tout">
+        <Link to="/actualites" className="v-btn v-btn-contour-sombre">
+          Toutes les actualités
+        </Link>
+      </p>
     </section>
   );
 }

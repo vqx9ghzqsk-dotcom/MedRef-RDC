@@ -43,6 +43,32 @@ describe('Accueil (lot D)', () => {
     expect(db.query.mock.calls[0][0]).toMatch(/expire_le IS NULL OR a.expire_le >= CURDATE\(\)/);
     // Mêmes règles de visibilité des produits que la page Médicaments
     expect(db.query.mock.calls[1][0]).toMatch(/m.nature = 'medicament'/);
+    // Seuls les produits avec photo, et le titre du médecin qui a validé
+    expect(db.query.mock.calls[1][0]).toMatch(/photo_url IS NOT NULL/);
+    expect(db.query.mock.calls[2][0]).toMatch(/valide_par_profil/);
+  });
+
+  it('archive des actualités : publiées seulement, filtres sûrs, pagination', async () => {
+    db.query
+      .mockResolvedValueOnce([{ id: 3, type: 'alerte_sanitaire', titre: 'Mpox', expiree: 1 }])
+      .mockResolvedValueOnce([{ n: '21' }]);
+    const res = await request(app)
+      .get('/api/actualites')
+      .query({ type: 'alerte_sanitaire', zone: 'Ituri', page: 2 });
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ page: 2, par_page: 20, total: 21 });
+    expect(res.body.data[0].expiree).toBe(true);
+    const [sql, params] = db.query.mock.calls[0];
+    expect(sql).toMatch(/statut = 'publie'/);
+    expect(sql).toMatch(/OFFSET 20/);
+    expect(params).toEqual(['alerte_sanitaire', '%Ituri%']);
+  });
+
+  it('archive des actualités : un type inconnu est ignoré', async () => {
+    db.query.mockResolvedValueOnce([]).mockResolvedValueOnce([{ n: 0 }]);
+    const res = await request(app).get('/api/actualites').query({ type: "x' OR 1=1" });
+    expect(res.status).toBe(200);
+    expect(db.query.mock.calls[0][1]).toEqual([]);
   });
 
   it('bloc personnel : compteurs d’administration pour un admin, rien pour un utilisateur', async () => {

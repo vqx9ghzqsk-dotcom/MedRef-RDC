@@ -25,6 +25,8 @@ export function createMedRefApi(client) {
     pathologies: () => data(client.get('/api/pathologies')),
     accueil: () => data(client.get('/api/accueil')),
     accueilPourMoi: () => data(client.get('/api/accueil/pour-moi')),
+    /** Archive publique : { data, page, par_page, total }. */
+    actualites: (filtres = {}) => client.get('/api/actualites', filtres),
 
     // Avis sur les produits et traitements (lot E)
     avisPublics: (cibleType, cible) => data(client.get('/api/avis', { cible_type: cibleType, cible })),

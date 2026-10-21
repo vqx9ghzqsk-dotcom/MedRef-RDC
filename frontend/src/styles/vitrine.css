@@ -497,6 +497,71 @@
 .v-actu-note a {
   text-decoration: underline;
 }
+/* Titres et listes cliquables : vers la fiche, la molécule ou le produit */
+.v-actu h3 a,
+.v-actu-liste a {
+  color: inherit;
+  text-decoration: none;
+}
+.v-actu h3 a:hover,
+.v-actu h3 a:focus-visible,
+.v-actu-liste a:hover,
+.v-actu-liste a:focus-visible {
+  text-decoration: underline;
+}
+.v-actu-liste {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+.v-actu-liste li {
+  padding-left: 14px;
+  position: relative;
+  opacity: 0.95;
+}
+.v-actu-liste li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  opacity: 0.7;
+}
+.v-actu-une .v-actu-liste {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 0.95rem;
+}
+.v-actu-photo {
+  position: absolute !important;
+  top: 14px;
+  right: 14px;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #fff;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.v-actu-photo ~ h3,
+.v-actu-photo ~ .v-actu-texte {
+  padding-right: 88px;
+}
+.v-actus-tout {
+  margin-top: 22px;
+  text-align: center;
+}
+.v-btn-contour-sombre {
+  background: transparent;
+  color: var(--v-nuit);
+  border-color: var(--v-trait);
+}
+.v-btn-contour-sombre:hover {
+  background: var(--v-pale);
+}
 
 /* Ce que vous trouverez */
 .v-cartes {

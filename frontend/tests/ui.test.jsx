@@ -277,6 +277,87 @@ describe('Accueil', () => {
     expect(screen.getAllByRole('button', { name: /À la une/ }).length).toBeGreaterThan(2);
   });
 
+  it('visiteur : cartes reliées aux fiches et produits, médecin validateur nommé, lien vers l’archive', async () => {
+    renderApp('/', {
+      accueil: vi.fn(async () => ({
+        alertes: [],
+        actualites: [],
+        produits: [
+          {
+            id: 9,
+            nom_commercial: 'Aerius',
+            dci: 'Desloratadine',
+            operateur: 'Organon',
+            photo_url: '/medias/a.webp',
+          },
+          {
+            id: 10,
+            nom_commercial: 'Xyzall',
+            dci: 'Lévocétirizine',
+            operateur: 'UCB',
+            photo_url: '/medias/x.webp',
+          },
+        ],
+        fiches_validees: [
+          {
+            nom: 'Paludisme grave',
+            slug: 'paludisme-grave',
+            valide_le: '2026-10-16',
+            valide_par: 'Kabasele',
+            valide_par_profil: 'medecin_specialiste',
+            valide_par_specialite: 'Pédiatrie',
+          },
+          { nom: 'Rougeole', slug: 'rougeole', valide_le: '2026-10-16', valide_par: 'Kabasele' },
+        ],
+        fiches_mises_a_jour: [{ nom: 'Choléra', slug: 'cholera', updated_at: '2026-10-19' }],
+        totaux: { fiches: 792, fiches_validees: 2 },
+      })),
+    });
+    expect(await screen.findByRole('link', { name: 'Paludisme grave' })).toHaveAttribute(
+      'href',
+      '/pathologies/paludisme-grave',
+    );
+    expect(screen.getByText(/par Dr Kabasele, Pédiatrie\./)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Rougeole' })).toHaveAttribute('href', '/pathologies/rougeole');
+    expect(screen.getByRole('link', { name: 'Aerius · Organon' })).toHaveAttribute('href', '/medicaments/9');
+    expect(screen.getByRole('link', { name: 'Xyzall' })).toHaveAttribute('href', '/medicaments/10');
+    expect(screen.getByRole('link', { name: 'Choléra' })).toHaveAttribute('href', '/pathologies/cholera');
+    expect(screen.getByRole('link', { name: 'Toutes les actualités' })).toHaveAttribute(
+      'href',
+      '/actualites',
+    );
+  });
+
+  it('archive des actualités : filtres par type et province, source et fiche liées', async () => {
+    const actualites = vi.fn(async () => ({
+      data: [
+        {
+          id: 4,
+          type: 'alerte_sanitaire',
+          titre: 'Mpox au Sud-Kivu',
+          resume: 'Cas confirmés.',
+          zone: 'Sud-Kivu',
+          publie_le: '2026-10-10',
+          expiree: true,
+          source_titre: 'OMS',
+          source_url: 'https://www.who.int/',
+          pathologie_slug: 'mpox',
+          pathologie_nom: 'Mpox',
+        },
+      ],
+      page: 1,
+      par_page: 20,
+      total: 1,
+    }));
+    renderApp('/actualites', { actualites });
+    expect(await screen.findByRole('heading', { name: 'Mpox au Sud-Kivu' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'OMS' })).toHaveAttribute('href', 'https://www.who.int/');
+    expect(screen.getByRole('link', { name: 'Mpox' })).toHaveAttribute('href', '/pathologies/mpox');
+    expect(screen.getByText('Terminée')).toBeInTheDocument();
+    await userEvent.selectOptions(screen.getByLabelText('Province'), 'Ituri');
+    await waitFor(() => expect(actualites).toHaveBeenLastCalledWith({ type: '', zone: 'Ituri', page: 1 }));
+  });
+
   it('affiche l’identité, la recherche, les 7 accès rapides et les départements', async () => {
     renderApp('/', {}, MEDECIN);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('MedRef RDC');

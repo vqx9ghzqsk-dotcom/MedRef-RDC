@@ -3,6 +3,7 @@ import { createApiClient } from '../../core/api/client.js';
 import { createMedRefApi } from '../../core/api/endpoints.js';
 import { createTokenStore } from '../../core/auth/tokenStore.js';
 import { createPrescriptionsRepo, openMedRefDB } from '../../core/offline/prescriptionsRepo.js';
+import { createActualitesHorsLigne, openActualitesDB } from '../../core/offline/actualitesHorsLigne.js';
 
 const ServicesContext = createContext(null);
 
@@ -28,10 +29,20 @@ export function createWebServices({ baseUrl = import.meta.env.VITE_API_URL || ''
     },
   };
 
+  // Actualités gardées pour la lecture hors connexion (base IndexedDB séparée, ouverte à la demande)
+  let dbActualites;
+  const lazyDbActualites = {
+    then(resolve, reject) {
+      dbActualites = dbActualites || openActualitesDB();
+      return dbActualites.then(resolve, reject);
+    },
+  };
+
   return {
     api: createMedRefApi(client),
     tokenStore,
     repo: createPrescriptionsRepo(lazyDb),
+    actualitesHorsLigne: createActualitesHorsLigne(lazyDbActualites, { baseUrl }),
     onSessionExpired(fn) {
       expiredListeners.add(fn);
       return () => expiredListeners.delete(fn);

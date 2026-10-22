@@ -178,7 +178,7 @@ const fiche = {
   sources: [{ id: 5, titre: 'WHO guidelines for malaria', niveau: 1, url: null }],
 };
 
-function renderApp(path, apiOverrides = {}, user = null) {
+function renderApp(path, apiOverrides = {}, user = null, autresServices = {}) {
   const api = {
     departements: vi.fn(async () => [
       {
@@ -208,6 +208,7 @@ function renderApp(path, apiOverrides = {}, user = null) {
     },
     repo: { list: vi.fn(async () => []) },
     onSessionExpired: () => () => {},
+    ...autresServices,
   };
   // Mode strict, comme dans main.jsx : chaque rendu est doublé et révèle les effets de bord
   render(
@@ -405,6 +406,40 @@ describe('Accueil', () => {
       'href',
       '/actualites',
     );
+  });
+
+  it('sans réseau : l’accueil affiche les actualités gardées sur l’appareil, avec leur date de téléchargement', async () => {
+    const enLigne = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+    const accueil = vi.fn(async () => ({}));
+    const actualitesHorsLigne = {
+      lister: vi.fn(async () => [
+        {
+          id: 3,
+          type: 'alerte_sanitaire',
+          titre: 'Choléra à Ufamandu',
+          resume: 'Recrudescence des cas.',
+          source_titre: 'Radio Okapi',
+          image_url: 'https://photos.radiookapi.net/a.jpg',
+          origine: 'veille',
+          publie_le: '2026-10-20',
+        },
+      ]),
+      etat: vi.fn(async () => ({ telecharge_le: '2026-10-21', conservation_jours: 30, actualites: 1 })),
+      synchroniser: vi.fn(),
+    };
+    try {
+      renderApp('/', { accueil }, null, { actualitesHorsLigne });
+      expect(await screen.findByRole('heading', { name: 'Choléra à Ufamandu' })).toBeInTheDocument();
+      expect(screen.getByRole('status', { name: '' })).toHaveTextContent(
+        /Hors connexion : actualités téléchargées le/,
+      );
+      expect(screen.getByText(/30 jours après sa publication/)).toBeInTheDocument();
+      expect(accueil).not.toHaveBeenCalled();
+      // Pas de téléchargement tenté sans réseau
+      expect(actualitesHorsLigne.synchroniser).not.toHaveBeenCalled();
+    } finally {
+      enLigne.mockRestore();
+    }
   });
 
   it('retour d’internet : actualités rechargées, relève demandée au serveur, puis rechargées encore', async () => {

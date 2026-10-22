@@ -248,6 +248,13 @@ Seuls le titre, la date, le court résumé publié par la source et le lien sont
 Sur l'accueil, une actualité de la veille ne paraît qu'avec sa propre photo, celle que la source publie pour cet
 article (balise og:image, ou carte épidémique des bulletins de l'OMS) ; les autres restent dans l'archive, sans image
 plutôt qu'avec une image sans rapport.
+
+**Lecture hors connexion.** L'application garde sur l'appareil le lot de nouveautés des actualités (IndexedDB) et leurs
+photos (cache du navigateur, téléchargées par le relais `GET /api/actualites/:id/photo`, sans copie sur le serveur) :
+au démarrage, au retour d'internet et toutes les 3 heures (`GET /api/actualites/lot?depuis=…` ne renvoie que les
+nouveautés depuis le lot précédent). Chaque actualité reste lisible sans réseau 30 jours après sa publication
+(`ACTUALITES_HORS_LIGNE_JOURS`), ou jusqu'à la fin d'une alerte, puis elle est effacée avec sa photo. La page
+« Utiliser sans connexion » montre l'état du lot et permet de le télécharger ou de l'effacer.
 Avec une clé API Claude (`ANTHROPIC_API_KEY` dans `backend/.env`), chaque actualité est triée (ce qui n'intéresse
 pas un soignant est écarté), traduite fidèlement en français, classée (alerte, pharmacovigilance, recommandation,
 innovation, information), située (provinces de la RDC) et reliée à la fiche MedRef concernée. Sans clé, un tri par

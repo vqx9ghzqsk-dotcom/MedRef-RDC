@@ -19,13 +19,32 @@ const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 
  * protocoles… publiées par les administrateurs avec leur source, filtrables par type et province.
  */
 export function ActualitesPage() {
-  const { api } = useServices();
+  const { api, actualitesHorsLigne } = useServices();
   const [params, setParams] = useSearchParams();
   const type = params.get('type') || '';
   const zone = params.get('zone') || '';
   const page = Math.max(1, Number(params.get('page')) || 1);
 
-  const state = useAsync(() => api.actualites({ type, zone, page }), [api, type, zone, page]);
+  const state = useAsync(async () => {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) throw new Error('Hors connexion');
+      return await api.actualites({ type, zone, page });
+    } catch (err) {
+      // Sans réseau : actualités gardées sur l'appareil, filtrées ici
+      const gardees = actualitesHorsLigne ? await actualitesHorsLigne.lister() : [];
+      if (!gardees.length) throw err;
+      const liste = gardees.filter(
+        (a) => (!type || a.type === type) && (!zone || !a.zone || a.zone.includes(zone)),
+      );
+      return {
+        data: liste,
+        page: 1,
+        par_page: Math.max(liste.length, 1),
+        total: liste.length,
+        hors_ligne: await actualitesHorsLigne.etat(),
+      };
+    }
+  }, [api, actualitesHorsLigne, type, zone, page]);
   // Retour d'internet : liste rechargée, puis relève des sources officielles
   useActualisationAuRetour(state.reload);
 
@@ -75,6 +94,12 @@ export function ActualitesPage() {
         </div>
       </form>
 
+      {state.data?.hors_ligne && (
+        <p className="hint" role="status">
+          Hors connexion : actualités téléchargées le {date(state.data.hors_ligne.telecharge_le)}, gardées{' '}
+          {state.data.hors_ligne.conservation_jours || 30} jours après leur publication.
+        </p>
+      )}
       <AsyncView state={state}>
         {(r) =>
           r.data.length === 0 ? (

@@ -12,13 +12,44 @@ function formatDate(iso) {
 
 /** Télécharger toutes les fiches pour les consulter sans réseau (zones mal couvertes, gardes). */
 export function HorsLignePage() {
-  const { api } = useServices();
+  const { api, actualitesHorsLigne } = useServices();
   const online = useOnline();
   const [etat, setEtat] = useState(() => lireEtat());
   const [enCache, setEnCache] = useState(null);
   const [progres, setProgres] = useState(null);
   const [erreur, setErreur] = useState(null);
+  const [actus, setActus] = useState(null);
+  const [actusEnCours, setActusEnCours] = useState(false);
   const disponible = swActif();
+
+  // Actualités gardées sur l'appareil (lot de nouveautés, expiration automatique)
+  useEffect(() => {
+    if (!actualitesHorsLigne) return undefined;
+    let actif = true;
+    actualitesHorsLigne
+      .etat()
+      .then((e) => actif && setActus(e))
+      .catch(() => {});
+    return () => {
+      actif = false;
+    };
+  }, [actualitesHorsLigne, actusEnCours]);
+
+  async function telechargerActus() {
+    setActusEnCours(true);
+    try {
+      await actualitesHorsLigne.synchroniser(api);
+    } catch (err) {
+      setErreur(err.message || 'Téléchargement des actualités interrompu');
+    } finally {
+      setActusEnCours(false);
+    }
+  }
+
+  async function viderActus() {
+    await actualitesHorsLigne.vider();
+    setActus(await actualitesHorsLigne.etat());
+  }
 
   useEffect(() => {
     let actif = true;
@@ -117,6 +148,49 @@ export function HorsLignePage() {
             </button>
           </div>
           {!online && <p className="hint">Connectez-vous à internet pour télécharger ou mettre à jour.</p>}
+        </section>
+      )}
+
+      {actualitesHorsLigne && (
+        <section className="card hors-ligne" aria-labelledby="hl-actus">
+          <h2 id="hl-actus">Actualités</h2>
+          <p>
+            Les nouveautés sont téléchargées automatiquement par lots (au démarrage, au retour d’internet et
+            toutes les 3 heures), avec leurs photos. Chaque actualité reste lisible sans réseau{' '}
+            {actus?.conservation_jours || 30} jours après sa publication, ou jusqu’à la fin d’une alerte, puis
+            elle est effacée de l’appareil.
+          </p>
+          <dl className="hors-ligne-etat">
+            <div>
+              <dt>Actualités gardées</dt>
+              <dd>
+                {actus ? actus.actualites : '—'}
+                {actus?.photos ? ` (${actus.photos} avec photo)` : ''}
+              </dd>
+            </div>
+            <div>
+              <dt>Dernier lot téléchargé</dt>
+              <dd>{formatDate(actus?.telecharge_le) || 'jamais'}</dd>
+            </div>
+          </dl>
+          <div className="hors-ligne-actions">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={telechargerActus}
+              disabled={!online || actusEnCours}
+            >
+              {actusEnCours ? 'Téléchargement…' : 'Télécharger les nouveautés'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={viderActus}
+              disabled={!actus?.actualites}
+            >
+              Effacer les actualités gardées
+            </button>
+          </div>
         </section>
       )}
 

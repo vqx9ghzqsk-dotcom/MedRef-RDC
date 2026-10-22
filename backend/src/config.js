@@ -36,6 +36,8 @@ const config = {
     verificationMinutes: Number(process.env.VEILLE_VERIFICATION_MINUTES) || 2,
     // Traduction et tri : nécessite ANTHROPIC_API_KEY ; sinon tri par mots-clés sans traduction
     modele: process.env.VEILLE_MODELE || 'claude-opus-5-5',
+    // Actualités gardées sur l'appareil pour la consultation hors connexion, puis effacées
+    conservationJours: Number(process.env.ACTUALITES_HORS_LIGNE_JOURS) || 30,
   },
   contenu: {
     // Délai avant qu'une fiche validée soit signalée « à revoir »

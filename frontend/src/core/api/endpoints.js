@@ -29,6 +29,8 @@ export function createMedRefApi(client) {
     actualites: (filtres = {}) => client.get('/api/actualites', filtres),
     /** Relève des sources demandée au retour du réseau : { statut, derniere, publiees }. */
     actualiserActualites: () => data(client.post('/api/actualites/actualiser', {})),
+    /** Lot d'actualités pour le hors-ligne : { data, ids, genere_le, conservation_jours }. */
+    lotActualites: (depuis) => client.get('/api/actualites/lot', depuis ? { depuis } : {}),
 
     // Avis sur les produits et traitements (lot E)
     avisPublics: (cibleType, cible) => data(client.get('/api/avis', { cible_type: cibleType, cible })),

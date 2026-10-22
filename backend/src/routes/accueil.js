@@ -6,12 +6,15 @@
  *                               ou mises à jour, innovations et protocoles) — mis en cache hors ligne.
  *   GET /api/actualites       : toutes les actualités publiées (archive filtrable par type et zone).
  *   POST /api/actualites/actualiser : relève des sources au retour du réseau (si la dernière a plus de 15 min).
+ *   GET /api/actualites/lot   : lot de nouveautés à garder sur l'appareil pour la lecture hors connexion.
+ *   GET /api/actualites/:id/photo : photo d'une actualité relayée depuis sa source (téléchargement hors ligne).
  *   GET /api/accueil/pour-moi : bloc personnel selon le rôle (fiches à valider, comptes à vérifier,
  *                               fiches à revoir, état de la vérification du compte).
  */
 
 const express = require('express');
 const db = require('../db');
+const config = require('../config');
 const { requireAuth, assertSessionActive, EDITOR_ROLES } = require('../middleware/auth');
 const { asyncHandler } = require('../utils/http');
 const { PERIMETRE } = require('./medicaments');
@@ -112,6 +115,95 @@ router.get(
 );
 
 const TYPES = ['alerte_sanitaire', 'pharmacovigilance', 'protocole', 'innovation', 'information'];
+
+const PHOTO_MAX = 5 * 1024 * 1024;
+const TYPES_IMAGE = {
+  ffd8ff: 'image/jpeg',
+  '89504e47': 'image/png',
+  47494638: 'image/gif',
+  52494646: 'image/webp',
+};
+
+/**
+ * Photo d'une actualité relayée depuis le site de sa source, pour que l'application puisse la
+ * garder sur l'appareil (la politique de sécurité du site interdit à la page de télécharger
+ * directement chez un tiers). Seule la photo enregistrée pour cette actualité est relayée, rien
+ * n'est conservé sur le serveur ; le navigateur peut la garder un jour.
+ */
+router.get(
+  '/actualites/:id/photo',
+  asyncHandler(async (req, res) => {
+    const id = Number.parseInt(req.params.id, 10);
+    const [a] = Number.isInteger(id)
+      ? await db.query("SELECT image_url FROM actualites WHERE id = ? AND statut = 'publie'", [id])
+      : [];
+    if (!a?.image_url) return res.status(404).json({ error: 'Photo introuvable' });
+    let reponse;
+    try {
+      reponse = await fetch(a.image_url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MedRefRDC-veille/1.0)' },
+        signal: AbortSignal.timeout(20000),
+      });
+    } catch {
+      return res.status(502).json({ error: 'Source injoignable' });
+    }
+    if (!reponse.ok) return res.status(502).json({ error: 'Photo indisponible à la source' });
+    const corps = Buffer.from(await reponse.arrayBuffer());
+    if (corps.length > PHOTO_MAX) return res.status(502).json({ error: 'Photo trop volumineuse' });
+    const declare = reponse.headers.get('content-type') || '';
+    const signature = corps.subarray(0, 4).toString('hex');
+    const type = /^image\//i.test(declare)
+      ? declare
+      : Object.entries(TYPES_IMAGE).find(([sig]) => signature.startsWith(sig))?.[1];
+    if (!type) return res.status(502).json({ error: 'Pas une image' });
+    res.set({ 'Content-Type': type, 'Cache-Control': 'public, max-age=86400' });
+    return res.send(corps);
+  }),
+);
+
+/**
+ * Lot d'actualités pour la lecture hors connexion : publiées depuis moins de `conservationJours`
+ * et non expirées. Avec `depuis` (date du lot précédent), seules les actualités nouvelles ou
+ * modifiées depuis sont renvoyées ; `ids` liste toutes celles encore valables, pour que
+ * l'appareil efface celles qui ont été retirées. Chaque actualité porte la date jusqu'à laquelle
+ * l'appareil peut la garder (`expire_hors_ligne`).
+ */
+router.get(
+  '/actualites/lot',
+  asyncHandler(async (req, res) => {
+    const jours = config.veille.conservationJours;
+    const depuis =
+      typeof req.query.depuis === 'string' && !Number.isNaN(Date.parse(req.query.depuis))
+        ? new Date(req.query.depuis)
+        : null;
+    const valables = `a.statut = 'publie' AND a.publie_le <= CURDATE()
+       AND a.publie_le >= CURDATE() - INTERVAL ${jours} DAY
+       AND (a.expire_le IS NULL OR a.expire_le >= CURDATE())`;
+    const [lignes, ids] = await Promise.all([
+      db.query(
+        `SELECT a.id, a.type, a.titre, a.resume, a.source_titre, a.source_url, a.image_url, a.zone,
+                a.publie_le, a.expire_le, a.origine, a.veille_source, a.traduction_auto, a.langue_originale,
+                a.titre_original, a.updated_at, p.nom AS pathologie_nom, p.slug AS pathologie_slug,
+                mo.dci AS molecule_dci, mo.slug AS molecule_slug,
+                LEAST(COALESCE(a.expire_le, a.publie_le + INTERVAL ${jours} DAY), a.publie_le + INTERVAL ${jours} DAY)
+                  AS expire_hors_ligne
+           FROM actualites a
+           LEFT JOIN pathologies p ON p.id = a.pathologie_id
+           LEFT JOIN molecules mo ON mo.id = a.molecule_id
+          WHERE ${valables}${depuis ? ' AND a.updated_at > ?' : ''}
+          ORDER BY a.publie_le DESC, a.id DESC`,
+        depuis ? [depuis] : [],
+      ),
+      db.query(`SELECT a.id FROM actualites a WHERE ${valables}`),
+    ]);
+    res.json({
+      data: lignes,
+      ids: ids.map((r) => r.id),
+      genere_le: new Date().toISOString(),
+      conservation_jours: jours,
+    });
+  }),
+);
 const PAR_PAGE = 20;
 
 /** Archive publique : actualités publiées (expirées comprises, signalées), les plus récentes d'abord. */

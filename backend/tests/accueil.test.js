@@ -77,6 +77,65 @@ describe('Accueil (lot D)', () => {
     expect(params).toEqual(['alerte_sanitaire', '%Ituri%']);
   });
 
+  it('lot hors connexion : actualités valables, nouveautés depuis le lot précédent, ids pour effacer', async () => {
+    db.query
+      .mockResolvedValueOnce([{ id: 7, titre: 'Choléra', expire_hors_ligne: '2026-11-20' }])
+      .mockResolvedValueOnce([{ id: 7 }, { id: 8 }]);
+    const res = await request(app).get('/api/actualites/lot').query({ depuis: '2026-10-20T10:00:00.000Z' });
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ ids: [7, 8], conservation_jours: 30 });
+    expect(res.body.data[0].expire_hors_ligne).toBe('2026-11-20');
+    const [sql, params] = db.query.mock.calls[0];
+    expect(sql).toMatch(/updated_at > ?/);
+    expect(sql).toMatch(/INTERVAL 30 DAY/);
+    expect(params[0]).toEqual(new Date('2026-10-20T10:00:00.000Z'));
+  });
+
+  it('photo relayée pour le hors-ligne : image de la source, type reconnu même non déclaré', async () => {
+    db.query.mockResolvedValueOnce([{ image_url: 'https://photos.radiookapi.net/a.jfif' }]);
+    const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
+    const fetchOrigine = global.fetch;
+    global.fetch = jest.fn(async () => ({
+      ok: true,
+      headers: { get: () => 'application/octet-stream' },
+      arrayBuffer: async () => jpeg,
+    }));
+    try {
+      const res = await request(app).get('/api/actualites/12/photo').buffer(true);
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toMatch(/image\/jpeg/);
+      expect(global.fetch).toHaveBeenCalledWith('https://photos.radiookapi.net/a.jfif', expect.any(Object));
+      // Seule la photo enregistrée pour une actualité publiée est relayée
+      expect(db.query.mock.calls[0][0]).toMatch(/statut = 'publie'/);
+    } finally {
+      global.fetch = fetchOrigine;
+    }
+  });
+
+  it('photo relayée : 404 sans photo, 502 si la source ne renvoie pas une image', async () => {
+    db.query.mockResolvedValueOnce([]);
+    expect((await request(app).get('/api/actualites/5/photo')).status).toBe(404);
+    db.query.mockResolvedValueOnce([{ image_url: 'https://x.org/page' }]);
+    const fetchOrigine = global.fetch;
+    global.fetch = jest.fn(async () => ({
+      ok: true,
+      headers: { get: () => 'text/html' },
+      arrayBuffer: async () => Buffer.from('<html>'),
+    }));
+    try {
+      expect((await request(app).get('/api/actualites/6/photo')).status).toBe(502);
+    } finally {
+      global.fetch = fetchOrigine;
+    }
+  });
+
+  it('lot hors connexion : sans date, le lot complet ; date illisible ignorée', async () => {
+    db.query.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+    await request(app).get('/api/actualites/lot').query({ depuis: 'pas une date' });
+    expect(db.query.mock.calls[0][0]).not.toMatch(/updated_at >/);
+    expect(db.query.mock.calls[0][1]).toEqual([]);
+  });
+
   it('actualisation au retour du réseau : relève lancée et bilan renvoyé', async () => {
     const res = await request(app).post('/api/actualites/actualiser');
     expect(res.status).toBe(200);

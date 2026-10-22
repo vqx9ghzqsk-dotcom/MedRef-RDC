@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
 import { useActualisationAuRetour } from '../hooks/useActualisationAuRetour.js';
+import { accueilHorsLigne } from '../../core/offline/actualitesHorsLigne.js';
 import { TYPES_ACTUALITE } from '../../core/labels.js';
 import { BandeauActualites } from '../components/BandeauActualites.jsx';
 import '../../styles/vitrine.css';
@@ -495,6 +496,13 @@ function Actualites({ accueil, erreur }) {
         Relevées automatiquement sur les sources officielles ou publiées par les administrateurs, chacune avec
         sa source ; chaque rubrique défile toute seule
       </p>
+      {accueil?.hors_ligne && (
+        <p className="v-hors-ligne" role="status">
+          Hors connexion : actualités téléchargées le {date(accueil.hors_ligne.telecharge_le)}. Chacune reste
+          lisible {accueil.hors_ligne.conservation_jours || 30} jours après sa publication, puis est effacée
+          de l’appareil.
+        </p>
+      )}
       {rubriques.length > 0 ? (
         <ul className="v-rubriques" data-impair={rubriques.length % 2 === 1 ? '' : undefined}>
           {rubriques.map((r, rang) => (
@@ -605,7 +613,7 @@ const ATOUTS = [
 // ------------------------------------------------------------------ page
 
 export function VitrinePage() {
-  const { api } = useServices();
+  const { api, actualitesHorsLigne } = useServices();
   const { user, logout } = useAuth();
   const [ouvert, setOuvert] = useState(false);
   const [accueil, setAccueil] = useState(null);
@@ -615,15 +623,32 @@ export function VitrinePage() {
   const monte = useRef(true);
   const charger = useCallback(() => {
     if (typeof api.accueil !== 'function') return;
-    api
-      .accueil()
+    // Sans réseau : actualités gardées sur l'appareil (jusqu'à leur expiration)
+    const gardees = async () => {
+      if (!actualitesHorsLigne) return null;
+      const [liste, etat] = await Promise.all([actualitesHorsLigne.lister(), actualitesHorsLigne.etat()]);
+      return liste.length ? accueilHorsLigne(liste, etat) : null;
+    };
+    const horsReseau = typeof navigator !== 'undefined' && navigator.onLine === false;
+    const source = horsReseau
+      ? gardees().then((d) => {
+          if (!d) throw new Error('hors ligne');
+          return d;
+        })
+      : api.accueil().catch((err) =>
+          gardees().then((d) => {
+            if (!d) throw err;
+            return d;
+          }),
+        );
+    source
       .then((d) => {
         if (!monte.current) return;
         setAccueil(d || null);
         setErreur(false);
       })
       .catch(() => monte.current && setErreur(true));
-  }, [api]);
+  }, [api, actualitesHorsLigne]);
 
   useEffect(() => {
     monte.current = true;

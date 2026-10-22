@@ -13,6 +13,8 @@ const VERSION = 'medref-v2';
 const API_CACHE = 'medref-api-v1';
 // Photos des produits : cache d'abord (noms uniques), conservées pour le hors ligne
 const MEDIAS_CACHE = 'medref-medias-v1';
+// Photos des actualités gardées pour la lecture hors connexion (voir core/offline/actualitesHorsLigne.js)
+const PHOTOS_ACTUALITES = 'medref-actualites-photos-v1';
 const DELAI_RESEAU_MS = 5000;
 const API_PRIVEES = ['/api/auth', '/api/prescriptions', '/api/admin', '/api/journal'];
 const SHELL = [
@@ -39,7 +41,9 @@ self.addEventListener('activate', (event) => {
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((k) => ![VERSION, API_CACHE, MEDIAS_CACHE].includes(k)).map((k) => caches.delete(k)),
+          keys
+            .filter((k) => ![VERSION, API_CACHE, MEDIAS_CACHE, PHOTOS_ACTUALITES].includes(k))
+            .map((k) => caches.delete(k)),
         ),
       )
       .then(() => self.clients.claim()),
@@ -50,7 +54,14 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
+  if (url.origin !== self.location.origin) {
+    // Photo d'actualité hébergée par sa source : en ligne, le navigateur la charge lui-même ; hors
+    // ligne, la copie gardée sur l'appareil (core/offline/actualitesHorsLigne.js)
+    if (request.destination === 'image' && self.navigator?.onLine === false) {
+      event.respondWith(photoActualite(request));
+    }
+    return;
+  }
   if (url.pathname.startsWith('/medias/')) {
     event.respondWith(cacheDabord(request));
     return;
@@ -120,4 +131,10 @@ async function cacheDabord(request) {
   const response = await fetch(request);
   if (response.ok) cache.put(request, response.clone());
   return response;
+}
+
+/** Photo d'une actualité gardée pour la lecture hors connexion (rien si elle n'a pas été gardée). */
+async function photoActualite(request) {
+  const gardee = await caches.open(PHOTOS_ACTUALITES).then((c) => c.match(request.url));
+  return gardee || Response.error();
 }

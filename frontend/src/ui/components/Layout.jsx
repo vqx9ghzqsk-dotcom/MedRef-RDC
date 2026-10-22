@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { useServices } from '../context/services.jsx';
 import { useActualisationAuRetour } from '../hooks/useActualisationAuRetour.js';
+import { useSynchroActualites } from '../hooks/useSynchroActualites.js';
 import { useAuth } from '../context/auth.jsx';
 import { useOnline } from '../hooks/useOnline.js';
 import { isEditor } from './AdminForm.jsx';
@@ -57,6 +58,8 @@ function PastilleAlertes() {
 
 export function Layout() {
   const { user, logout } = useAuth();
+  // Lot d'actualités gardé sur l'appareil pour la lecture hors connexion
+  useSynchroActualites();
   const online = useOnline();
   const { pathname } = useLocation();
 

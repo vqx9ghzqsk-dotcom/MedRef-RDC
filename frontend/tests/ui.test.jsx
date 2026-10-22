@@ -442,6 +442,41 @@ describe('Accueil', () => {
     }
   });
 
+  it('fiche du jour : vraie fiche cliquable, raccourcis vers ses onglets, validation et avancement réel', async () => {
+    renderApp('/', {
+      accueil: vi.fn(async () => ({
+        alertes: [],
+        actualites: [],
+        produits: [],
+        fiches_validees: [],
+        fiches_mises_a_jour: [],
+        fiche_du_jour: {
+          nom: 'Paludisme grave',
+          slug: 'paludisme-grave',
+          specialite: 'Infectiologie',
+          resume: 'Paludisme avec signe de gravité : urgence ; artésunate IV',
+          statut: 'valide',
+          valide_par: 'Kabasele',
+          valide_par_profil: 'medecin_specialiste',
+        },
+        totaux: { fiches: 792, fiches_validees: 770 },
+      })),
+    });
+    const carte = await screen.findByRole('region', { name: 'Fiche du jour' });
+    expect(within(carte).getByRole('link', { name: 'Paludisme grave' })).toHaveAttribute(
+      'href',
+      '/pathologies/paludisme-grave',
+    );
+    expect(within(carte).getByText('Paludisme avec signe de gravité')).toBeInTheDocument();
+    expect(within(carte).getByRole('link', { name: 'Traitement' })).toHaveAttribute(
+      'href',
+      '/pathologies/paludisme-grave?onglet=therapeutique',
+    );
+    expect(within(carte).getByText('Validée par Dr Kabasele')).toBeInTheDocument();
+    expect(within(carte).getByRole('progressbar')).toHaveAttribute('aria-valuenow', '97');
+    expect(within(carte).getByText('770 fiches validées sur 792')).toBeInTheDocument();
+  });
+
   it('retour d’internet : actualités rechargées, relève demandée au serveur, puis rechargées encore', async () => {
     const accueil = vi.fn(async () => ({
       alertes: [],

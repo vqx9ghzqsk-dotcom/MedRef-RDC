@@ -57,6 +57,31 @@ const ACTUALITES_PUBLIEES = `SELECT * FROM (
  WHERE t.rang <= ${PAR_TYPE}
  ORDER BY t.publie_le DESC, t.id DESC`;
 
+/**
+ * Fiche du jour de l'accueil : une fiche validée (avec résumé) différente chaque jour, la même
+ * pour tous les visiteurs ce jour-là ; à défaut de fiche validée, une fiche en relecture.
+ */
+async function choisirFicheDuJour(nbValidees, maintenant = Date.now()) {
+  const jour = Math.floor(maintenant / 86400000);
+  const validee = nbValidees > 0;
+  const condition = validee ? "p.statut = 'valide'" : "p.statut <> 'brouillon'";
+  const [{ n } = { n: 0 }] = await db.query(
+    `SELECT COUNT(*) AS n FROM pathologies p WHERE ${condition} AND p.resume IS NOT NULL`,
+  );
+  if (!Number(n)) return null;
+  const [fiche] = await db.query(
+    `SELECT p.nom, p.slug, p.resume, p.statut, p.valide_le, v.nom AS valide_par, v.profil AS valide_par_profil,
+            s.nom AS specialite
+       FROM pathologies p
+       JOIN specialites s ON s.id = p.specialite_id
+       LEFT JOIN users v ON v.id = p.valide_par
+      WHERE ${condition} AND p.resume IS NOT NULL
+      ORDER BY p.id
+      LIMIT 1 OFFSET ${jour % Number(n)}`,
+  );
+  return fiche || null;
+}
+
 router.get(
   '/accueil',
   asyncHandler(async (_req, res) => {
@@ -100,12 +125,14 @@ router.get(
       ),
     ]);
     const t = totaux[0] || {};
+    const ficheDuJour = await choisirFicheDuJour(Number(t.fiches_validees) || 0);
     res.json({
       data: {
         alertes: actualites.filter((a) => a.type === 'alerte_sanitaire' || a.type === 'pharmacovigilance'),
         actualites: actualites.filter((a) => a.type !== 'alerte_sanitaire' && a.type !== 'pharmacovigilance'),
         produits,
         produits_decouverte: decouverte || [],
+        fiche_du_jour: ficheDuJour,
         fiches_validees: validees,
         fiches_mises_a_jour: misesAJour,
         totaux: Object.fromEntries(Object.entries(t).map(([k, v]) => [k, Number(v)])),

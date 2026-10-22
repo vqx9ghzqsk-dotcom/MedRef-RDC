@@ -270,20 +270,89 @@ function Carrousel({ diapos, connecte }) {
   );
 }
 
-function Ecrans({ cote, totaux }) {
+const RACCOURCIS_FICHE = [
+  ['diagnostic', 'Diagnostic'],
+  ['therapeutique', 'Traitement'],
+  ['niveaux', 'Niveaux de soins'],
+];
+
+/** Première idée du résumé (avant les deux-points ou le point-virgule), pour une carte courte. */
+const accroche = (resume) =>
+  court(
+    String(resume || '')
+      .split(/\s:\s|;/)[0]
+      .trim(),
+    130,
+  );
+
+/** « validée par Dr Nom » pour un médecin, sinon le nom du compte. */
+const validateur = (f) =>
+  f.valide_par
+    ? `${/^medecin/.test(f.valide_par_profil || '') && !/^dr\.? /i.test(f.valide_par) ? 'Dr ' : ''}${f.valide_par}`
+    : '';
+
+/**
+ * Fiche du jour : une vraie fiche, différente chaque jour (choisie par le serveur parmi les fiches
+ * validées), avec son résumé, des raccourcis vers ses onglets, son statut de validation et
+ * l'avancement réel de la relecture de l'ensemble des fiches.
+ */
+function FicheDuJour({ fiche, totaux }) {
+  const pct = totaux?.fiches ? Math.round((100 * (totaux.fiches_validees || 0)) / totaux.fiches) : null;
+  if (!fiche) {
+    return (
+      <div className="v-ecran" aria-hidden="true">
+        <p className="v-ecran-titre">Fiche pathologie</p>
+        <p className="v-ecran-gros">Paludisme grave</p>
+        <p>Diagnostic · Traitement · Niveaux de soins</p>
+      </div>
+    );
+  }
+  const lien = `/pathologies/${fiche.slug}`;
+  const validee = fiche.statut === 'valide';
+  return (
+    <section className="v-ecran v-ecran-fiche" aria-label="Fiche du jour">
+      <p className="v-ecran-titre">Fiche du jour{fiche.specialite ? ` · ${fiche.specialite}` : ''}</p>
+      <Link to={lien} className="v-ecran-gros v-ecran-lien">
+        {fiche.nom}
+      </Link>
+      {fiche.resume && <p className="v-ecran-resume">{accroche(fiche.resume)}</p>}
+      <p className="v-ecran-onglets">
+        {RACCOURCIS_FICHE.map(([onglet, libelle]) => (
+          <Link key={onglet} to={`${lien}?onglet=${onglet}`}>
+            {libelle}
+          </Link>
+        ))}
+      </p>
+      <span className={`v-ecran-tag${validee ? ' v-ecran-tag-ok' : ''}`}>
+        {validee ? `Validée${fiche.valide_par ? ` par ${validateur(fiche)}` : ''}` : 'En relecture médicale'}
+      </span>
+      {pct !== null && (
+        <div className="v-ecran-avancement">
+          <div
+            className="v-ecran-barre"
+            role="progressbar"
+            aria-label="Fiches validées par un médecin"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={pct}
+          >
+            <i style={{ width: `${pct}%` }} />
+          </div>
+          <p>
+            {nombre(totaux.fiches_validees)} fiches validées sur {nombre(totaux.fiches)}
+          </p>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function Ecrans({ cote, totaux, fiche }) {
   if (cote === 'gauche') {
     return (
-      <div className="v-ecrans" aria-hidden="true">
-        <div className="v-ecran">
-          <p className="v-ecran-titre">Fiche pathologie</p>
-          <p className="v-ecran-gros">Paludisme grave</p>
-          <p>Diagnostic · Traitement · Niveaux de soins</p>
-          <div className="v-ecran-barre">
-            <i style={{ width: '72%' }} />
-          </div>
-          <span className="v-ecran-tag">Relecture médicale</span>
-        </div>
-        <div className="v-ecran">
+      <div className="v-ecrans">
+        <FicheDuJour fiche={fiche} totaux={totaux} />
+        <div className="v-ecran" aria-hidden="true">
           <p className="v-ecran-titre">Hors ligne</p>
           <p className="v-ecran-gros">
             {totaux?.fiches ? `${nombre(totaux.fiches)} fiches` : 'Toutes les fiches'}
@@ -740,7 +809,7 @@ export function VitrinePage() {
         </div>
 
         <div className="v-heros-corps">
-          <Ecrans cote="gauche" totaux={t} />
+          <Ecrans cote="gauche" totaux={t} fiche={accueil?.fiche_du_jour} />
           <Carrousel diapos={diapos} connecte={Boolean(user)} />
           <Ecrans cote="droite" totaux={t} />
         </div>

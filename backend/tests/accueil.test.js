@@ -31,7 +31,12 @@ describe('Accueil (lot D)', () => {
       .mockResolvedValueOnce([
         { fiches: '792', fiches_validees: '0', molecules: '500', produits: '1200', amm: '6352' },
       ])
-      .mockResolvedValueOnce([{ id: 4, nom_commercial: 'Coartem', photo_url: '/m/c.webp' }]);
+      .mockResolvedValueOnce([{ id: 4, nom_commercial: 'Coartem', photo_url: '/m/c.webp' }])
+      // Fiche du jour : aucune fiche validée ici, donc une fiche en relecture
+      .mockResolvedValueOnce([{ n: 3 }])
+      .mockResolvedValueOnce([
+        { nom: 'Rougeole', slug: 'rougeole', statut: 'a_valider', specialite: 'Pédiatrie' },
+      ]);
     const res = await request(app).get('/api/accueil');
     expect(res.status).toBe(200);
     expect(res.body.data.alertes.map((a) => a.id)).toEqual([1]);
@@ -58,6 +63,9 @@ describe('Accueil (lot D)', () => {
       /created_at < CURDATE\(\) - INTERVAL 7 DAY[\s\S]*ORDER BY RAND\(\)/,
     );
     expect(res.body.data.produits_decouverte.map((p) => p.nom_commercial)).toEqual(['Coartem']);
+    expect(res.body.data.fiche_du_jour).toMatchObject({ slug: 'rougeole', specialite: 'Pédiatrie' });
+    expect(db.query.mock.calls[6][0]).toMatch(/statut <> 'brouillon'/);
+    expect(db.query.mock.calls[7][0]).toMatch(/OFFSET [0-2]$/m);
     expect(db.query.mock.calls[2][0]).toMatch(/valide_par_profil/);
   });
 

@@ -34,6 +34,12 @@ const PHOTOS = [
     ref: 'acorep:nattermann-cie-gmbh-nattermann-allee:toplexil:oxomemazine-benzoate-de-sodium-glycerol-acide-c:33f2ad7b569d',
     photo: '/medias/produits/sanofi/sanofi-toplexil-5cc600bb.webp',
   },
+  // Socomol injectable (répertoire AMM) : boîte tirée de l'image « Famille Socomol » du Dr Mingalu
+  // (21 octobre 2026), qui a aussi remplacé les photos de la gamme dans le catalogue PrincePharma
+  {
+    ref: 'acorep:prince-pharma:socomol:paracetamol',
+    photo: '/medias/produits/princepharma/princepharma-socomol-injectable-b596b365.webp',
+  },
   // Fiche de départ (sans référence de catalogue) : comprimés, suspension et suppositoires
   { nom: 'Doliprane', photo: '/medias/produits/sanofi/sanofi-doliprane-500-56ffc1c6.webp' },
 ];

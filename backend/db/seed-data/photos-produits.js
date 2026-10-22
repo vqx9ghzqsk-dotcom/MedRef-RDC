@@ -17,6 +17,9 @@
 const SOURCE = 'Photos de produits fournies par le Dr Mingalu (20 octobre 2026)';
 const SOURCE_PRODUIT = `${SOURCE} — composition lue sur la boîte (présentation française) ; AMM RDC et présentation locale à vérifier.`;
 
+const SOURCE_VIATRIS =
+  'Photos de boîtes fournies par le Dr Mingalu (21 octobre 2026) — composition lue sur la boîte (présentation européenne) ; AMM RDC et présentation locale à vérifier.';
+
 const PHOTOS = [
   { ref: 'repertoire-aspegic', photo: '/medias/produits/sanofi/sanofi-aspegic-05b713b3.webp' },
   { ref: 'repertoire-bronchokod', photo: '/medias/produits/sanofi/sanofi-bronchokod-2177d1bb.webp' },
@@ -163,6 +166,7 @@ const PHOTOS = [
     photo: '/medias/produits/pfizer/pfizer-medrol-24e5b052.webp',
   },
   { nom: 'Zithromax', photo: '/medias/produits/pfizer/pfizer-zithromax-9ba9877e.webp' },
+  { ref: 'repertoire-diprosalic', photo: '/medias/produits/organon/organon-diprosalic-4d245f2a.webp' },
 ];
 
 const P = (ref, nom, dci, forme, presentation, classe, photo) => ({
@@ -286,6 +290,59 @@ const CATALOGUE = [
         'Antihistaminiques H1',
         'sanofi-allervi-b1b8e5d1.webp',
       ),
+    ],
+  },
+  // Génériques Viatris dont le Dr Mingalu a fourni les boîtes (21 octobre 2026)
+  {
+    firme: {
+      nom: 'Viatris',
+      slug: 'viatris',
+      pays: 'États-Unis',
+      site_web: null,
+      source: SOURCE_VIATRIS,
+      ajoute_par_ia: false,
+    },
+    produits: [
+      {
+        ref: 'photo-pregabalin-viatris',
+        nom: 'Pregabalin Viatris',
+        dci: 'Prégabaline',
+        forme: 'Gélule',
+        presentation: '25, 50, 75, 150 et 300 mg',
+        classe: 'Antiépileptiques et douleurs neuropathiques',
+        photo: '/medias/produits/viatris/viatris-pregabalin-viatris-8bcd63ec.webp',
+        source: SOURCE_VIATRIS,
+      },
+      {
+        ref: 'photo-tixocortol-viatris',
+        nom: 'Tixocortol Viatris',
+        dci: 'Tixocortol',
+        forme: 'Suspension nasale',
+        presentation: '1 %, flacon',
+        classe: 'Corticoïdes nasaux',
+        photo: '/medias/produits/viatris/viatris-tixocortol-viatris-2dbae2e5.webp',
+        source: SOURCE_VIATRIS,
+      },
+      {
+        ref: 'photo-celecoxib-viatris',
+        nom: 'Celecoxib Viatris',
+        dci: 'Célécoxib',
+        forme: 'Gélule',
+        presentation: '200 mg, boîte de 30',
+        classe: 'Anti-inflammatoires non stéroïdiens',
+        photo: '/medias/produits/viatris/viatris-celecoxib-viatris-1c12440a.webp',
+        source: SOURCE_VIATRIS,
+      },
+      {
+        ref: 'photo-ibuprofen-viatris',
+        nom: 'Ibuprofen Viatris',
+        dci: 'Ibuprofène',
+        forme: 'Comprimé pelliculé',
+        presentation: '400 mg, boîte de 20',
+        classe: 'Anti-inflammatoires non stéroïdiens',
+        photo: '/medias/produits/viatris/viatris-ibuprofen-viatris-c2a6bb6f.webp',
+        source: SOURCE_VIATRIS,
+      },
     ],
   },
 ];

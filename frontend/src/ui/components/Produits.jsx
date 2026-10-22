@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
@@ -44,6 +45,9 @@ export function PhotoProduit({ produit, grande = false }) {
 /**
  * Fiche pharmacologique d'un produit, en panneau latéral (plein écran sur téléphone).
  * Échap, le bouton Fermer ou un clic sur le fond referment le panneau.
+ * Rendu directement dans <body> : le flou de verre de la zone de contenu (backdrop-filter) ferait
+ * sinon du panneau « fixe » un enfant de cette zone, plus haut que l'écran et impossible à faire
+ * défiler jusqu'en bas.
  */
 export function ProduitPanneau({ id, onClose, onOuvrir }) {
   const { api } = useServices();
@@ -63,7 +67,7 @@ export function ProduitPanneau({ id, onClose, onOuvrir }) {
     };
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className="panneau-fond" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <aside className="panneau" role="dialog" aria-modal="true" aria-labelledby={titreId}>
         <div className="panneau-barre">
@@ -117,7 +121,8 @@ export function ProduitPanneau({ id, onClose, onOuvrir }) {
           )}
         </AsyncView>
       </aside>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

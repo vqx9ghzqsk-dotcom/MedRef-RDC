@@ -117,6 +117,9 @@ describeDb('Intégration MySQL', () => {
     // … sauf les produits ajoutés par l'IA (catalogue Organon) : AMM obligatoire, photo ou non
     const marvelon = (await request(app).get('/api/medicaments?q=Marvelon')).body.data;
     expect(marvelon.filter((m) => m.operateur === 'Organon')).toEqual([]);
+    // … sauf quand le Dr Mingalu a fourni la photo de la boîte (photo_fournie)
+    const singulair = (await request(app).get('/api/medicaments?q=Singulair')).body.data;
+    expect(singulair.some((m) => m.operateur === 'Organon' && m.photo_url)).toBe(true);
     // Entrées par domaine et recherche instantanée dans le même périmètre
     const domaines = (await request(app).get('/api/medicaments/domaines')).body.data;
     const palu = domaines.groupes.find((g) => g.nom === 'Antipaludiques');

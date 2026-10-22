@@ -186,21 +186,24 @@ async function retirerLiensIncompatibles(conn, index) {
 
 /**
  * Photos fournies pour des produits déjà en base : par référence de catalogue, ou par nom pour une
- * fiche de départ sans référence. Une photo déjà présente n'est jamais remplacée.
+ * fiche de départ sans référence. Une photo déjà présente n'est jamais remplacée. Le produit dont la
+ * photo est celle de la liste est marqué `photo_fournie` (affiché même sans AMM relevée).
  */
 async function attribuerPhotos(conn, photos) {
   let attribuees = 0;
   for (const p of photos) {
-    const [r] = p.ref
-      ? await conn.execute(
-          'UPDATE medicaments SET photo_url = ? WHERE catalogue_ref = ? AND photo_url IS NULL',
-          [p.photo, p.ref],
-        )
-      : await conn.execute(
-          'UPDATE medicaments SET photo_url = ? WHERE nom_commercial = ? AND catalogue_ref IS NULL AND photo_url IS NULL',
-          [p.photo, p.nom],
-        );
+    const [cible, valeur] = p.ref
+      ? ['catalogue_ref = ?', p.ref]
+      : ['nom_commercial = ? AND catalogue_ref IS NULL', p.nom];
+    const [r] = await conn.execute(
+      `UPDATE medicaments SET photo_url = ? WHERE ${cible} AND photo_url IS NULL`,
+      [p.photo, valeur],
+    );
     attribuees += r.affectedRows;
+    await conn.execute(`UPDATE medicaments SET photo_fournie = 1 WHERE ${cible} AND photo_url = ?`, [
+      valeur,
+      p.photo,
+    ]);
   }
   return { attribuees };
 }

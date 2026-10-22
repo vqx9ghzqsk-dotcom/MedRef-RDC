@@ -148,4 +148,16 @@ describe('photos de produits fournies par le médecin', () => {
     // Chaque photo attribuée vise un produit précis : une référence, ou un nom de fiche de départ
     for (const p of PHOTOS) expect(Boolean(p.ref) !== Boolean(p.nom)).toBe(true);
   });
+
+  it('boîtes Organon fournies : même photo que le catalogue, pour que le produit soit marqué « photo fournie »', () => {
+    const organon = new Map(
+      data.catalogues
+        .filter((c) => c.firme.nom === 'Organon')
+        .flatMap((c) => c.produits)
+        .map((p) => [p.ref, p.photo]),
+    );
+    const fournies = PHOTOS.filter((p) => p.ref && p.ref.startsWith('organon-'));
+    expect(fournies.length).toBeGreaterThanOrEqual(15);
+    for (const p of fournies) expect(organon.get(p.ref)).toBe(p.photo);
+  });
 });

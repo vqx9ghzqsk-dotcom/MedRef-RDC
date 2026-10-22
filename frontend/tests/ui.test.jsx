@@ -1215,6 +1215,8 @@ describe('Produits des firmes sur la fiche molécule', () => {
 
     await user.click(within(galerie).getByRole('button', { name: 'Amidol sirop' }));
     const panneau = await screen.findByRole('dialog', { name: 'Amidol sirop' });
+    // Rendu dans <body> : le flou de la zone de contenu ne doit pas en faire le repère du panneau fixe
+    expect(panneau.closest('.panneau-fond').parentElement).toBe(document.body);
     expect(medicament).toHaveBeenCalledWith(2);
     expect(within(panneau).getByText('Adapté à l’enfant')).toBeInTheDocument();
     await user.click(within(panneau).getByRole('button', { name: 'Fermer' }));

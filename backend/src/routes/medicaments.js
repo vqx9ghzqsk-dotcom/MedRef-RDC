@@ -61,9 +61,10 @@ const AMM_EXISTE = 'EXISTS (SELECT 1 FROM autorisations_amm a WHERE a.medicament
  * Périmètre de la page Médicaments : médicaments des opérateurs retenus, autorisés en RDC
  * (AMM ACOREP) ou présentés avec leur photo dans le catalogue fourni par une firme (sans
  * condition d'AMM). Les produits ajoutés par l'IA (`ajoute_par_ia`, ex. Organon) suivent la
- * règle des produits sans photo : AMM obligatoire. Cosmétiques, dispositifs et compléments restent en base, hors page.
+ * règle des produits sans photo (AMM obligatoire), sauf quand le Dr Mingalu a fourni la photo de
+ * leur boîte (`photo_fournie`). Cosmétiques, dispositifs et compléments restent en base, hors page.
  */
-const PERIMETRE = `m.nature = 'medicament' AND (${AMM_EXISTE} OR (m.photo_url IS NOT NULL AND m.ajoute_par_ia = 0)) AND ${OPERATEUR_VISIBLE}`;
+const PERIMETRE = `m.nature = 'medicament' AND (${AMM_EXISTE} OR (m.photo_url IS NOT NULL AND (m.ajoute_par_ia = 0 OR m.photo_fournie = 1))) AND ${OPERATEUR_VISIBLE}`;
 const EXTERNES_COLS =
   'fe.molecule_id, fe.source, fe.nom, fe.classe, fe.mecanisme, fe.indications, fe.posologie, fe.precautions, fe.a_valider';
 

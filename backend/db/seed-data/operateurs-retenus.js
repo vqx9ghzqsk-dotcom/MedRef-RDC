@@ -109,6 +109,10 @@ const OPERATEURS_RETENUS = [
   // Retenue le 21 octobre 2026 pour les seuls produits utiles aux fiches : Acupan (néfopam,
   // fiche « Douleur postopératoire ») ; Ultra-Levure (Saccharomyces boulardii) n'est cité par aucune fiche
   { nom: 'Biocodex', motif: /^biocodex$/, marques: ['Acupan'] },
+  // Cetafor (ceftriaxone, Dafra Pharma) : photo fournie par le Dr Mingalu le 21 octobre 2026 ;
+  // AMM au nom de ses deux importateurs
+  { nom: 'Energia', motif: /^energia$/, marques: ['Cetafor'] },
+  { nom: 'Bilim', motif: /^bilim$/, marques: ['Cetafor'] },
 ];
 
 /**

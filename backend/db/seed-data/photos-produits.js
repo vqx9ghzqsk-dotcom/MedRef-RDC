@@ -167,6 +167,38 @@ const PHOTOS = [
   },
   { nom: 'Zithromax', photo: '/medias/produits/pfizer/pfizer-zithromax-9ba9877e.webp' },
   { ref: 'repertoire-diprosalic', photo: '/medias/produits/organon/organon-diprosalic-4d245f2a.webp' },
+  // Organon : boîtes fournies par le Dr Mingalu (21 octobre 2026) à la place des étiquettes du catalogue ;
+  // la photo est déjà posée par catalogues/organon.json, cette liste marque le produit « photo fournie »
+  {
+    ref: 'organon-asmanex-twisthaler-219ecfb5',
+    photo: '/medias/produits/organon/organon-asmanex-twisthaler-eef7efee.webp',
+  },
+  {
+    ref: 'organon-celestone-soluspan-d39ed53c',
+    photo: '/medias/produits/organon/organon-celestone-soluspan-c59cb964.webp',
+  },
+  {
+    ref: 'organon-clarinex-d-12-heures-60bc4c9b',
+    photo: '/medias/produits/organon/organon-clarinex-d-12-heures-91028adf.webp',
+  },
+  { ref: 'organon-cozaar-42ad1e35', photo: '/medias/produits/organon/organon-cozaar-fd035f9d.webp' },
+  { ref: 'organon-diprolene-1cc0d277', photo: '/medias/produits/organon/organon-diprolene-05aafb69.webp' },
+  { ref: 'organon-dulera-5b3cc101', photo: '/medias/produits/organon/organon-dulera-dd222469.webp' },
+  {
+    ref: 'organon-fosamax-plus-d-2c4c8ce8',
+    photo: '/medias/produits/organon/organon-fosamax-plus-d-d87d36eb.webp',
+  },
+  {
+    ref: 'organon-ganirelix-acetate-278b22a6',
+    photo: '/medias/produits/organon/organon-ganirelix-acetate-1c995c8c.webp',
+  },
+  { ref: 'organon-hyzaar-5524ea20', photo: '/medias/produits/organon/organon-hyzaar-6ed26bb9.webp' },
+  { ref: 'organon-sinemet-09f53e45', photo: '/medias/produits/organon/organon-sinemet-a3ad2d60.webp' },
+  { ref: 'organon-singulair-a746e6f8', photo: '/medias/produits/organon/organon-singulair-bf2cac26.webp' },
+  { ref: 'organon-tofidence-6a131220', photo: '/medias/produits/organon/organon-tofidence-85172eb8.webp' },
+  { ref: 'organon-vytorin-84db1693', photo: '/medias/produits/organon/organon-vytorin-6e921d85.webp' },
+  { ref: 'organon-zetia-70bdbdb1', photo: '/medias/produits/organon/organon-zetia-88f598f0.webp' },
+  { ref: 'organon-zocor-7bf3c8c0', photo: '/medias/produits/organon/organon-zocor-bc013e1e.webp' },
 ];
 
 const P = (ref, nom, dci, forme, presentation, classe, photo) => ({

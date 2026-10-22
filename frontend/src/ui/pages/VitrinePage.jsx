@@ -157,19 +157,17 @@ function carteActualite(a) {
 }
 
 /**
- * Nouveautés de MedRef RDC montrées sur l'accueil : les derniers produits en photo, une carte par
- * produit (chacune avec sa photo). Les fiches validées et mises à jour, sans photo possible, sont
- * présentées dans Mon espace.
+ * Cartes de produits pour l'accueil, une par produit avec sa photo (marques en double écartées) :
+ * les nouveaux produits (ajoutés ces derniers jours) et des produits de la base tirés au hasard.
  */
-function cartesNouveautes(accueil) {
+function cartesProduits(liste, etiquette) {
   const vus = new Set();
-  return (accueil.produits || [])
+  return (liste || [])
     .filter((p) => p.photo_url && !vus.has(p.nom_commercial) && vus.add(p.nom_commercial))
-    .slice(0, 6)
     .map((p) => ({
       cle: `produit-${p.id}`,
       classe: 'v-actu-produits',
-      etiquette: 'Produit en photo',
+      etiquette,
       titre: [p.nom_commercial, p.operateur].filter(Boolean).join(' · '),
       lien: `/medicaments/${p.id}`,
       image: p.photo_url,
@@ -194,15 +192,19 @@ export function rubriquesActualites(accueil) {
     classe: CLASSES_TYPE[r.type],
     cartes: toutes.filter((a) => a.type === r.type).map(carteActualite),
   })).filter((r) => r.cartes.length);
-  const nouveautes = cartesNouveautes(accueil);
-  if (nouveautes.length) {
-    rubriques.push({
+  const rubriquesProduits = [
+    {
       cle: 'medref',
       titre: 'Nouveaux produits en photo',
-      classe: 'v-actu-fiches',
-      cartes: nouveautes,
-    });
-  }
+      cartes: cartesProduits(accueil.produits, 'Nouveau produit'),
+    },
+    {
+      cle: 'decouverte',
+      titre: 'À découvrir dans la base',
+      cartes: cartesProduits(accueil.produits_decouverte, 'Produit de la base'),
+    },
+  ];
+  for (const r of rubriquesProduits) if (r.cartes.length) rubriques.push({ ...r, classe: 'v-actu-fiches' });
   return rubriques;
 }
 

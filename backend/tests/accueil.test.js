@@ -30,7 +30,8 @@ describe('Accueil (lot D)', () => {
       .mockResolvedValueOnce([{ nom: 'Rougeole', slug: 'rougeole', statut: 'a_valider' }])
       .mockResolvedValueOnce([
         { fiches: '792', fiches_validees: '0', molecules: '500', produits: '1200', amm: '6352' },
-      ]);
+      ])
+      .mockResolvedValueOnce([{ id: 4, nom_commercial: 'Coartem', photo_url: '/m/c.webp' }]);
     const res = await request(app).get('/api/accueil');
     expect(res.status).toBe(200);
     expect(res.body.data.alertes.map((a) => a.id)).toEqual([1]);
@@ -51,6 +52,12 @@ describe('Accueil (lot D)', () => {
     expect(db.query.mock.calls[1][0]).toMatch(/m.nature = 'medicament'/);
     // Seuls les produits avec photo, et le titre du médecin qui a validé
     expect(db.query.mock.calls[1][0]).toMatch(/photo_url IS NOT NULL/);
+    // Nouveaux produits : ajoutés ces derniers jours ; découverte : produits plus anciens au hasard
+    expect(db.query.mock.calls[1][0]).toMatch(/created_at >= CURDATE\(\) - INTERVAL 7 DAY/);
+    expect(db.query.mock.calls[5][0]).toMatch(
+      /created_at < CURDATE\(\) - INTERVAL 7 DAY[\s\S]*ORDER BY RAND\(\)/,
+    );
+    expect(res.body.data.produits_decouverte.map((p) => p.nom_commercial)).toEqual(['Coartem']);
     expect(db.query.mock.calls[2][0]).toMatch(/valide_par_profil/);
   });
 

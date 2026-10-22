@@ -337,6 +337,16 @@ describe('Accueil', () => {
           { nom: 'Rougeole', slug: 'rougeole', valide_le: '2026-10-16', valide_par: 'Kabasele' },
         ],
         fiches_mises_a_jour: [{ nom: 'Choléra', slug: 'cholera', updated_at: '2026-10-19' }],
+        produits_decouverte: [
+          {
+            id: 20,
+            nom_commercial: 'Coartem',
+            dci: 'Artéméther + luméfantrine',
+            operateur: 'Novartis',
+            photo_url: '/m/c.webp',
+          },
+          { id: 21, nom_commercial: 'Sans photo', dci: 'X', operateur: 'Y' },
+        ],
         totaux: { fiches: 792, fiches_validees: 2 },
       })),
     });
@@ -346,6 +356,13 @@ describe('Accueil', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Nouveaux produits en photo : actualité suivante' }));
     expect(screen.getByRole('link', { name: 'Xyzall · UCB' })).toHaveAttribute('href', '/medicaments/10');
+    // Produits de la base tirés au hasard par le serveur : rubrique à part, photo obligatoire
+    expect(screen.getByRole('heading', { name: 'À découvrir dans la base' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Coartem · Novartis' })).toHaveAttribute(
+      'href',
+      '/medicaments/20',
+    );
+    expect(screen.queryByText('Sans photo · Y')).toBeNull();
     // Fiches validées et mises à jour : sans photo possible, présentées dans Mon espace
     expect(screen.queryByRole('link', { name: 'Paludisme grave' })).toBeNull();
     expect(screen.queryByRole('link', { name: 'Choléra' })).toBeNull();

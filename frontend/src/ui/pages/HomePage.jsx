@@ -165,7 +165,7 @@ function Nouveautes({ accueil }) {
           <h3>Produits ajoutés au catalogue</h3>
           {produits.length ? (
             <ul className="nouv-liste">
-              {produits.map((p) => (
+              {produits.slice(0, 8).map((p) => (
                 <li key={p.id}>
                   <Link to={`/medicaments/${p.id}`}>{p.nom_commercial}</Link>
                   <span className="row-sub">

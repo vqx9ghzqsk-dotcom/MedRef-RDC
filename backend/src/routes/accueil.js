@@ -20,6 +20,15 @@ const veille = require('../services/veille');
 const router = express.Router();
 
 const LIMITE = 8;
+// Un produit est « nouveau » pendant les jours qui suivent son ajout à la base
+const NOUVEAUTE_JOURS = 7;
+const NOUVEAUX_MAX = 20;
+// Produits de la base présentés au hasard sur l'accueil, renouvelés à chaque visite
+const DECOUVERTE = 12;
+const PRODUIT_ACCUEIL = `SELECT m.id, m.nom_commercial, m.dci, m.forme, m.dosage, m.photo_url, m.created_at,
+                COALESCE(o.nom_affiche, o.nom) AS operateur
+           FROM medicaments m LEFT JOIN operateurs o ON o.id = m.operateur_id
+          WHERE ${PERIMETRE} AND m.photo_url IS NOT NULL`;
 
 /**
  * Actualités publiées et non expirées : les 10 plus récentes de chaque type, pour que chaque
@@ -48,16 +57,13 @@ const ACTUALITES_PUBLIEES = `SELECT * FROM (
 router.get(
   '/accueil',
   asyncHandler(async (_req, res) => {
-    const [actualites, produits, validees, misesAJour, totaux] = await Promise.all([
+    const [actualites, produits, validees, misesAJour, totaux, decouverte] = await Promise.all([
       db.query(ACTUALITES_PUBLIEES),
-      // Produits avec photo, les derniers modifiés d'abord : une photo ajoutée les fait remonter
+      // Nouveaux produits : ajoutés à la base ces derniers jours, avec photo, les plus récents d'abord
       db.query(
-        `SELECT m.id, m.nom_commercial, m.dci, m.forme, m.dosage, m.photo_url, m.created_at,
-                COALESCE(o.nom_affiche, o.nom) AS operateur
-           FROM medicaments m LEFT JOIN operateurs o ON o.id = m.operateur_id
-          WHERE ${PERIMETRE} AND m.photo_url IS NOT NULL
-          ORDER BY m.updated_at DESC, m.id DESC
-          LIMIT ${LIMITE}`,
+        `${PRODUIT_ACCUEIL} AND m.created_at >= CURDATE() - INTERVAL ${NOUVEAUTE_JOURS} DAY
+          ORDER BY m.created_at DESC, m.id DESC
+          LIMIT ${NOUVEAUX_MAX}`,
       ),
       db.query(
         `SELECT p.nom, p.slug, p.valide_le, v.nom AS valide_par, v.profil AS valide_par_profil,
@@ -83,6 +89,12 @@ router.get(
                 (SELECT COUNT(*) FROM medicaments m WHERE ${PERIMETRE}) AS produits,
                 (SELECT COUNT(*) FROM autorisations_amm) AS amm`,
       ),
+      // Produits de la base au hasard (hors nouveautés), différents à chaque visite
+      db.query(
+        `${PRODUIT_ACCUEIL} AND m.created_at < CURDATE() - INTERVAL ${NOUVEAUTE_JOURS} DAY
+          ORDER BY RAND()
+          LIMIT ${DECOUVERTE}`,
+      ),
     ]);
     const t = totaux[0] || {};
     res.json({
@@ -90,6 +102,7 @@ router.get(
         alertes: actualites.filter((a) => a.type === 'alerte_sanitaire' || a.type === 'pharmacovigilance'),
         actualites: actualites.filter((a) => a.type !== 'alerte_sanitaire' && a.type !== 'pharmacovigilance'),
         produits,
+        produits_decouverte: decouverte || [],
         fiches_validees: validees,
         fiches_mises_a_jour: misesAJour,
         totaux: Object.fromEntries(Object.entries(t).map(([k, v]) => [k, Number(v)])),

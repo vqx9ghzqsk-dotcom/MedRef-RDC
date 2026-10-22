@@ -82,6 +82,65 @@ async function choisirFicheDuJour(nbValidees, maintenant = Date.now()) {
   return fiche || null;
 }
 
+/**
+ * Calcul de dose du jour : un médicament pédiatrique courant en RDC, différent chaque jour, dont
+ * la posologie de l'enfant au poids est structurée dans sa fiche (dose par kg, maximum, prises).
+ * Liste choisie pour des doses simples (une dose par prise, sans dose de charge) ; l'indication
+ * précise la ligne de posologie quand la molécule en a plusieurs.
+ */
+const CALCULS_DU_JOUR = [
+  { slug: 'paracetamol' },
+  { slug: 'amoxicilline', indication: 'Pneumonie (PCIME)' },
+  { slug: 'artesunate', indication: 'Paludisme grave' },
+  { slug: 'ibuprofene' },
+  { slug: 'ceftriaxone', indication: 'Autres infections graves' },
+  { slug: 'azithromycine', indication: 'Choléra' },
+  { slug: 'diazepam', voie: 'Intrarectale' },
+  { slug: 'cotrimoxazole', indication: 'Prophylaxie (VIH)' },
+  { slug: 'metronidazole' },
+  { slug: 'ampicilline' },
+  { slug: 'gentamicine' },
+  { slug: 'prednisolone', indication: 'Exacerbation d’asthme' },
+];
+// Enfant d'environ 3 à 4 ans : sous 20 kg (seuil de l'artésunate IV à 3 mg/kg)
+const POIDS_EXEMPLE = 15;
+
+async function choisirCalculDuJour(maintenant = Date.now()) {
+  const jour = Math.floor(maintenant / 86400000);
+  // À partir du choix du jour, le premier médicament de la liste dont la posologie est en base
+  for (let i = 0; i < CALCULS_DU_JOUR.length; i += 1) {
+    const c = CALCULS_DU_JOUR[(jour + i) % CALCULS_DU_JOUR.length];
+    const conditions = ['mo.slug = ?', "p.population = 'enfant'", 'p.dose_par_kg IS NOT NULL'];
+    const params = [c.slug];
+    if (c.indication) {
+      conditions.push('p.indication = ?');
+      params.push(c.indication);
+    }
+    if (c.voie) {
+      conditions.push('p.voie = ?');
+      params.push(c.voie);
+    }
+    const [p] = await db.query(
+      `SELECT mo.dci, mo.slug, p.indication, p.voie, p.dose_texte, p.dose_par_kg, p.dose_max, p.dose_base,
+              p.unite, p.frequence, p.prises_par_jour, p.structure_a_valider
+         FROM molecule_posologies p JOIN molecules mo ON mo.id = p.molecule_id
+        WHERE ${conditions.join(' AND ')}
+        ORDER BY p.ordre, p.id
+        LIMIT 1`,
+      params,
+    );
+    if (p) {
+      return {
+        ...p,
+        dose_par_kg: Number(p.dose_par_kg),
+        dose_max: p.dose_max === null ? null : Number(p.dose_max),
+        poids_exemple: POIDS_EXEMPLE,
+      };
+    }
+  }
+  return null;
+}
+
 router.get(
   '/accueil',
   asyncHandler(async (_req, res) => {
@@ -126,6 +185,7 @@ router.get(
     ]);
     const t = totaux[0] || {};
     const ficheDuJour = await choisirFicheDuJour(Number(t.fiches_validees) || 0);
+    const calculDuJour = await choisirCalculDuJour();
     res.json({
       data: {
         alertes: actualites.filter((a) => a.type === 'alerte_sanitaire' || a.type === 'pharmacovigilance'),
@@ -133,6 +193,7 @@ router.get(
         produits,
         produits_decouverte: decouverte || [],
         fiche_du_jour: ficheDuJour,
+        calcul_du_jour: calculDuJour,
         fiches_validees: validees,
         fiches_mises_a_jour: misesAJour,
         totaux: Object.fromEntries(Object.entries(t).map(([k, v]) => [k, Number(v)])),

@@ -4,6 +4,7 @@ import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
 import { useActualisationAuRetour } from '../hooks/useActualisationAuRetour.js';
 import { accueilHorsLigne } from '../../core/offline/actualitesHorsLigne.js';
+import { calculerDose } from '../../core/posologie.js';
 import { TYPES_ACTUALITE } from '../../core/labels.js';
 import { BandeauActualites } from '../components/BandeauActualites.jsx';
 import '../../styles/vitrine.css';
@@ -347,7 +348,76 @@ function FicheDuJour({ fiche, totaux }) {
   );
 }
 
-function Ecrans({ cote, totaux, fiche }) {
+const nombreFr = (n) => Number(n).toLocaleString('fr-FR', { maximumFractionDigits: 2 });
+
+/**
+ * Calcul de dose du jour : un médicament pédiatrique courant, différent chaque jour, calculé pour un
+ * enfant de 15 kg à partir de la posologie structurée de sa fiche (dose par kg, maximum, prises),
+ * avec un lien vers la molécule pour calculer à un autre poids.
+ */
+function CalculDuJour({ calcul }) {
+  if (!calcul) {
+    return (
+      <div className="v-ecran" aria-hidden="true">
+        <p className="v-ecran-titre">Calcul de dose</p>
+        <p className="v-ecran-gros">Dose au poids</p>
+        <p>Calculée à partir de la posologie de chaque molécule</p>
+      </div>
+    );
+  }
+  const poids = calcul.poids_exemple;
+  const dose = calculerDose(calcul, poids);
+  if (!dose) return null;
+  const parJour = calcul.dose_base === 'par_jour';
+  const prises = calcul.prises_par_jour;
+  const lien = `/molecules/${calcul.slug}`;
+  const precision = [calcul.indication, calcul.voie].filter(Boolean).join(' · ');
+  return (
+    <section className="v-ecran v-ecran-calcul" aria-label="Calcul de dose du jour">
+      <p className="v-ecran-titre">Calcul de dose du jour</p>
+      <Link to={lien} className="v-ecran-gros v-ecran-lien">
+        {calcul.dci}
+      </Link>
+      {precision && <p>{precision}</p>}
+      <p className="v-ecran-poids">Enfant de {nombreFr(poids)} kg</p>
+      <p className="v-ecran-calc">
+        <span>
+          {nombreFr(calcul.dose_par_kg)} {calcul.unite}/kg{parJour ? '/j' : ''} × {nombreFr(poids)} kg
+        </span>
+        <b>
+          {dose.affichage}
+          {parJour ? ' par jour' : ''}
+        </b>
+      </p>
+      {dose.plafonnee && (
+        <p className="v-ecran-note">
+          Plafonnée au maximum de {nombreFr(calcul.dose_max)} {calcul.unite}
+        </p>
+      )}
+      {prises > 1 && (
+        <p className="v-ecran-calc">
+          <span>
+            {parJour
+              ? `Par prise (${prises} prises)`
+              : `Par jour · ${calcul.frequence || `${prises} prises`}`}
+          </span>
+          <b>
+            {nombreFr(parJour ? dose.valeur / prises : dose.valeur * prises)} {dose.unite}
+          </b>
+        </p>
+      )}
+      {!(prises > 1) && calcul.frequence && <p className="v-ecran-note">{calcul.frequence}</p>}
+      <p className="v-ecran-onglets">
+        <Link to={lien}>Calculer pour un autre poids</Link>
+      </p>
+      <span className={`v-ecran-tag${calcul.structure_a_valider ? '' : ' v-ecran-tag-ok'}`}>
+        {calcul.structure_a_valider ? 'Posologie en relecture médicale' : 'Posologie validée'}
+      </span>
+    </section>
+  );
+}
+
+function Ecrans({ cote, totaux, fiche, calcul }) {
   if (cote === 'gauche') {
     return (
       <div className="v-ecrans">
@@ -363,21 +433,9 @@ function Ecrans({ cote, totaux, fiche }) {
     );
   }
   return (
-    <div className="v-ecrans v-ecrans-droite" aria-hidden="true">
-      <div className="v-ecran">
-        <p className="v-ecran-titre">Calcul de dose</p>
-        <p className="v-ecran-gros">Artésunate IV</p>
-        <p>Enfant de 4 ans, 15 kg</p>
-        <p className="v-ecran-calc">
-          <span>3 mg/kg × 15 kg</span>
-          <b>45 mg</b>
-        </p>
-        <p className="v-ecran-calc">
-          <span>Flacon de 60 mg</span>
-          <b>0,75 flacon</b>
-        </p>
-      </div>
-      <div className="v-ecran">
+    <div className="v-ecrans v-ecrans-droite">
+      <CalculDuJour calcul={calcul} />
+      <div className="v-ecran" aria-hidden="true">
         <p className="v-ecran-titre">Avis entre pairs</p>
         <p className="v-ecran-gros">Avis sourcé et examiné</p>
         <p>Votes « pertinent et sourcé », puis relecture médicale</p>
@@ -811,7 +869,7 @@ export function VitrinePage() {
         <div className="v-heros-corps">
           <Ecrans cote="gauche" totaux={t} fiche={accueil?.fiche_du_jour} />
           <Carrousel diapos={diapos} connecte={Boolean(user)} />
-          <Ecrans cote="droite" totaux={t} />
+          <Ecrans cote="droite" totaux={t} calcul={accueil?.calcul_du_jour} />
         </div>
       </header>
 

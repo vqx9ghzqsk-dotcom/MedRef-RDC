@@ -36,6 +36,11 @@ describe('Accueil (lot D)', () => {
       .mockResolvedValueOnce([{ n: 3 }])
       .mockResolvedValueOnce([
         { nom: 'Rougeole', slug: 'rougeole', statut: 'a_valider', specialite: 'Pédiatrie' },
+      ])
+      // Calcul de dose du jour : le premier médicament essayé n'a pas de posologie, le suivant si
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        { dci: 'Paracétamol', slug: 'paracetamol', dose_par_kg: '15.00', dose_max: '1000.00', unite: 'mg' },
       ]);
     const res = await request(app).get('/api/accueil');
     expect(res.status).toBe(200);
@@ -67,6 +72,14 @@ describe('Accueil (lot D)', () => {
     expect(db.query.mock.calls[6][0]).toMatch(/statut <> 'brouillon'/);
     expect(db.query.mock.calls[7][0]).toMatch(/OFFSET [0-2]$/m);
     expect(db.query.mock.calls[2][0]).toMatch(/valide_par_profil/);
+    // Calcul du jour : posologie de l'enfant au poids, nombres convertis, poids d'exemple
+    expect(db.query.mock.calls[8][0]).toMatch(/p.population = 'enfant' AND p.dose_par_kg IS NOT NULL/);
+    expect(res.body.data.calcul_du_jour).toMatchObject({
+      slug: 'paracetamol',
+      dose_par_kg: 15,
+      dose_max: 1000,
+      poids_exemple: 15,
+    });
   });
 
   it('archive des actualités : publiées seulement, filtres sûrs, pagination', async () => {

@@ -442,6 +442,44 @@ describe('Accueil', () => {
     }
   });
 
+  it('calcul de dose du jour : vraie posologie, dose au poids, par prise, lien vers la molécule', async () => {
+    renderApp('/', {
+      accueil: vi.fn(async () => ({
+        alertes: [],
+        actualites: [],
+        produits: [],
+        fiches_validees: [],
+        fiches_mises_a_jour: [],
+        calcul_du_jour: {
+          dci: 'Paracétamol',
+          slug: 'paracetamol',
+          dose_par_kg: 15,
+          dose_max: 1000,
+          dose_base: 'par_prise',
+          unite: 'mg',
+          frequence: 'Toutes les 6 heures',
+          prises_par_jour: 4,
+          structure_a_valider: 1,
+          poids_exemple: 15,
+        },
+        totaux: {},
+      })),
+    });
+    const carte = await screen.findByRole('region', { name: 'Calcul de dose du jour' });
+    expect(within(carte).getByRole('link', { name: 'Paracétamol' })).toHaveAttribute(
+      'href',
+      '/molecules/paracetamol',
+    );
+    expect(within(carte).getByText('15 mg/kg × 15 kg')).toBeInTheDocument();
+    expect(within(carte).getByText('225 mg')).toBeInTheDocument();
+    expect(within(carte).getByText('900 mg')).toBeInTheDocument();
+    expect(within(carte).getByRole('link', { name: 'Calculer pour un autre poids' })).toHaveAttribute(
+      'href',
+      '/molecules/paracetamol',
+    );
+    expect(within(carte).getByText('Posologie en relecture médicale')).toBeInTheDocument();
+  });
+
   it('fiche du jour : vraie fiche cliquable, raccourcis vers ses onglets, validation et avancement réel', async () => {
     renderApp('/', {
       accueil: vi.fn(async () => ({

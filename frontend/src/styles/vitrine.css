@@ -1269,3 +1269,17 @@ button.v-btn {
 .v-ecran-barre i {
   background: linear-gradient(90deg, #2f80d8, #3fb37f);
 }
+
+/* Calcul de dose du jour (bandeau d'accueil) */
+.v-ecran-poids {
+  margin-top: 6px !important;
+  font-weight: 600;
+  color: #fff;
+}
+.v-ecran-note {
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+.v-ecran-calcul .v-ecran-calc b {
+  color: #fff;
+}

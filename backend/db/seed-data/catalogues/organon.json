@@ -14,15 +14,15 @@
       "nom": "Vytorin",
       "presentation": "Ézétimibe + simvastatine, comprimés",
       "composition": null,
-      "dci": "Ézétimibe + Atorvastatine",
+      "dci": "Ézétimibe + Simvastatine",
       "forme": "Comprimé",
       "enfant": false,
       "classe": "Cardiovasculaire",
       "sous_classe": "Hypolipémiants (associations)",
-      "mecanisme": "Ézétimibe : inhibition de l'absorption du cholestérol ; atorvastatine : inhibition de l'HMG-CoA réductase.",
+      "mecanisme": "Ézétimibe : inhibition de l'absorption du cholestérol ; simvastatine : inhibition de l'HMG-CoA réductase.",
       "indications": "Hypercholestérolémie non contrôlée par statine seule.",
       "posologie": "10/10 à 10/80 mg 1x/j.",
-      "photo": "/medias/produits/organon/organon-vytorin-84db1693.webp"
+      "photo": "/medias/produits/organon/organon-vytorin-6e921d85.webp"
     },
     {
       "ref": "organon-cozaar-42ad1e35",
@@ -37,7 +37,7 @@
       "mecanisme": "Antagoniste sélectif des récepteurs AT1 de l'angiotensine II : vasodilatation, baisse de l'aldostérone, néphroprotection.",
       "indications": "Hypertension artérielle, néphropathie diabétique, insuffisance cardiaque (intolérance aux IEC), hypertrophie ventriculaire gauche.",
       "posologie": "50 mg 1x/j, augmenter à 100 mg/j ; 25 mg si déplétion volémique ou insuffisance hépatique.",
-      "photo": "/medias/produits/organon/organon-cozaar-42ad1e35.webp"
+      "photo": "/medias/produits/organon/organon-cozaar-fd035f9d.webp"
     },
     {
       "ref": "organon-hyzaar-5524ea20",
@@ -52,7 +52,7 @@
       "mecanisme": "Antagoniste AT1 associé à un diurétique thiazidique : effet antihypertenseur additif.",
       "indications": "Hypertension artérielle non contrôlée par le losartan seul.",
       "posologie": "50/12,5 mg 1x/j, jusqu'à 100/25 mg.",
-      "photo": "/medias/produits/organon/organon-hyzaar-5524ea20.webp"
+      "photo": "/medias/produits/organon/organon-hyzaar-6ed26bb9.webp"
     },
     {
       "ref": "organon-zetia-70bdbdb1",
@@ -67,7 +67,7 @@
       "mecanisme": "Inhibe la protéine NPC1L1 de l'entérocyte : réduit l'absorption du cholestérol alimentaire et biliaire.",
       "indications": "Hypercholestérolémie primaire (en monothérapie si intolérance aux statines ou en association).",
       "posologie": "10 mg 1x/j.",
-      "photo": "/medias/produits/organon/organon-zetia-70bdbdb1.webp"
+      "photo": "/medias/produits/organon/organon-zetia-88f598f0.webp"
     },
     {
       "ref": "organon-zocor-7bf3c8c0",
@@ -82,7 +82,7 @@
       "mecanisme": "Inhibiteur de l'HMG-CoA réductase : baisse la synthèse hépatique du cholestérol, réduit le LDL-cholestérol et le risque cardiovasculaire.",
       "indications": "Hypercholestérolémie, prévention cardiovasculaire primaire et secondaire.",
       "posologie": "10-40 mg 1x/j le soir (80 mg déconseillé).",
-      "photo": "/medias/produits/organon/organon-zocor-7bf3c8c0.webp"
+      "photo": "/medias/produits/organon/organon-zocor-bc013e1e.webp"
     },
     {
       "ref": "organon-celestone-soluspan-d39ed53c",
@@ -112,7 +112,7 @@
       "mecanisme": "Lévodopa : précurseur de la dopamine ; carbidopa : inhibiteur de la dopa-décarboxylase périphérique qui limite la dégradation périphérique de la lévodopa.",
       "indications": "Maladie de Parkinson, syndromes parkinsoniens.",
       "posologie": "Débuter 25/100 mg 3x/j puis titrer selon la réponse (jusqu'à 800 mg de lévodopa/j) ; à distance des repas riches en protéines.",
-      "photo": "/medias/produits/organon/organon-sinemet-09f53e45.webp"
+      "photo": "/medias/produits/organon/organon-sinemet-a3ad2d60.webp"
     },
     {
       "ref": "organon-maxalt-maxalt-mlt-a4173181",
@@ -172,7 +172,7 @@
       "mecanisme": "Corticoïde inhalé de forte affinité : anti-inflammatoire bronchique local.",
       "indications": "Traitement de fond de l'asthme persistant (enfant dès 4-5 ans et adulte).",
       "posologie": "110-440 µg 1-2x/j selon la gravité (inhalateur de poudre : 1 inhalation 1-2x/j) ; rincer la bouche.",
-      "photo": "/medias/produits/organon/organon-asmanex-twisthaler-219ecfb5.webp"
+      "photo": "/medias/produits/organon/organon-asmanex-twisthaler-eef7efee.webp"
     },
     {
       "ref": "organon-dulera-5b3cc101",
@@ -187,7 +187,7 @@
       "mecanisme": "Corticoïde anti-inflammatoire + agoniste β2 de longue durée d'action (bronchodilatation prolongée).",
       "indications": "Asthme persistant non contrôlé par un corticoïde inhalé seul ; BPCO (selon pays).",
       "posologie": "2 inhalations 2x/j (50/5 µg ou 100/5 µg) ; ne pas utiliser en crise.",
-      "photo": "/medias/produits/organon/organon-dulera-5b3cc101.webp"
+      "photo": "/medias/produits/organon/organon-dulera-dd222469.webp"
     },
     {
       "ref": "organon-singulair-a746e6f8",
@@ -292,7 +292,7 @@
       "mecanisme": "Antagoniste de la GnRH : bloque de façon compétitive les récepteurs hypophysaires de la GnRH et empêche le pic prématuré de LH.",
       "indications": "Prévention du pic prématuré de LH chez la femme en stimulation ovarienne contrôlée (FIV).",
       "posologie": "250 µg SC une fois par jour, à partir du milieu de la phase folliculaire (après le début de la FSH), jusqu’au déclenchement de l’ovulation.",
-      "photo": "/medias/produits/organon/organon-ganirelix-acetate-278b22a6.webp"
+      "photo": "/medias/produits/organon/organon-ganirelix-acetate-1c995c8c.webp"
     },
     {
       "ref": "organon-xaciato-232b8b00",
@@ -367,7 +367,7 @@
       "mecanisme": "Corticoïde topique de classe forte : anti-inflammatoire, antiprurigineux, vasoconstricteur.",
       "indications": "Psoriasis, eczéma sévère, lichen, dermatoses corticosensibles de l'adulte.",
       "posologie": "Couche fine 1-2x/j, 2 semaines environ (au plus 4 semaines), sans pansement occlusif.",
-      "photo": "/medias/produits/organon/organon-diprolene-1cc0d277.webp"
+      "photo": "/medias/produits/organon/organon-diprolene-05aafb69.webp"
     },
     {
       "ref": "organon-vtama-5c6a411e",
@@ -487,7 +487,7 @@
       "mecanisme": "Alendronate (anti-résorptif) + vitamine D3 pour corriger la carence en vitamine D fréquente chez les patients ostéoporotiques.",
       "indications": "Ostéoporose post-ménopausique avec risque de carence en vitamine D.",
       "posologie": "1 comprimé (70 mg/2800 UI ou 70 mg/5600 UI) 1x/semaine, à jeun.",
-      "photo": "/medias/produits/organon/organon-fosamax-plus-d-2c4c8ce8.webp"
+      "photo": "/medias/produits/organon/organon-fosamax-plus-d-d87d36eb.webp"
     },
     {
       "ref": "organon-proscar-49cf9a46",
@@ -532,7 +532,7 @@
       "mecanisme": "Antihistaminique H1 de 2e génération + vasoconstricteur α-adrénergique décongestionnant nasal.",
       "indications": "Rhinite allergique avec congestion nasale.",
       "posologie": "1 comprimé LP 12 h toutes les 12 h chez l'adulte et l'adolescent ≥ 12 ans.",
-      "photo": "/medias/produits/organon/organon-clarinex-d-12-heures-60bc4c9b.webp"
+      "photo": "/medias/produits/organon/organon-clarinex-d-12-heures-91028adf.webp"
     },
     {
       "ref": "organon-clarinex-111e9414",

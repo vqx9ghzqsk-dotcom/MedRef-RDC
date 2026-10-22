@@ -42,6 +42,127 @@ const PHOTOS = [
   },
   // Fiche de départ (sans référence de catalogue) : comprimés, suspension et suppositoires
   { nom: 'Doliprane', photo: '/medias/produits/sanofi/sanofi-doliprane-500-56ffc1c6.webp' },
+  // Photos du document « les produits organon, viatris, pfizer, roche et sanofi » du Dr Mingalu
+  // (21 octobre 2026), une photo par produit, rognée au cadre 4:3
+  { nom: 'Cozaar', photo: '/medias/produits/organon/organon-cozaar-fd035f9d.webp' },
+  { ref: 'repertoire-xanax', photo: '/medias/produits/viatris/viatris-xanax-3f5afdb7.webp' },
+  {
+    ref: 'acorep:viatris-mylan:duspatalin:mebeverine',
+    photo: '/medias/produits/viatris/viatris-duspatalin-cbeb158d.webp',
+  },
+  { ref: 'repertoire-xalatan', photo: '/medias/produits/viatris/viatris-xalatan-55814545.webp' },
+  { ref: 'repertoire-xalacom', photo: '/medias/produits/viatris/viatris-xalacom-b886a8b7.webp' },
+  { ref: 'repertoire-mestinon', photo: '/medias/produits/viatris/viatris-mestinon-a8406b28.webp' },
+  {
+    ref: 'acorep:viatris-mylan:brufen:ibuprofene',
+    photo: '/medias/produits/viatris/viatris-brufen-399153d1.webp',
+  },
+  {
+    ref: 'acorep:viatris-mylan:xagulant:apixaban',
+    photo: '/medias/produits/viatris/viatris-xagulant-41037a24.webp',
+  },
+  {
+    ref: 'acorep:viatris-mylan:xafariv:rivaroxaban',
+    photo: '/medias/produits/viatris/viatris-xafariv-fd88b5a7.webp',
+  },
+  {
+    ref: 'acorep:viatris-mylan:tahor:atorvastatine',
+    photo: '/medias/produits/viatris/viatris-tahor-918a2cfb.webp',
+  },
+  { nom: 'Lipitor', photo: '/medias/produits/viatris/viatris-lipitor-585d6b51.webp' },
+  { nom: 'Amlor', photo: '/medias/produits/viatris/viatris-amlor-e87e70c4.webp' },
+  { ref: 'repertoire-lyrica', photo: '/medias/produits/viatris/viatris-lyrica-4972f670.webp' },
+  { ref: 'acorep:roche:avastin:bevacizumab', photo: '/medias/produits/roche/roche-avastin-01b36458.webp' },
+  { ref: 'repertoire-herceptin', photo: '/medias/produits/roche/roche-herceptin-57052b9b.webp' },
+  { ref: 'acorep:roche:mabthera:rituximab', photo: '/medias/produits/roche/roche-mabthera-9d12d95f.webp' },
+  { nom: 'Gardénal', photo: '/medias/produits/sanofi/sanofi-gardenal-71a67343.webp' },
+  {
+    ref: 'acorep:sanofi:lactacyde-emulsion-lavante-douce:lactoserum-atmisat-acide-lactique-zerezol-tegosoft-li:a977f548f70e',
+    photo: '/medias/produits/sanofi/sanofi-lactacyd-ac16b12f.webp',
+  },
+  {
+    ref: 'acorep:sanofi:insulin-glargine-impact-solostar:insuline-glargine',
+    photo: '/medias/produits/sanofi/sanofi-insulin-glargine-impact-solostar-6064b118.webp',
+  },
+  {
+    ref: 'acorep:sanofi:glimepiride-metformin-hydrochloride-impact:glimepiride-chlorhydrate-de-metformine',
+    photo: '/medias/produits/sanofi/sanofi-glimepiride-metformine-impact-ccea9a20.webp',
+  },
+  {
+    ref: 'acorep:sanofi:glimepiride-impact:glimepiride',
+    photo: '/medias/produits/sanofi/sanofi-glimepiride-impact-30197f3d.webp',
+  },
+  {
+    ref: 'acorep:sanofi:fleming-enfant:amoxicilline-acide-clavulanique',
+    photo: '/medias/produits/sanofi/sanofi-fleming-enfant-dbc90103.webp',
+  },
+  {
+    ref: 'acorep:sanofi:fleming-nourrisson:amoxicilline-acide-clavulanique',
+    photo: '/medias/produits/sanofi/sanofi-fleming-nourrisson-24d62dda.webp',
+  },
+  { ref: 'acorep:sanofi:amarel:glimepiride', photo: '/medias/produits/sanofi/sanofi-amarel-25580f83.webp' },
+  { ref: 'repertoire-apidra', photo: '/medias/produits/sanofi/sanofi-apidra-effa6c03.webp' },
+  { ref: 'repertoire-aprovel', photo: '/medias/produits/sanofi/sanofi-aprovel-7d33aa9e.webp' },
+  { ref: 'repertoire-claforan', photo: '/medias/produits/sanofi/sanofi-claforan-4eadc2db.webp' },
+  {
+    ref: 'acorep:sanofi:clopidogrel-impact:clopidogrel-bisulfate',
+    photo: '/medias/produits/sanofi/sanofi-clopidogrel-impact-8cab6e4b.webp',
+  },
+  { ref: 'repertoire-coaprovel', photo: '/medias/produits/sanofi/sanofi-coaprovel-b812effe.webp' },
+  { ref: 'repertoire-cordarone', photo: '/medias/produits/sanofi/sanofi-cordarone-4d289549.webp' },
+  { ref: 'acorep:sanofi:daonil:glibenclamide', photo: '/medias/produits/sanofi/sanofi-daonil-2c15f31c.webp' },
+  {
+    ref: 'repertoire-depakine-chrono',
+    photo: '/medias/produits/sanofi/sanofi-depakine-chrono-d1bf6a90.webp',
+  },
+  {
+    ref: 'acorep:sanofi:enoxaparin-sodium-impact:enoxaparine-sodique',
+    photo: '/medias/produits/sanofi/sanofi-enoxaparin-impact-7f2acaa6.webp',
+  },
+  { nom: 'Exacyl', photo: '/medias/produits/sanofi/sanofi-exacyl-17ef2ce1.webp' },
+  { nom: 'Flagyl', photo: '/medias/produits/sanofi/sanofi-flagyl-8db7dace.webp' },
+  { nom: 'Kardégic', photo: '/medias/produits/sanofi/sanofi-kardegic-022deaea.webp' },
+  { ref: 'repertoire-lasilix', photo: '/medias/produits/sanofi/sanofi-lasilix-9462d77a.webp' },
+  { nom: 'Lasix', photo: '/medias/produits/sanofi/sanofi-lasix-0252a174.webp' },
+  { ref: 'repertoire-lovenox', photo: '/medias/produits/sanofi/sanofi-lovenox-0004457d.webp' },
+  {
+    ref: 'acorep:sanofi:xatral-lp:chlorhydrate-d-alfuzosinene',
+    photo: '/medias/produits/sanofi/sanofi-xatral-lp-6977cefe.webp',
+  },
+  {
+    ref: 'acorep:sanofi:xatral:chlorhydrate-d-alfuzosinene',
+    photo: '/medias/produits/sanofi/sanofi-xatral-af06f8e3.webp',
+  },
+  {
+    ref: 'acorep:energia:cetafor:ceftriaxone',
+    photo: '/medias/produits/dafra-pharma/dafra-pharma-cetafor-ceftriaxone-3d01a7eb.webp',
+  },
+  {
+    ref: 'acorep:bilim:cetafor:ceftriaxone',
+    photo: '/medias/produits/dafra-pharma/dafra-pharma-cetafor-ceftriaxone-3d01a7eb.webp',
+  },
+  { ref: 'acorep:pfizer:amlor:amlodipine', photo: '/medias/produits/pfizer/pfizer-amlor-a1a52890.webp' },
+  { nom: 'Aldactone', photo: '/medias/produits/pfizer/pfizer-aldactone-ff7231aa.webp' },
+  { ref: 'acorep:pfizer:celebrex:celecoxib', photo: '/medias/produits/pfizer/pfizer-celebrex-ea2d93a2.webp' },
+  { ref: 'repertoire-dalacine', photo: '/medias/produits/pfizer/pfizer-dalacine-a1a94606.webp' },
+  {
+    ref: 'acorep:pfizer:depo-provera:acetate-de-medroxyprogesterone',
+    photo: '/medias/produits/pfizer/pfizer-depo-provera-0f9af9c6.webp',
+  },
+  {
+    ref: 'acorep:pfizer:diflucan:fluconazole',
+    photo: '/medias/produits/pfizer/pfizer-diflucan-894d028a.webp',
+  },
+  { ref: 'repertoire-fasigyne', photo: '/medias/produits/pfizer/pfizer-fasigyne-5020d1ed.webp' },
+  {
+    ref: 'acorep:pfizer:lincocine:lincomycine',
+    photo: '/medias/produits/pfizer/pfizer-lincocine-62cf2e45.webp',
+  },
+  {
+    ref: 'acorep:pfizer:medrol:methylprednisolone',
+    photo: '/medias/produits/pfizer/pfizer-medrol-24e5b052.webp',
+  },
+  { nom: 'Zithromax', photo: '/medias/produits/pfizer/pfizer-zithromax-9ba9877e.webp' },
 ];
 
 const P = (ref, nom, dci, forme, presentation, classe, photo) => ({

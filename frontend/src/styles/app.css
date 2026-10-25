@@ -3828,3 +3828,22 @@ details.forme {
     margin: 0;
   }
 }
+
+/* Parcours adaptatif : éléments mis en avant d'après le profil, le motif et les hypothèses */
+.diag-prioritaire {
+  background: var(--link-bg);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem 0.8rem;
+  margin: 0.8rem 0;
+}
+.diag-prioritaire h2 {
+  margin-top: 0.2rem;
+}
+.chip-bouton.diag-a-preciser {
+  border-color: var(--link);
+  border-width: 2px;
+}
+.diag-examen-pour {
+  display: block;
+  font-size: 0.85rem;
+}

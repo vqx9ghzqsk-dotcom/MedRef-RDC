@@ -9,6 +9,7 @@
  *   à l'interrogatoire).
  * - TERRAINS : antécédents et terrain qui orientent vers certaines fiches (motif sur le nom).
  * - CONTEXTES : exposition et contexte épidémique.
+ * `sexe` et `ages` (facultatifs) : terrain ou contexte proposé seulement à ces patients.
  * Les noms doivent correspondre exactement à la table `symptomes` (vérifié par les tests).
  */
 
@@ -457,6 +458,7 @@ const TERRAINS = [
   },
   {
     id: 'hta',
+    ages: ['grand', 'adulte', 'age'],
     groupe: 'Médicaux',
     libelle: 'Hypertension artérielle',
     motif:
@@ -508,42 +510,51 @@ const TERRAINS = [
   },
   {
     id: 'cesarienne',
+    sexe: 'F',
+    ages: ['grand', 'adulte', 'age'],
     groupe: 'Gynéco-obstétricaux',
     libelle: 'Césarienne ou chirurgie utérine',
     motif: 'rupture uterine|placenta|uterus cicatriciel|endometrite',
   },
   {
     id: 'avortement',
+    sexe: 'F',
+    ages: ['grand', 'adulte'],
     groupe: 'Gynéco-obstétricaux',
     libelle: 'Avortement ou accouchement récent',
     motif: 'avortement|post-partum|endometrite|retention|hemorragie|sepsis|infection puerperale|thrombo',
   },
   {
     id: 'prematurite',
+    ages: ['nn', 'petit', 'grand'],
     groupe: 'Enfant',
     libelle: 'Prématurité, petit poids de naissance',
     motif: 'premat|neonat|hypothermie|apnee|enterocolite|retinopathie|ictere',
   },
   {
     id: 'vaccins-incomplets',
+    ages: ['nn', 'petit', 'grand'],
     groupe: 'Enfant',
     libelle: 'Vaccinations non à jour',
     motif: 'rougeole|coqueluche|diphterie|tetanos|poliomyelite|meningite|fievre jaune|pneumonie|hepatite b',
   },
   {
     id: 'alcool',
+    ages: ['grand', 'adulte', 'age'],
     groupe: 'Habitudes',
     libelle: 'Consommation d’alcool importante',
     motif: 'alcool|cirrhose|pancreatite|varice|delirium|sevrage|hepatite|wernicke',
   },
   {
     id: 'tabac',
+    ages: ['grand', 'adulte', 'age'],
     groupe: 'Habitudes',
     libelle: 'Tabagisme',
     motif: 'bpco|cancer|coronar|infarctus|arterite|bronch',
   },
   {
     id: 'drogues',
+    ages: ['grand', 'adulte', 'age'],
     groupe: 'Habitudes',
     libelle: 'Usage de drogues',
     motif: 'intoxication|sevrage|overdose|endocardite|psychose|addict|cannabis|opiace',
@@ -584,9 +595,137 @@ const CONTEXTES = [
   },
   {
     id: 'rapports-risque',
+    ages: ['grand', 'adulte', 'age'],
     libelle: 'Rapports sexuels non protégés',
     motif: 'vih|syphilis|gonococ|chlamyd|ist|urethrite|cervicite|hepatite b|herpes',
   },
 ];
 
-module.exports = { APPAREILS, PHYSIQUES, TERRAINS, CONTEXTES };
+/**
+ * Signes impossibles pour certains patients (règles cliniques explicites) : un signe n'est
+ * proposé que si le patient satisfait toutes les règles où il figure. Les autres signes ne sont
+ * jamais masqués, seulement ordonnés selon le cas (une fiche manquante ne doit pas cacher un signe).
+ */
+const RESTRICTIONS = [
+  {
+    motif: 'Anatomie féminine',
+    sexe: 'F',
+    signes: [
+      'Aménorrhée',
+      'Dysménorrhée',
+      'Troubles du cycle menstruel',
+      'Leucorrhées',
+      'Saignement vaginal',
+      'Tuméfaction vulvaire',
+      'Dyspareunie',
+      'Pesanteur pelvienne',
+      'Contractions utérines',
+      'Écoulement de liquide amniotique',
+      'Diminution des mouvements fœtaux',
+      'Lochies fétides',
+    ],
+  },
+  {
+    motif: 'Anatomie masculine',
+    sexe: 'M',
+    signes: [
+      'Douleur scrotale',
+      'Tuméfaction scrotale',
+      'Bourse vide',
+      'Érection prolongée',
+      'Troubles de l’érection',
+    ],
+  },
+  {
+    motif: 'Grossesse ou accouchement récent',
+    grossesse: true,
+    signes: [
+      'Contractions utérines',
+      'Écoulement de liquide amniotique',
+      'Diminution des mouvements fœtaux',
+      'Lochies fétides',
+    ],
+  },
+  {
+    motif: 'Après la puberté',
+    ages: ['grand', 'adulte', 'age'],
+    signes: [
+      'Aménorrhée',
+      'Dysménorrhée',
+      'Troubles du cycle menstruel',
+      'Dyspareunie',
+      'Troubles de l’érection',
+      'Baisse de la libido',
+      'Infertilité',
+      'Bouffées de chaleur',
+      'Contractions utérines',
+      'Écoulement de liquide amniotique',
+      'Diminution des mouvements fœtaux',
+      'Lochies fétides',
+    ],
+  },
+  { motif: 'Nouveau-né', ages: ['nn'], signes: ['Rougeur ombilicale', 'Ambiguïté sexuelle'] },
+  {
+    motif: 'Nourrisson',
+    ages: ['nn', 'petit'],
+    signes: ['Fontanelle bombée', 'Refus de téter', 'Spasmes infantiles'],
+  },
+  {
+    motif: 'Enfant',
+    ages: ['nn', 'petit', 'grand'],
+    signes: [
+      'Pleurs excessifs',
+      'Retard de développement psychomoteur',
+      'Régression des acquisitions',
+      'Macrocéphalie',
+      'Puberté précoce',
+      'Retard pubertaire',
+      'Angoisse de séparation',
+      'Retard de croissance',
+    ],
+  },
+  { motif: 'Âge scolaire', ages: ['petit', 'grand'], signes: ['Difficultés scolaires'] },
+  {
+    motif: 'Plainte que le nouveau-né ne peut pas exprimer',
+    ages: ['petit', 'grand', 'adulte', 'age'],
+    signes: [
+      'Céphalées',
+      'Vertiges',
+      'Paresthésies',
+      'Troubles sensitifs',
+      'Nausées',
+      'Acouphènes',
+      'Diplopie',
+      'Troubles visuels',
+      'Hallucinations',
+      'Idées délirantes',
+      'Idées suicidaires',
+      'Anxiété',
+      'Humeur dépressive',
+      'Troubles de la mémoire',
+      'Amnésie',
+      'Pyrosis',
+      'Épigastralgies',
+      'Palpitations',
+      'Plaintes somatiques multiples',
+      'Troubles de la concentration',
+      'Obsessions et compulsions',
+      'Peurs excessives',
+      'Douleur thoracique',
+      'Douleur dentaire',
+      'Brûlures mictionnelles',
+      'Dysurie',
+      'Myalgies',
+      'Asthénie',
+      'Douleur radiculaire',
+      'Impatiences des jambes',
+      'Jambes lourdes',
+      'Perte de l’odorat et du goût',
+      'Douleur faciale',
+      'Douleur de l’épaule',
+      'Douleur lombaire',
+    ],
+  },
+];
+
+module.exports = { APPAREILS, PHYSIQUES, TERRAINS, CONTEXTES, RESTRICTIONS };

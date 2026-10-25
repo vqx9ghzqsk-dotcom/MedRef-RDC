@@ -458,3 +458,130 @@ export function effetsIndesirablesPossibles(molecules, nomsSignes) {
   }
   return resultats;
 }
+
+/* ---------- Parcours adaptatif : chaque réponse oriente la suite ---------- */
+
+/** Normes des constantes selon l'âge, affichées en aide à la saisie. */
+export const NORMES = {
+  temperature: () => '36 – 37,5',
+  fr: (age) => ({ nn: '40 – 60', petit: '20 – 40', grand: '15 – 25' })[age] || '12 – 20',
+  fc: (age) => ({ nn: '100 – 180', petit: '80 – 150', grand: '70 – 120' })[age] || '60 – 100',
+  tas: (age) => ({ nn: '≥ 60', petit: '≥ 70', grand: '≥ 80' })[age] || '90 – 140',
+  tad: (age) => (ENFANT.includes(age) ? '' : '60 – 90'),
+  spo2: () => '≥ 94',
+  glycemie: () => '3,9 – 7,8',
+  glasgow: () => '15',
+  pb: () => '≥ 125',
+};
+
+/** Le terrain ou le contexte concerne-t-il ce patient ? (âge et sexe déclarés dans le référentiel) */
+export function terrainPossible(t, cas) {
+  if (t.sexe && cas.sexe && t.sexe !== cas.sexe) return false;
+  if (t.ages && cas.age && !t.ages.includes(cas.age)) return false;
+  return true;
+}
+
+/** Le patient satisfait-il la règle ? (critère non renseigné : la règle ne masque rien) */
+function respecte(regle, cas) {
+  if (regle.sexe && cas.sexe && regle.sexe !== cas.sexe) return false;
+  if (regle.ages && cas.age && !regle.ages.includes(cas.age)) return false;
+  if (regle.grossesse && cas.grossesse !== true) return false;
+  return true;
+}
+
+/**
+ * Profil du patient : fiches qui peuvent le concerner (âge, sexe, grossesse) et signes
+ * possibles. Un signe n'est masqué que s'il est impossible pour ce patient selon une règle
+ * clinique explicite du référentiel (aménorrhée chez un homme, fontanelle chez l'adulte,
+ * céphalées chez le nouveau-né) : l'absence d'une fiche ne suffit pas à cacher un signe.
+ * `masques` donne, pour chaque signe masqué, la règle en cause.
+ */
+export function profilDuPatient(index, cas) {
+  const fiches = index.donnees.pathologies.filter((f) => convientAuPatient(f, cas));
+  const masques = new Map();
+  for (const regle of index.donnees.restrictions || []) {
+    if (respecte(regle, cas)) continue;
+    for (const s of regle.symptomes) if (!masques.has(s)) masques.set(s, regle.motif);
+  }
+  const signes = new Set(index.donnees.symptomes.map((s) => s.id).filter((s) => !masques.has(s)));
+  return { fiches, signes, masques };
+}
+
+/**
+ * Pertinence de chaque signe pour la suite de l'examen :
+ *  - s'il y a des hypothèses, poids du signe dans les hypothèses en tête (selon leur score) ;
+ *  - sinon, si le motif est connu, dans les fiches possibles qui comportent ce motif ;
+ *  - sinon, nombre de fiches possibles où le signe est fréquent.
+ * Les signes déjà notés (présents ou absents) ne sont pas repris.
+ */
+export function pertinenceSignes(index, cas, hypotheses, profil) {
+  const scores = new Map();
+  const ajouter = (s, v) => scores.set(s, (scores.get(s) || 0) + v);
+  if (hypotheses.length) {
+    for (const h of hypotheses.slice(0, 8)) {
+      for (const [s, f] of index.parFiche.get(h.fiche.id) || [])
+        ajouter(s, h.score ** 2 * POIDS_FREQUENCE[f]);
+    }
+  } else if (cas.motif) {
+    for (const fiche of profil.fiches) {
+      const tableau = index.parFiche.get(fiche.id);
+      const fm = tableau?.get(Number(cas.motif));
+      if (fm === undefined) continue;
+      for (const [s, f] of tableau) ajouter(s, POIDS_FREQUENCE[fm] * POIDS_FREQUENCE[f]);
+    }
+  } else {
+    for (const fiche of profil.fiches) {
+      for (const [s, f] of index.parFiche.get(fiche.id) || []) if (f >= 2) ajouter(s, 1);
+    }
+  }
+  const notes = new Set([...Object.keys(cas.signes || {}).map(Number), Number(cas.motif)]);
+  for (const s of notes) scores.delete(s);
+  return scores;
+}
+
+/**
+ * Motifs de consultation les plus fréquents pour ce patient : signes très fréquents des fiches
+ * qui peuvent le concerner, les fiches propres à son âge ou à sa grossesse comptant triple.
+ */
+export function motifsFrequents(index, profil, nombreMax = 10, cas = {}) {
+  const compte = new Map();
+  for (const fiche of profil.fiches) {
+    const pub = fiche.public || {};
+    const propre = (cas.age && pub.ages?.includes(cas.age)) || (cas.grossesse && pub.obstetrique);
+    for (const [s, f] of index.parFiche.get(fiche.id) || []) {
+      if (f === 3 && profil.signes.has(s)) compte.set(s, (compte.get(s) || 0) + (propre ? 3 : 1));
+    }
+  }
+  return [...compte]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, nombreMax)
+    .map(([s]) => index.symptomes.get(s));
+}
+
+/**
+ * Examens utiles pour les hypothèses en tête : ceux qui confirment (ou orientent vers) une ou
+ * plusieurs d'entre elles, les plus discriminants d'abord, avec les hypothèses concernées.
+ */
+export function examensUtiles(index, hypotheses, dejaFaits = {}, nombreMax = 8) {
+  const parExamen = new Map();
+  for (const h of hypotheses.slice(0, 6)) {
+    for (const [id, role] of Object.entries(h.fiche.tests || {})) {
+      if (dejaFaits[id]) continue;
+      if (!parExamen.has(id)) parExamen.set(id, { poids: 0, hypotheses: [] });
+      const e = parExamen.get(id);
+      e.poids += h.score * (role === 'c' ? 1 : 0.5);
+      e.hypotheses.push({ nom: h.fiche.nom, role });
+    }
+  }
+  return [...parExamen]
+    .map(([id, e]) => ({ examen: index.donnees.examens.find((x) => String(x.id) === id), ...e }))
+    .filter((e) => e.examen)
+    .sort((a, b) => b.poids - a.poids)
+    .slice(0, nombreMax);
+}
+
+/** Terrains et contextes qui pèseraient sur les hypothèses en tête (à demander au patient). */
+export function terrainsAPreciser(index, hypotheses, liste) {
+  const noms = hypotheses.slice(0, 5).map((h) => index.nomsFiches.get(h.fiche.id) || '');
+  return new Set((liste || []).filter((t) => noms.some((n) => new RegExp(t.motif).test(n))).map((t) => t.id));
+}

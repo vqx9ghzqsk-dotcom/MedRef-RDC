@@ -118,6 +118,7 @@ router.get(
         physiques: ids(referentiel.PHYSIQUES),
         terrains: referentiel.TERRAINS,
         contextes: referentiel.CONTEXTES,
+        restrictions: referentiel.RESTRICTIONS.map(({ signes, ...r }) => ({ ...r, symptomes: ids(signes) })),
       },
     });
   }),

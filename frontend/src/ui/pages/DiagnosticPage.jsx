@@ -9,10 +9,17 @@ import {
   analyser,
   DUREES,
   effetsIndesirablesPossibles,
+  examensUtiles,
   indexer,
   LIBELLES_FREQUENCE,
+  motifsFrequents,
+  NORMES,
+  pertinenceSignes,
   posologiePour,
+  profilDuPatient,
   sansAccents,
+  terrainPossible,
+  terrainsAPreciser,
   TRANCHES_AGE,
 } from '../../core/diagnostic.js';
 import { calculerDose } from '../../core/posologie.js';
@@ -125,6 +132,17 @@ function Moteur({ donnees }) {
   const [etape, setEtape] = useState('motif');
   const [choix, setChoix] = useState(null);
   const resultat = useMemo(() => analyser(index, cas), [index, cas]);
+  // Parcours adaptatif : le profil restreint les signes possibles, le motif et les hypothèses
+  // en tête ordonnent ce qu'il faut rechercher ensuite
+  const profil = useMemo(
+    () => profilDuPatient(index, cas),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [index, cas.age, cas.sexe, cas.grossesse],
+  );
+  const pertinence = useMemo(
+    () => pertinenceSignes(index, cas, resultat.hypotheses, profil),
+    [index, cas, resultat.hypotheses, profil],
+  );
   const maj = (champ, valeur) => setCas((c) => ({ ...c, [champ]: valeur }));
   const regler = (id, etat) =>
     setCas((c) => {
@@ -163,8 +181,17 @@ function Moteur({ donnees }) {
               </button>
             ))}
           </nav>
-          {etape === 'motif' && <EtapeMotif index={index} cas={cas} maj={maj} />}
-          {etape === 'terrain' && <EtapeTerrain donnees={donnees} cas={cas} maj={maj} basculer={basculer} />}
+          {etape === 'motif' && <EtapeMotif index={index} cas={cas} maj={maj} profil={profil} />}
+          {etape === 'terrain' && (
+            <EtapeTerrain
+              donnees={donnees}
+              index={index}
+              cas={cas}
+              maj={maj}
+              basculer={basculer}
+              hypotheses={resultat.hypotheses}
+            />
+          )}
           {etape === 'examen' && (
             <EtapeExamen
               donnees={donnees}
@@ -173,12 +200,16 @@ function Moteur({ donnees }) {
               maj={maj}
               regler={regler}
               deduits={resultat.deduits}
+              profil={profil}
+              pertinence={pertinence}
             />
           )}
           {etape === 'paraclinique' && (
             <EtapeParaclinique
+              index={index}
               examens={donnees.examens}
               valeurs={cas.examens}
+              hypotheses={resultat.hypotheses}
               onChange={(v) => maj('examens', v)}
             />
           )}
@@ -248,7 +279,7 @@ function Moteur({ donnees }) {
 
 /* ---------- Étape 1 : motif et histoire de la maladie ---------- */
 
-function EtapeMotif({ index, cas, maj }) {
+function EtapeMotif({ index, cas, maj, profil }) {
   const idHistoire = useId();
   return (
     <>
@@ -313,12 +344,30 @@ function EtapeMotif({ index, cas, maj }) {
           </button>
         </p>
       ) : (
-        <RechercheListe
-          libelle="Plainte principale"
-          elements={index.donnees.symptomes}
-          dejaPris={[]}
-          onChoix={(s) => maj('motif', s.id)}
-        />
+        <>
+          <RechercheListe
+            libelle="Plainte principale"
+            elements={index.donnees.symptomes.filter((s) => profil.signes.has(s.id))}
+            dejaPris={[]}
+            onChoix={(s) => maj('motif', s.id)}
+          />
+          <p className="muted">
+            Motifs fréquents
+            {cas.age || cas.sexe ? ' pour ce patient' : ''} :
+          </p>
+          <div className="chips">
+            {motifsFrequents(index, profil, 10, cas).map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                className="chip chip-bouton"
+                onClick={() => maj('motif', s.id)}
+              >
+                {s.nom}
+              </button>
+            ))}
+          </div>
+        </>
       )}
       <h2>Histoire de la maladie</h2>
       <Boutons legende="Début" options={DEBUTS} valeur={cas.debut} onChange={(v) => maj('debut', v)} />
@@ -351,29 +400,42 @@ function EtapeMotif({ index, cas, maj }) {
 
 /* ---------- Étape 2 : terrain ---------- */
 
-function EtapeTerrain({ donnees, cas, maj, basculer }) {
-  const groupes = [...new Set(donnees.terrains.map((t) => t.groupe))];
+function EtapeTerrain({ donnees, index, cas, maj, basculer, hypotheses }) {
+  // Seuls les antécédents et contextes qui concernent ce patient ; ceux qui pèseraient sur les
+  // hypothèses en tête sont demandés en premier
+  const terrains = donnees.terrains.filter((t) => terrainPossible(t, cas));
+  const contextes = donnees.contextes.filter((t) => terrainPossible(t, cas));
+  const aPreciser = terrainsAPreciser(index, hypotheses, [...terrains, ...contextes]);
+  const groupes = [...new Set(terrains.filter((t) => !aPreciser.has(t.id)).map((t) => t.groupe))];
   const molecule = (id) => donnees.molecules.find((m) => m.id === id);
+  const bouton = (t, champ) => (
+    <button
+      key={t.id}
+      type="button"
+      className={`chip chip-bouton${aPreciser.has(t.id) ? ' diag-a-preciser' : ''}`}
+      aria-pressed={cas[champ].includes(t.id)}
+      onClick={() => basculer(champ, t.id)}
+    >
+      {t.libelle}
+    </button>
+  );
+  const prioritaires = [...terrains, ...contextes].filter((t) => aPreciser.has(t.id));
   return (
     <>
+      {prioritaires.length > 0 && (
+        <div className="diag-prioritaire">
+          <h2>À préciser pour les hypothèses actuelles</h2>
+          <div className="chips">
+            {prioritaires.map((t) => bouton(t, terrains.includes(t) ? 'terrains' : 'contextes'))}
+          </div>
+        </div>
+      )}
       <h2>Antécédents et terrain</h2>
       {groupes.map((g) => (
         <fieldset key={g} className="diag-champ">
           <legend>{g}</legend>
           <div className="chips">
-            {donnees.terrains
-              .filter((t) => t.groupe === g)
-              .map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  className="chip chip-bouton"
-                  aria-pressed={cas.terrains.includes(t.id)}
-                  onClick={() => basculer('terrains', t.id)}
-                >
-                  {t.libelle}
-                </button>
-              ))}
+            {terrains.filter((t) => t.groupe === g && !aPreciser.has(t.id)).map((t) => bouton(t, 'terrains'))}
           </div>
         </fieldset>
       ))}
@@ -396,17 +458,7 @@ function EtapeTerrain({ donnees, cas, maj, basculer }) {
       />
       <h2>Exposition et contexte épidémique</h2>
       <div className="chips">
-        {donnees.contextes.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            className="chip chip-bouton"
-            aria-pressed={cas.contextes.includes(c.id)}
-            onClick={() => basculer('contextes', c.id)}
-          >
-            {c.libelle}
-          </button>
-        ))}
+        {contextes.filter((c) => !aPreciser.has(c.id)).map((c) => bouton(c, 'contextes'))}
       </div>
     </>
   );
@@ -449,14 +501,35 @@ function ListeMolecules({ libelle, molecules, valeurs, onChange, molecule, avecC
 
 /* ---------- Étape 3 : examen clinique ---------- */
 
-function EtapeExamen({ donnees, index, cas, maj, regler, deduits }) {
+function EtapeExamen({ donnees, index, cas, maj, regler, deduits, profil, pertinence }) {
+  const [toutVoir, setToutVoir] = useState(false);
   const physiques = index.physiques;
   const deduitDe = new Map(deduits.map((d) => [d.id, d.etat]));
+  // Signes possibles pour ce patient (sauf s'ils sont déjà notés), triés par pertinence pour le cas
+  const visible = (s) => toutVoir || profil.signes.has(s) || cas.signes[s];
+  const rang = (s) => pertinence.get(s) || 0;
+  const cles = [...pertinence]
+    .filter(([s, v]) => v > 0 && profil.signes.has(s))
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([s]) => s);
+  const appareils = donnees.appareils
+    .map((a) => ({
+      ...a,
+      signes: a.symptomes.filter(visible).sort((x, y) => rang(y) - rang(x)),
+      poids: a.symptomes.reduce((t, s) => t + rang(s), 0),
+    }))
+    .filter((a) => a.signes.length)
+    .sort((a, b) => b.poids - a.poids);
+  const masques = donnees.symptomes.filter((s) => !profil.signes.has(s.id)).length;
+  const constantes = CONSTANTES.filter(([id]) => id !== 'pb' || cas.age === 'petit').filter(
+    ([id]) => id !== 'tad' || !['nn', 'petit', 'grand'].includes(cas.age),
+  );
   return (
     <>
       <h2>Constantes</h2>
       <div className="diag-constantes">
-        {CONSTANTES.filter(([id]) => id !== 'pb' || cas.age === 'petit').map(([id, libelle, unite]) => (
+        {constantes.map(([id, libelle, unite]) => (
           <label key={id}>
             {libelle} <span className="muted">({unite})</span>
             <input
@@ -464,22 +537,54 @@ function EtapeExamen({ donnees, index, cas, maj, regler, deduits }) {
               inputMode="decimal"
               value={cas.constantes[id] ?? ''}
               onChange={(e) => maj('constantes', { ...cas.constantes, [id]: e.target.value })}
+              placeholder={NORMES[id]?.(cas.age) ? `N : ${NORMES[id](cas.age)}` : undefined}
             />
           </label>
         ))}
       </div>
-      <h2>Signes, présents ou absents</h2>
+      {cles.length > 0 && (
+        <div className="diag-prioritaire">
+          <h2>
+            {cas.motif || Object.keys(cas.signes).length
+              ? 'Signes clés pour ce cas'
+              : 'Signes les plus fréquents pour ce patient'}
+          </h2>
+          <ul className="diag-signes">
+            {cles.map((id) => (
+              <LigneSigne
+                key={id}
+                nom={index.symptomes.get(id)?.nom}
+                precision={physiques.has(id) ? 'examen' : 'interrogatoire'}
+                etat={cas.signes[id] || deduitDe.get(id) || ''}
+                deduit={!cas.signes[id] && deduitDe.has(id)}
+                onChange={(e) => regler(id, e)}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
+      <h2>Examen par appareil</h2>
       <RechercheListe
         libelle="Chercher un signe"
-        elements={donnees.symptomes}
+        elements={donnees.symptomes.filter((s) => visible(s.id))}
         dejaPris={Object.keys(cas.signes).map(Number)}
         onChoix={(s) => regler(s.id, 'present')}
       />
       <p className="muted">
-        Par appareil : <b>interrogatoire</b> (signes fonctionnels) puis <b>examen</b> (signes physiques).
-        Noter un signe <b>absent</b> aide autant à éliminer qu’un signe présent à confirmer.
+        Appareils et signes classés selon le cas : <b>interrogatoire</b> (signes fonctionnels) puis{' '}
+        <b>examen</b> (signes physiques). Noter un signe <b>absent</b> aide autant à éliminer qu’un signe
+        présent à confirmer.
+        {masques > 0 && !toutVoir && (
+          <>
+            {' '}
+            {masques} signes impossibles pour ce patient (sexe, âge, grossesse) sont masqués.{' '}
+            <button type="button" className="btn-link" onClick={() => setToutVoir(true)}>
+              Tout afficher
+            </button>
+          </>
+        )}
       </p>
-      {donnees.appareils.map((a) => {
+      {appareils.map((a) => {
         const notes = a.symptomes.filter((s) => cas.signes[s]).length;
         return (
           <details key={a.id} className="diag-appareil">
@@ -488,8 +593,8 @@ function EtapeExamen({ donnees, index, cas, maj, regler, deduits }) {
               {notes > 0 && <span className="tag">{notes}</span>}
             </summary>
             {[
-              ['Interrogatoire', a.symptomes.filter((s) => !physiques.has(s))],
-              ['Examen', a.symptomes.filter((s) => physiques.has(s))],
+              ['Interrogatoire', a.signes.filter((s) => !physiques.has(s))],
+              ['Examen', a.signes.filter((s) => physiques.has(s))],
             ]
               .filter(([, liste]) => liste.length)
               .map(([titre, liste]) => (
@@ -515,11 +620,12 @@ function EtapeExamen({ donnees, index, cas, maj, regler, deduits }) {
   );
 }
 
-function LigneSigne({ nom, etat, deduit, onChange }) {
+function LigneSigne({ nom, etat, deduit, precision, onChange }) {
   return (
     <li className={`diag-signe diag-signe-${etat || 'inconnu'}`}>
       <span>
         {nom}
+        {precision && <span className="muted"> ({precision})</span>}
         {deduit && <span className="muted"> (d’après les constantes)</span>}
       </span>
       <span className="diag-tri">
@@ -546,11 +652,18 @@ function LigneSigne({ nom, etat, deduit, onChange }) {
 
 /* ---------- Étape 4 : paraclinique ---------- */
 
-function EtapeParaclinique({ examens, valeurs, onChange }) {
-  const rapides = EXAMENS_RAPIDES.map((slug) => examens.find((e) => e.slug === slug)).filter(Boolean);
-  const autres = Object.keys(valeurs)
+function EtapeParaclinique({ index, examens, valeurs, hypotheses, onChange }) {
+  // Examens qui confirment ou orientent vers les hypothèses en tête ; sans hypothèse, les
+  // examens rapides courants
+  const utiles = examensUtiles(index, hypotheses, valeurs);
+  const proposes = utiles.length
+    ? utiles.map((u) => u.examen)
+    : EXAMENS_RAPIDES.map((slug) => examens.find((e) => e.slug === slug)).filter(Boolean);
+  const pour = new Map(utiles.map((u) => [u.examen.id, u.hypotheses]));
+  const faits = Object.keys(valeurs)
     .map((id) => examens.find((e) => String(e.id) === id))
-    .filter((e) => e && !rapides.includes(e));
+    .filter(Boolean);
+  const liste = [...faits, ...proposes.filter((e) => !faits.includes(e))];
   const regler = (id, v) => {
     const suite = { ...valeurs };
     if (!v || suite[id] === v) delete suite[id];
@@ -559,14 +672,25 @@ function EtapeParaclinique({ examens, valeurs, onChange }) {
   };
   return (
     <>
-      <h2>Examens complémentaires réalisés</h2>
+      <h2>{utiles.length ? 'Examens utiles pour les hypothèses actuelles' : 'Examens complémentaires'}</h2>
       <p className="muted">
         Résultat positif (en faveur) ou négatif ; laisser vide si l’examen n’a pas été fait.
       </p>
       <ul className="diag-examens">
-        {[...rapides, ...autres].map((e) => (
+        {liste.map((e) => (
           <li key={e.id}>
-            <span>{e.nom}</span>
+            <span>
+              {e.nom}
+              {pour.has(e.id) && (
+                <span className="muted diag-examen-pour">
+                  {' '}
+                  {pour
+                    .get(e.id)
+                    .map((h) => `${h.role === 'c' ? 'confirme' : 'oriente vers'} ${h.nom}`)
+                    .join(' ; ')}
+                </span>
+              )}
+            </span>
             <span className="diag-tri">
               {[
                 ['positif', 'Positif'],
@@ -589,7 +713,7 @@ function EtapeParaclinique({ examens, valeurs, onChange }) {
       <RechercheListe
         libelle="Ajouter un autre examen"
         elements={examens}
-        dejaPris={[...rapides.map((e) => e.id), ...autres.map((e) => e.id)]}
+        dejaPris={liste.map((e) => e.id)}
         onChoix={(e) => regler(e.id, 'positif')}
       />
     </>

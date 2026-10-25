@@ -3,9 +3,15 @@ import {
   analyser,
   convientAuPatient,
   effetsIndesirablesPossibles,
+  examensUtiles,
   indexer,
   lireConstantes,
+  motifsFrequents,
+  pertinenceSignes,
   posologiePour,
+  profilDuPatient,
+  terrainPossible,
+  terrainsAPreciser,
 } from '../src/core/diagnostic.js';
 
 // Jeu réduit : 1 fièvre, 2 convulsions, 3 coma, 4 raideur de nuque, 5 toux, 6 pâleur
@@ -174,5 +180,61 @@ describe('aide au diagnostic : moteur', () => {
     expect(effetsIndesirablesPossibles(molecules, ['Paresthésies', 'Fièvre'])).toEqual([
       { molecule: molecules[0], signes: ['Paresthésies'] },
     ]);
+  });
+
+  it('parcours adaptatif : le profil restreint les fiches et les signes possibles', () => {
+    // Ajout d'un signe propre à l'éclampsie (7) : il ne doit pas être proposé chez un homme
+    const d = {
+      ...donnees,
+      symptomes: [...donnees.symptomes, { id: 7, nom: 'Contractions utérines' }],
+      liens: [...donnees.liens, [103, 7, 2]],
+      restrictions: [
+        { motif: 'Anatomie féminine', sexe: 'F', symptomes: [7] },
+        { motif: 'Grossesse', grossesse: true, symptomes: [7] },
+      ],
+    };
+    const idx = indexer(d);
+    const homme = profilDuPatient(idx, { age: 'adulte', sexe: 'M' });
+    expect(homme.fiches.map((f) => f.slug)).not.toContain('eclampsie');
+    expect(homme.signes.has(7)).toBe(false);
+    const enceinte = profilDuPatient(idx, { age: 'adulte', sexe: 'F', grossesse: true });
+    expect(enceinte.signes.has(7)).toBe(true);
+    // Chez le jeune enfant, ni fiche de l'adulte ni fiche obstétricale
+    expect(
+      profilDuPatient(idx, { age: 'petit' })
+        .fiches.map((f) => f.slug)
+        .sort(),
+    ).toEqual(['meningite', 'palu-grave-enfant']);
+  });
+
+  it('le motif puis les hypothèses ordonnent les signes à rechercher', () => {
+    const profil = profilDuPatient(index, { age: 'petit' });
+    // Motif « raideur de nuque » : seule la méningite l'explique, ses signes passent devant
+    const parMotif = pertinenceSignes(index, { age: 'petit', motif: 4, signes: {} }, [], profil);
+    expect(parMotif.has(4)).toBe(false);
+    expect(parMotif.get(1)).toBeGreaterThan(parMotif.get(6) || 0);
+    // Hypothèses en tête : la pâleur (paludisme) devient pertinente
+    const r = analyser(index, { age: 'petit', signes: { 1: 'present', 2: 'present' } });
+    const parHyp = pertinenceSignes(
+      index,
+      { age: 'petit', signes: { 1: 'present', 2: 'present' } },
+      r.hypotheses,
+      profil,
+    );
+    expect(parHyp.get(6)).toBeGreaterThan(0);
+    expect(parHyp.has(1)).toBe(false);
+    expect(motifsFrequents(index, profil).map((s) => s.nom)).toContain('Fièvre');
+  });
+
+  it('examens utiles et antécédents à préciser selon les hypothèses en tête', () => {
+    const r = analyser(index, { age: 'petit', signes: { 1: 'present', 2: 'present', 3: 'present' } });
+    const utiles = examensUtiles(index, r.hypotheses);
+    expect(utiles[0].examen.slug).toBe('tdr-paludisme');
+    expect(utiles[0].hypotheses).toEqual([{ nom: 'Paludisme grave de l’enfant', role: 'c' }]);
+    expect(examensUtiles(index, r.hypotheses, { 10: 'positif' })).toEqual([]);
+    expect([...terrainsAPreciser(index, r.hypotheses, donnees.terrains)]).toEqual(['vih']);
+    expect(terrainPossible({ sexe: 'F' }, { sexe: 'M' })).toBe(false);
+    expect(terrainPossible({ ages: ['adulte'] }, { age: 'petit' })).toBe(false);
+    expect(terrainPossible({ ages: ['adulte'] }, {})).toBe(true);
   });
 });

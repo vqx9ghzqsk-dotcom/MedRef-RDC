@@ -1963,6 +1963,7 @@ describe('Aide au diagnostic', () => {
       { id: 1, nom: 'Fièvre', slug: 'fievre' },
       { id: 2, nom: 'Convulsions', slug: 'convulsions' },
       { id: 3, nom: 'Toux', slug: 'toux' },
+      { id: 4, nom: 'Raideur de nuque', slug: 'raideur-de-nuque' },
     ],
     examens: [{ id: 10, slug: 'tdr-paludisme', nom: 'TDR paludisme' }],
     pathologies: [
@@ -1978,11 +1979,11 @@ describe('Aide au diagnostic', () => {
       },
       {
         id: 2,
-        slug: 'pneumonie',
-        nom: 'Pneumonie',
-        specialite: 'Pneumologie',
+        slug: 'meningite',
+        nom: 'Méningite bactérienne',
+        specialite: 'Neuro-infectiologie',
         validee: false,
-        urgence: false,
+        urgence: true,
         public: { ages: null, sexe: null, obstetrique: false },
         tests: {},
       },
@@ -1991,8 +1992,22 @@ describe('Aide au diagnostic', () => {
       [1, 1, 3],
       [1, 2, 2],
       [2, 1, 3],
-      [2, 3, 3],
+      [2, 2, 1],
+      [2, 4, 2],
     ],
+    syndromes: [],
+    molecules: [
+      { id: 3, dci: 'Artésunate', slug: 'artesunate', classe_id: 1, classe: 'Antipaludiques' },
+      { id: 9, dci: 'Amoxicilline', slug: 'amoxicilline', classe_id: 2, classe: 'Pénicillines' },
+    ],
+    appareils: [
+      { id: 'general', nom: 'Signes généraux', symptomes: [1] },
+      { id: 'neuro', nom: 'Neurologique', symptomes: [2, 4] },
+      { id: 'cardio-respiratoire', nom: 'Cœur et poumons', symptomes: [3] },
+    ],
+    physiques: [4],
+    terrains: [{ id: 'vih', groupe: 'Médicaux', libelle: 'Infection à VIH', motif: 'meningite' }],
+    contextes: [],
   };
 
   it('réservée aux comptes connectés', async () => {
@@ -2001,7 +2016,7 @@ describe('Aide au diagnostic', () => {
     expect(screen.getByRole('link', { name: 'Connectez-vous' })).toHaveAttribute('href', '/connexion');
   });
 
-  it('du cas aux hypothèses, puis au traitement avec dose au poids et produits', async () => {
+  it('suit la démarche : motif, terrain, examen (présent, absent, constantes), hypothèses, traitement', async () => {
     const user = userEvent.setup();
     const molecule = vi.fn(async () => ({
       posologies: [
@@ -2013,27 +2028,43 @@ describe('Aide au diagnostic', () => {
           dose_texte: '2,4 mg/kg',
         },
       ],
+      interactions: null,
+      grossesse_allaitement: null,
     }));
     renderApp('/diagnostic', { diagnosticDonnees: vi.fn(async () => donneesDiag), molecule }, MEDECIN);
+    // 1. Motif et histoire
     await user.click(await screen.findByRole('button', { name: 'Adulte' }));
-    await user.type(screen.getByLabelText(/Poids/), '50');
-    const champ = screen.getByLabelText('Ajouter un signe');
-    await user.type(champ, 'fiev');
-    await user.click(screen.getByRole('button', { name: 'Fièvre' }));
-    await user.type(champ, 'conv{Enter}');
-    // Signe de gravité et hypothèses classées
+    await user.type(screen.getByLabelText('Poids (kg)'), '50');
+    await user.type(screen.getByLabelText('Plainte principale'), 'conv{Enter}');
+    expect(screen.getByText('Convulsions', { selector: 'b' })).toBeInTheDocument();
+    // 2. Terrain : allergie déclarée à une autre molécule de la même classe que le traitement
+    await user.click(screen.getByRole('button', { name: '2 · Terrain' }));
+    await user.click(screen.getByRole('button', { name: 'Infection à VIH' }));
+    // 3. Examen : constantes (fièvre déduite) et raideur de nuque absente
+    await user.click(screen.getByRole('button', { name: '3 · Examen clinique' }));
+    await user.type(screen.getByLabelText(/Température/), '39,4');
     expect(screen.getByRole('alert')).toHaveTextContent('Convulsions');
+    await user.click(screen.getByText('Neurologique'));
+    // (le même signe est aussi proposé dans « À explorer maintenant »)
+    const neuro = screen.getByText('Neurologique').closest('details');
+    await user.click(within(neuro).getByRole('button', { name: 'Raideur de nuque : absent' }));
+    // Hypothèses : la méningite recule malgré le terrain ; le paludisme passe en tête
     const hypotheses = screen
       .getAllByRole('listitem')
       .filter((li) => li.classList.contains('diag-hypothese'));
     expect(hypotheses[0]).toHaveTextContent('Paludisme grave');
-    expect(hypotheses[0]).toHaveTextContent('Très probable');
-    // Toux : signe qui départage, proposé à rechercher
-    expect(screen.getByRole('button', { name: '+ Toux' })).toBeInTheDocument();
+    const meningite = hypotheses.find((h) => h.textContent.includes('Méningite'));
+    expect(meningite).toHaveTextContent('Contre : Raideur de nuque absent');
+    expect(meningite).toHaveTextContent('Terrain : Infection à VIH');
+    // Observation imprimable
+    const observation = screen.getByRole('region', { name: 'Observation' });
+    expect(observation).toHaveTextContent('Convulsions');
+    expect(observation).toHaveTextContent('Température 39,4 °C');
+    expect(observation).toHaveTextContent('Raideur de nuque');
+    // Traitement : dose au poids
     await user.click(within(hypotheses[0]).getByRole('button', { name: 'Traitement et produits' }));
     const traitement = await screen.findByRole('region', { name: /Paludisme grave : traitement/ });
     expect(await within(traitement).findByText('120 mg par prise')).toBeInTheDocument();
-    expect(within(traitement).getByText('Artesun 60 mg')).toBeInTheDocument();
     expect(within(traitement).getByRole('link', { name: 'Préparer l’ordonnance' })).toHaveAttribute(
       'href',
       '/prescriptions?pathologie=paludisme-grave',

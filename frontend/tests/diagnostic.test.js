@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { analyser, convientAuPatient, indexer, posologiePour } from '../src/core/diagnostic.js';
+import {
+  analyser,
+  convientAuPatient,
+  effetsIndesirablesPossibles,
+  indexer,
+  lireConstantes,
+  posologiePour,
+} from '../src/core/diagnostic.js';
 
 // Jeu réduit : 1 fièvre, 2 convulsions, 3 coma, 4 raideur de nuque, 5 toux, 6 pâleur
 const donnees = {
@@ -60,6 +67,10 @@ const donnees = {
     [103, 2, 3],
     [103, 3, 2],
   ],
+  syndromes: [{ id: 50, nom: 'Syndrome méningé', slug: 'syndrome-meninge', symptomes: [1, 4] }],
+  physiques: [4, 6],
+  terrains: [{ id: 'vih', libelle: 'Infection à VIH', motif: 'meningite' }],
+  contextes: [],
 };
 const index = indexer(donnees);
 
@@ -118,5 +129,50 @@ describe('aide au diagnostic : moteur', () => {
       'Orale',
     );
     expect(posologiePour(artemether, 'Paludisme grave de l’enfant', 'petit', 'IM').voie).toBe('IM');
+  });
+
+  it('un signe noté absent fait reculer la fiche qui l’attend', () => {
+    const sans = analyser(index, { age: 'petit', signes: { 1: 'present', 3: 'present' } });
+    const avec = analyser(index, { age: 'petit', signes: { 1: 'present', 3: 'present', 6: 'absent' } });
+    const score = (r, slug) => r.hypotheses.find((h) => h.fiche.slug === slug).score;
+    expect(score(avec, 'palu-grave-enfant')).toBeLessThan(score(sans, 'palu-grave-enfant'));
+    expect(avec.hypotheses.find((h) => h.fiche.slug === 'palu-grave-enfant').discordants[0].nom).toBe(
+      'Pâleur',
+    );
+  });
+
+  it('les constantes donnent des signes présents ou absents et des alertes', () => {
+    expect(lireConstantes({ temperature: '39,2', fr: '45', glycemie: '1,8' }, 'petit')).toMatchObject({
+      presents: ['Fièvre', 'Tachypnée'],
+      orientations: ['hypoglyc'],
+    });
+    expect(lireConstantes({ temperature: '36,8', tas: '120' }, 'adulte').absents).toEqual([
+      'Fièvre',
+      'Hypotension',
+    ]);
+    expect(lireConstantes({ glasgow: '7', spo2: '85' }, 'adulte').alertes).toHaveLength(2);
+    const r = analyser(index, { age: 'petit', constantes: { temperature: '39' }, signes: { 2: 'present' } });
+    expect(r.deduits).toEqual([{ id: 1, nom: 'Fièvre', etat: 'present' }]);
+  });
+
+  it('motif, terrain, synthèse syndromique et question suivante', () => {
+    const r = analyser(index, { age: 'adulte', motif: 4, terrains: ['vih'], signes: { 1: 'present' } });
+    expect(r.hypotheses[0].fiche.slug).toBe('meningite');
+    expect(r.hypotheses[0].raisons).toEqual(['Infection à VIH']);
+    expect(r.syndromes.map((s) => s.nom)).toEqual(['Syndrome méningé']);
+    const q = analyser(index, { age: 'petit', signes: { 1: 'present', 3: 'present' } }).questions;
+    expect(q.length).toBeGreaterThan(0);
+    expect(q.map((x) => x.symptome.nom)).toEqual(expect.arrayContaining(['Pâleur']));
+    expect(q.find((x) => x.symptome.nom === 'Pâleur').examen).toBe(true);
+  });
+
+  it('effets indésirables : un signe du cas cité dans la fiche d’un traitement en cours', () => {
+    const molecules = [
+      { dci: 'Isoniazide', slug: 'isoniazide', effets_indesirables: 'Neuropathie, paresthésies, hépatite.' },
+      { dci: 'Paracétamol', slug: 'paracetamol', effets_indesirables: 'Rares.' },
+    ];
+    expect(effetsIndesirablesPossibles(molecules, ['Paresthésies', 'Fièvre'])).toEqual([
+      { molecule: molecules[0], signes: ['Paresthésies'] },
+    ]);
   });
 });

@@ -1,15 +1,21 @@
 /**
- * Moteur d'aide au diagnostic, sans dépendance UI et utilisable hors connexion.
+ * Moteur d'aide au diagnostic, sans dépendance UI et utilisable hors connexion. Il suit la
+ * démarche sémiologique : motif et histoire de la maladie, terrain, examen clinique (constantes
+ * et signes présents ou absents par appareil), synthèse syndromique, hypothèses, question
+ * suivante.
  *
  * Données (GET /api/diagnostic/donnees) : fiches avec leur public visé, symptômes, liens
- * [pathologie, symptôme, fréquence 0-3] et examens de confirmation (c) ou de présomption (p).
+ * [pathologie, symptôme, fréquence 0-3], examens de confirmation (c) ou de présomption (p),
+ * syndromes, molécules et référentiel (appareils, signes d'examen, terrains, contextes).
  *
- * Principe : chaque signe du cas pèse selon sa rareté parmi les fiches (un signe présent dans
- * peu de fiches départage mieux que la fièvre) et selon sa fréquence dans la fiche. Le score
- * combine la part du cas expliquée par la fiche et la part du tableau de la fiche retrouvée.
- * Un examen positif qui confirme la fiche la fait monter, un examen négatif la fait descendre.
- * Les fiches d'un autre public (âge, sexe, grossesse) sont écartées ; celles qui visent
- * précisément l'âge du patient passent devant les fiches générales.
+ * Score d'une fiche :
+ *  - chaque signe présent pèse selon sa rareté parmi les fiches (la fièvre départage peu) et sa
+ *    fréquence dans la fiche ; le motif de consultation pèse davantage et doit être expliqué ;
+ *  - part du cas expliquée par la fiche (70 %) et part du tableau de la fiche retrouvée (30 %) ;
+ *  - un signe noté ABSENT que la fiche attend fait reculer la fiche (c'est ainsi qu'on élimine) ;
+ *  - examens : un examen de confirmation positif fait monter, négatif fait reculer ;
+ *  - terrain, contexte épidémique, constantes anormales et durée orientent sans décider ;
+ *  - les fiches d'un autre public (âge, sexe, grossesse) sont écartées.
  */
 
 /** Poids d'un signe selon sa fréquence dans la fiche (rare, occasionnel, fréquent, très fréquent). */
@@ -22,6 +28,14 @@ export const TRANCHES_AGE = [
   { id: 'grand', libelle: '5 – 14 ans' },
   { id: 'adulte', libelle: 'Adulte' },
   { id: 'age', libelle: 'Plus de 65 ans' },
+];
+const ENFANT = ['nn', 'petit', 'grand'];
+
+export const DUREES = [
+  { id: 'heures', libelle: 'Quelques heures' },
+  { id: 'jours', libelle: 'Quelques jours (moins de 2 semaines)' },
+  { id: 'semaines', libelle: '2 à 6 semaines' },
+  { id: 'mois', libelle: 'Plus de 6 semaines' },
 ];
 
 /** Signes qui imposent une conduite d'urgence, quel que soit le diagnostic. */
@@ -49,9 +63,16 @@ export const SIGNES_GRAVITE = new Set([
 
 const MAX_HYPOTHESES = 8;
 
+export const sansAccents = (s) =>
+  String(s || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase();
+
 /** Index construit une fois par jeu de données (le moteur est rappelé à chaque saisie). */
 export function indexer(donnees) {
   const symptomes = new Map(donnees.symptomes.map((s) => [s.id, s]));
+  const parNom = new Map(donnees.symptomes.map((s) => [s.nom, s.id]));
   const parFiche = new Map();
   const nbFiches = new Map();
   for (const [p, s, f] of donnees.liens) {
@@ -62,7 +83,19 @@ export function indexer(donnees) {
   const total = donnees.pathologies.length || 1;
   const rarete = new Map();
   for (const [s, n] of nbFiches) rarete.set(s, Math.log(1 + total / n));
-  return { donnees, symptomes, parFiche, rarete };
+  const nomsFiches = new Map(donnees.pathologies.map((p) => [p.id, sansAccents(p.nom)]));
+  const motifs = (liste) => new Map((liste || []).map((t) => [t.id, new RegExp(t.motif)]));
+  return {
+    donnees,
+    symptomes,
+    parNom,
+    parFiche,
+    rarete,
+    nomsFiches,
+    physiques: new Set(donnees.physiques || []),
+    terrains: motifs(donnees.terrains),
+    contextes: motifs(donnees.contextes),
+  };
 }
 
 /** La fiche s'adresse-t-elle à ce patient ? (critère manquant = pas de restriction) */
@@ -75,24 +108,172 @@ export function convientAuPatient(fiche, cas) {
   return true;
 }
 
+const nombre = (v) => {
+  if (v === '' || v === null || v === undefined) return null;
+  const n = Number(String(v).replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+};
+
+/**
+ * Lecture des constantes : signes déduits (présents ou absents), alertes et orientations.
+ * Seuils : fièvre ≥ 38 °C ; hypothermie < 35,5 °C ; tachypnée selon l'âge (PCIME : ≥ 60 avant
+ * 2 mois, ≥ 40 jusqu'à 5 ans ; ≥ 30 de 5 à 14 ans ; ≥ 22 chez l'adulte) ; hypotension (PAS
+ * < 90 mmHg chez l'adulte, < 70 avant 5 ans, < 80 de 5 à 14 ans) ; SpO2 < 90 % ; glycémie
+ * < 2,2 mmol/L (hypoglycémie) ou ≥ 14 mmol/L ; Glasgow ≤ 13 ; périmètre brachial < 115 mm
+ * (malnutrition aiguë sévère, 6 à 59 mois).
+ */
+export function lireConstantes(constantes = {}, age = '') {
+  const c = Object.fromEntries(Object.entries(constantes).map(([k, v]) => [k, nombre(v)]));
+  const presents = [];
+  const absents = [];
+  const alertes = [];
+  const orientations = [];
+  if (c.temperature !== null && c.temperature !== undefined) {
+    if (c.temperature >= 38) presents.push('Fièvre');
+    else if (c.temperature >= 35.5) absents.push('Fièvre');
+    if (c.temperature >= 40) presents.push('Hyperthermie');
+    if (c.temperature < 35.5) presents.push('Hypothermie');
+  }
+  if (c.fr) {
+    const seuil = { nn: 60, petit: 40, grand: 30 }[age] || 22;
+    if (c.fr >= seuil) presents.push('Tachypnée');
+    else absents.push('Tachypnée');
+  }
+  if (c.tas) {
+    const seuil = { nn: 60, petit: 70, grand: 80 }[age] || 90;
+    if (c.tas < seuil) presents.push('Hypotension');
+    else absents.push('Hypotension');
+  }
+  if (c.spo2 !== null && c.spo2 !== undefined && c.spo2 < 90) {
+    alertes.push(`Hypoxémie (SpO2 ${c.spo2} %) : oxygène sans attendre`);
+  }
+  if (c.glycemie !== null && c.glycemie !== undefined) {
+    if (c.glycemie < 2.2) {
+      alertes.push(`Hypoglycémie (${c.glycemie} mmol/L) : sucre par voie IV ou orale immédiatement`);
+      orientations.push('hypoglyc');
+    } else if (c.glycemie >= 14) {
+      alertes.push(`Hyperglycémie (${c.glycemie} mmol/L) : rechercher une cétose`);
+      orientations.push('diabet|acidocetose|hyperosmolaire');
+    }
+  }
+  if (c.glasgow) {
+    if (c.glasgow <= 13) presents.push('Troubles de la conscience');
+    else if (c.glasgow === 15) absents.push('Troubles de la conscience');
+    if (c.glasgow <= 8) alertes.push(`Glasgow ${c.glasgow} : coma, protéger les voies aériennes`);
+  }
+  if (c.fc) {
+    const seuil = { nn: 180, petit: 160, grand: 130 }[age] || 120;
+    if (c.fc >= seuil) alertes.push(`Tachycardie (${c.fc}/min)`);
+  }
+  if (c.pb && age === 'petit') {
+    if (c.pb < 115) {
+      alertes.push(`Périmètre brachial ${c.pb} mm : malnutrition aiguë sévère`);
+      orientations.push('malnutrition');
+    } else if (c.pb < 125) orientations.push('malnutrition');
+  }
+  return { presents, absents, alertes, orientations };
+}
+
+/** Signes présents et absents du cas : saisis, puis déduits des constantes s'ils ne l'ont pas été. */
+export function etatDesSignes(index, cas) {
+  const presents = new Set(cas.symptomes || []);
+  const absents = new Set();
+  for (const [id, etat] of Object.entries(cas.signes || {})) {
+    const n = Number(id);
+    if (etat === 'present') presents.add(n);
+    else if (etat === 'absent') absents.add(n);
+  }
+  if (cas.motif) presents.add(Number(cas.motif));
+  const lecture = lireConstantes(cas.constantes, cas.age);
+  const deduits = [];
+  for (const nom of lecture.presents) {
+    const id = index.parNom.get(nom);
+    if (id && !presents.has(id) && !absents.has(id)) {
+      presents.add(id);
+      deduits.push({ id, nom, etat: 'present' });
+    }
+  }
+  for (const nom of lecture.absents) {
+    const id = index.parNom.get(nom);
+    if (id && !presents.has(id) && !absents.has(id)) {
+      absents.add(id);
+      deduits.push({ id, nom, etat: 'absent' });
+    }
+  }
+  return { presents, absents, deduits, lecture };
+}
+
 function niveau(score, premier) {
   if (premier && score >= 0.7) return 'tres_probable';
   if (score >= 0.55) return 'probable';
   return 'possible';
 }
 
+/** Coup de pouce du terrain, du contexte, des constantes et de la durée (plafonné). */
+function orientation(index, fiche, cas, lecture) {
+  const nom = index.nomsFiches.get(fiche.id) || '';
+  const raisons = [];
+  let bonus = 0;
+  for (const id of cas.terrains || []) {
+    const motif = index.terrains.get(id);
+    if (motif?.test(nom)) {
+      bonus += 0.06;
+      raisons.push(index.donnees.terrains.find((t) => t.id === id).libelle);
+    }
+  }
+  for (const id of cas.contextes || []) {
+    const motif = index.contextes.get(id);
+    if (motif?.test(nom)) {
+      bonus += 0.08;
+      raisons.push(index.donnees.contextes.find((t) => t.id === id).libelle);
+    }
+  }
+  for (const motif of lecture.orientations) {
+    if (new RegExp(motif).test(nom)) {
+      bonus += 0.1;
+      raisons.push('constantes');
+    }
+  }
+  bonus = Math.min(bonus, 0.2);
+  const chronique = /chronique/.test(nom);
+  const aigue = /aigu/.test(nom);
+  if (cas.duree === 'semaines' || cas.duree === 'mois') {
+    if (chronique) bonus += 0.05;
+    if (aigue) bonus -= 0.08;
+  } else if (cas.duree === 'heures' || cas.duree === 'jours') {
+    if (aigue) bonus += 0.03;
+    if (chronique) bonus -= 0.08;
+  }
+  return { bonus, raisons: [...new Set(raisons)] };
+}
+
 /**
  * Hypothèses classées pour un cas :
- *   cas = { age, sexe, grossesse, symptomes: [id], examens: { [id]: 'positif' | 'negatif' } }
- * Renvoie { hypotheses, gravite, aRechercher }.
+ *   cas = { age, sexe, grossesse, motif, duree, signes: { [id]: 'present' | 'absent' },
+ *           constantes, terrains, contextes, examens: { [id]: 'positif' | 'negatif' } }
+ * (`symptomes: [id]` reste accepté : signes présents.)
+ * Renvoie { hypotheses, gravite, alertes, deduits, syndromes, questions, aRechercher }.
  */
 export function analyser(index, cas) {
   const { donnees, symptomes, parFiche, rarete } = index;
-  const signes = [...new Set(cas.symptomes || [])].filter((s) => symptomes.has(s));
+  const { presents, absents, deduits, lecture } = etatDesSignes(index, cas);
+  const signes = [...presents].filter((s) => symptomes.has(s));
   const gravite = signes.map((s) => symptomes.get(s)).filter((s) => SIGNES_GRAVITE.has(s.nom));
-  if (!signes.length) return { hypotheses: [], gravite, aRechercher: [] };
+  const syndromes = syntheseSyndromique(index, presents, absents);
+  const vide = {
+    hypotheses: [],
+    gravite,
+    alertes: lecture.alertes,
+    deduits,
+    syndromes,
+    questions: [],
+    aRechercher: [],
+  };
+  if (!signes.length) return vide;
 
-  const poidsCas = signes.reduce((t, s) => t + (rarete.get(s) || 0), 0) || 1;
+  const motif = cas.motif ? Number(cas.motif) : null;
+  const poidsSigne = (s) => (rarete.get(s) || 0) * (s === motif ? 1.5 : 1);
+  const poidsCas = signes.reduce((t, s) => t + poidsSigne(s), 0) || 1;
   const examens = cas.examens || {};
   const resultats = [];
   for (const fiche of donnees.pathologies) {
@@ -101,17 +282,25 @@ export function analyser(index, cas) {
     if (!tableau) continue;
     let explique = 0;
     let poidsFiche = 0;
+    let contre = 0;
     const concordants = [];
+    const discordants = [];
     for (const [s, f] of tableau) {
       const w = (rarete.get(s) || 0) * POIDS_FREQUENCE[f];
       poidsFiche += w;
-      if (signes.includes(s)) {
-        explique += w;
+      if (presents.has(s)) {
+        explique += w * (s === motif ? 1.5 : 1);
         concordants.push({ id: s, nom: symptomes.get(s).nom, frequence: f });
+      } else if (absents.has(s)) {
+        contre += w;
+        discordants.push({ id: s, nom: symptomes.get(s).nom, frequence: f });
       }
     }
     if (!concordants.length) continue;
-    let score = 0.7 * (explique / poidsCas) + 0.3 * (explique / (poidsFiche || 1));
+    let score =
+      0.7 * (explique / poidsCas) + 0.3 * (explique / (poidsFiche || 1)) - 0.5 * (contre / (poidsFiche || 1));
+    // Le motif de consultation doit être expliqué par l'hypothèse
+    if (motif && !tableau.has(motif)) score *= 0.8;
     const tests = [];
     for (const [id, resultat] of Object.entries(examens)) {
       const role = fiche.tests?.[id];
@@ -121,18 +310,22 @@ export function analyser(index, cas) {
       else score *= role === 'c' ? 0.4 : 0.75;
       tests.push({ nom, resultat, role });
     }
+    const { bonus, raisons } = orientation(index, fiche, cas, lecture);
+    score += bonus;
     // À tableau égal, la fiche consacrée à l'âge du patient passe devant la fiche générale
     if (cas.age && fiche.public?.ages?.includes(cas.age)) score += 0.04;
     const manquants = [...tableau]
-      .filter(([s, f]) => f >= 2 && !signes.includes(s))
+      .filter(([s, f]) => f >= 2 && !presents.has(s) && !absents.has(s))
       .sort((a, b) => b[1] - a[1] || (rarete.get(b[0]) || 0) - (rarete.get(a[0]) || 0))
       .map(([s]) => symptomes.get(s).nom);
     resultats.push({
       fiche,
-      score: Math.min(score, 1),
+      score: Math.max(0, Math.min(score, 1)),
       concordants: concordants.sort((a, b) => b.frequence - a.frequence),
+      discordants,
       aRechercher: manquants.slice(0, 4),
       tests,
+      raisons,
     });
   }
   resultats.sort((a, b) => b.score - a.score || a.fiche.nom.localeCompare(b.fiche.nom, 'fr'));
@@ -143,27 +336,75 @@ export function analyser(index, cas) {
     if (aEliminer) graves += 1;
     return { ...h, niveau: niveau(h.score, i === 0), aEliminer };
   });
-  return { hypotheses, gravite, aRechercher: signesQuiDepartagent(index, hypotheses, signes) };
+  const questions = questionsSuivantes(index, hypotheses, presents, absents);
+  return {
+    ...vide,
+    hypotheses,
+    questions,
+    aRechercher: questions.map((q) => q.symptome),
+  };
 }
 
 /**
- * Signes à rechercher pour départager les premières hypothèses : présents (fréquents) dans
- * certaines seulement, pas encore saisis, les plus discriminants d'abord.
+ * Synthèse syndromique : syndromes dont au moins deux signes et la moitié des signes sont
+ * présents, dont un signe caractéristique (présent dans quatre syndromes au plus : la fièvre ou
+ * les troubles de la conscience appartiennent à trop de syndromes pour en fonder un), et dont
+ * les signes notés absents ne l'emportent pas sur les signes présents.
  */
-export function signesQuiDepartagent(index, hypotheses, signes) {
-  const tete = hypotheses.slice(0, 5);
+export function syntheseSyndromique(index, presents, absents = new Set()) {
+  const syndromes = index.donnees.syndromes || [];
+  const partage = new Map();
+  for (const sy of syndromes) for (const s of sy.symptomes) partage.set(s, (partage.get(s) || 0) + 1);
+  return syndromes
+    .map((sy) => {
+      const vus = sy.symptomes.filter((s) => presents.has(s));
+      return {
+        ...sy,
+        signes: vus.map((s) => index.symptomes.get(s)?.nom).filter(Boolean),
+        part: vus.length / sy.symptomes.length,
+        caracteristique: vus.some((s) => partage.get(s) <= 4),
+        contre: sy.symptomes.filter((s) => absents.has(s)).length,
+      };
+    })
+    .filter(
+      (sy) => sy.signes.length >= 2 && sy.part >= 0.5 && sy.caracteristique && sy.contre < sy.signes.length,
+    )
+    .sort((a, b) => b.part - a.part || b.signes.length - a.signes.length);
+}
+
+/**
+ * Question suivante : le signe pas encore exploré qui sépare le mieux les premières
+ * hypothèses (présent dans certaines, pas dans d'autres), pondéré par leur score. Les signes
+ * d'examen sont signalés comme tels (« à rechercher à l'examen »).
+ */
+export function questionsSuivantes(index, hypotheses, presents, absents, nombreMax = 3) {
+  const tete = hypotheses.slice(0, 6);
   if (tete.length < 2) return [];
-  const compte = new Map();
+  const poids = tete.map((h) => h.score ** 2 || 0.0001);
+  const total = poids.reduce((a, b) => a + b, 0);
+  const candidats = new Set();
   for (const h of tete) {
-    for (const [s, f] of index.parFiche.get(h.fiche.id) || []) {
-      if (f >= 2 && !signes.includes(s)) compte.set(s, (compte.get(s) || 0) + 1);
+    for (const [s] of index.parFiche.get(h.fiche.id) || []) {
+      if (!presents.has(s) && !absents.has(s)) candidats.add(s);
     }
   }
-  return [...compte]
-    .filter(([, n]) => n < tete.length)
-    .sort((a, b) => (index.rarete.get(b[0]) || 0) - (index.rarete.get(a[0]) || 0))
-    .slice(0, 6)
-    .map(([s]) => index.symptomes.get(s));
+  return [...candidats]
+    .map((s) => {
+      let p = 0;
+      tete.forEach((h, i) => {
+        const f = index.parFiche.get(h.fiche.id)?.get(s);
+        if (f !== undefined) p += poids[i] * POIDS_FREQUENCE[f];
+      });
+      p /= total;
+      return { s, gain: p * (1 - p) * (0.5 + (index.rarete.get(s) || 0) / 6) };
+    })
+    .filter((x) => x.gain > 0)
+    .sort((a, b) => b.gain - a.gain)
+    .slice(0, nombreMax)
+    .map(({ s }) => ({
+      symptome: index.symptomes.get(s),
+      examen: index.physiques.has(s),
+    }));
 }
 
 /** Voie suggérée par le contexte de la molécule dans la fiche (« relais oral », « rectal pré-transfert »…). */
@@ -174,20 +415,13 @@ const VOIES = [
   [/\bim\b|intramusculaire/, /\bim\b|intramusculaire/],
 ];
 
-const sansAccents = (s) =>
-  String(s || '')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase();
-
 /**
  * Posologie de la fiche molécule adaptée au cas : population enfant avant 15 ans, adulte
  * ensuite ; puis la ligne dont l'indication correspond à la pathologie et dont la voie
  * correspond au contexte de la molécule dans la fiche (relais oral, rectal, IV…).
  */
 export function posologiePour(posologies, pathologieNom, age, contexte = '') {
-  const enfant = ['nn', 'petit', 'grand'].includes(age);
-  const population = enfant ? 'enfant' : 'adulte';
+  const population = ENFANT.includes(age) ? 'enfant' : 'adulte';
   const nom = sansAccents(pathologieNom);
   const ctx = sansAccents(contexte);
   const candidates = (posologies || []).filter((p) => p.population === population);
@@ -205,4 +439,22 @@ export function posologiePour(posologies, pathologieNom, age, contexte = '') {
     return n;
   };
   return liste.reduce((meilleure, p) => (points(p) > points(meilleure) ? p : meilleure), liste[0]);
+}
+
+/**
+ * Signes du cas qui peuvent être un effet indésirable d'un traitement en cours (recherche du
+ * nom du signe dans le texte « effets indésirables » de la fiche molécule).
+ */
+export function effetsIndesirablesPossibles(molecules, nomsSignes) {
+  const resultats = [];
+  for (const m of molecules) {
+    const texte = sansAccents(m.effets_indesirables);
+    if (!texte) continue;
+    const signes = nomsSignes.filter((n) => {
+      const cle = sansAccents(n).split(/[ ’']/)[0];
+      return cle.length >= 4 && texte.includes(cle);
+    });
+    if (signes.length) resultats.push({ molecule: m, signes });
+  }
+  return resultats;
 }

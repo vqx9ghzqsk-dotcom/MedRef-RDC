@@ -25,3 +25,28 @@ describe('aide au diagnostic : public visé des fiches', () => {
     });
   });
 });
+
+describe('aide au diagnostic : référentiel de la démarche sémiologique', () => {
+  const data = require('../db/seed-data');
+  const { APPAREILS, PHYSIQUES, TERRAINS, CONTEXTES } = require('../db/seed-data/diagnostic');
+  const fiches = [...data.pathologies, ...(data.ajouts.fiches || [])];
+  const noms = new Set([
+    ...data.symptomes.map((s) => s[0] ?? s.nom),
+    ...fiches.flatMap((p) => (p.symptomes || []).map(([n]) => n)),
+  ]);
+
+  it('chaque signe de la base est rangé dans un seul appareil, sans nom inconnu', () => {
+    const ranges = APPAREILS.flatMap((a) => a.symptomes);
+    expect(ranges.filter((n) => !noms.has(n))).toEqual([]);
+    expect(new Set(ranges).size).toBe(ranges.length);
+    expect([...noms].filter((n) => !ranges.includes(n))).toEqual([]);
+    expect(PHYSIQUES.filter((n) => !ranges.includes(n))).toEqual([]);
+  });
+
+  it('terrains et contextes : identifiants uniques et motifs valides', () => {
+    for (const liste of [TERRAINS, CONTEXTES]) {
+      expect(new Set(liste.map((t) => t.id)).size).toBe(liste.length);
+      for (const t of liste) expect(() => new RegExp(t.motif)).not.toThrow();
+    }
+  });
+});

@@ -4,6 +4,7 @@ const express = require('express');
 const db = require('../db');
 const { asyncHandler } = require('../utils/http');
 const { requireAuth } = require('../middleware/auth');
+const referentiel = require('../../db/seed-data/diagnostic');
 
 const router = express.Router();
 
@@ -46,28 +47,45 @@ function publicVise(nom, specialite) {
 /**
  * Données du moteur d'aide au diagnostic (calcul fait dans le navigateur, hors connexion) :
  * fiches avec leur public visé, symptômes, liens fiche-symptôme avec fréquence, examens de
- * confirmation ou de présomption, et fiches liées à une urgence.
+ * confirmation ou de présomption, fiches liées à une urgence, syndromes (synthèse syndromique),
+ * molécules (traitements en cours, allergies) et référentiel de la démarche sémiologique
+ * (signes par appareil, signes d'examen, terrains, contextes).
  */
 router.get(
   '/diagnostic/donnees',
   requireAuth,
   asyncHandler(async (_req, res) => {
-    const [pathologies, symptomes, liens, examens, urgences] = await Promise.all([
-      db.query(
-        `SELECT p.id, p.slug, p.nom, p.statut, s.nom AS specialite
+    const [pathologies, symptomes, liens, examens, urgences, syndromes, syndromeSignes, molecules] =
+      await Promise.all([
+        db.query(
+          `SELECT p.id, p.slug, p.nom, p.statut, s.nom AS specialite
            FROM pathologies p JOIN specialites s ON s.id = p.specialite_id
           WHERE p.statut <> 'brouillon'
           ORDER BY p.nom`,
-      ),
-      db.query('SELECT id, nom, slug FROM symptomes ORDER BY nom'),
-      db.query('SELECT pathologie_id, symptome_id, frequence FROM pathologie_symptomes'),
-      db.query(
-        `SELECT pe.pathologie_id, e.id, e.slug, e.nom, pe.categorie
+        ),
+        db.query('SELECT id, nom, slug FROM symptomes ORDER BY nom'),
+        db.query('SELECT pathologie_id, symptome_id, frequence FROM pathologie_symptomes'),
+        db.query(
+          `SELECT pe.pathologie_id, e.id, e.slug, e.nom, pe.categorie
            FROM pathologie_examens pe JOIN examens e ON e.id = pe.examen_id
           WHERE pe.categorie IN ('confirmation', 'presomption')`,
-      ),
-      db.query('SELECT DISTINCT pathologie_id FROM pathologie_urgences'),
-    ]);
+        ),
+        db.query('SELECT DISTINCT pathologie_id FROM pathologie_urgences'),
+        db.query('SELECT id, nom, slug FROM syndromes ORDER BY nom'),
+        db.query('SELECT syndrome_id, symptome_id FROM syndrome_symptomes'),
+        db.query(
+          `SELECT mo.id, mo.dci, mo.slug, c.id AS classe_id, c.nom AS classe
+           FROM molecules mo LEFT JOIN classes_pharmacologiques c ON c.id = mo.classe_id
+          ORDER BY mo.dci`,
+        ),
+      ]);
+    const idSymptome = new Map(symptomes.map((x) => [x.nom, x.id]));
+    const ids = (noms) => noms.map((n) => idSymptome.get(n)).filter(Boolean);
+    const signesDe = new Map();
+    for (const l of syndromeSignes) {
+      if (!signesDe.has(l.syndrome_id)) signesDe.set(l.syndrome_id, []);
+      signesDe.get(l.syndrome_id).push(l.symptome_id);
+    }
     const urgentes = new Set(urgences.map((u) => u.pathologie_id));
     const tests = new Map();
     const examensUtiles = new Map();
@@ -92,6 +110,14 @@ router.get(
         // [pathologie, symptôme, fréquence 0 à 3]
         liens: liens.map((l) => [l.pathologie_id, l.symptome_id, FREQUENCES[l.frequence] ?? 2]),
         examens: [...examensUtiles.values()].sort((a, b) => a.nom.localeCompare(b.nom, 'fr')),
+        syndromes: syndromes
+          .map((x) => ({ ...x, symptomes: signesDe.get(x.id) || [] }))
+          .filter((x) => x.symptomes.length >= 2),
+        molecules,
+        appareils: referentiel.APPAREILS.map((a) => ({ id: a.id, nom: a.nom, symptomes: ids(a.symptomes) })),
+        physiques: ids(referentiel.PHYSIQUES),
+        terrains: referentiel.TERRAINS,
+        contextes: referentiel.CONTEXTES,
       },
     });
   }),

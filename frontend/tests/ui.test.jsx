@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { AppRoutes } from '../src/App.jsx';
@@ -2009,6 +2009,31 @@ describe('Aide au diagnostic', () => {
     terrains: [{ id: 'vih', groupe: 'Médicaux', libelle: 'Infection à VIH', motif: 'meningite' }],
     contextes: [],
   };
+
+  beforeEach(() => sessionStorage.clear());
+
+  it('la saisie survit au départ de la page (touche retour, passage par une fiche)', async () => {
+    const user = userEvent.setup();
+    const api = { diagnosticDonnees: vi.fn(async () => donneesDiag) };
+    renderApp('/diagnostic', api, MEDECIN);
+    await user.click(await screen.findByRole('button', { name: 'Adulte' }));
+    await user.type(screen.getByLabelText('Plainte principale'), 'conv{Enter}');
+    // On quitte l'outil puis on y revient : le cas est toujours là
+    cleanup();
+    renderApp('/diagnostic', api, MEDECIN);
+    expect(await screen.findByRole('button', { name: 'Adulte' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText('Convulsions', { selector: 'b' })).toBeInTheDocument();
+    // L'étape est dans l'adresse : ouvrir directement l'examen clinique
+    cleanup();
+    renderApp('/diagnostic?etape=examen', api, MEDECIN);
+    expect(await screen.findByRole('button', { name: '3 · Examen clinique' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    // « Nouveau cas » efface la saisie
+    await user.click(screen.getByRole('button', { name: 'Nouveau cas' }));
+    expect(sessionStorage.getItem('medref.diagnostic.cas')).toBeNull();
+  });
 
   it('réservée aux comptes connectés', async () => {
     renderApp('/diagnostic');

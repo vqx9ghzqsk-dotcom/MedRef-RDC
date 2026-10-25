@@ -1,5 +1,5 @@
-import { useId, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useId, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
 import { useAsync } from '../hooks/useAsync.js';
@@ -126,11 +126,49 @@ function Diagnostic() {
   );
 }
 
+/**
+ * Cas en cours gardé dans l'onglet (sessionStorage) : la touche retour, le passage par une fiche
+ * ou un rechargement ne font plus perdre la saisie. Rien ne quitte l'appareil ; l'onglet fermé
+ * ou « Nouveau cas » l'effacent.
+ */
+const CLE_CAS = 'medref.diagnostic.cas';
+
+function casEnregistre() {
+  try {
+    const brut = sessionStorage.getItem(CLE_CAS);
+    return brut ? { ...CAS_VIDE, ...JSON.parse(brut) } : CAS_VIDE;
+  } catch {
+    return CAS_VIDE;
+  }
+}
+
 function Moteur({ donnees }) {
   const index = useMemo(() => indexer(donnees), [donnees]);
-  const [cas, setCas] = useState(CAS_VIDE);
-  const [etape, setEtape] = useState('motif');
-  const [choix, setChoix] = useState(null);
+  const [cas, setCas] = useState(casEnregistre);
+  // L'étape est dans l'adresse (?etape=…) : la touche retour revient à l'étape précédente
+  const [params, setParams] = useSearchParams();
+  const etape = ETAPES.some((e) => e.id === params.get('etape')) ? params.get('etape') : 'motif';
+  const setEtape = (id) => {
+    if (id === etape) return;
+    const suite = new URLSearchParams(params);
+    suite.set('etape', id);
+    setParams(suite);
+  };
+  const choix = params.get('hypothese');
+  const setChoix = (slug) => {
+    const suite = new URLSearchParams(params);
+    if (slug) suite.set('hypothese', slug);
+    else suite.delete('hypothese');
+    setParams(suite);
+  };
+  useEffect(() => {
+    try {
+      if (cas === CAS_VIDE) sessionStorage.removeItem(CLE_CAS);
+      else sessionStorage.setItem(CLE_CAS, JSON.stringify(cas));
+    } catch {
+      // Stockage indisponible (navigation privée) : la saisie reste en mémoire
+    }
+  }, [cas]);
   const resultat = useMemo(() => analyser(index, cas), [index, cas]);
   // Parcours adaptatif : le profil restreint les signes possibles, le motif et les hypothèses
   // en tête ordonnent ce qu'il faut rechercher ensuite
@@ -159,8 +197,7 @@ function Moteur({ donnees }) {
   const choisie = resultat.hypotheses.find((h) => h.fiche.slug === choix);
   const nouveau = () => {
     setCas(CAS_VIDE);
-    setChoix(null);
-    setEtape('motif');
+    setParams({}, { replace: true });
   };
 
   return (

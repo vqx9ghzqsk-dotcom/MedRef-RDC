@@ -105,6 +105,7 @@ function createApp() {
   app.use('/api', require('./routes/semiologie'));
   app.use('/api', require('./routes/horsLigne'));
   app.use('/api', require('./routes/prescriptions'));
+  app.use('/api', require('./routes/diagnostic'));
   app.use('/api', require('./routes/admin'));
 
   const ui = dossierInterface();

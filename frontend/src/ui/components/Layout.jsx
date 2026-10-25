@@ -16,6 +16,7 @@ const PAGES_AUTH = ['/connexion', '/inscription', '/mot-de-passe-oublie', '/rein
 
 export const QUICK_ACCESS = [
   { to: '/urgences', label: 'Urgences', hint: 'Conduite ABCDE, signes de gravité', tone: 'urgence' },
+  { to: '/diagnostic', label: 'Aide au diagnostic', hint: 'Du cas clinique aux produits' },
   { to: '/symptomes', label: 'Symptômes', hint: 'Partir de ce que présente le patient' },
   { to: '/scores', label: 'Calculatrices', hint: 'Scores et calculs de doses' },
   { to: '/medicaments', label: 'Médicaments', hint: 'DCI, produits disponibles en RDC' },

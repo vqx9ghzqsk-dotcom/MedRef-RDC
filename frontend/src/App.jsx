@@ -25,6 +25,7 @@ import {
   AdminTermePage,
 } from './ui/pages/AdminPages.jsx';
 import { RecherchePage } from './ui/pages/RecherchePage.jsx';
+import { DiagnosticPage } from './ui/pages/DiagnosticPage.jsx';
 import { OrdonnancePage, PrescriptionsPage } from './ui/pages/PrescriptionsPage.jsx';
 import { AvisFormPage, AvisPage, MesAvisPage } from './ui/pages/AvisPages.jsx';
 import { NotFoundPage } from './ui/pages/NotFoundPage.jsx';
@@ -49,6 +50,7 @@ export function AppRoutes() {
         <Route path="pathologies/:slug" element={<PathologiePage />} />
         <Route path="urgences" element={<UrgencesPage />} />
         <Route path="urgences/:slug" element={<UrgencePage />} />
+        <Route path="diagnostic" element={<DiagnosticPage />} />
         <Route path="symptomes" element={<SymptomesPage />} />
         <Route path="symptomes/:slug" element={<SymptomePage />} />
         <Route path="scores" element={<ScoresPage />} />

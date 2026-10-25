@@ -566,13 +566,17 @@ describe('Accueil', () => {
     await waitFor(() => expect(actualites).toHaveBeenLastCalledWith({ type: '', zone: 'Ituri', page: 1 }));
   });
 
-  it('affiche l’identité, la recherche, les 7 accès rapides et les départements', async () => {
+  it('affiche l’identité, la recherche, les 8 accès rapides (dont l’aide au diagnostic) et les départements', async () => {
     renderApp('/espace', {}, MEDECIN);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('MedRef RDC');
     expect(screen.getByText('par le Dr Ben Mingalu')).toBeInTheDocument();
     expect(screen.getAllByRole('search').length).toBeGreaterThan(0);
     const acces = screen.getByRole('region', { name: 'Accès rapides' });
-    expect(within(acces).getAllByRole('link')).toHaveLength(7);
+    expect(within(acces).getAllByRole('link')).toHaveLength(8);
+    expect(within(acces).getByRole('link', { name: /Aide au diagnostic/ })).toHaveAttribute(
+      'href',
+      '/diagnostic',
+    );
     expect(await screen.findByRole('link', { name: /Pédiatrie/ })).toHaveAttribute(
       'href',
       '/departements/pediatrie',
@@ -1950,5 +1954,89 @@ describe('Avis sur les produits et les traitements (lot E)', () => {
     await user.click(screen.getByRole('button', { name: 'Élément pertinent et sourcé' }));
     expect(voterAvis).toHaveBeenCalledWith(42);
     expect(screen.getByLabelText(/Votre commentaire/)).toBeInTheDocument();
+  });
+});
+
+describe('Aide au diagnostic', () => {
+  const donneesDiag = {
+    symptomes: [
+      { id: 1, nom: 'Fièvre', slug: 'fievre' },
+      { id: 2, nom: 'Convulsions', slug: 'convulsions' },
+      { id: 3, nom: 'Toux', slug: 'toux' },
+    ],
+    examens: [{ id: 10, slug: 'tdr-paludisme', nom: 'TDR paludisme' }],
+    pathologies: [
+      {
+        id: 1,
+        slug: 'paludisme-grave',
+        nom: 'Paludisme grave',
+        specialite: 'Infectiologie',
+        validee: true,
+        urgence: true,
+        public: { ages: null, sexe: null, obstetrique: false },
+        tests: { 10: 'c' },
+      },
+      {
+        id: 2,
+        slug: 'pneumonie',
+        nom: 'Pneumonie',
+        specialite: 'Pneumologie',
+        validee: false,
+        urgence: false,
+        public: { ages: null, sexe: null, obstetrique: false },
+        tests: {},
+      },
+    ],
+    liens: [
+      [1, 1, 3],
+      [1, 2, 2],
+      [2, 1, 3],
+      [2, 3, 3],
+    ],
+  };
+
+  it('réservée aux comptes connectés', async () => {
+    renderApp('/diagnostic');
+    expect(await screen.findByText(/réservé aux professionnels de santé/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Connectez-vous' })).toHaveAttribute('href', '/connexion');
+  });
+
+  it('du cas aux hypothèses, puis au traitement avec dose au poids et produits', async () => {
+    const user = userEvent.setup();
+    const molecule = vi.fn(async () => ({
+      posologies: [
+        {
+          population: 'adulte',
+          indication: 'Paludisme grave',
+          dose_par_kg: 2.4,
+          unite: 'mg',
+          dose_texte: '2,4 mg/kg',
+        },
+      ],
+    }));
+    renderApp('/diagnostic', { diagnosticDonnees: vi.fn(async () => donneesDiag), molecule }, MEDECIN);
+    await user.click(await screen.findByRole('button', { name: 'Adulte' }));
+    await user.type(screen.getByLabelText(/Poids/), '50');
+    const champ = screen.getByLabelText('Ajouter un signe');
+    await user.type(champ, 'fiev');
+    await user.click(screen.getByRole('button', { name: 'Fièvre' }));
+    await user.type(champ, 'conv{Enter}');
+    // Signe de gravité et hypothèses classées
+    expect(screen.getByRole('alert')).toHaveTextContent('Convulsions');
+    const hypotheses = screen
+      .getAllByRole('listitem')
+      .filter((li) => li.classList.contains('diag-hypothese'));
+    expect(hypotheses[0]).toHaveTextContent('Paludisme grave');
+    expect(hypotheses[0]).toHaveTextContent('Très probable');
+    // Toux : signe qui départage, proposé à rechercher
+    expect(screen.getByRole('button', { name: '+ Toux' })).toBeInTheDocument();
+    await user.click(within(hypotheses[0]).getByRole('button', { name: 'Traitement et produits' }));
+    const traitement = await screen.findByRole('region', { name: /Paludisme grave : traitement/ });
+    expect(await within(traitement).findByText('120 mg par prise')).toBeInTheDocument();
+    expect(within(traitement).getByText('Artesun 60 mg')).toBeInTheDocument();
+    expect(within(traitement).getByRole('link', { name: 'Préparer l’ordonnance' })).toHaveAttribute(
+      'href',
+      '/prescriptions?pathologie=paludisme-grave',
+    );
   });
 });

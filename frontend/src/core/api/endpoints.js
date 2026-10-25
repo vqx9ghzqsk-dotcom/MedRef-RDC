@@ -53,6 +53,7 @@ export function createMedRefApi(client) {
     urgences: (categorie) => data(client.get('/api/urgences', { categorie })),
     urgence: (slug) => data(client.get(`/api/urgences/${enc(slug)}`)),
     symptomes: () => data(client.get('/api/symptomes')),
+    diagnosticDonnees: () => data(client.get('/api/diagnostic/donnees')),
     symptome: (slug) => data(client.get(`/api/symptomes/${enc(slug)}`)),
     scores: () => data(client.get('/api/scores')),
     score: (slug) => data(client.get(`/api/scores/${enc(slug)}`)),

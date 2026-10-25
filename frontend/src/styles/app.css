@@ -3475,3 +3475,181 @@ details.forme {
     margin: 0 0 0.6rem;
   }
 }
+
+/* Aide au diagnostic : saisie du cas à gauche, hypothèses et traitement à droite */
+.diag-avertissement {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+.diag-grille {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (min-width: 960px) {
+  .diag-grille {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.35fr);
+  }
+}
+.diag-champ {
+  border: 0;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+.diag-champ legend {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+.diag-case,
+.diag-poids {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+.diag-poids input {
+  display: block;
+  margin-top: 0.3rem;
+  width: 8rem;
+}
+.diag-recherche {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+.diag-recherche label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.diag-recherche input {
+  width: 100%;
+}
+.diag-propositions {
+  list-style: none;
+  margin: 0.3rem 0 0;
+  padding: 0.3rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.diag-propositions button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.6rem;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 8px;
+}
+.diag-propositions button:hover,
+.diag-propositions button:focus-visible {
+  background: var(--link-bg);
+}
+.diag-suggestions p {
+  margin: 0.5rem 0 0.35rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.diag-examens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.diag-examens li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+}
+.diag-urgence {
+  background: var(--urgence);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+}
+.diag-urgence a {
+  color: #fff;
+  font-weight: 700;
+}
+.diag-hypotheses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.diag-hypothese.diag-choisie,
+.diag-hypothese.diag-tres_probable {
+  border-color: var(--link);
+  border-width: 2px;
+}
+.diag-hyp-tete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.diag-hyp-tete h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  flex: 1 1 14rem;
+}
+.tag-alerte {
+  background: #fff4e5;
+  color: #8a4200;
+}
+.diag-barre {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--line);
+  margin: 0.7rem 0;
+  overflow: hidden;
+}
+.diag-barre i {
+  display: block;
+  height: 100%;
+  background: var(--link);
+}
+.diag-detail {
+  margin: 0.3rem 0;
+  font-size: 0.93rem;
+}
+.diag-traitement h3 {
+  font-size: 1rem;
+  margin: 1rem 0 0.4rem;
+}
+.diag-liste {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.93rem;
+}
+.diag-molecules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+.diag-molecule {
+  border-top: 1px solid var(--line);
+  padding-top: 0.6rem;
+}
+.diag-molecule p {
+  margin: 0 0 0.4rem;
+}
+.diag-dose {
+  background: var(--link-bg);
+  border-radius: 10px;
+  padding: 0.5rem 0.7rem;
+}
+.diag-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.1rem 0 0.5rem;
+}

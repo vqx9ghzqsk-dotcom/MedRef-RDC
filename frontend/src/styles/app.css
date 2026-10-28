@@ -4159,3 +4159,26 @@ p.diag-triage-priorite {
   color: var(--muted, #667);
   font-family: ui-monospace, monospace;
 }
+
+/* Explication d'un signe : définition et technique d'examen */
+.diag-aide-signe {
+  margin-left: 0.35rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  border: 1px solid var(--link);
+  background: transparent;
+  color: var(--link);
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.diag-explication {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--text-muted, inherit);
+}

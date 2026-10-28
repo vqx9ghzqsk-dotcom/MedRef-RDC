@@ -10,6 +10,7 @@ const { SIGNES_FICHES } = require('../../db/seed-data/signes-fiches');
 const { PERFORMANCES } = require('../../db/seed-data/performances-examens');
 const essentiels = require('../../db/seed-data/medicaments-essentiels');
 const { CIM10 } = require('../../db/seed-data/codes-cim10');
+const { RECHERCHE_SIGNES } = require('../../db/seed-data/recherche-signes');
 
 const router = express.Router();
 
@@ -85,7 +86,7 @@ router.get(
           WHERE p.statut <> 'brouillon'
           ORDER BY p.nom`,
       ),
-      db.query('SELECT id, nom, slug FROM symptomes ORDER BY nom'),
+      db.query('SELECT id, nom, slug, description FROM symptomes ORDER BY nom'),
       db.query('SELECT pathologie_id, symptome_id, frequence FROM pathologie_symptomes'),
       db.query(
         `SELECT pe.pathologie_id, e.id, e.slug, e.nom, pe.categorie
@@ -168,7 +169,8 @@ router.get(
           foyers: epidemiologie.FOYERS[p.slug] || null,
           ...discriminants(SIGNES_FICHES[p.slug], ids),
         })),
-        symptomes,
+        // Définition du signe et, pour les signes physiques, technique d'examen (à valider)
+        symptomes: symptomes.map((s) => ({ ...s, recherche: RECHERCHE_SIGNES[s.nom] || null })),
         // [pathologie, symptôme, fréquence 0 à 3]
         liens: [...tableau.values()],
         // Sensibilité et spécificité connues (à valider) : [Se %, Sp %]
@@ -336,6 +338,19 @@ router.post(
       id,
     ]);
     res.json({ data: { id, statut: 'traite' } });
+  }),
+);
+
+/**
+ * Mode apprentissage : cas cliniques d'entraînement (banc de l'aide au diagnostic), sans leur
+ * titre qui donnerait la réponse ; la réponse attendue accompagne le cas pour la correction.
+ */
+router.get(
+  '/diagnostic/apprentissage',
+  requireAuth,
+  asyncHandler(async (_req, res) => {
+    const { CAS } = require('../../db/seed-data/cas-cliniques');
+    res.json({ data: CAS.map(({ titre: _titre, ...c }, i) => ({ id: i + 1, ...c })) });
   }),
 );
 

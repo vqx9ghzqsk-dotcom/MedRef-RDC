@@ -1,0 +1,55 @@
+/**
+ * Comment rechercher les principaux signes physiques (technique d'examen et pièges), affiché
+ * à côté du signe dans l'aide au diagnostic et utilisé par le mode apprentissage.
+ * Rédigé par Claude d'après les manuels de sémiologie et la PCIME ; À VALIDER par le Dr Mingalu.
+ */
+
+const RECHERCHE_SIGNES = {
+  Pâleur: 'Regarder la paume des mains (comparer à celle de l’examinateur), les conjonctives et le lit des ongles. Pâleur palmaire sévère : paume blanche (PCIME).',
+  Ictère: 'À la lumière du jour : sclérotiques, palais, paumes. Chez le nouveau-né, appuyer sur la peau du front puis du tronc et des membres (progression céphalo-caudale).',
+  Cyanose: 'Centrale : lèvres et langue bleues (hypoxie) ; périphérique : extrémités seules (froid, bas débit). Peu visible en cas d’anémie sévère.',
+  Œdèmes: 'Appuyer 3 secondes avec le pouce sur le dos des pieds ou la face interne du tibia : godet qui persiste. Œdèmes des deux pieds chez l’enfant : malnutrition sévère jusqu’à preuve du contraire.',
+  Adénopathies: 'Palper chaque aire (cervicale, sus-claviculaire, axillaire, inguinale) : taille, consistance, sensibilité, mobilité, fistule. Sus-claviculaire ou > 2 cm fixe : biopsie à discuter.',
+  Hypotension: 'Mesurer la pression au brassard adapté au bras (largeur ≈ 40 % du périmètre). Chez l’enfant : PAS < 70 + 2 × âge (ans). Rechercher aussi pouls rapide et faible, TRC > 3 s.',
+  'Troubles de la conscience': 'AVPU : alerte, répond à la voix, à la douleur (pression du lit unguéal), aréactif. Puis Glasgow (adulte) ou Blantyre (enfant de moins de 5 ans).',
+  'Raideur de nuque': 'Patient couché : fléchir passivement la nuque, la résistance douloureuse empêche le menton de toucher le sternum. Kernig et Brudzinski. Souvent absente chez le nourrisson : chercher la fontanelle bombée.',
+  'Fontanelle bombée': 'Nourrisson assis et calme (les pleurs la font bomber) : palper la fontanelle antérieure, tendue et saillante au-dessus du niveau des os.',
+  'Déficit moteur': 'Comparer les deux côtés : épreuve des bras tendus et de Mingazzini (jambes), force segmentaire cotée de 0 à 5, réflexes, signe de Babinski.',
+  'Paralysie faciale': 'Faire fermer les yeux, siffler, montrer les dents. Centrale (AVC) : épargne le front ; périphérique : front atteint, œil ne se ferme pas (signe de Charles Bell).',
+  'Paralysie flasque': 'Membre mou, sans tonus, réflexes abolis. Chez l’enfant de moins de 15 ans : toute paralysie flasque aiguë est à notifier (poliomyélite).',
+  Hypotonie: 'Nourrisson tenu sous le ventre (suspension ventrale) : il « se plie » en U inversé ; membres ballants à la mobilisation.',
+  Trismus: 'Ouverture de la bouche limitée et douloureuse (moins de 3 travers de doigt) : tétanos, abcès dentaire ou péri-amygdalien.',
+  Tachypnée: 'Compter une minute entière, enfant calme, en regardant le thorax ou l’abdomen se soulever. Seuils PCIME : ≥ 60 avant 2 mois, ≥ 50 de 2 à 12 mois, ≥ 40 de 1 à 5 ans.',
+  Sibilants: 'Sifflements expiratoires à l’auscultation (ou à l’oreille). Les rechercher aussi après une inspiration profonde ; un thorax « silencieux » est un signe de gravité.',
+  Stridor: 'Bruit rauque à l’inspiration, chez l’enfant calme. Ne pas examiner la gorge à l’abaisse-langue en cas de suspicion d’épiglottite.',
+  'Geignement expiratoire': 'Bruit court à chaque expiration chez le nourrisson ou le nouveau-né : détresse respiratoire sévère.',
+  'Membre froid et pâle': 'Comparer la température et la couleur des deux membres, palper les pouls distaux, temps de recoloration : ischémie aiguë si pouls absents.',
+  'Distension abdominale': 'Inspection en position couchée ; percussion : tympanisme (gaz, occlusion) ou matité déclive mobile (ascite).',
+  'Masse abdominale': 'Palpation douce, mains réchauffées, genoux fléchis : siège, taille, consistance, mobilité, battements. Chez l’enfant : néphroblastome, neuroblastome, lymphome de Burkitt.',
+  Hépatomégalie: 'Palper de la fosse iliaque droite vers le rebord costal pendant l’inspiration ; mesurer la flèche hépatique (percussion), noter consistance et douleur.',
+  Splénomégalie: 'Palper de la fosse iliaque droite vers l’hypocondre gauche, patient en décubitus puis en décubitus latéral droit ; classification de Hackett en zone de paludisme.',
+  'Tuméfaction inguinale': 'Debout puis couché, faire tousser : impulsion (hernie), réductibilité ; hernie douloureuse, dure, irréductible : étranglement, urgence chirurgicale.',
+  'Bourse vide': 'Examiner au chaud, mains réchauffées, enfant assis en tailleur : rechercher le testicule dans le canal inguinal.',
+  'Tuméfaction scrotale': 'Transillumination (hydrocèle translucide), palpation du testicule et de l’épididyme ; douleur brutale chez l’adolescent : torsion jusqu’à preuve du contraire.',
+  Purpura: 'Taches rouges ou violacées qui ne s’effacent pas à la vitropression (presser un verre transparent). Purpura fébrile : méningococcémie à traiter immédiatement.',
+  'Éruption vésiculeuse': 'Petites bulles claires : siège (paumes et plantes, visage, muqueuses), même stade ou stades différents, topographie d’un dermatome (zona).',
+  'Taches cutanées hypopigmentées': 'Rechercher une perte de sensibilité au toucher fin (mèche de coton), à la chaleur et à la douleur : lèpre si anesthésie.',
+  'Ulcère cutané': 'Bords (décollés : Buruli), fond, siège, douleur, ancienneté ; palper les nerfs et ganglions satellites.',
+  'Écoulement purulent d’une plaie': 'Rougeur, chaleur, induration autour de la plaie, pus, fièvre ; crépitation sous la peau : gangrène gazeuse.',
+  'Rougeur ombilicale': 'Rougeur de la peau autour de l’ombilic, pus ou mauvaise odeur : omphalite ; rougeur qui s’étend à la peau de l’abdomen : infection grave.',
+  'Ulcérations buccales': 'Examiner toute la bouche à la lampe : aphtes, muguet (dépôts blancs qui s’enlèvent), ulcérations de stomatite, lésions de mpox.',
+  'Tuméfaction parotidienne': 'Gonflement devant l’oreille, effaçant l’angle de la mâchoire ; orifice du canal de Sténon rouge (oreillons).',
+  'Yeux rouges': 'Rougeur diffuse avec sécrétions (conjonctivite) ou cercle périkératique avec baisse de la vision et douleur (kératite, uvéite, glaucome aigu : urgence).',
+  Leucocorie: 'Reflet blanc de la pupille sur une photo au flash ou à la lampe : rétinoblastome ou cataracte, adresser en ophtalmologie.',
+  Trichiasis: 'Retourner la paupière supérieure : cils qui frottent la cornée, cicatrices conjonctivales (trachome).',
+  'Gonflement articulaire': 'Comparer au côté opposé : chaleur, épanchement (choc rotulien au genou), limitation ; monoarthrite fébrile : ponction pour éliminer une arthrite septique.',
+  'Déformation d’un membre': 'Comparer les longueurs et les axes ; ne pas mobiliser une fracture : immobiliser, vérifier pouls et sensibilité en aval.',
+  Hyperthermie: 'Température axillaire (ajouter 0,5 °C) ou rectale chez le nourrisson ; ≥ 40 °C : risque de convulsions et de coup de chaleur.',
+  Hypothermie: 'Thermomètre bas ; chez le nouveau-né < 36,5 °C : réchauffer peau contre peau (méthode kangourou).',
+  'Œdème d’un membre': 'Mesurer le périmètre des deux mollets à 10 cm sous la rotule : différence > 3 cm, douleur, chaleur : thrombose veineuse profonde (score de Wells).',
+  Myosis: 'Pupilles serrées « en tête d’épingle » à la lumière : intoxication aux organophosphorés ou aux opiacés.',
+  'Lésions traumatiques': 'Examen de la tête aux pieds (ABCDE puis secondaire) : plaies, hématomes, déformations ; noter les lésions en schéma daté (certificat).',
+  Dysmorphie: 'Visage, mains (pli palmaire unique), pieds, oreilles ; photographier avec accord des parents pour un avis génétique.',
+};
+
+module.exports = { RECHERCHE_SIGNES };

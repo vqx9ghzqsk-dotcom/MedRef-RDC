@@ -157,6 +157,9 @@ function Diagnostic() {
           Aide à la décision : elle ne remplace ni l’examen clinique ni le jugement du soignant. Aucune donnée
           du patient n’est enregistrée.
         </p>
+        <p>
+          <Link to="/diagnostic/apprentissage">Mode apprentissage : s’entraîner sur des cas cliniques</Link>
+        </p>
       </div>
       <AsyncView state={state}>{(donnees) => <Moteur donnees={donnees} />}</AsyncView>
     </>
@@ -1052,6 +1055,7 @@ function EtapeExamen({ donnees, index, cas, maj, regler, deduits, profil, pertin
               <LigneSigne
                 key={id}
                 nom={index.symptomes.get(id)?.nom}
+                aide={index.symptomes.get(id)}
                 precision={physiques.has(id) ? 'examen' : 'interrogatoire'}
                 etat={cas.signes[id] || deduitDe.get(id) || ''}
                 deduit={!cas.signes[id] && deduitDe.has(id)}
@@ -1103,6 +1107,7 @@ function EtapeExamen({ donnees, index, cas, maj, regler, deduits, profil, pertin
                       <LigneSigne
                         key={id}
                         nom={index.symptomes.get(id)?.nom}
+                        aide={index.symptomes.get(id)}
                         etat={cas.signes[id] || deduitDe.get(id) || ''}
                         deduit={!cas.signes[id] && deduitDe.has(id)}
                         onChange={(e) => regler(id, e)}
@@ -1118,13 +1123,36 @@ function EtapeExamen({ donnees, index, cas, maj, regler, deduits, profil, pertin
   );
 }
 
-function LigneSigne({ nom, etat, deduit, precision, onChange }) {
+function LigneSigne({ nom, etat, deduit, precision, onChange, aide }) {
+  const [ouvert, setOuvert] = useState(false);
+  const explication = aide?.description || aide?.recherche;
   return (
     <li className={`diag-signe diag-signe-${etat || 'inconnu'}`}>
       <span>
         {nom}
         {precision && <span className="muted"> ({precision})</span>}
         {deduit && <span className="muted"> (d’après les constantes)</span>}
+        {explication && (
+          <button
+            type="button"
+            className="diag-aide-signe"
+            aria-expanded={ouvert}
+            aria-label={`Comment rechercher : ${nom}`}
+            onClick={() => setOuvert(!ouvert)}
+          >
+            ?
+          </button>
+        )}
+        {ouvert && (
+          <span className="diag-explication">
+            {aide.description && <span>{aide.description}</span>}
+            {aide.recherche && (
+              <span>
+                <b>Rechercher :</b> {aide.recherche}
+              </span>
+            )}
+          </span>
+        )}
       </span>
       <span className="diag-tri">
         <button

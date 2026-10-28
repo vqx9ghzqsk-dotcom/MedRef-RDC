@@ -40,6 +40,7 @@ const aLaDemande = (charger, nom) => {
 const admin = () => import('./ui/pages/AdminPages.jsx');
 const prescriptions = () => import('./ui/pages/PrescriptionsPage.jsx');
 const DiagnosticPage = aLaDemande(() => import('./ui/pages/DiagnosticPage.jsx'), 'DiagnosticPage');
+const ApprentissagePage = aLaDemande(() => import('./ui/pages/ApprentissagePage.jsx'), 'ApprentissagePage');
 const PrescriptionsPage = aLaDemande(prescriptions, 'PrescriptionsPage');
 const OrdonnancePage = aLaDemande(prescriptions, 'OrdonnancePage');
 const AdminHomePage = aLaDemande(admin, 'AdminHomePage');
@@ -66,6 +67,7 @@ export function AppRoutes() {
         <Route path="urgences" element={<UrgencesPage />} />
         <Route path="urgences/:slug" element={<UrgencePage />} />
         <Route path="diagnostic" element={<DiagnosticPage />} />
+        <Route path="diagnostic/apprentissage" element={<ApprentissagePage />} />
         <Route path="symptomes" element={<SymptomesPage />} />
         <Route path="symptomes/:slug" element={<SymptomePage />} />
         <Route path="scores" element={<ScoresPage />} />

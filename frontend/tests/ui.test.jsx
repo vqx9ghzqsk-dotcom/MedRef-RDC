@@ -2182,6 +2182,32 @@ describe('Aide au diagnostic', () => {
     expect(cas.signes['3']).toBe('present');
   });
 
+  it('mode apprentissage : proposer un diagnostic puis voir la correction et le raisonnement', async () => {
+    const user = userEvent.setup();
+    const exercices = [
+      { id: 1, age: 'adulte', motif: 'Convulsions', presents: ['Fièvre'], attendu: ['paludisme-grave'] },
+      { id: 2, age: 'adulte', motif: 'Toux', presents: ['Fièvre'], attendu: ['meningite'] },
+    ];
+    const api = {
+      diagnosticDonnees: vi.fn(async () => donneesDiag),
+      diagnosticApprentissage: vi.fn(async () => exercices),
+    };
+    renderApp('/diagnostic/apprentissage', api, MEDECIN);
+    expect(await screen.findByText(/Cas 1 sur 2/)).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Présentation du cas' })).toHaveTextContent(
+      'Motif : Convulsions',
+    );
+    await user.type(screen.getByLabelText('Chercher une fiche'), 'palu');
+    await user.click(screen.getByRole('button', { name: 'Paludisme grave' }));
+    await user.click(screen.getByRole('button', { name: 'Corriger' }));
+    const correction = screen.getByRole('region', { name: 'Correction' });
+    expect(correction).toHaveTextContent('Bonne réponse');
+    expect(correction).toHaveTextContent('Le raisonnement de l’outil');
+    expect(screen.getByText(/score de la séance : 1\/1/)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Cas suivant' }));
+    expect(screen.getByText(/Cas 2 sur 2/)).toBeInTheDocument();
+  });
+
   it('réservée aux comptes connectés', async () => {
     renderApp('/diagnostic');
     expect(await screen.findByText(/réservé aux professionnels de santé/)).toBeInTheDocument();

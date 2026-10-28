@@ -87,3 +87,14 @@ describe('Aide au diagnostic : diagnostic retenu, signalements, calibration', ()
     expect(res.body.data.signalements).toHaveLength(1);
   });
 });
+
+describe('Aide au diagnostic : mode apprentissage', () => {
+  it('cas d’entraînement sans titre, avec la réponse attendue, pour un compte connecté', async () => {
+    expect((await request(app).get('/api/diagnostic/apprentissage')).status).toBe(401);
+    const res = await request(app).get('/api/diagnostic/apprentissage').set(auth());
+    expect(res.status).toBe(200);
+    expect(res.body.data.length).toBeGreaterThanOrEqual(60);
+    expect(res.body.data[0]).toMatchObject({ id: 1, attendu: expect.any(Array) });
+    expect(res.body.data.some((c) => 'titre' in c)).toBe(false);
+  });
+});

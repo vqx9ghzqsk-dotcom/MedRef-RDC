@@ -76,6 +76,7 @@ router.get(
       syndromeSignes,
       molecules,
       traitements,
+      [version],
     ] = await Promise.all([
       db.query(
         `SELECT p.id, p.slug, p.nom, p.statut, s.nom AS specialite
@@ -99,6 +100,10 @@ router.get(
           ORDER BY mo.dci`,
       ),
       db.query('SELECT pathologie_id, molecule_id FROM molecule_pathologies'),
+      db.query(
+        `SELECT MAX(updated_at) AS mise_a_jour, COUNT(*) AS fiches, SUM(statut = 'valide') AS validees
+           FROM pathologies WHERE statut <> 'brouillon'`,
+      ),
     ]);
     // Molécules qui traitent chaque fiche : un échec sous ce traitement fait reculer la fiche
     const traitePar = new Map();
@@ -199,6 +204,12 @@ router.get(
           ...referentiel.NIVEAUX_EXAMENS.hopital_general.map((slug) => [slug, 2]),
         ]),
         provinces: epidemiologie.PROVINCES,
+        // Version de la base de connaissances : dernière mise à jour des fiches, fiches validées
+        version: {
+          miseAJour: version?.mise_a_jour || null,
+          fiches: Number(version?.fiches) || 0,
+          validees: Number(version?.validees) || 0,
+        },
         restrictions: referentiel.RESTRICTIONS.map(({ signes, ...r }) => ({ ...r, symptomes: ids(signes) })),
       },
     });

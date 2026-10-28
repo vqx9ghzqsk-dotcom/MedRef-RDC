@@ -770,3 +770,20 @@ describe('aide au diagnostic : conseils au patient', () => {
     expect(conseilsPatient({ nom: 'Fiche inconnue', urgence: true }, {}).reevaluation).toMatch(/heures/);
   });
 });
+
+describe('aide au diagnostic : degré de certitude', () => {
+  it('insuffisant avec peu de signes, élevé avec un examen de confirmation positif', async () => {
+    const { degreDeCertitude } = await import('../src/core/diagnostic.js');
+    const h = (score, tests = []) => ({ score, tests });
+    expect(degreDeCertitude({ hypotheses: [] }, {})).toBeNull();
+    expect(degreDeCertitude({ hypotheses: [h(0.9)] }, { signes: { 1: 'present' } }).niveau).toBe(
+      'insuffisant',
+    );
+    const signes = { 1: 'present', 2: 'present', 3: 'absent' };
+    expect(degreDeCertitude({ hypotheses: [h(0.8), h(0.5)] }, { signes }).niveau).toBe('eleve');
+    expect(degreDeCertitude({ hypotheses: [h(0.6), h(0.5)] }, { signes }).niveau).toBe('modere');
+    expect(degreDeCertitude({ hypotheses: [h(0.45), h(0.44)] }, { signes }).niveau).toBe('faible');
+    const confirme = h(0.4, [{ resultat: 'positif', role: 'c' }]);
+    expect(degreDeCertitude({ hypotheses: [confirme, h(0.39)] }, {}).niveau).toBe('eleve');
+  });
+});

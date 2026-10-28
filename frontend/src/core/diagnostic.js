@@ -743,6 +743,41 @@ export const CAUSES_ECHEC = [
 ];
 
 /**
+ * Degré de certitude de la synthèse, pour ne pas laisser croire à une conclusion quand les
+ * données manquent : nombre de signes notés, avance de la 1re hypothèse sur la 2e, examen de
+ * confirmation positif. Renvoie { niveau: 'insuffisant' | 'faible' | 'modere' | 'eleve', texte }.
+ */
+export function degreDeCertitude(resultat, cas) {
+  const h = resultat.hypotheses;
+  if (!h.length) return null;
+  const notes = Object.keys(cas.signes || {}).length + (cas.motif ? 1 : 0);
+  const ecart = h[0].score - (h[1]?.score || 0);
+  const confirme = h[0].tests.some((t) => t.resultat === 'positif' && t.role === 'c');
+  if (notes < 3 && !confirme) {
+    return {
+      niveau: 'insuffisant',
+      texte: 'Données insuffisantes pour conclure : complétez l’interrogatoire et l’examen.',
+    };
+  }
+  if (confirme || (h[0].score >= 0.7 && ecart >= 0.15)) {
+    return {
+      niveau: 'eleve',
+      texte: 'Hypothèse bien étayée ; éliminez quand même les diagnostics graves signalés.',
+    };
+  }
+  if (h[0].score >= 0.5 && ecart >= 0.08) {
+    return {
+      niveau: 'modere',
+      texte: 'Hypothèse probable ; recherchez les signes et examens proposés pour confirmer.',
+    };
+  }
+  return {
+    niveau: 'faible',
+    texte: 'Plusieurs hypothèses proches : aucune ne s’impose, recherchez les signes qui les départagent.',
+  };
+}
+
+/**
  * Maladies simultanées : quand la première hypothèse laisse des signes importants inexpliqués,
  * cherche l'hypothèse qui les explique (paludisme et pneumonie, VIH et tuberculose…).
  * Renvoie au plus 2 associations { principale, associee, expliques: [noms] }.

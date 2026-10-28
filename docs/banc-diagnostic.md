@@ -1,6 +1,6 @@
 # Banc de cas cliniques de l’aide au diagnostic
 
-Généré le 27/10/2026 par `npm run diagnostic:banc` (cas : backend/db/seed-data/cas-cliniques.js, à valider).
+Généré le 28/10/2026 par `npm run diagnostic:banc` (cas : backend/db/seed-data/cas-cliniques.js, à valider).
 
 - **60 cas** · bon diagnostic **en 1re position : 57 (95 %)** · **dans les 3 premiers : 60 (100 %)**
 

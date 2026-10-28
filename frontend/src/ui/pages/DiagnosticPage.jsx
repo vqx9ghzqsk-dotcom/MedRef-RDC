@@ -11,6 +11,7 @@ import {
   ageEnMois,
   analyser,
   BIOLOGIE,
+  degreDeCertitude,
   DUREES,
   effetsIndesirablesPossibles,
   examensUtiles,
@@ -488,6 +489,7 @@ function Moteur({ donnees }) {
           )}
           <EffetsTraitements traitements={cas.traitements} donnees={donnees} index={index} cas={cas} />
           <h2>Hypothèses diagnostiques</h2>
+          <Certitude resultat={resultat} cas={cas} />
           {resultat.associations?.length > 0 && (
             <div className="card diag-association">
               <h3>Deux maladies à la fois ?</h3>
@@ -568,6 +570,7 @@ function Moteur({ donnees }) {
           )}
         </section>
       </div>
+      <VersionBase version={donnees.version} />
       <BarreSynthese resultat={resultat} />
       <Observation cas={cas} index={index} donnees={donnees} resultat={resultat} />
       {reference && choisie?.fiche.slug === reference.slug && (
@@ -1484,6 +1487,32 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
   );
 }
 
+/* ---------- Transparence : certitude, version de la base ---------- */
+
+const CERTITUDES = { insuffisant: 'Insuffisante', faible: 'Faible', modere: 'Modérée', eleve: 'Élevée' };
+
+function Certitude({ resultat, cas }) {
+  const c = degreDeCertitude(resultat, cas);
+  if (!c) return null;
+  return (
+    <p className={`diag-certitude diag-certitude-${c.niveau}`} role="status">
+      <b>Certitude : {CERTITUDES[c.niveau]}.</b> {c.texte} L’outil propose, le soignant décide.
+    </p>
+  );
+}
+
+function VersionBase({ version }) {
+  if (!version) return null;
+  const date = version.miseAJour ? new Date(version.miseAJour).toLocaleDateString('fr-FR') : null;
+  return (
+    <p className="muted diag-version no-print">
+      Base de connaissances{date ? ` du ${date}` : ''} · {version.fiches} fiches, dont {version.validees}{' '}
+      validées par un médecin · moteur {VERSION_MOTEUR} · référentiels (épidémiologie, signes discriminants,
+      performances des examens, LNME) à valider.
+    </p>
+  );
+}
+
 /* ---------- Diagnostic retenu et signalement ---------- */
 
 const VERSION_MOTEUR = '2026-10';
@@ -1780,6 +1809,26 @@ function Traitement({ fiche, cas, donnees, niveau, onReference }) {
               </div>
               <p className="muted">Posologies de la fiche, à vérifier par le prescripteur.</p>
               <ConseilsPatient fiche={fiche} cas={cas} />
+              {p.sources?.length > 0 && (
+                <div className="diag-sources">
+                  <h3>Sources de la fiche</h3>
+                  <ul className="diag-liste">
+                    {p.sources.map((so) => (
+                      <li key={so.id}>
+                        {so.url ? (
+                          <a href={so.url} target="_blank" rel="noreferrer">
+                            {so.titre}
+                          </a>
+                        ) : (
+                          so.titre
+                        )}
+                        {[so.organisation, so.annee].filter(Boolean).length > 0 &&
+                          ` (${[so.organisation, so.annee].filter(Boolean).join(', ')})`}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </>
           );
         }}

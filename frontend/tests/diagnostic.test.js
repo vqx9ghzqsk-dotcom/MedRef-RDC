@@ -298,3 +298,32 @@ describe('aide au diagnostic : âge exact', () => {
     expect(lireConstantes({ pb: '110' }, 'petit', 18).alertes).toHaveLength(1);
   });
 });
+
+describe('aide au diagnostic : résultats biologiques chiffrés', () => {
+  it('interprète selon l’âge, alerte et oriente', async () => {
+    const { lireBiologie } = await import('../src/core/diagnostic.js');
+    // Hb 6 : anémie sévère chez l'adulte (< 7), anémie simple chez l'enfant (seuil 5)
+    expect(lireBiologie({ hb: '6' }, 'adulte').interpretations[0]).toMatchObject({
+      texte: 'anémie sévère',
+      grave: true,
+    });
+    expect(lireBiologie({ hb: '6' }, 'petit', 24).interpretations[0].texte).toBe('anémie');
+    const r = lireBiologie({ plaquettes: '15', potassium: '7', gb: '18' }, 'adulte');
+    expect(r.alertes).toHaveLength(2);
+    expect(r.orientations.join(' ')).toMatch(/palud/);
+    expect(r.orientations.join(' ')).toMatch(/bacter/);
+    expect(lireBiologie({ crp: '4' }).interpretations[0].texte).toBe('normale');
+  });
+
+  it('une orientation biologique fait monter la fiche correspondante', () => {
+    const sans = analyser(index, { age: 'petit', signes: { 1: 'present', 3: 'present' } });
+    const avec = analyser(index, {
+      age: 'petit',
+      signes: { 1: 'present', 3: 'present' },
+      biologie: { plaquettes: '40' },
+    });
+    const score = (r) => r.hypotheses.find((h) => h.fiche.slug === 'palu-grave-enfant').score;
+    expect(score(avec)).toBeGreaterThan(score(sans));
+    expect(avec.biologie).toEqual([{ cle: 'plaquettes', texte: 'thrombopénie', grave: false }]);
+  });
+});

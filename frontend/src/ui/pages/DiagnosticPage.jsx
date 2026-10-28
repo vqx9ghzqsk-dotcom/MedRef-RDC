@@ -8,6 +8,7 @@ import { LienProduit, PhotoProduit } from '../components/Produits.jsx';
 import {
   ageEnMois,
   analyser,
+  BIOLOGIE,
   DUREES,
   effetsIndesirablesPossibles,
   examensUtiles,
@@ -85,6 +86,7 @@ const CAS_VIDE = {
   allergies: [],
   contextes: [],
   constantes: {},
+  biologie: {},
   signes: {},
   examens: {},
 };
@@ -324,6 +326,9 @@ function Moteur({ donnees }) {
               onChange={(v) => maj('examens', v)}
               niveau={niveau}
               niveauxExamens={donnees.niveauxExamens}
+              biologie={cas.biologie}
+              interpretations={resultat.biologie}
+              onBiologie={(v) => maj('biologie', v)}
             />
           )}
           <div className="diag-pied-etape">
@@ -810,7 +815,18 @@ function LigneSigne({ nom, etat, deduit, precision, onChange }) {
 
 /* ---------- Étape 4 : paraclinique ---------- */
 
-function EtapeParaclinique({ index, examens, valeurs, hypotheses, onChange, niveau, niveauxExamens }) {
+function EtapeParaclinique({
+  index,
+  examens,
+  valeurs,
+  hypotheses,
+  onChange,
+  niveau,
+  niveauxExamens,
+  biologie,
+  interpretations,
+  onBiologie,
+}) {
   // Examens qui confirment ou orientent vers les hypothèses en tête ; sans hypothèse, les
   // examens rapides courants
   const utiles = examensUtiles(index, hypotheses, valeurs);
@@ -868,6 +884,27 @@ function EtapeParaclinique({ index, examens, valeurs, hypotheses, onChange, nive
           </li>
         ))}
       </ul>
+      <h2>Résultats chiffrés</h2>
+      <p className="muted">
+        Interprétés selon l’âge ; ils orientent les hypothèses et déclenchent les alertes.
+      </p>
+      <div className="diag-constantes">
+        {BIOLOGIE.map(([id, libelle, unite]) => {
+          const lu = (interpretations || []).find((x) => x.cle === id);
+          return (
+            <label key={id}>
+              {libelle} <span className="muted">({unite})</span>
+              <input
+                type="text"
+                inputMode="decimal"
+                value={biologie[id] ?? ''}
+                onChange={(e) => onBiologie({ ...biologie, [id]: e.target.value })}
+              />
+              {lu && <span className={`tag${lu.grave ? ' tag-alerte' : ''}`}>{lu.texte}</span>}
+            </label>
+          );
+        })}
+      </div>
       <RechercheListe
         libelle="Ajouter un autre examen"
         elements={examens}
@@ -1388,7 +1425,15 @@ function Observation({ cas, index, donnees, resultat }) {
         <dt>Signes absents</dt>
         <dd>{[...absents, ...deduits.filter((d) => d.endsWith('absent'))].join(', ') || '—'}</dd>
         <dt>Paraclinique</dt>
-        <dd>{examens.join(' ; ') || '—'}</dd>
+        <dd>
+          {[
+            ...examens,
+            ...BIOLOGIE.filter(([id]) => cas.biologie?.[id]).map(([id, l, u]) => {
+              const lu = (resultat.biologie || []).find((x) => x.cle === id);
+              return `${l} ${cas.biologie[id]} ${u}${lu ? ` (${lu.texte})` : ''}`;
+            }),
+          ].join(' ; ') || '—'}
+        </dd>
         <dt>Synthèse</dt>
         <dd>{resultat.syndromes.map((s) => s.nom).join(', ') || '—'}</dd>
         <dt>Hypothèses</dt>

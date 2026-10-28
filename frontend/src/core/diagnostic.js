@@ -218,6 +218,11 @@ export function etatDesSignes(index, cas) {
   }
   if (cas.motif) presents.add(Number(cas.motif));
   const lecture = lireConstantes(cas.constantes, cas.age, ageEnMois(cas));
+  // Résultats biologiques chiffrés : alertes et orientations s'ajoutent à celles des constantes
+  const bio = lireBiologie(cas.biologie, cas.age, ageEnMois(cas));
+  lecture.alertes.push(...bio.alertes);
+  lecture.orientations.push(...bio.orientations);
+  lecture.biologie = bio.interpretations;
   const deduits = [];
   for (const nom of lecture.presents) {
     const id = index.parNom.get(nom);
@@ -264,7 +269,7 @@ function orientation(index, fiche, cas, lecture) {
   for (const motif of lecture.orientations) {
     if (new RegExp(motif).test(nom)) {
       bonus += 0.1;
-      raisons.push('constantes');
+      raisons.push('constantes ou résultats biologiques');
     }
   }
   bonus = Math.min(bonus, 0.2);
@@ -301,6 +306,7 @@ export function analyser(index, cas) {
     syndromes,
     questions: [],
     aRechercher: [],
+    biologie: lecture.biologie,
   };
   if (!signes.length) return vide;
 
@@ -621,4 +627,107 @@ export function examensUtiles(index, hypotheses, dejaFaits = {}, nombreMax = 8) 
 export function terrainsAPreciser(index, hypotheses, liste) {
   const noms = hypotheses.slice(0, 5).map((h) => index.nomsFiches.get(h.fiche.id) || '');
   return new Set((liste || []).filter((t) => noms.some((n) => new RegExp(t.motif).test(n))).map((t) => t.id));
+}
+
+/* ---------- Résultats biologiques chiffrés ---------- */
+
+/** Examens chiffrés proposés, avec leur unité. */
+export const BIOLOGIE = [
+  ['hb', 'Hémoglobine', 'g/dL'],
+  ['gb', 'Globules blancs', 'G/L'],
+  ['plaquettes', 'Plaquettes', 'G/L'],
+  ['crp', 'CRP', 'mg/L'],
+  ['creatinine', 'Créatinine', 'µmol/L'],
+  ['sodium', 'Sodium', 'mmol/L'],
+  ['potassium', 'Potassium', 'mmol/L'],
+  ['lactates', 'Lactates', 'mmol/L'],
+];
+
+/**
+ * Lecture des résultats chiffrés selon des seuils usuels (OMS pour l'anémie sévère : Hb < 5 g/dL
+ * chez l'enfant de moins de 12 ans, < 7 g/dL au-delà) : interprétation de chaque valeur,
+ * alertes de gravité et orientations (motif sur le nom des fiches).
+ */
+export function lireBiologie(bio = {}, age = '', mois = null) {
+  const v = Object.fromEntries(Object.entries(bio).map(([k, x]) => [k, nombre(x)]));
+  const interpretations = [];
+  const alertes = [];
+  const orientations = [];
+  const noter = (cle, texte, grave = false) => interpretations.push({ cle, texte, grave });
+  const enfant = mois !== null && mois !== undefined ? mois < 144 : ENFANT.includes(age);
+  if (v.hb !== null && v.hb !== undefined) {
+    const severe = enfant ? 5 : 7;
+    if (v.hb < severe) {
+      noter('hb', 'anémie sévère', true);
+      alertes.push(`Anémie sévère (Hb ${v.hb} g/dL) : transfusion à discuter`);
+      orientations.push('anemi|palud|drepano|hemoly|hemorrag|ankylostom');
+    } else if (v.hb < (enfant ? 11 : 12)) {
+      noter('hb', 'anémie');
+      orientations.push('anemi|palud|drepano|hemoly|carence|ankylostom');
+    } else noter('hb', 'normale');
+  }
+  if (v.gb !== null && v.gb !== undefined) {
+    if (v.gb > 15) {
+      noter('gb', 'hyperleucocytose');
+      orientations.push('bacter|sepsis|pneumon|menin|abces|appendic|periton|pyelo|cellulite|osteomyel');
+    } else if (v.gb < 4) {
+      noter('gb', 'leucopénie');
+      orientations.push('vih|typho|palud|leucem|aplasie|dengue|ebola');
+    } else noter('gb', 'normaux');
+  }
+  if (v.plaquettes !== null && v.plaquettes !== undefined) {
+    if (v.plaquettes < 100) {
+      noter('plaquettes', 'thrombopénie', v.plaquettes < 20);
+      orientations.push('palud|dengue|ebola|hemorragique|hellp|coagulation|leucem|purpura');
+      if (v.plaquettes < 20) alertes.push(`Thrombopénie sévère (${v.plaquettes} G/L) : risque hémorragique`);
+    } else noter('plaquettes', 'normales');
+  }
+  if (v.crp !== null && v.crp !== undefined) {
+    if (v.crp >= 100) {
+      noter('crp', 'très élevée, en faveur d’une infection bactérienne');
+      orientations.push('bacter|sepsis|pneumon|menin|abces|pyelo|periton|osteomyel');
+    } else if (v.crp >= 10) noter('crp', 'élevée');
+    else noter('crp', 'normale');
+  }
+  if (v.creatinine !== null && v.creatinine !== undefined) {
+    const seuil = enfant ? 90 : 120;
+    if (v.creatinine > seuil) {
+      noter('creatinine', 'insuffisance rénale', v.creatinine > 3 * seuil);
+      orientations.push('renal|nephr|uremi|hellp|palud|leptospir|deshydrat');
+      if (v.creatinine > 3 * seuil)
+        alertes.push(`Créatinine ${v.creatinine} µmol/L : insuffisance rénale sévère`);
+    } else noter('creatinine', 'normale');
+  }
+  if (v.sodium !== null && v.sodium !== undefined) {
+    if (v.sodium < 125) {
+      noter('sodium', 'hyponatrémie sévère', true);
+      alertes.push(`Hyponatrémie sévère (${v.sodium} mmol/L) : risque de convulsions`);
+    } else if (v.sodium < 135) noter('sodium', 'hyponatrémie');
+    else if (v.sodium > 150) {
+      noter('sodium', 'hypernatrémie', true);
+      alertes.push(`Hypernatrémie (${v.sodium} mmol/L) : déshydratation intracellulaire`);
+      orientations.push('deshydrat');
+    } else noter('sodium', 'normale');
+  }
+  if (v.potassium !== null && v.potassium !== undefined) {
+    if (v.potassium >= 6.5) {
+      noter('potassium', 'hyperkaliémie menaçante', true);
+      alertes.push(`Hyperkaliémie (${v.potassium} mmol/L) : ECG et traitement urgent`);
+      orientations.push('renal|hyperkali|acidocetose');
+    } else if (v.potassium > 5.5) noter('potassium', 'hyperkaliémie');
+    else if (v.potassium < 2.5) {
+      noter('potassium', 'hypokaliémie sévère', true);
+      alertes.push(`Hypokaliémie sévère (${v.potassium} mmol/L) : risque de troubles du rythme`);
+    } else if (v.potassium < 3.5) noter('potassium', 'hypokaliémie');
+    else noter('potassium', 'normale');
+  }
+  if (v.lactates !== null && v.lactates !== undefined) {
+    if (v.lactates >= 4) {
+      noter('lactates', 'hyperlactatémie', true);
+      alertes.push(`Lactates ${v.lactates} mmol/L : hypoperfusion, état de choc à rechercher`);
+      orientations.push('sepsis|choc|palud');
+    } else if (v.lactates > 2) noter('lactates', 'élevés');
+    else noter('lactates', 'normaux');
+  }
+  return { interpretations, alertes, orientations };
 }

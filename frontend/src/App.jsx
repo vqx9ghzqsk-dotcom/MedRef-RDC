@@ -1,4 +1,6 @@
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { Loading } from './ui/components/Status.jsx';
 import { Layout } from './ui/components/Layout.jsx';
 import { HomePage } from './ui/pages/HomePage.jsx';
 import {
@@ -16,23 +18,36 @@ import { MedicamentPage, MedicamentsPage } from './ui/pages/MedicamentsPages.jsx
 import { MoleculePage, MoleculesPage } from './ui/pages/MoleculesPages.jsx';
 import { ExamenPage, ExamensPage } from './ui/pages/ExamensPages.jsx';
 import { SourcesPage } from './ui/pages/SourcesPage.jsx';
-import {
-  AdminHomePage,
-  AdminMedicamentPage,
-  AdminMoleculePage,
-  AdminPathologiePage,
-  AdminSyndromePage,
-  AdminTermePage,
-} from './ui/pages/AdminPages.jsx';
 import { RecherchePage } from './ui/pages/RecherchePage.jsx';
-import { DiagnosticPage } from './ui/pages/DiagnosticPage.jsx';
-import { OrdonnancePage, PrescriptionsPage } from './ui/pages/PrescriptionsPage.jsx';
 import { AvisFormPage, AvisPage, MesAvisPage } from './ui/pages/AvisPages.jsx';
 import { NotFoundPage } from './ui/pages/NotFoundPage.jsx';
 import { HorsLignePage } from './ui/pages/HorsLignePage.jsx';
 import { ActualitesPage } from './ui/pages/ActualitesPage.jsx';
 import { ComptePage } from './ui/pages/ComptePage.jsx';
 import { GlossairePage, SyndromePage, SyndromesPage } from './ui/pages/SemiologiePages.jsx';
+
+// Pages lourdes chargées à la demande : premier affichage plus rapide sur les téléphones modestes
+const aLaDemande = (charger, nom) => {
+  const Page = lazy(() => charger().then((m) => ({ default: m[nom] })));
+  return function PageALaDemande() {
+    return (
+      <Suspense fallback={<Loading />}>
+        <Page />
+      </Suspense>
+    );
+  };
+};
+const admin = () => import('./ui/pages/AdminPages.jsx');
+const prescriptions = () => import('./ui/pages/PrescriptionsPage.jsx');
+const DiagnosticPage = aLaDemande(() => import('./ui/pages/DiagnosticPage.jsx'), 'DiagnosticPage');
+const PrescriptionsPage = aLaDemande(prescriptions, 'PrescriptionsPage');
+const OrdonnancePage = aLaDemande(prescriptions, 'OrdonnancePage');
+const AdminHomePage = aLaDemande(admin, 'AdminHomePage');
+const AdminPathologiePage = aLaDemande(admin, 'AdminPathologiePage');
+const AdminMoleculePage = aLaDemande(admin, 'AdminMoleculePage');
+const AdminMedicamentPage = aLaDemande(admin, 'AdminMedicamentPage');
+const AdminTermePage = aLaDemande(admin, 'AdminTermePage');
+const AdminSyndromePage = aLaDemande(admin, 'AdminSyndromePage');
 
 export function AppRoutes() {
   return (

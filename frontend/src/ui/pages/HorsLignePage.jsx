@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { useServices } from '../context/services.jsx';
+import { useAuth } from '../context/auth.jsx';
 import { useOnline } from '../hooks/useOnline.js';
 import { compterEnCache, ecrireEtat, lireEtat, telechargerTout, viderCache } from '../../core/horsLigne.js';
 
@@ -13,6 +14,7 @@ function formatDate(iso) {
 /** Télécharger toutes les fiches pour les consulter sans réseau (zones mal couvertes, gardes). */
 export function HorsLignePage() {
   const { api, actualitesHorsLigne } = useServices();
+  const { user } = useAuth();
   const online = useOnline();
   const [etat, setEtat] = useState(() => lireEtat());
   const [enCache, setEnCache] = useState(null);
@@ -71,6 +73,11 @@ export function HorsLignePage() {
       const res = await telechargerTout(urls, {
         onProgres: (fait, total, echecs) => setProgres({ fait, total, echecs }),
       });
+      // Aide au diagnostic (comptes connectés) : ses données passent par le client authentifié et
+      // restent en cache pour un usage sans réseau
+      if (user) await api.diagnosticDonnees().catch(() => {});
+      // Code des pages chargées à la demande : gardé en cache par le service worker
+      await Promise.all([import('./DiagnosticPage.jsx'), import('./PrescriptionsPage.jsx')]).catch(() => {});
       const nouvelEtat = { date: new Date().toISOString(), total: res.total, echecs: res.echecs.length };
       ecrireEtat(nouvelEtat);
       setEtat(nouvelEtat);

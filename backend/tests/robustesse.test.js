@@ -104,3 +104,11 @@ describe('Interface servie par l’API (mise en ligne simple)', () => {
     }
   });
 });
+
+describe('Compression des réponses', () => {
+  it('négocie la compression gzip (données mobiles)', async () => {
+    const res = await request(createApp()).get('/api/health').set('Accept-Encoding', 'gzip');
+    expect(res.status).toBe(200);
+    expect(res.headers.vary).toMatch(/Accept-Encoding/);
+  });
+});

@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const helmet = require('helmet');
+const compression = require('compression');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const config = require('./config');
@@ -59,6 +60,9 @@ function createApp() {
       exposedHeaders: ['X-Request-Id'],
     }),
   );
+  // Réponses compressées (gzip) : l'API et l'interface pèsent environ 6 fois moins sur les
+  // données mobiles (ex. données de l'aide au diagnostic : 454 Ko → 79 Ko)
+  app.use(compression());
   app.use(express.json({ limit: '1mb' }));
 
   // Photos des produits (catalogues) : noms uniques par produit, donc cache long

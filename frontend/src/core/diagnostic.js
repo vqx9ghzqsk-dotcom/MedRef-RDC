@@ -103,7 +103,11 @@ export function convientAuPatient(fiche, cas) {
   const pub = fiche.public || {};
   if (cas.age && pub.ages && !pub.ages.includes(cas.age)) return false;
   if (cas.sexe && pub.sexe && pub.sexe !== cas.sexe) return false;
-  if (pub.obstetrique && cas.sexe === 'F' && cas.grossesse === false) return false;
+  // Une fiche de la grossesse n'est proposée que si la grossesse (ou l'accouchement récent) est indiquée
+  if (pub.obstetrique && cas.grossesse !== true) return false;
+  if (pub.horsGrossesse && cas.grossesse === true) return false;
+  // Les fiches de prise en charge (contraception, suivi, rééducation…) ne sont pas des hypothèses
+  if (fiche.diagnostic === false) return false;
   if (pub.obstetrique && (cas.sexe === 'M' || ['nn', 'petit'].includes(cas.age))) return false;
   return true;
 }
@@ -354,6 +358,8 @@ export function analyser(index, cas) {
     score += bonus;
     // À tableau égal, la fiche consacrée à l'âge du patient passe devant la fiche générale
     if (cas.age && fiche.public?.ages?.includes(cas.age)) score += 0.04;
+    // Pendant la grossesse, la fiche obstétricale passe devant la fiche générale ou gynécologique
+    if (cas.grossesse === true && fiche.public?.obstetrique) score += 0.06;
     const manquants = [...tableau]
       .filter(([s, f]) => f >= 2 && !presents.has(s) && !absents.has(s))
       .sort((a, b) => b[1] - a[1] || (rarete.get(b[0]) || 0) - (rarete.get(a[0]) || 0))

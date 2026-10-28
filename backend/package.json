@@ -24,7 +24,8 @@
     "user:role": "node scripts/role.js",
     "user:password": "node scripts/password.js",
     "posologies:structurer": "node scripts/structurer-posologies.js",
-    "veille": "node scripts/veille.js"
+    "veille": "node scripts/veille.js",
+    "diagnostic:banc": "node scripts/banc-diagnostic.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

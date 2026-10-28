@@ -36,11 +36,18 @@ function publicVise(nom, specialite) {
   else if (/adolescent/.test(s)) cible.ages = ['grand', 'adulte'];
   else if (/de l.adulte|chez l.adulte/.test(n)) cible.ages = ['adulte', 'age'];
   else if (/geriatr|demence/.test(s)) cible.ages = ['adulte', 'age'];
-  if (/grossesse|obstetric|accouchement|post-partum|materno-foetale/.test(s)) {
+  // Obstétrique : par la spécialité ou par le nom (« Tuberculose et grossesse », « Psychose
+  // puerpérale »…) ; la grossesse extra-utérine reste proposée à toute femme en âge de procréer
+  const obstetricalParNom =
+    /grossesse|gravidique|post-partum|peripartum|puerp|gestationnel/.test(n) && !/extra-uterine/.test(n);
+  if (/grossesse|obstetric|accouchement|post-partum|materno-foetale/.test(s) || obstetricalParNom) {
     cible.sexe = 'F';
     cible.obstetrique = true;
   } else if (/gynecolog|senologie|planification familiale|urogynecolog/.test(s)) cible.sexe = 'F';
-  else if (/prostat|testic|scrot|verge|penis|cryptorchid/.test(n)) cible.sexe = 'M';
+  if (/menopause/.test(n)) {
+    cible.ages = ['adulte', 'age'];
+    cible.horsGrossesse = true;
+  } else if (/prostat|testic|scrot|verge|penis|cryptorchid/.test(n)) cible.sexe = 'M';
   return cible;
 }
 
@@ -104,6 +111,7 @@ router.get(
           validee: p.statut === 'valide',
           urgence: urgentes.has(p.id),
           public: publicVise(p.nom, p.specialite),
+          diagnostic: estDiagnostic(p.nom),
           tests: tests.get(p.id) || {},
         })),
         symptomes,
@@ -141,5 +149,16 @@ router.get(
   }),
 );
 
+/**
+ * Fiches de prise en charge ou de prévention (contraception, suivi, rééducation, dépistage…) :
+ * elles ne sont pas des diagnostics et ne sont pas proposées comme hypothèses.
+ */
+function estDiagnostic(nom) {
+  return !/^(accouchement normal|consultation prenatale|contraception|delivrance|depistage|nutrition et supplementation|prevention|reeducation|soins essentiels|suivi postnatal|surveillance du bien-etre|vaccination|medicaments et grossesse|grossesse apres 40|grossesse gemellaire|grossesse prolongee|grossesse de l.adolescente|reanimation du nouveau-ne)/.test(
+    normal(nom),
+  );
+}
+
 module.exports = router;
 module.exports.publicVise = publicVise;
+module.exports.estDiagnostic = estDiagnostic;

@@ -1,0 +1,81 @@
+'use strict';
+
+/**
+ * Banc de cas cliniques de l'aide au diagnostic : présentations typiques (manuels de référence,
+ * PCIME, protocoles OMS et MSF) avec le ou les diagnostics attendus. Le script
+ * `npm run diagnostic:banc` les fait passer dans le moteur et mesure la part de bons diagnostics
+ * en première position et dans les trois premiers. Cas rédigés par Claude, à valider.
+ *
+ * Champs : age (tranche) ou ageValeur/ageUnite, sexe, grossesse, motif, presents, absents,
+ * constantes, biologie, examens ({ slug: 'positif' | 'negatif' }), terrains, contextes,
+ * attendu : slugs acceptés.
+ */
+const CAS = [
+  // --- Enfant ---
+  { titre: 'Enfant fébrile qui convulse, TDR positif', ageValeur: '3', ageUnite: 'ans', sexe: 'M', motif: 'Convulsions', presents: ['Fièvre', 'Vomissements', 'Troubles de la conscience'], examens: { 'tdr-paludisme': 'positif' }, attendu: ['paludisme-grave-enfant', 'paludisme-grave'] },
+  { titre: 'Enfant fébrile sans signe de gravité, TDR positif', ageValeur: '4', ageUnite: 'ans', motif: 'Fièvre', presents: ['Frissons', 'Vomissements'], absents: ['Convulsions', 'Troubles de la conscience'], examens: { 'tdr-paludisme': 'positif' }, attendu: ['paludisme-simple-enfant', 'paludisme-simple'] },
+  { titre: 'Nourrisson fébrile, fontanelle bombée', ageValeur: '8', ageUnite: 'mois', motif: 'Fièvre', presents: ['Fontanelle bombée', 'Vomissements', 'Convulsions'], examens: { 'tdr-paludisme': 'negatif' }, attendu: ['meningite-bacterienne-enfant', 'meningo-encephalite-enfant'] },
+  { titre: 'Enfant qui tousse et respire vite', ageValeur: '18', ageUnite: 'mois', motif: 'Toux', presents: ['Fièvre'], constantes: { fr: '52' }, attendu: ['pneumonie-enfant'] },
+  { titre: 'Nourrisson sifflant, premier épisode', ageValeur: '5', ageUnite: 'mois', motif: 'Dyspnée', presents: ['Toux', 'Sibilants', 'Rhinorrhée'], constantes: { fr: '62' }, attendu: ['bronchiolite-aigue-nourrisson'] },
+  { titre: 'Diarrhée aiguë de l’enfant', ageValeur: '14', ageUnite: 'mois', motif: 'Diarrhée', presents: ['Vomissements', 'Fièvre'], attendu: ['diarrhee-aigue-enfant', 'cholera-enfant'] },
+  { titre: 'Toux quinteuse du nourrisson', ageValeur: '3', ageUnite: 'mois', motif: 'Toux quinteuse', presents: ['Vomissements', 'Cyanose'], attendu: ['coqueluche'] },
+  { titre: 'Fièvre éruptive avec yeux rouges', ageValeur: '2', ageUnite: 'ans', motif: 'Éruption cutanée', presents: ['Fièvre', 'Toux', 'Yeux rouges', 'Rhinorrhée'], terrains: ['vaccins-incomplets'], attendu: ['rougeole'] },
+  { titre: 'Enfant œdématié et dénutri', ageValeur: '2', ageUnite: 'ans', motif: 'Œdèmes', presents: ['Anorexie', 'Diarrhée', 'Lésions eczématiformes'], constantes: { pb: '108' }, attendu: ['kwashiorkor', 'malnutrition-aigue-severe'] },
+  { titre: 'Enfant pâle et essoufflé', ageValeur: '3', ageUnite: 'ans', motif: 'Pâleur', presents: ['Asthénie', 'Dyspnée'], biologie: { hb: '4' }, attendu: ['anemie-enfant', 'anemies-hemolytiques-enfant', 'paludisme-grave-enfant'] },
+  { titre: 'Enfant drépanocytaire avec douleurs osseuses', ageValeur: '6', ageUnite: 'ans', motif: 'Douleurs osseuses', presents: ['Fièvre'], terrains: ['drepanocytose'], attendu: ['crise-vaso-occlusive-enfant-drepanocytaire', 'osteomyelite-aigue', 'infections-enfant-drepanocytaire'] },
+  { titre: 'Otite de l’enfant', ageValeur: '2', ageUnite: 'ans', motif: 'Otalgie', presents: ['Fièvre', 'Irritabilité'], attendu: ['otite-moyenne-aigue'] },
+  { titre: 'Angine de l’enfant', ageValeur: '8', ageUnite: 'ans', motif: 'Mal de gorge', presents: ['Fièvre', 'Adénopathies'], absents: ['Toux'], attendu: ['angine-pharyngite-enfant'] },
+  { titre: 'Nouveau-né qui ne tète plus, hypothermie', ageValeur: '6', ageUnite: 'jours', motif: 'Refus de téter', presents: ['Hypothermie', 'Tachypnée', 'Troubles de la conscience'], attendu: ['sepsis-neonatal', 'meningite-neonatale'] },
+  { titre: 'Nouveau-né avec trismus', ageValeur: '8', ageUnite: 'jours', motif: 'Trismus', presents: ['Refus de téter', 'Contractures musculaires', 'Convulsions'], attendu: ['tetanos-neonatal'] },
+  { titre: 'Hématurie de l’enfant baigneur', ageValeur: '10', ageUnite: 'ans', motif: 'Hématurie', presents: ['Douleur abdominale', 'Dysurie'], contextes: ['eau-baignade'], attendu: ['schistosomiase-urogenitale', 'schistosomiase-enfant'] },
+  { titre: 'Enfant asthmatique en crise', ageValeur: '9', ageUnite: 'ans', motif: 'Dyspnée', presents: ['Sibilants', 'Toux'], terrains: ['asthme'], attendu: ['asthme-enfant', 'asthme', 'asthme-aigu-grave'] },
+  { titre: 'Convulsion fébrile brève', ageValeur: '20', ageUnite: 'mois', motif: 'Convulsions', presents: ['Fièvre'], absents: ['Raideur de nuque', 'Troubles de la conscience', 'Fontanelle bombée'], examens: { 'tdr-paludisme': 'negatif' }, attendu: ['convulsions-febriles'] },
+  { titre: 'Enfant diabétique déshydraté', ageValeur: '11', ageUnite: 'ans', motif: 'Polyurie-polydipsie', presents: ['Vomissements', 'Douleur abdominale', 'Perte de poids', 'Troubles de la conscience'], constantes: { glycemie: '28' }, attendu: ['acidocetose-diabetique-enfant', 'diabete-type-1-enfant'] },
+  { titre: 'Enfant qui tousse depuis un mois et maigrit', ageValeur: '6', ageUnite: 'ans', motif: 'Toux', duree: 'mois', presents: ['Fièvre', 'Perte de poids', 'Sueurs nocturnes'], contextes: ['tb-contact'], attendu: ['tuberculose-enfant'] },
+  // --- Adulte : infectiologie ---
+  { titre: 'Adulte fébrile avec frissons, TDR positif', age: 'adulte', sexe: 'M', motif: 'Fièvre', presents: ['Frissons', 'Céphalées', 'Myalgies'], absents: ['Troubles de la conscience'], examens: { 'tdr-paludisme': 'positif' }, attendu: ['paludisme-simple'] },
+  { titre: 'Adulte comateux fébrile, TDR positif', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Troubles de la conscience', presents: ['Fièvre', 'Convulsions', 'Ictère'], examens: { 'tdr-paludisme': 'positif' }, attendu: ['neuropaludisme-adulte', 'paludisme-grave'] },
+  { titre: 'Méningite bactérienne de l’adulte', age: 'adulte', sexe: 'M', motif: 'Céphalées', presents: ['Fièvre', 'Raideur de nuque', 'Vomissements', 'Photophobie'], duree: 'heures', attendu: ['meningite-bacterienne'] },
+  { titre: 'Céphalées subaiguës chez un patient VIH', age: 'adulte', sexe: 'M', motif: 'Céphalées', duree: 'semaines', presents: ['Fièvre', 'Vomissements'], terrains: ['vih'], attendu: ['meningite-a-cryptocoque', 'meningite-tuberculeuse'] },
+  { titre: 'Toux chronique, sueurs, amaigrissement', age: 'adulte', sexe: 'M', motif: 'Toux', duree: 'mois', presents: ['Fièvre', 'Sueurs nocturnes', 'Perte de poids', 'Hémoptysie'], attendu: ['tuberculose-pulmonaire', 'coinfection-tuberculose-vih'] },
+  { titre: 'Pneumonie de l’adulte', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Toux', duree: 'jours', presents: ['Fièvre', 'Douleur thoracique', 'Dyspnée', 'Expectoration'], constantes: { fr: '28' }, attendu: ['pneumonie-communautaire-adulte'] },
+  { titre: 'Diarrhée aqueuse profuse en zone de choléra', age: 'adulte', sexe: 'M', motif: 'Diarrhée', duree: 'heures', presents: ['Vomissements', 'Crampes musculaires'], contextes: ['cholera'], constantes: { tas: '80', temperature: '36,8' }, attendu: ['cholera'] },
+  { titre: 'Fièvre prolongée en plateau avec troubles digestifs', age: 'adulte', sexe: 'M', motif: 'Fièvre', duree: 'semaines', presents: ['Douleur abdominale', 'Céphalées', 'Constipation', 'Asthénie'], examens: { 'tdr-paludisme': 'negatif' }, attendu: ['fievre-typhoide'] },
+  { titre: 'Fièvre hémorragique en zone d’Ebola', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Fièvre', duree: 'jours', presents: ['Hémorragies', 'Diarrhée', 'Vomissements', 'Asthénie'], contextes: ['ebola'], attendu: ['maladie-a-virus-ebola'] },
+  { titre: 'Éruption vésiculeuse fébrile, contact mpox', age: 'adulte', sexe: 'M', motif: 'Éruption vésiculeuse', presents: ['Fièvre', 'Adénopathies'], contextes: ['mpox'], attendu: ['mpox'] },
+  { titre: 'Morsure de chien puis hydrophobie', age: 'adulte', sexe: 'M', motif: 'Hydrophobie', presents: ['Agitation', 'Hypersalivation'], contextes: ['morsure'], attendu: ['rage'] },
+  { titre: 'Trismus après une plaie souillée', age: 'adulte', sexe: 'M', motif: 'Trismus', presents: ['Contractures musculaires', 'Convulsions'], contextes: ['plaie-souillee'], attendu: ['tetanos'] },
+  { titre: 'Écoulement urétral purulent', age: 'adulte', sexe: 'M', motif: 'Écoulement urétral', presents: ['Brûlures mictionnelles', 'Dysurie'], contextes: ['rapports-risque'], attendu: ['ist-adolescent'] }, // pas de fiche « urétrite de l'adulte » : lacune à combler
+  { titre: 'Ulcération génitale indolore', age: 'adulte', sexe: 'M', motif: 'Ulcération génitale', presents: ['Adénopathies'], contextes: ['rapports-risque'], attendu: ['syphilis'] },
+  { titre: 'Somnolence diurne en zone de trypanosomiase', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Troubles du sommeil', duree: 'mois', presents: ['Céphalées', 'Fièvre', 'Adénopathies', 'Troubles du comportement'], contextes: ['voyage-foret'], attendu: ['trypanosomiase-humaine-africaine'] },
+  { titre: 'Plaie chronique indolore en zone rurale', age: 'adulte', sexe: 'M', motif: 'Ulcère cutané', duree: 'mois', presents: ['Nodules sous-cutanés'], contextes: ['voyage-foret'], attendu: ['ulcere-de-buruli'] },
+  { titre: 'Taches hypopigmentées anesthésiques', age: 'adulte', sexe: 'M', motif: 'Taches cutanées hypopigmentées', duree: 'mois', presents: ['Anesthésie cutanée', 'Mains en griffe'], attendu: ['lepre'] },
+  { titre: 'Brûlures mictionnelles avec fièvre et douleur lombaire', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Brûlures mictionnelles', presents: ['Fièvre', 'Douleur lombaire', 'Frissons'], attendu: ['pyelonephrite-aigue', 'infections-urinaires-adulte'] },
+  // --- Adulte : obstétrique ---
+  { titre: 'Femme enceinte : céphalées, troubles visuels, œdèmes', age: 'adulte', sexe: 'F', grossesse: true, motif: 'Céphalées', presents: ['Troubles visuels', 'Œdèmes'], constantes: { tas: '165' }, attendu: ['pre-eclampsie-severe', 'eclampsie', 'hypertension-gravidique'] },
+  { titre: 'Convulsions au troisième trimestre', age: 'adulte', sexe: 'F', grossesse: true, motif: 'Convulsions', presents: ['Céphalées', 'Œdèmes', 'Troubles de la conscience'], attendu: ['eclampsie'] },
+  { titre: 'Saignement abondant après l’accouchement', age: 'adulte', sexe: 'F', grossesse: true, motif: 'Saignement vaginal', presents: ['Pâleur', 'Hypotension'], attendu: ['hemorragie-post-partum', 'retention-placentaire'] },
+  { titre: 'Douleur pelvienne et aménorrhée avec choc', age: 'adulte', sexe: 'F', grossesse: true, motif: 'Douleur pelvienne', presents: ['Aménorrhée', 'Saignement vaginal', 'Hypotension', 'Pâleur'], attendu: ['grossesse-extra-uterine'] },
+  { titre: 'Saignement indolore du troisième trimestre', age: 'adulte', sexe: 'F', grossesse: true, motif: 'Saignement vaginal', presents: [], absents: ['Douleur abdominale', 'Contractions utérines'], attendu: ['placenta-praevia'] },
+  { titre: 'Fièvre et lochies fétides après l’accouchement', age: 'adulte', sexe: 'F', grossesse: true, motif: 'Fièvre', presents: ['Lochies fétides', 'Douleur pelvienne'], attendu: ['sepsis-maternel-endometrite'] },
+  { titre: 'Saignement et fièvre après un avortement', age: 'adulte', sexe: 'F', grossesse: true, motif: 'Saignement vaginal', presents: ['Fièvre', 'Douleur pelvienne', 'Leucorrhées'], terrains: ['avortement'], attendu: ['avortement-septique'] },
+  // --- Adulte : chirurgie et digestif ---
+  { titre: 'Douleur de la fosse iliaque droite', age: 'adulte', sexe: 'M', motif: 'Douleur abdominale', duree: 'heures', presents: ['Fièvre', 'Vomissements', 'Anorexie'], attendu: ['appendicite-aigue'] },
+  { titre: 'Arrêt des matières et des gaz après chirurgie', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Arrêt des matières et des gaz', presents: ['Distension abdominale', 'Vomissements', 'Douleur abdominale'], terrains: ['chirurgie-abdominale'], attendu: ['occlusion-sur-bride', 'occlusion-intestinale-aigue'] },
+  { titre: 'Douleur épigastrique brutale et défense', age: 'adulte', sexe: 'M', motif: 'Épigastralgies', duree: 'heures', presents: ['Douleur abdominale', 'Vomissements', 'Fièvre'], attendu: ['perforation-ulcere-gastroduodenal', 'peritonite-aigue', 'pancreatite-aigue'] },
+  { titre: 'Ictère et ascite chez un buveur', age: 'adulte', sexe: 'M', motif: 'Distension abdominale', duree: 'mois', presents: ['Ictère', 'Œdèmes', 'Splénomégalie'], terrains: ['alcool', 'hepatopathie'], attendu: ['cirrhose-hepatique', 'ascite-et-decompensation-cirrhose'] },
+  { titre: 'Hématémèse chez un cirrhotique', age: 'adulte', sexe: 'M', motif: 'Hématémèse', presents: ['Méléna', 'Pâleur', 'Splénomégalie'], terrains: ['hepatopathie'], attendu: ['hemorragie-digestive-haute', 'rupture-varices-oesophagiennes', 'ascite-et-decompensation-cirrhose'] },
+  // --- Adulte : cardiologie, neurologie, endocrinologie ---
+  { titre: 'Dyspnée d’effort et œdèmes des membres', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Dyspnée', duree: 'semaines', presents: ['Œdèmes', 'Palpitations', 'Toux'], terrains: ['hta'], attendu: ['insuffisance-cardiaque'] },
+  { titre: 'Hémiplégie brutale chez un hypertendu', age: 'adulte', sexe: 'M', motif: 'Déficit moteur', duree: 'heures', presents: ['Paralysie faciale', 'Aphasie'], terrains: ['hta'], attendu: ['avc', 'avc-ischemique', 'avc-hemorragique'] },
+  { titre: 'Céphalée brutale avec raideur de nuque', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Céphalées', duree: 'heures', presents: ['Raideur de nuque', 'Vomissements', 'Troubles de la conscience'], absents: ['Fièvre'], attendu: ['hemorragie-meningee'] },
+  { titre: 'Crises convulsives répétées sans fièvre', age: 'adulte', sexe: 'M', motif: 'Convulsions', duree: 'mois', absents: ['Fièvre'], terrains: ['epilepsie'], attendu: ['epilepsie', 'etat-de-mal-epileptique'] },
+  { titre: 'Diabétique confus et en sueur', age: 'adulte', sexe: 'M', motif: 'Troubles de la conscience', presents: ['Sueurs', 'Tremblements'], terrains: ['diabete'], constantes: { glycemie: '1,8' }, attendu: ['hypoglycemie-adulte'] },
+  { titre: 'Polyurie, soif et amaigrissement', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Polyurie-polydipsie', duree: 'semaines', presents: ['Perte de poids', 'Asthénie'], constantes: { glycemie: '19' }, attendu: ['diabete-type-2', 'diabete-type-1-adulte'] },
+  { titre: 'Crise d’asthme de l’adulte', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Dyspnée', duree: 'heures', presents: ['Sibilants', 'Toux'], terrains: ['asthme'], attendu: ['asthme', 'asthme-aigu-grave'] },
+  { titre: 'Tristesse, insomnie et idées noires', age: 'adulte', sexe: 'F', grossesse: false, motif: 'Humeur dépressive', duree: 'mois', presents: ['Troubles du sommeil', 'Asthénie', 'Idées suicidaires'], attendu: ['depression'] },
+  { titre: 'Agitation et tremblements après arrêt de l’alcool', age: 'adulte', sexe: 'M', motif: 'Agitation', presents: ['Tremblements', 'Hallucinations', 'Sueurs'], terrains: ['alcool'], attendu: ['sevrage-alcoolique-delirium-tremens'] },
+  { titre: 'Œil rouge et douloureux avec baisse de vision', age: 'adulte', sexe: 'M', motif: 'Douleur oculaire', presents: ['Yeux rouges', 'Troubles visuels', 'Céphalées', 'Vomissements'], attendu: ['glaucome', 'keratite-ulcere-de-cornee'] },
+];
+
+module.exports = { CAS };

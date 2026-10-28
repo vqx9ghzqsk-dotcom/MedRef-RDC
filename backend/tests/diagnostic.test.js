@@ -50,3 +50,18 @@ describe('aide au diagnostic : référentiel de la démarche sémiologique', () 
     }
   });
 });
+
+describe('aide au diagnostic : fiches proposées comme hypothèses', () => {
+  const { publicVise, estDiagnostic } = require('../src/routes/diagnostic');
+  it('obstétrique reconnue par le nom ; ménopause hors grossesse ; fiches de prise en charge exclues', () => {
+    expect(publicVise('Tuberculose et grossesse', 'Infectiologie').obstetrique).toBe(true);
+    expect(publicVise('Psychose puerpérale', 'Psychiatrie').obstetrique).toBe(true);
+    expect(publicVise('Grossesse extra-utérine', 'Gynécologie').obstetrique).toBe(false);
+    expect(publicVise('Saignements après la ménopause', 'Gynécologie')).toMatchObject({
+      horsGrossesse: true,
+    });
+    expect(estDiagnostic('Rééducation après un AVC')).toBe(false);
+    expect(estDiagnostic('Contraception d’urgence')).toBe(false);
+    expect(estDiagnostic('AVC ischémique')).toBe(true);
+  });
+});

@@ -2163,6 +2163,25 @@ describe('Aide au diagnostic', () => {
     });
   });
 
+  it('parcours PCIME : classification par couleur et réponses reportées dans l’examen', async () => {
+    const user = userEvent.setup();
+    const api = { diagnosticDonnees: vi.fn(async () => donneesDiag) };
+    renderApp('/diagnostic', api, MEDECIN);
+    await screen.findByRole('button', { name: 'Adulte' });
+    await user.type(screen.getByLabelText('Âge'), '2');
+    await user.click(screen.getByRole('button', { name: 'PCIME : enfant de 2 mois à 5 ans' }));
+    const parcours = screen.getByRole('region', { name: 'PCIME : enfant de 2 mois à 5 ans' });
+    await user.click(within(parcours).getByRole('button', { name: 'Toux ou difficulté à respirer : Oui' }));
+    await user.click(within(parcours).getByRole('button', { name: /Respiration rapide.* : Oui/ }));
+    expect(within(parcours).getByRole('list', { name: 'Classification' })).toHaveTextContent('Pneumonie');
+    expect(within(parcours).getByRole('list', { name: 'Classification' })).toHaveTextContent(
+      'Amoxicilline orale 5 jours',
+    );
+    await user.click(within(parcours).getByRole('button', { name: 'Reporter les réponses dans l’examen' }));
+    const cas = JSON.parse(sessionStorage.getItem('medref.diagnostic.cas'));
+    expect(cas.signes['3']).toBe('present');
+  });
+
   it('réservée aux comptes connectés', async () => {
     renderApp('/diagnostic');
     expect(await screen.findByText(/réservé aux professionnels de santé/)).toBeInTheDocument();

@@ -787,3 +787,41 @@ describe('aide au diagnostic : degré de certitude', () => {
     expect(degreDeCertitude({ hypotheses: [confirme, h(0.39)] }, {}).niveau).toBe('eleve');
   });
 });
+
+describe('aide au diagnostic : parcours guidés', () => {
+  it('PCIME, PCIMA et saignement pendant la grossesse : classifications et signes reportés', async () => {
+    const { PARCOURS, profilParcours, questionsVisibles, signesDuParcours } =
+      await import('../src/core/parcours.js');
+    const def = (id) => PARCOURS.find((d) => d.id === id);
+    const pcime = def('pcime');
+    // Toux + respiration rapide sans danger : pneumonie (jaune)
+    expect(pcime.classer({ toux: true, rapide: true }).map((c) => [c.couleur, c.titre])).toEqual([
+      ['jaune', 'Pneumonie'],
+    ]);
+    // Signe de danger : rouge, et la toux devient pneumonie grave
+    expect(pcime.classer({ convulse: true, toux: true }).map((c) => c.couleur)).toEqual(['rouge', 'rouge']);
+    // Diarrhée avec 2 signes de déshydratation sévère : plan C
+    expect(
+      pcime
+        .classer({ diarrhee: true, lethargie: true, pliTresLent: true })
+        .some((c) => c.titre === 'Déshydratation sévère'),
+    ).toBe(true);
+    // Fièvre sans TDR : le faire d'abord
+    expect(pcime.classer({ fievre: true })[0].titre).toMatch(/TDR/);
+    expect(questionsVisibles(pcime, {}).find((g) => g.titre.startsWith('Toux')).questions).toHaveLength(1);
+    expect(signesDuParcours(pcime, { toux: true, rapide: false })).toEqual({
+      Toux: 'present',
+      Tachypnée: 'absent',
+    });
+    expect(def('pcima').classer({ oedemes: true, appetit: true })[0].couleur).toBe('rouge');
+    expect(def('saignement-grossesse').classer({ avant22: false })[0].fiche).toBe('placenta-praevia');
+    // Parcours proposés selon le patient
+    expect(PARCOURS.filter((d) => d.public(profilParcours({}, 24))).map((d) => d.id)).toEqual([
+      'pcime',
+      'pcima',
+    ]);
+    expect(
+      PARCOURS.filter((d) => d.public(profilParcours({ grossesse: true }, 300))).map((d) => d.id),
+    ).toEqual(['pcima', 'saignement-grossesse']);
+  });
+});

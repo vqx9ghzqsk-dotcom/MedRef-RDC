@@ -4103,3 +4103,51 @@ p.diag-triage-priorite {
 .diag-signalement textarea {
   width: 100%;
 }
+
+/* Parcours guidés (PCIME, PCIMA, saignement pendant la grossesse) */
+.diag-parcours {
+  margin: 0 0 1rem;
+}
+.diag-parcours-corps {
+  margin-top: 0.75rem;
+}
+.diag-parcours-questions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.diag-parcours-questions li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0;
+}
+.diag-classes {
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+}
+.diag-classe {
+  border-left: 6px solid;
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.diag-classe ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+}
+.diag-classe-rouge {
+  border-color: var(--urgence);
+  background: color-mix(in srgb, var(--urgence) 12%, transparent);
+}
+.diag-classe-jaune {
+  border-color: #e0a100;
+  background: color-mix(in srgb, #e0a100 14%, transparent);
+}
+.diag-classe-vert {
+  border-color: #2e8b57;
+  background: color-mix(in srgb, #2e8b57 12%, transparent);
+}

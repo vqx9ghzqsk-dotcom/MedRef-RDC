@@ -33,6 +33,7 @@ import {
 } from '../../core/diagnostic.js';
 import { calculerDose } from '../../core/posologie.js';
 import { conseilsPatient } from '../../core/conseils.js';
+import { PARCOURS, profilParcours, questionsVisibles, signesDuParcours } from '../../core/parcours.js';
 import { evaluerScoreGuide, profilScores, SCORES_GUIDES } from '../../core/scoresGuides.js';
 import { LIGNES } from '../../core/labels.js';
 
@@ -98,6 +99,7 @@ const CAS_VIDE = {
   evolution: '',
   premierSigne: null,
   scoresGuides: {},
+  parcours: {},
   reponse: '',
   histoire: '',
   terrains: [],
@@ -699,6 +701,7 @@ function EtapeMotif({ index, cas, maj, setCas, profil }) {
         />
       </label>
 
+      <ParcoursGuides index={index} cas={cas} maj={maj} setCas={setCas} />
       <h2>Motif de consultation</h2>
       {cas.motif ? (
         <p className="diag-motif">
@@ -784,6 +787,109 @@ function EtapeMotif({ index, cas, maj, setCas, profil }) {
         placeholder="Sans nom ni identité du patient"
       />
     </>
+  );
+}
+
+/**
+ * Parcours guidés officiels (PCIME, PCIMA, saignement pendant la grossesse) : questions oui/non,
+ * classification par couleur avec la conduite et la fiche ; les réponses peuvent être reportées
+ * comme signes présents ou absents dans l'examen.
+ */
+function ParcoursGuides({ index, cas, maj, setCas }) {
+  const [ouvert, setOuvert] = useState(null);
+  const profil = profilParcours(cas, ageEnMois(cas));
+  const proposes = PARCOURS.filter((d) => d.public(profil));
+  if (!proposes.length) return null;
+  const reponses = cas.parcours || {};
+  const def = proposes.find((d) => d.id === ouvert);
+  const r = def ? reponses[def.id] || {} : {};
+  const repondre = (q, valeur) =>
+    maj('parcours', { ...reponses, [def.id]: { ...r, [q]: r[q] === valeur ? undefined : valeur } });
+  const classes = def ? def.classer(r) : [];
+  const reporter = () => {
+    const parNom = signesDuParcours(def, r);
+    setCas((c) => {
+      const signes = { ...c.signes };
+      for (const [nom, etat] of Object.entries(parNom)) {
+        const id = index.parNom.get(nom);
+        if (id) signes[id] = etat;
+      }
+      return { ...c, signes };
+    });
+  };
+  return (
+    <div className="diag-parcours">
+      <h2>Parcours guidés</h2>
+      <div className="chips">
+        {proposes.map((d) => (
+          <button
+            key={d.id}
+            type="button"
+            className="chip chip-bouton"
+            aria-pressed={ouvert === d.id}
+            onClick={() => setOuvert(ouvert === d.id ? null : d.id)}
+          >
+            {d.nom}
+          </button>
+        ))}
+      </div>
+      {def && (
+        <section className="diag-parcours-corps" aria-label={def.nom}>
+          {questionsVisibles(def, r).map((g) => (
+            <fieldset key={g.titre} className="diag-champ">
+              <legend>{g.titre}</legend>
+              <ul className="diag-parcours-questions">
+                {g.questions.map((q) => (
+                  <li key={q.id}>
+                    <span>{q.libelle}</span>
+                    <span className="diag-tri">
+                      {[
+                        [true, 'Oui'],
+                        [false, 'Non'],
+                      ].map(([v, l]) => (
+                        <button
+                          key={l}
+                          type="button"
+                          className="chip chip-bouton"
+                          aria-pressed={r[q.id] === v}
+                          aria-label={`${q.libelle} : ${l}`}
+                          onClick={() => repondre(q.id, v)}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </fieldset>
+          ))}
+          {classes.length > 0 && (
+            <ul className="diag-classes" aria-label="Classification">
+              {classes.map((c) => (
+                <li key={c.titre} className={`diag-classe diag-classe-${c.couleur}`}>
+                  <b>{c.titre}</b>
+                  {c.fiche && (
+                    <>
+                      {' '}
+                      · <Link to={`/pathologies/${c.fiche}`}>fiche</Link>
+                    </>
+                  )}
+                  <ul>
+                    {c.actions.map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
+          <button type="button" className="btn btn-secondary btn-small" onClick={reporter}>
+            Reporter les réponses dans l’examen
+          </button>
+        </section>
+      )}
+    </div>
   );
 }
 

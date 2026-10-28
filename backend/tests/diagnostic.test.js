@@ -148,3 +148,23 @@ describe('aide au diagnostic : médicaments essentiels et AWaRe', () => {
     expect(texte.includes('"amoxicilline"')).toBe(true);
   });
 });
+
+describe('aide au diagnostic : parcours guidés', () => {
+  const data = require('../db/seed-data');
+  const { APPAREILS } = require('../db/seed-data/diagnostic');
+  const slugs = new Set([...data.pathologies, ...(data.ajouts.fiches || [])].map((p) => p.slug));
+  const signes = new Set(APPAREILS.flatMap((a) => a.symptomes));
+
+  it('les fiches et les signes cités par les parcours existent', () => {
+    const texte = require('fs').readFileSync(
+      require('path').join(__dirname, '../../frontend/src/core/parcours.js'),
+      'utf8',
+    );
+    const fiches = [...texte.matchAll(/fiche: '([a-z0-9-]+)'/g)].map((m) => m[1]);
+    expect(fiches.length).toBeGreaterThan(10);
+    expect(fiches.filter((f) => !slugs.has(f))).toEqual([]);
+    const cites = [...texte.matchAll(/, signe: '([^']+)'/g)].map((m) => m[1]);
+    expect(cites.length).toBeGreaterThan(10);
+    expect(cites.filter((n) => !signes.has(n))).toEqual([]);
+  });
+});

@@ -347,6 +347,18 @@ export function lireConstantes(constantes = {}, age = '', mois = null) {
     if (c.tas < seuilHypotension(age, mois)) presents.push('Hypotension');
     else absents.push('Hypotension');
   }
+  // Pression élevée (adulte et grand enfant) : poussée sévère ≥ 180/110, hypertension ≥ 140/90
+  const adulteOuGrand = mois !== null && mois !== undefined ? mois >= 144 : ['adulte', 'age'].includes(age);
+  if (adulteOuGrand && (c.tas || c.tad)) {
+    if (c.tas >= 180 || c.tad >= 110) {
+      alertes.push(
+        `Pression artérielle ${c.tas || '?'}/${c.tad || '?'} mmHg : poussée sévère, rechercher une atteinte d’organe (céphalées, troubles visuels, déficit, douleur thoracique ; protéinurie si grossesse)`,
+      );
+      orientations.push('hypertens|eclampsie');
+    } else if (c.tas >= 140 || c.tad >= 90) {
+      orientations.push('hypertens|eclampsie');
+    }
+  }
   if (c.spo2 !== null && c.spo2 !== undefined && c.spo2 < 90) {
     alertes.push(`Hypoxémie (SpO2 ${c.spo2} %) : oxygène sans attendre`);
   }

@@ -893,3 +893,15 @@ describe('aide au diagnostic : partage anonyme', () => {
     expect(texte).not.toMatch(/Jean|Matonge|3 ans/);
   });
 });
+
+describe('aide au diagnostic : pression artérielle élevée', () => {
+  it('poussée sévère : alerte et orientation ; pas de lecture « adulte » chez le jeune enfant', () => {
+    const severe = lireConstantes({ tas: '210', tad: '125' }, 'adulte', null);
+    expect(severe.alertes.some((a) => a.includes('210/125'))).toBe(true);
+    expect(severe.orientations).toContain('hypertens|eclampsie');
+    const hta = lireConstantes({ tas: '150', tad: '95' }, 'adulte', null);
+    expect(hta.alertes).toEqual([]);
+    expect(hta.orientations).toContain('hypertens|eclampsie');
+    expect(lireConstantes({ tas: '150' }, 'petit', 36).orientations).not.toContain('hypertens|eclampsie');
+  });
+});

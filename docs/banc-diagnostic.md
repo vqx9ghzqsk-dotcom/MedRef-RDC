@@ -2,7 +2,7 @@
 
 Généré le 28/10/2026 par `npm run diagnostic:banc` (cas à valider).
 
-- **Banc de validation (cas indépendants, jamais utilisés pour régler le moteur)** : 40 cas · 1re position : 32 (80 %) · 3 premiers : 37 (93 %)
+- **Banc de validation (cas indépendants, jamais utilisés pour régler le moteur)** : 40 cas · 1re position : 32 (80 %) · 3 premiers : 38 (95 %)
 - Banc de réglage (cas ayant servi à corriger les fiches, donc optimiste) : 60 cas · 1re position : 57 (95 %) · 3 premiers : 60 (100 %)
 
 ## Validation (backend/db/seed-data/cas-validation.js)
@@ -33,7 +33,7 @@ Généré le 28/10/2026 par `npm run diagnostic:banc` (cas à valider).
 | Adulte, jambe rouge chaude et fièvre | absent | Abcès et phlegmons des parties molles ; Pyomyosite tropicale ; Infection du site opératoire |
 | Adulte, ictère fébrile après quelques jours de malaise | 1 | Hépatites virales aiguës (A et E) ; Déficit en G6PD ; Angiocholite |
 | Adulte, polyurie, soif et amaigrissement | 2 | Diabète de type 1 de l’adulte ; Diabète de type 2 ; État hyperosmolaire hyperglycémique |
-| Hypertendu, céphalées et vision trouble | 4 | Troubles de la réfraction ; Hypertension intracrânienne ; Rétinopathies diabétique et hypertensive |
+| Hypertendu, céphalées et vision trouble | 3 | Hypertension intracrânienne ; Rétinopathies diabétique et hypertensive ; Urgences hypertensives |
 | Adulte, crise de dyspnée sifflante | 1 | Asthme ; Asthme aigu grave ; Bronchopneumopathie chronique obstructive |
 | Adulte, brûlure épigastrique chronique | 1 | Dyspepsie et gastrite ; Reflux gastro-œsophagien ; Perforation d’ulcère gastroduodénal |
 | Adulte, douleur de la fosse iliaque droite et fièvre | 1 | Appendicite aiguë ; Hépatites virales aiguës (A et E) ; Infection à Helicobacter pylori |

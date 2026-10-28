@@ -262,7 +262,7 @@ function Moteur({ donnees }) {
   return (
     <>
       <div className="diag-grille">
-        <section className="card diag-cas no-print" aria-label="Observation du patient">
+        <section id="diag-saisie" className="card diag-cas no-print" aria-label="Observation du patient">
           <fieldset className="diag-champ diag-lieu">
             <legend>Je travaille en</legend>
             <div className="chips">
@@ -348,7 +348,12 @@ function Moteur({ donnees }) {
           </div>
         </section>
 
-        <section className="diag-resultats no-print" aria-label="Synthèse et hypothèses" aria-live="polite">
+        <section
+          id="diag-synthese"
+          className="diag-resultats no-print"
+          aria-label="Synthèse et hypothèses"
+          aria-live="polite"
+        >
           <Alertes resultat={resultat} />
           {resultat.scores?.length > 0 && (
             <div className="card">
@@ -414,6 +419,7 @@ function Moteur({ donnees }) {
           )}
         </section>
       </div>
+      <BarreSynthese resultat={resultat} />
       <Observation cas={cas} index={index} donnees={donnees} resultat={resultat} />
       {reference && choisie?.fiche.slug === reference.slug && (
         <FicheReference reference={reference} onFermer={() => setReference(null)} />
@@ -932,6 +938,38 @@ function EtapeParaclinique({
 }
 
 /* ---------- Synthèse ---------- */
+
+/**
+ * Barre fixe en bas de l'écran sur téléphone : nombre d'hypothèses, la première, repère
+ * d'urgence, et passage de la saisie aux hypothèses sans faire défiler toute la page.
+ */
+function BarreSynthese({ resultat }) {
+  const premiere = resultat.hypotheses[0];
+  const urgence = resultat.gravite.length > 0 || resultat.alertes.length > 0;
+  const aller = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  return (
+    <div className="diag-barre-mobile no-print" role="region" aria-label="Résumé du cas">
+      <p>
+        {urgence && <span className="tag tag-alerte">Urgence</span>}{' '}
+        {premiere ? (
+          <>
+            <b>{resultat.hypotheses.length} hypothèses</b> · 1re : {premiere.fiche.nom}
+          </>
+        ) : (
+          'Aucune hypothèse pour l’instant'
+        )}
+      </p>
+      <span className="diag-barre-boutons">
+        <button type="button" className="btn btn-secondary btn-small" onClick={() => aller('diag-saisie')}>
+          Saisie
+        </button>
+        <button type="button" className="btn btn-primary btn-small" onClick={() => aller('diag-synthese')}>
+          Hypothèses
+        </button>
+      </span>
+    </div>
+  );
+}
 
 function Alertes({ resultat }) {
   if (!resultat.gravite.length && !resultat.alertes.length) return null;

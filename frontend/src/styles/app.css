@@ -3871,3 +3871,45 @@ details.forme {
 .diag-score-grave {
   color: var(--urgence);
 }
+
+/* Barre de synthèse fixe sur téléphone (la page laisse la place en bas) */
+.diag-barre-mobile {
+  display: none;
+}
+@media (max-width: 959px) {
+  .diag-barre-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    padding: 0.55rem 0.9rem calc(0.55rem + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15);
+  }
+  .diag-barre-mobile p {
+    margin: 0;
+    font-size: 0.9rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .diag-barre-boutons {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+  #diag-saisie,
+  #diag-synthese {
+    scroll-margin-top: 5rem;
+  }
+  .diag-grille {
+    padding-bottom: 4.5rem;
+  }
+}

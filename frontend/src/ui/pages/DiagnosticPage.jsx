@@ -50,6 +50,12 @@ const EVOLUTIONS = [
   ['intermittente', 'Par épisodes'],
 ];
 
+const REPONSES = [
+  ['non', 'Non'],
+  ['amelioration', 'Oui, il s’améliore'],
+  ['echec', 'Oui, sans amélioration après 48 à 72 h'],
+];
+
 const CONSTANTES = [
   ['temperature', 'Température', '°C'],
   ['fc', 'Fréquence cardiaque', '/min'],
@@ -84,6 +90,8 @@ const CAS_VIDE = {
   debut: '',
   duree: '',
   evolution: '',
+  premierSigne: null,
+  reponse: '',
   histoire: '',
   terrains: [],
   traitements: [],
@@ -505,6 +513,23 @@ function Moteur({ donnees }) {
               ))}
             </ol>
           )}
+          {resultat.echec && (
+            <div className="card diag-echec">
+              <h2>Échec du traitement reçu</h2>
+              {resultat.echec.fiches.length > 0 && (
+                <p>
+                  Hypothèses traitées par ces médicaments, mises en retrait :{' '}
+                  {resultat.echec.fiches.join(', ')}.
+                </p>
+              )}
+              <p className="muted">Avant de conclure à une erreur de diagnostic, vérifier :</p>
+              <ul className="diag-liste">
+                {resultat.echec.causes.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           {resultat.aNePasManquer?.length > 0 && (
             <div className="card diag-ne-pas-manquer">
               <h2>À ne pas manquer</h2>
@@ -547,6 +572,15 @@ function Moteur({ donnees }) {
 
 function EtapeMotif({ index, cas, maj, setCas, profil }) {
   const idHistoire = useId();
+  // Signes présents (motif compris) : le premier apparu est choisi parmi eux
+  const signesPresents = [
+    ...new Set([
+      ...(cas.motif ? [Number(cas.motif)] : []),
+      ...Object.entries(cas.signes)
+        .filter(([, e]) => e === 'present')
+        .map(([id]) => Number(id)),
+    ]),
+  ].filter((id) => index.symptomes.has(id));
   // L'âge exact fixe la tranche d'âge (seuils PCIME, fiches et doses de l'âge)
   const majAge = (valeur, unite) =>
     setCas((c) => {
@@ -701,6 +735,31 @@ function EtapeMotif({ index, cas, maj, setCas, profil }) {
         valeur={cas.evolution}
         onChange={(v) => maj('evolution', v)}
       />
+      {signesPresents.length > 1 && (
+        <label className="diag-etiquette">
+          Premier signe apparu{' '}
+          <select
+            value={cas.premierSigne || ''}
+            onChange={(e) => maj('premierSigne', e.target.value ? Number(e.target.value) : null)}
+          >
+            <option value="">—</option>
+            {signesPresents.map((id) => (
+              <option key={id} value={id}>
+                {index.symptomes.get(id)?.nom}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      <Boutons
+        legende="Déjà traité pour cet épisode ?"
+        options={REPONSES}
+        valeur={cas.reponse}
+        onChange={(v) => maj('reponse', v)}
+      />
+      {cas.reponse && cas.reponse !== 'non' && !cas.traitements.length && (
+        <p className="muted">Indiquez les médicaments reçus à l’étape Terrain (traitements en cours).</p>
+      )}
       <label htmlFor={idHistoire} className="diag-etiquette">
         Chronologie, signes associés, traitements déjà pris (notes)
       </label>
@@ -1712,6 +1771,9 @@ function Observation({ cas, index, donnees, resultat }) {
             libelle(DEBUTS, cas.debut) && `début ${libelle(DEBUTS, cas.debut).toLowerCase()}`,
             DUREES.find((d) => d.id === cas.duree)?.libelle.toLowerCase(),
             libelle(EVOLUTIONS, cas.evolution)?.toLowerCase(),
+            cas.premierSigne && `premier signe : ${nom(cas.premierSigne)}`,
+            cas.reponse === 'echec' && 'sans amélioration sous traitement',
+            cas.reponse === 'amelioration' && 'amélioration sous traitement',
           ]
             .filter(Boolean)
             .join(', ') || '—'}

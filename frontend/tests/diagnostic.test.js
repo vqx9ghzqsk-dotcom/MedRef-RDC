@@ -106,7 +106,9 @@ describe('aide au diagnostic : moteur', () => {
     const positif = analyser(index, { age: 'petit', symptomes: [1, 2, 3], examens: { 10: 'positif' } });
     const negatif = analyser(index, { age: 'petit', symptomes: [1, 2, 3], examens: { 10: 'negatif' } });
     expect(positif.hypotheses[0].fiche.slug).toBe('palu-grave-enfant');
-    expect(positif.hypotheses[0].tests).toEqual([{ nom: 'TDR paludisme', resultat: 'positif', role: 'c', rv: null }]);
+    expect(positif.hypotheses[0].tests).toEqual([
+      { nom: 'TDR paludisme', resultat: 'positif', role: 'c', rv: null },
+    ]);
     expect(negatif.hypotheses[0].fiche.slug).toBe('meningite');
   });
 
@@ -613,5 +615,59 @@ describe('aide au diagnostic : rapports de vraisemblance des examens', () => {
     expect(score({ 21: 'negatif' })).toBeLessThan(score({ 20: 'negatif' }));
     const h = analyser(index, { ...cas, examens: { 21: 'positif' } }).hypotheses[0];
     expect(h.tests[0].rv.positif).toBeCloseTo(42.5, 0);
+  });
+});
+
+describe('aide au diagnostic : chronologie, début, échec du traitement', () => {
+  it('le début brutal, le premier signe et l’échec sous traitement pèsent sur le classement', () => {
+    const fiche = (id, slug, nom, extra) => ({
+      id,
+      slug,
+      nom,
+      specialite: 'X',
+      public: { ages: null, sexe: null, obstetrique: false },
+      tests: {},
+      ...extra,
+    });
+    const d = {
+      symptomes: [
+        { id: 1, nom: 'Céphalées' },
+        { id: 2, nom: 'Déficit moteur' },
+        { id: 3, nom: 'Fièvre' },
+        { id: 4, nom: 'Toux' },
+      ],
+      examens: [],
+      pathologies: [
+        fiche(1, 'avc', 'AVC hémorragique'),
+        fiche(2, 'tumeur', 'Tumeurs cérébrales'),
+        fiche(3, 'pneumo', 'Pneumonie', { traitements: [9] }),
+        fiche(4, 'tb', 'Tuberculose pulmonaire', { traitements: [7] }),
+      ],
+      liens: [
+        [1, 1, 2],
+        [1, 2, 3],
+        [2, 1, 2],
+        [2, 2, 3],
+        [3, 3, 3],
+        [3, 4, 3],
+        [4, 3, 3],
+        [4, 4, 3],
+      ],
+      syndromes: [],
+      terrains: [],
+      contextes: [],
+    };
+    const index = indexer(d);
+    const ordre = (cas) => analyser(index, { age: 'adulte', ...cas }).hypotheses.map((h) => h.fiche.slug);
+    const neuro = { signes: { 1: 'present', 2: 'present' } };
+    expect(ordre({ ...neuro, debut: 'brutal' })[0]).toBe('avc');
+    expect(ordre({ ...neuro, debut: 'progressif' })[0]).toBe('tumeur');
+    // Toux et fièvre traitées par amoxicilline (9) sans amélioration : la pneumonie recule
+    const resp = { signes: { 3: 'present', 4: 'present' }, traitements: [9] };
+    expect(ordre({ ...resp, reponse: 'echec' })[0]).toBe('tb');
+    const r = analyser(index, { age: 'adulte', ...resp, reponse: 'echec' });
+    expect(r.echec.fiches).toEqual(['Pneumonie']);
+    expect(r.echec.causes.length).toBeGreaterThan(3);
+    expect(analyser(index, { age: 'adulte', ...resp, reponse: 'amelioration' }).echec).toBeNull();
   });
 });

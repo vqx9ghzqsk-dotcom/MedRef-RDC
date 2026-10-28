@@ -437,6 +437,14 @@ export const LIBELLES_FREQUENCE_RDC = {
   rare: 'Rare en RDC',
 };
 
+/** Fiches dont le début est typiquement brutal, progressif, ou qui évoluent par épisodes (sur le nom). */
+const DEBUT_BRUTAL =
+  /avc|accident ischemique|embolie|hemorragie|torsion|perforation|rupture|syndrome coronarien|pneumothorax|colique|dissection|occlusion|invagination|volvulus|choc|anaphyla|intoxication|traumat|fracture|convuls|etat de mal|eclampsie|hematome|abdomen aigu|ischemie aigue/;
+const DEBUT_PROGRESSIF =
+  /chronique|cancer|carcinome|tumeur|lymphome|leucemie|myelome|insuffisance renale chronique|cirrhose|demence|alzheimer|parkinson|tuberculose|diabete|hypothyroidie|malnutrition|sclerose|myopathie|arthrose/;
+const PAR_EPISODES =
+  /epilep|migraine|cephalees|angor|asthme|paludisme|crise|colique|lithiase|urticaire|trouble panique|syncope|vertige|dysmenorrhee|goutte|bipolaire/;
+
 /** Coup de pouce du terrain, du contexte, des constantes et de la durée (plafonné). */
 function orientation(index, fiche, cas, lecture) {
   const nom = index.nomsFiches.get(fiche.id) || '';
@@ -478,6 +486,18 @@ function orientation(index, fiche, cas, lecture) {
       raisons.push(`foyer connu (${cas.province})`);
     } else bonus -= 0.04;
   }
+  // Mode de début et évolution (à valider)
+  if (cas.debut === 'brutal' && DEBUT_BRUTAL.test(nom)) {
+    bonus += 0.04;
+    raisons.push('début brutal');
+  } else if (cas.debut === 'progressif' && DEBUT_PROGRESSIF.test(nom)) {
+    bonus += 0.03;
+    raisons.push('début progressif');
+  }
+  if (cas.evolution === 'intermittente' && PAR_EPISODES.test(nom)) {
+    bonus += 0.03;
+    raisons.push('évolution par épisodes');
+  }
   const chronique = /chronique/.test(nom);
   const aigue = /aigu/.test(nom);
   if (cas.duree === 'semaines' || cas.duree === 'mois') {
@@ -512,6 +532,7 @@ export function analyser(index, cas) {
     questions: [],
     aRechercher: [],
     aNePasManquer: [],
+    echec: null,
     associations: [],
     biologie: lecture.biologie,
     scores: calculerScores(index, cas, presents, absents),
@@ -550,6 +571,11 @@ export function analyser(index, cas) {
         discordants.push({ id: s, nom: symptomes.get(s).nom, exclusion: true });
     }
     if (!concordants.length) continue;
+    // Le premier signe apparu compte un peu plus que les autres
+    if (cas.premierSigne && presents.has(Number(cas.premierSigne)) && tableau.has(Number(cas.premierSigne))) {
+      const p = Number(cas.premierSigne);
+      if (p !== motif) explique += 0.25 * (rarete.get(p) || 0) * POIDS_FREQUENCE[tableau.get(p)];
+    }
     let score =
       0.7 * (explique / poidsCas) + 0.3 * (explique / (poidsFiche || 1)) - 0.5 * (contre / (poidsFiche || 1));
     // Le motif de consultation doit être expliqué par l'hypothèse
@@ -575,6 +601,16 @@ export function analyser(index, cas) {
     }
     const { bonus, raisons } = orientation(index, fiche, cas, lecture);
     score += bonus;
+    // Chronologie : le premier signe apparu doit être expliqué, comme le motif (un peu moins)
+    const premier = cas.premierSigne ? Number(cas.premierSigne) : null;
+    if (premier && premier !== motif && presents.has(premier) && !tableau.has(premier)) score *= 0.9;
+    // Déjà traité pour cet épisode sans amélioration : la fiche traitée par ces molécules recule
+    const traitee =
+      cas.reponse === 'echec' && (fiche.traitements || []).some((m) => (cas.traitements || []).includes(m));
+    if (traitee) {
+      score *= 0.75;
+      raisons.push('échec du traitement déjà reçu');
+    }
     const cles = fiche.cles || [];
     score += Math.min(0.08, 0.04 * cles.filter((s) => presents.has(s)).length);
     if (cles.some((s) => absents.has(s))) score *= 0.6;
@@ -620,6 +656,18 @@ export function analyser(index, cas) {
     return { ...h, niveau: niveau(h.score, i === 0), aEliminer };
   });
   const questions = questionsSuivantes(index, hypotheses, presents, absents);
+  // Échec d'un traitement déjà reçu : causes à vérifier avant de changer de diagnostic
+  const echec =
+    cas.reponse === 'echec' && (cas.traitements || []).length
+      ? {
+          fiches: donnees.pathologies
+            .filter((f) => (f.traitements || []).some((m) => cas.traitements.includes(m)))
+            .filter((f) => resultats.some((r) => r.fiche.id === f.id))
+            .map((f) => f.nom)
+            .slice(0, 4),
+          causes: CAUSES_ECHEC,
+        }
+      : null;
   // Diagnostics graves à ne pas manquer : fiches d'urgence compatibles, même hors des premières
   // places (score ≥ 0,3), présentées à part avec ce qu'il faut rechercher pour les éliminer
   const premiere = hypotheses[0]?.fiche.id;
@@ -632,10 +680,20 @@ export function analyser(index, cas) {
     hypotheses,
     questions,
     aNePasManquer,
+    echec,
     associations: associations(index, resultats, presents),
     aRechercher: questions.map((q) => q.symptome),
   };
 }
+
+/** Causes d'échec d'un traitement à vérifier (à valider). */
+export const CAUSES_ECHEC = [
+  'Observance : doses prises, vomissements, durée suffisante (au moins 48 à 72 h)',
+  'Dose ou voie inadaptée au poids et à la gravité ; médicament de qualité douteuse',
+  'Résistance (antibiotique, antipaludique, antituberculeux) : prélèvements avant de changer',
+  'Complication (abcès, épanchement, méningite, anémie sévère…) ou forme grave méconnue',
+  'Autre diagnostic ou maladie associée (VIH, tuberculose, drépanocytose, malnutrition)',
+];
 
 /**
  * Maladies simultanées : quand la première hypothèse laisse des signes importants inexpliqués,

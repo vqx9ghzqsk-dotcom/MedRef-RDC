@@ -4009,3 +4009,8 @@ p.diag-triage-priorite {
 .diag-association h3 {
   margin-top: 0;
 }
+
+/* Échec d'un traitement déjà reçu */
+.diag-echec {
+  border-left: 4px solid #e0a100;
+}

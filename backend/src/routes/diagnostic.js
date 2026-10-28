@@ -65,30 +65,46 @@ router.get(
   '/diagnostic/donnees',
   requireAuth,
   asyncHandler(async (_req, res) => {
-    const [pathologies, symptomes, liens, examens, urgences, syndromes, syndromeSignes, molecules] =
-      await Promise.all([
-        db.query(
-          `SELECT p.id, p.slug, p.nom, p.statut, s.nom AS specialite
+    const [
+      pathologies,
+      symptomes,
+      liens,
+      examens,
+      urgences,
+      syndromes,
+      syndromeSignes,
+      molecules,
+      traitements,
+    ] = await Promise.all([
+      db.query(
+        `SELECT p.id, p.slug, p.nom, p.statut, s.nom AS specialite
            FROM pathologies p JOIN specialites s ON s.id = p.specialite_id
           WHERE p.statut <> 'brouillon'
           ORDER BY p.nom`,
-        ),
-        db.query('SELECT id, nom, slug FROM symptomes ORDER BY nom'),
-        db.query('SELECT pathologie_id, symptome_id, frequence FROM pathologie_symptomes'),
-        db.query(
-          `SELECT pe.pathologie_id, e.id, e.slug, e.nom, pe.categorie
+      ),
+      db.query('SELECT id, nom, slug FROM symptomes ORDER BY nom'),
+      db.query('SELECT pathologie_id, symptome_id, frequence FROM pathologie_symptomes'),
+      db.query(
+        `SELECT pe.pathologie_id, e.id, e.slug, e.nom, pe.categorie
            FROM pathologie_examens pe JOIN examens e ON e.id = pe.examen_id
           WHERE pe.categorie IN ('confirmation', 'presomption')`,
-        ),
-        db.query('SELECT DISTINCT pathologie_id FROM pathologie_urgences'),
-        db.query('SELECT id, nom, slug FROM syndromes ORDER BY nom'),
-        db.query('SELECT syndrome_id, symptome_id FROM syndrome_symptomes'),
-        db.query(
-          `SELECT mo.id, mo.dci, mo.slug, c.id AS classe_id, c.nom AS classe
+      ),
+      db.query('SELECT DISTINCT pathologie_id FROM pathologie_urgences'),
+      db.query('SELECT id, nom, slug FROM syndromes ORDER BY nom'),
+      db.query('SELECT syndrome_id, symptome_id FROM syndrome_symptomes'),
+      db.query(
+        `SELECT mo.id, mo.dci, mo.slug, c.id AS classe_id, c.nom AS classe
            FROM molecules mo LEFT JOIN classes_pharmacologiques c ON c.id = mo.classe_id
           ORDER BY mo.dci`,
-        ),
-      ]);
+      ),
+      db.query('SELECT pathologie_id, molecule_id FROM molecule_pathologies'),
+    ]);
+    // Molécules qui traitent chaque fiche : un échec sous ce traitement fait reculer la fiche
+    const traitePar = new Map();
+    for (const t of traitements) {
+      if (!traitePar.has(t.pathologie_id)) traitePar.set(t.pathologie_id, []);
+      traitePar.get(t.pathologie_id).push(t.molecule_id);
+    }
     const idSymptome = new Map(symptomes.map((x) => [x.nom, x.id]));
     const ids = (noms) => noms.map((n) => idSymptome.get(n)).filter(Boolean);
     // Signes discriminants (à valider) : les signes manquants complètent le tableau des fiches,
@@ -137,6 +153,7 @@ router.get(
           diagnostic: estDiagnostic(p.nom),
           periode: periodeObstetricale(p.slug, p.specialite),
           tests: tests.get(p.id) || {},
+          traitements: traitePar.get(p.id) || [],
           // Épidémiologie en RDC (à valider) : fréquence, saison, provinces de foyer
           frequence: epidemiologie.frequenceDe(p.slug),
           saison: epidemiologie.saisonDe(p.slug),

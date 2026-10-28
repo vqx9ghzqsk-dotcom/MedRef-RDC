@@ -3913,3 +3913,69 @@ details.forme {
     padding-bottom: 4.5rem;
   }
 }
+
+/* Mode urgence : triage ABCDE */
+.diag-bouton-urgence {
+  width: 100%;
+  margin: 0 0 0.75rem;
+}
+.diag-triage {
+  border: 2px solid var(--urgence);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+}
+.diag-triage h2 {
+  margin-top: 0;
+  color: var(--urgence);
+}
+.diag-triage-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.diag-triage-liste li {
+  padding: 0.3rem 0.4rem;
+  border-radius: 6px;
+}
+.diag-triage-liste label {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+li.diag-triage-urgence {
+  background: color-mix(in srgb, var(--urgence) 14%, transparent);
+}
+li.diag-triage-priorite {
+  background: color-mix(in srgb, #e0a100 18%, transparent);
+}
+.diag-triage-conduite {
+  margin: 0.2rem 0 0 1.6rem;
+  font-weight: 600;
+}
+.diag-triage-categorie {
+  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  background: var(--surface-2, rgba(127, 127, 127, 0.12));
+}
+p.diag-triage-urgence {
+  background: var(--urgence);
+  color: #fff;
+}
+p.diag-triage-priorite {
+  background: #e0a100;
+  color: #1a1a1a;
+}
+.diag-priorite {
+  border-left: 4px solid #e0a100;
+  background: color-mix(in srgb, #e0a100 14%, transparent);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+  margin: 0 0 1rem;
+}
+.diag-conduites {
+  margin: 0.4rem 0;
+  padding-left: 1.1rem;
+}

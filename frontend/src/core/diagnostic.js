@@ -154,6 +154,170 @@ function seuilHypotension(age, mois) {
 }
 
 /**
+ * Triage d'urgence (démarche ABCDE ; signes d'urgence et de priorité de l'ETAT/OMS chez l'enfant).
+ * Chaque critère : lettre ABCDE, niveau (urgence = traiter immédiatement, priorite = voir avant
+ * les autres), conduite immédiate, signe de l'examen qu'il coche, et public (enfant/adulte).
+ * À valider par le Dr Mingalu.
+ */
+export const TRIAGE = [
+  {
+    id: 'obstruction',
+    lettre: 'A',
+    niveau: 'urgence',
+    libelle: 'Voies aériennes obstruées (bruits, ronflement, corps étranger)',
+    conduite:
+      'Libérer les voies aériennes : position, aspiration, manœuvre de désobstruction si corps étranger.',
+    signe: 'Stridor',
+  },
+  {
+    id: 'apnee',
+    lettre: 'B',
+    niveau: 'urgence',
+    libelle: 'Ne respire pas ou respiration agonique',
+    conduite: 'Ventiler au ballon et masque, appeler à l’aide, débuter la réanimation si pas de pouls.',
+  },
+  {
+    id: 'cyanose',
+    lettre: 'B',
+    niveau: 'urgence',
+    libelle: 'Cyanose centrale',
+    conduite: 'Oxygène sans attendre ; cible SpO2 ≥ 94 %.',
+    signe: 'Cyanose',
+  },
+  {
+    id: 'detresse',
+    lettre: 'B',
+    niveau: 'urgence',
+    libelle: 'Détresse respiratoire sévère (tirage marqué, geignement, épuisement)',
+    conduite: 'Oxygène, position assise (adulte) ou demi-assise, surveillance rapprochée.',
+    signe: 'Geignement expiratoire',
+  },
+  {
+    id: 'choc',
+    lettre: 'C',
+    niveau: 'urgence',
+    libelle: 'Signes de choc : extrémités froides, recoloration > 3 s, pouls faible et rapide',
+    conduite:
+      'Voie veineuse ou intra-osseuse, remplissage (prudence si malnutrition sévère ou insuffisance cardiaque), glycémie.',
+    signe: 'Hypotension',
+  },
+  {
+    id: 'hemorragie',
+    lettre: 'C',
+    niveau: 'urgence',
+    libelle: 'Hémorragie active importante',
+    conduite: 'Compression directe, deux voies veineuses, groupage et transfusion à préparer.',
+    signe: 'Hémorragies',
+  },
+  {
+    id: 'coma',
+    lettre: 'D',
+    niveau: 'urgence',
+    libelle: 'Coma ou ne réagit qu’à la douleur (AVPU : P ou U)',
+    conduite: 'Position latérale de sécurité, protéger les voies aériennes, glycémie capillaire.',
+    signe: 'Troubles de la conscience',
+  },
+  {
+    id: 'convulsions',
+    lettre: 'D',
+    niveau: 'urgence',
+    libelle: 'Convulsions en cours',
+    conduite: 'Protéger, diazépam intrarectal ou midazolam selon le poids, glycémie, oxygène.',
+    signe: 'Convulsions',
+  },
+  {
+    id: 'deshydratation',
+    lettre: 'E',
+    niveau: 'urgence',
+    public: 'enfant',
+    libelle: 'Diarrhée avec déshydratation sévère (léthargie, yeux enfoncés, pli cutané très lent)',
+    conduite: 'Réhydratation selon le plan C (sauf malnutrition sévère : ReSoMal et protocole adapté).',
+  },
+  {
+    id: 'nourrisson',
+    lettre: 'E',
+    niveau: 'priorite',
+    public: 'enfant',
+    libelle: 'Nourrisson de moins de 2 mois malade',
+    conduite: 'Examiner en priorité : rechercher une infection grave.',
+  },
+  {
+    id: 'fievre',
+    lettre: 'E',
+    niveau: 'priorite',
+    libelle: 'Température très élevée (≥ 39,5 °C) ou hypothermie',
+    conduite: 'Antipyrétique ou réchauffement ; TDR paludisme et recherche d’un sepsis.',
+  },
+  {
+    id: 'trauma',
+    lettre: 'E',
+    niveau: 'priorite',
+    libelle: 'Traumatisme grave, brûlure étendue ou intoxication',
+    conduite: 'Immobiliser le rachis si traumatisme, refroidir la brûlure, identifier le toxique.',
+  },
+  {
+    id: 'paleur',
+    lettre: 'C',
+    niveau: 'priorite',
+    libelle: 'Pâleur palmaire sévère',
+    conduite: 'Hémoglobine en urgence, transfusion à discuter.',
+  },
+  {
+    id: 'agitation',
+    lettre: 'D',
+    niveau: 'priorite',
+    libelle: 'Agitation, irritabilité ou somnolence inhabituelles',
+    conduite: 'Glycémie capillaire, rechercher méningite, paludisme grave, hypoxie.',
+  },
+  {
+    id: 'mas',
+    lettre: 'E',
+    niveau: 'priorite',
+    public: 'enfant',
+    libelle: 'Émaciation visible sévère ou œdèmes des deux pieds',
+    conduite: 'Périmètre brachial, poids/taille ; prise en charge de la malnutrition aiguë sévère.',
+  },
+  {
+    id: 'douleur',
+    lettre: 'E',
+    niveau: 'priorite',
+    libelle: 'Douleur intense',
+    conduite: 'Antalgique adapté avant la suite de l’examen.',
+  },
+];
+
+/**
+ * Catégorie de triage du cas : critères cochés (cas.triage) et critères déduits des constantes
+ * (SpO2 < 90 %, hypotension, Glasgow ≤ 8, hypoglycémie, température extrême).
+ * Renvoie { categorie: 'urgence' | 'priorite' | 'non-urgent' | null, criteres: [{…, auto}] }.
+ */
+export function triageUrgence(cas) {
+  const coches = cas.triage || {};
+  const mois = ageEnMois(cas);
+  const enfant = mois !== null && mois !== undefined ? mois < 180 : ENFANT.includes(cas.age);
+  const c = Object.fromEntries(Object.entries(cas.constantes || {}).map(([k, v]) => [k, nombre(v)]));
+  const auto = new Set();
+  if (c.spo2 !== null && c.spo2 !== undefined && c.spo2 < 90) auto.add('cyanose');
+  if (c.tas && c.tas < seuilHypotension(cas.age, mois)) auto.add('choc');
+  if (c.glasgow && c.glasgow <= 8) auto.add('coma');
+  if (c.glycemie !== null && c.glycemie !== undefined && c.glycemie < 2.2) auto.add('agitation');
+  if (c.temperature && (c.temperature >= 39.5 || c.temperature < 35.5)) auto.add('fievre');
+  if (mois !== null && mois !== undefined ? mois < 2 : cas.age === 'nn') auto.add('nourrisson');
+  const criteres = TRIAGE.filter((t) => coches[t.id] || auto.has(t.id))
+    .filter((t) => t.public !== 'enfant' || enfant || coches[t.id])
+    .map((t) => ({ ...t, auto: !coches[t.id] }));
+  const evalue = Object.keys(coches).length > 0 || criteres.length > 0 || cas.triageFait === true;
+  const categorie = criteres.some((t) => t.niveau === 'urgence')
+    ? 'urgence'
+    : criteres.some((t) => t.niveau === 'priorite')
+      ? 'priorite'
+      : evalue
+        ? 'non-urgent'
+        : null;
+  return { categorie, criteres, enfant };
+}
+
+/**
  * Lecture des constantes : signes déduits (présents ou absents), alertes et orientations.
  * Seuils : fièvre ≥ 38 °C ; hypothermie < 35,5 °C ; tachypnée selon l'âge exact (PCIME : ≥ 60
  * avant 2 mois, ≥ 50 de 2 à 12 mois, ≥ 40 de 1 à 5 ans ; ≥ 30 de 5 à 14 ans ; ≥ 22 chez
@@ -227,6 +391,7 @@ export function etatDesSignes(index, cas) {
   lecture.alertes.push(...bio.alertes);
   lecture.orientations.push(...bio.orientations);
   lecture.biologie = bio.interpretations;
+  for (const t of TRIAGE) if (t.signe && cas.triage?.[t.id]) lecture.presents.push(t.signe);
   const deduits = [];
   for (const nom of lecture.presents) {
     const id = index.parNom.get(nom);
@@ -312,6 +477,7 @@ export function analyser(index, cas) {
     aRechercher: [],
     biologie: lecture.biologie,
     scores: calculerScores(index, cas, presents, absents),
+    triage: triageUrgence(cas),
   };
   if (!signes.length) return vide;
 

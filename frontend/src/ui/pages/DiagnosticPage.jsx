@@ -23,6 +23,7 @@ import {
   terrainPossible,
   terrainsAPreciser,
   TRANCHES_AGE,
+  TRIAGE,
   trancheDepuisAge,
 } from '../../core/diagnostic.js';
 import { calculerDose } from '../../core/posologie.js';
@@ -90,6 +91,8 @@ const CAS_VIDE = {
   biologie: {},
   signes: {},
   examens: {},
+  triage: {},
+  triageFait: false,
 };
 
 /**
@@ -202,6 +205,14 @@ function Moteur({ donnees }) {
     suite.set('etape', id);
     setParams(suite);
   };
+  // Mode urgence (triage ABCDE) dans l'adresse aussi : la touche retour le referme
+  const urgence = params.get('urgence') === '1';
+  const setUrgence = (oui) => {
+    const suite = new URLSearchParams(params);
+    if (oui) suite.set('urgence', '1');
+    else suite.delete('urgence');
+    setParams(suite);
+  };
   const choix = params.get('hypothese');
   const setChoix = (slug) => {
     const suite = new URLSearchParams(params);
@@ -279,6 +290,25 @@ function Moteur({ donnees }) {
               ))}
             </div>
           </fieldset>
+          {urgence ? (
+            <TriageUrgence
+              cas={cas}
+              triage={resultat.triage}
+              setCas={setCas}
+              onTerminer={() => {
+                maj('triageFait', true);
+                setUrgence(false);
+              }}
+            />
+          ) : (
+            <button
+              type="button"
+              className="btn btn-danger diag-bouton-urgence"
+              onClick={() => setUrgence(true)}
+            >
+              Patient en détresse ? Triage ABCDE
+            </button>
+          )}
           <nav className="diag-etapes" aria-label="Étapes de la démarche">
             {ETAPES.map((e) => (
               <button
@@ -972,10 +1002,30 @@ function BarreSynthese({ resultat }) {
 }
 
 function Alertes({ resultat }) {
-  if (!resultat.gravite.length && !resultat.alertes.length) return null;
+  const t = resultat.triage;
+  if (!resultat.gravite.length && !resultat.alertes.length && t?.categorie !== 'priorite') return null;
+  if (!resultat.gravite.length && !resultat.alertes.length && t.categorie === 'priorite') {
+    return (
+      <div className="diag-priorite" role="status">
+        <strong>Triage : prioritaire</strong> — à examiner avant les autres patients :{' '}
+        {t.criteres.map((c) => c.libelle).join(' ; ')}.
+      </div>
+    );
+  }
   return (
     <div className="diag-urgence" role="alert">
-      <strong>Urgence</strong>
+      <strong>{t?.categorie === 'urgence' ? 'Triage : urgence' : 'Urgence'}</strong>
+      {t?.categorie === 'urgence' && (
+        <ol className="diag-conduites">
+          {t.criteres
+            .filter((c) => c.niveau === 'urgence')
+            .map((c) => (
+              <li key={c.id}>
+                <b>{c.lettre}</b> · {c.conduite}
+              </li>
+            ))}
+        </ol>
+      )}
       <ul>
         {resultat.gravite.length > 0 && (
           <li>
@@ -989,6 +1039,73 @@ function Alertes({ resultat }) {
       </ul>
       <Link to="/urgences">Conduites d’urgence</Link>
     </div>
+  );
+}
+
+/**
+ * Triage d'urgence avant la démarche : critères ABCDE à cocher en quelques secondes, conduite
+ * immédiate pour chacun, catégorie (urgence, prioritaire, non urgent). Les critères cochés valent
+ * signes présents à l'examen ; ceux déduits des constantes sont signalés.
+ */
+function TriageUrgence({ cas, triage, setCas, onTerminer }) {
+  const coches = cas.triage || {};
+  const basculer = (id) =>
+    setCas((c) => {
+      const t = { ...(c.triage || {}) };
+      if (t[id]) delete t[id];
+      else t[id] = true;
+      return { ...c, triage: t };
+    });
+  const auto = new Set(triage.criteres.filter((c) => c.auto).map((c) => c.id));
+  const visibles = TRIAGE.filter((t) => t.public !== 'enfant' || triage.enfant);
+  const titres = {
+    A: 'A · Voies aériennes',
+    B: 'B · Respiration',
+    C: 'C · Circulation',
+    D: 'D · Conscience (AVPU, glycémie)',
+    E: 'E · Exposition et priorités',
+  };
+  const libelleCategorie = {
+    urgence: 'URGENCE : traiter immédiatement',
+    priorite: 'PRIORITAIRE : examiner avant les autres',
+    'non-urgent': 'Non urgent : suivre la démarche habituelle',
+  };
+  return (
+    <section className="diag-triage" aria-label="Triage d'urgence ABCDE">
+      <h2>Triage ABCDE</h2>
+      <p className="muted">
+        Cochez ce que vous voyez en moins d’une minute ; la conduite s’affiche aussitôt.
+      </p>
+      {Object.entries(titres).map(([lettre, titre]) => {
+        const items = visibles.filter((t) => t.lettre === lettre);
+        if (!items.length) return null;
+        return (
+          <fieldset key={lettre} className="diag-champ">
+            <legend>{titre}</legend>
+            <ul className="diag-triage-liste">
+              {items.map((t) => {
+                const actif = Boolean(coches[t.id]) || auto.has(t.id);
+                return (
+                  <li key={t.id} className={actif ? `diag-triage-${t.niveau}` : undefined}>
+                    <label>
+                      <input type="checkbox" checked={actif} onChange={() => basculer(t.id)} /> {t.libelle}
+                      {auto.has(t.id) && <span className="tag">d’après les constantes</span>}
+                    </label>
+                    {actif && <p className="diag-triage-conduite">{t.conduite}</p>}
+                  </li>
+                );
+              })}
+            </ul>
+          </fieldset>
+        );
+      })}
+      <p className={`diag-triage-categorie diag-triage-${triage.categorie || 'vide'}`} role="status">
+        {triage.categorie ? libelleCategorie[triage.categorie] : 'Aucun critère coché pour l’instant'}
+      </p>
+      <button type="button" className="btn btn-primary" onClick={onTerminer}>
+        Triage fait : continuer la démarche
+      </button>
+    </section>
   );
 }
 
@@ -1446,6 +1563,20 @@ function Observation({ cas, index, donnees, resultat }) {
             .filter(Boolean)
             .join(', ') || '—'}
         </dd>
+        {resultat.triage?.categorie && (
+          <>
+            <dt>Triage</dt>
+            <dd>
+              {
+                { urgence: 'Urgence', priorite: 'Prioritaire', 'non-urgent': 'Non urgent' }[
+                  resultat.triage.categorie
+                ]
+              }
+              {resultat.triage.criteres.length > 0 &&
+                ` : ${resultat.triage.criteres.map((c) => `${c.lettre} ${c.libelle}`).join(' ; ')}`}
+            </dd>
+          </>
+        )}
         <dt>Motif</dt>
         <dd>{cas.motif ? nom(cas.motif) : '—'}</dd>
         <dt>Histoire</dt>

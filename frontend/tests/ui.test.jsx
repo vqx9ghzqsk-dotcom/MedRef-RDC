@@ -2038,6 +2038,22 @@ describe('Aide au diagnostic', () => {
     expect(sessionStorage.getItem('medref.diagnostic.cas')).toBeNull();
   });
 
+  it('mode urgence : triage ABCDE avec conduite immédiate, puis retour à la démarche', async () => {
+    const user = userEvent.setup();
+    const api = { diagnosticDonnees: vi.fn(async () => donneesDiag) };
+    renderApp('/diagnostic', api, MEDECIN);
+    await user.click(await screen.findByRole('button', { name: 'Patient en détresse ? Triage ABCDE' }));
+    const triage = screen.getByRole('region', { name: "Triage d'urgence ABCDE" });
+    await user.click(within(triage).getByRole('checkbox', { name: /Convulsions en cours/ }));
+    expect(within(triage).getByText(/diazépam intrarectal/)).toBeInTheDocument();
+    expect(within(triage).getByRole('status')).toHaveTextContent('URGENCE');
+    // La synthèse affiche la conduite ; le signe coché compte à l'examen
+    expect(screen.getByRole('alert')).toHaveTextContent('Triage : urgence');
+    expect(screen.getByRole('alert')).toHaveTextContent('Convulsions');
+    await user.click(within(triage).getByRole('button', { name: 'Triage fait : continuer la démarche' }));
+    expect(screen.queryByRole('region', { name: "Triage d'urgence ABCDE" })).not.toBeInTheDocument();
+  });
+
   it('réservée aux comptes connectés', async () => {
     renderApp('/diagnostic');
     expect(await screen.findByText(/réservé aux professionnels de santé/)).toBeInTheDocument();

@@ -373,3 +373,22 @@ describe('aide au diagnostic : scores calculés', () => {
     expect(grave['PCIME']).toMatchObject({ valeur: 'Pneumonie grave ou maladie très grave', grave: true });
   });
 });
+
+describe('aide au diagnostic : triage d’urgence ABCDE', () => {
+  it('catégorie, critères déduits des constantes et signes cochés', async () => {
+    const { triageUrgence } = await import('../src/core/diagnostic.js');
+    expect(triageUrgence({}).categorie).toBeNull();
+    expect(triageUrgence({ triageFait: true }).categorie).toBe('non-urgent');
+    expect(triageUrgence({ triage: { douleur: true } }).categorie).toBe('priorite');
+    const t = triageUrgence({ triage: { douleur: true }, constantes: { spo2: '85' } });
+    expect(t.categorie).toBe('urgence');
+    expect(t.criteres.find((c) => c.id === 'cyanose').auto).toBe(true);
+    // Nourrisson de moins de 2 mois : prioritaire d'office ; critère réservé à l'enfant absent chez l'adulte
+    expect(triageUrgence({ ageValeur: '3', ageUnite: 'jours' }).categorie).toBe('priorite');
+    expect(triageUrgence({ age: 'adulte', constantes: { temperature: '37' } }).categorie).toBeNull();
+    // Un critère coché vaut signe présent : les convulsions deviennent un signe de gravité
+    const r = analyser(indexer(donnees), { age: 'adulte', triage: { convulsions: true } });
+    expect(r.gravite.map((s) => s.nom)).toContain('Convulsions');
+    expect(r.triage.categorie).toBe('urgence');
+  });
+});

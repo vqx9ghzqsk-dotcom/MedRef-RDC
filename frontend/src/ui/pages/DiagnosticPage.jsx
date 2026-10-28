@@ -143,6 +143,41 @@ function Diagnostic() {
  */
 const CLE_CAS = 'medref.diagnostic.cas';
 
+/** Lieu de soins du soignant (préférence de l'appareil, pas une donnée du patient). */
+const CLE_NIVEAU = 'medref.diagnostic.niveau';
+const NIVEAUX_LIEU = [
+  ['centre_sante', 'Centre de santé', 1],
+  ['hopital_general', 'Hôpital général', 2],
+  ['hopital_tertiaire', 'Hôpital tertiaire', 3],
+];
+const RANG_NIVEAU = Object.fromEntries(NIVEAUX_LIEU.map(([id, , rang]) => [id, rang]));
+const LIEU_NIVEAU = { 1: 'au centre de santé', 2: 'à l’hôpital général', 3: 'au niveau tertiaire' };
+
+/** Disponibilité d'un examen au lieu de soins choisi (référentiel NIVEAUX_EXAMENS). */
+function disponibilite(slug, niveau, niveauxExamens = {}) {
+  const requis = niveauxExamens[slug] || 3;
+  if (!niveau) return { ici: null, requis };
+  return { ici: requis <= RANG_NIVEAU[niveau], requis };
+}
+
+function BadgeDispo({ slug, niveau, niveauxExamens }) {
+  const d = disponibilite(slug, niveau, niveauxExamens);
+  if (d.ici === null) return null;
+  return d.ici ? (
+    <span className="tag tag-ok">disponible ici</span>
+  ) : (
+    <span className="tag tag-alerte">{LIEU_NIVEAU[d.requis]}</span>
+  );
+}
+
+function niveauEnregistre() {
+  try {
+    return localStorage.getItem(CLE_NIVEAU) || '';
+  } catch {
+    return '';
+  }
+}
+
 function casEnregistre() {
   try {
     const brut = sessionStorage.getItem(CLE_CAS);
@@ -207,13 +242,40 @@ function Moteur({ donnees }) {
   const choisie = resultat.hypotheses.find((h) => h.fiche.slug === choix);
   const nouveau = () => {
     setCas(CAS_VIDE);
+    setReference(null);
     setParams({}, { replace: true });
+  };
+  const [niveau, setNiveau] = useState(niveauEnregistre);
+  const [reference, setReference] = useState(null);
+  const choisirNiveau = (id) => {
+    setNiveau(id);
+    try {
+      localStorage.setItem(CLE_NIVEAU, id);
+    } catch {
+      // préférence non gardée (stockage indisponible)
+    }
   };
 
   return (
     <>
       <div className="diag-grille">
         <section className="card diag-cas no-print" aria-label="Observation du patient">
+          <fieldset className="diag-champ diag-lieu">
+            <legend>Je travaille en</legend>
+            <div className="chips">
+              {NIVEAUX_LIEU.map(([id, libelle]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className="chip chip-bouton"
+                  aria-pressed={niveau === id}
+                  onClick={() => choisirNiveau(id)}
+                >
+                  {libelle}
+                </button>
+              ))}
+            </div>
+          </fieldset>
           <nav className="diag-etapes" aria-label="Étapes de la démarche">
             {ETAPES.map((e) => (
               <button
@@ -260,6 +322,8 @@ function Moteur({ donnees }) {
               valeurs={cas.examens}
               hypotheses={resultat.hypotheses}
               onChange={(v) => maj('examens', v)}
+              niveau={niveau}
+              niveauxExamens={donnees.niveauxExamens}
             />
           )}
           <div className="diag-pied-etape">
@@ -318,10 +382,21 @@ function Moteur({ donnees }) {
               ))}
             </ol>
           )}
-          {choisie && <Traitement fiche={choisie.fiche} cas={cas} donnees={donnees} />}
+          {choisie && (
+            <Traitement
+              fiche={choisie.fiche}
+              cas={cas}
+              donnees={donnees}
+              niveau={niveau}
+              onReference={setReference}
+            />
+          )}
         </section>
       </div>
       <Observation cas={cas} index={index} donnees={donnees} resultat={resultat} />
+      {reference && choisie?.fiche.slug === reference.slug && (
+        <FicheReference reference={reference} onFermer={() => setReference(null)} />
+      )}
     </>
   );
 }
@@ -735,7 +810,7 @@ function LigneSigne({ nom, etat, deduit, precision, onChange }) {
 
 /* ---------- Étape 4 : paraclinique ---------- */
 
-function EtapeParaclinique({ index, examens, valeurs, hypotheses, onChange }) {
+function EtapeParaclinique({ index, examens, valeurs, hypotheses, onChange, niveau, niveauxExamens }) {
   // Examens qui confirment ou orientent vers les hypothèses en tête ; sans hypothèse, les
   // examens rapides courants
   const utiles = examensUtiles(index, hypotheses, valeurs);
@@ -763,7 +838,7 @@ function EtapeParaclinique({ index, examens, valeurs, hypotheses, onChange }) {
         {liste.map((e) => (
           <li key={e.id}>
             <span>
-              {e.nom}
+              {e.nom} <BadgeDispo slug={e.slug} niveau={niveau} niveauxExamens={niveauxExamens} />
               {pour.has(e.id) && (
                 <span className="muted diag-examen-pour">
                   {' '}
@@ -953,7 +1028,7 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
 
 /* ---------- Traitement de l'hypothèse choisie ---------- */
 
-function Traitement({ fiche, cas, donnees }) {
+function Traitement({ fiche, cas, donnees, niveau, onReference }) {
   const { api } = useServices();
   const state = useAsync(() => api.pathologie(fiche.slug), [api, fiche.slug]);
   return (
@@ -984,13 +1059,21 @@ function Traitement({ fiche, cas, donnees }) {
                   <ul className="diag-liste">
                     {examens.slice(0, 6).map((e) => (
                       <li key={`${e.id}-${e.categorie}`}>
-                        <b>{e.nom}</b>
-                        {e.interpretation ? ` : ${e.interpretation}` : ''}
+                        <b>{e.nom}</b>{' '}
+                        <BadgeDispo slug={e.slug} niveau={niveau} niveauxExamens={donnees.niveauxExamens} />
+                        {e.interpretation ? ` ${e.interpretation}` : ''}
                       </li>
                     ))}
                   </ul>
                 </>
               )}
+              <NiveauDeSoins
+                p={p}
+                niveau={niveau}
+                examens={examens}
+                donnees={donnees}
+                onReference={onReference}
+              />
               <h3>Molécules</h3>
               <ul className="diag-molecules">
                 {molecules.map((m) => (
@@ -1013,6 +1096,116 @@ function Traitement({ fiche, cas, donnees }) {
           );
         }}
       </AsyncView>
+    </section>
+  );
+}
+
+/**
+ * Prise en charge au lieu de soins choisi (onglet « Niveaux de soins » de la fiche) : ce qui
+ * peut être fait sur place, critères de transfert, examens à faire ailleurs.
+ */
+function NiveauDeSoins({ p, niveau, examens, donnees, onReference }) {
+  if (!niveau) {
+    return (
+      <p className="muted">
+        Indiquez où vous travaillez (en haut de l’observation) pour voir la prise en charge possible sur place
+        et les critères de transfert.
+      </p>
+    );
+  }
+  const ligne = (p.onglets?.niveaux || []).find((n) => n.niveau === niveau);
+  const ailleurs = examens.filter((e) => disponibilite(e.slug, niveau, donnees.niveauxExamens).ici === false);
+  const preTransfert = (p.onglets?.therapeutique?.molecules || []).filter((m) =>
+    /transfert/i.test(m.contexte || ''),
+  );
+  const libelle = NIVEAUX_LIEU.find(([id]) => id === niveau)?.[1];
+  return (
+    <div className="diag-niveau">
+      <h3>À votre niveau : {libelle}</h3>
+      {ligne?.prise_en_charge && <p className="diag-texte">{ligne.prise_en_charge}</p>}
+      {ligne?.criteres_transfert && (
+        <>
+          <h3>Transférer si</h3>
+          <p className="diag-texte">{ligne.criteres_transfert}</p>
+        </>
+      )}
+      {ailleurs.length > 0 && (
+        <p className="diag-detail">
+          <b>Examens non disponibles ici :</b> {ailleurs.map((e) => e.nom).join(', ')}
+        </p>
+      )}
+      {niveau !== 'hopital_tertiaire' && (
+        <button
+          type="button"
+          className="btn btn-secondary btn-small"
+          onClick={() =>
+            onReference({
+              slug: p.slug,
+              nom: p.nom,
+              depuis: libelle,
+              criteres: ligne?.criteres_transfert || '',
+              examens: ailleurs.map((e) => e.nom),
+              preTransfert: preTransfert.map((m) => `${m.dci}${m.contexte ? ` (${m.contexte})` : ''}`),
+            })
+          }
+        >
+          Préparer la fiche de référence
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** Fiche de référence (transfert) imprimée avec l'observation. */
+function FicheReference({ reference, onFermer }) {
+  const [vers, setVers] = useState('');
+  const [faits, setFaits] = useState('');
+  const date = new Date().toLocaleDateString('fr-FR');
+  return (
+    <section className="card diag-observation diag-reference" aria-labelledby="diag-ref-titre">
+      <div className="diag-hyp-tete">
+        <h2 id="diag-ref-titre">Fiche de référence</h2>
+        <button type="button" className="btn btn-secondary btn-small no-print" onClick={() => window.print()}>
+          Imprimer avec l’observation
+        </button>
+        <button type="button" className="btn btn-ghost btn-small no-print" onClick={onFermer}>
+          Fermer
+        </button>
+      </div>
+      <dl className="diag-obs">
+        <dt>Date</dt>
+        <dd>{date}</dd>
+        <dt>Référé depuis</dt>
+        <dd>{reference.depuis}</dd>
+        <dt>Référé vers</dt>
+        <dd>
+          <input
+            type="text"
+            aria-label="Structure de destination"
+            value={vers}
+            onChange={(e) => setVers(e.target.value)}
+            placeholder="Hôpital, service"
+          />
+        </dd>
+        <dt>Diagnostic évoqué</dt>
+        <dd>{reference.nom}</dd>
+        <dt>Motif du transfert</dt>
+        <dd className="diag-texte">{reference.criteres || '—'}</dd>
+        <dt>Examens à réaliser</dt>
+        <dd>{reference.examens.join(', ') || '—'}</dd>
+        <dt>Traitement pré-transfert prévu</dt>
+        <dd>{reference.preTransfert.join(' ; ') || '—'}</dd>
+        <dt>Soins déjà donnés</dt>
+        <dd>
+          <textarea
+            aria-label="Soins déjà donnés"
+            rows={2}
+            value={faits}
+            onChange={(e) => setFaits(e.target.value)}
+            placeholder="Médicaments, doses et heures"
+          />
+        </dd>
+      </dl>
     </section>
   );
 }

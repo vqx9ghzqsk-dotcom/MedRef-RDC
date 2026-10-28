@@ -130,6 +130,11 @@ router.get(
         physiques: ids(referentiel.PHYSIQUES),
         terrains: referentiel.TERRAINS,
         contextes: referentiel.CONTEXTES,
+        // Niveau minimal de disponibilité de chaque examen : 1 centre de santé, 2 hôpital général, 3 tertiaire
+        niveauxExamens: Object.fromEntries([
+          ...referentiel.NIVEAUX_EXAMENS.centre_sante.map((slug) => [slug, 1]),
+          ...referentiel.NIVEAUX_EXAMENS.hopital_general.map((slug) => [slug, 2]),
+        ]),
         restrictions: referentiel.RESTRICTIONS.map(({ signes, ...r }) => ({ ...r, symptomes: ids(signes) })),
       },
     });

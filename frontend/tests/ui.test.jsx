@@ -2010,7 +2010,10 @@ describe('Aide au diagnostic', () => {
     contextes: [],
   };
 
-  beforeEach(() => sessionStorage.clear());
+  beforeEach(() => {
+    sessionStorage.clear();
+    localStorage.removeItem('medref.diagnostic.niveau');
+  });
 
   it('la saisie survit au départ de la page (touche retour, passage par une fiche)', async () => {
     const user = userEvent.setup();
@@ -2057,6 +2060,9 @@ describe('Aide au diagnostic', () => {
       grossesse_allaitement: null,
     }));
     renderApp('/diagnostic', { diagnosticDonnees: vi.fn(async () => donneesDiag), molecule }, MEDECIN);
+    // Lieu de soins (préférence gardée sur l'appareil)
+    await user.click(await screen.findByRole('button', { name: 'Centre de santé' }));
+    expect(localStorage.getItem('medref.diagnostic.niveau')).toBe('centre_sante');
     // 1. Motif et histoire
     await user.click(await screen.findByRole('button', { name: 'Adulte' }));
     await user.type(screen.getByLabelText('Poids (kg)'), '50');
@@ -2090,6 +2096,7 @@ describe('Aide au diagnostic', () => {
     await user.click(within(hypotheses[0]).getByRole('button', { name: 'Traitement et produits' }));
     const traitement = await screen.findByRole('region', { name: /Paludisme grave : traitement/ });
     expect(await within(traitement).findByText('120 mg par prise')).toBeInTheDocument();
+    expect(within(traitement).getByText('À votre niveau : Centre de santé')).toBeInTheDocument();
     expect(within(traitement).getByRole('link', { name: 'Préparer l’ordonnance' })).toHaveAttribute(
       'href',
       '/prescriptions?pathologie=paludisme-grave',

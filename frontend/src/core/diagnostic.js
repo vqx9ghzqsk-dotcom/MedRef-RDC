@@ -114,15 +114,50 @@ const nombre = (v) => {
   return Number.isFinite(n) ? n : null;
 };
 
+/** Âge exact du cas en mois (âge saisi en jours, mois ou années), ou null. */
+export function ageEnMois(cas = {}) {
+  const v = nombre(cas.ageValeur);
+  if (v === null || v < 0) return null;
+  if (cas.ageUnite === 'jours') return v / 30.44;
+  if (cas.ageUnite === 'mois') return v;
+  return v * 12;
+}
+
+/** Tranche d'âge déduite de l'âge exact. */
+export function trancheDepuisAge(mois) {
+  if (mois === null || mois === undefined) return '';
+  if (mois < 2) return 'nn';
+  if (mois < 60) return 'petit';
+  if (mois < 180) return 'grand';
+  if (mois < 780) return 'adulte';
+  return 'age';
+}
+
+/** Seuil de tachypnée : PCIME avant 5 ans (60, 50, 40), puis 30 jusqu'à 14 ans, 22 chez l'adulte. */
+function seuilTachypnee(age, mois) {
+  if (mois !== null && mois !== undefined && mois < 60) return mois < 2 ? 60 : mois < 12 ? 50 : 40;
+  return { nn: 60, petit: 40, grand: 30 }[age] || 22;
+}
+
+/** Seuil d'hypotension : 60 avant 1 mois, 70 avant 1 an, 70 + 2 × âge (années) de 1 à 10 ans, 90 ensuite. */
+function seuilHypotension(age, mois) {
+  if (mois !== null && mois !== undefined && mois < 120) {
+    if (mois < 1) return 60;
+    if (mois < 12) return 70;
+    return 70 + 2 * Math.floor(mois / 12);
+  }
+  return { nn: 60, petit: 70, grand: 80 }[age] || 90;
+}
+
 /**
  * Lecture des constantes : signes déduits (présents ou absents), alertes et orientations.
- * Seuils : fièvre ≥ 38 °C ; hypothermie < 35,5 °C ; tachypnée selon l'âge (PCIME : ≥ 60 avant
- * 2 mois, ≥ 40 jusqu'à 5 ans ; ≥ 30 de 5 à 14 ans ; ≥ 22 chez l'adulte) ; hypotension (PAS
- * < 90 mmHg chez l'adulte, < 70 avant 5 ans, < 80 de 5 à 14 ans) ; SpO2 < 90 % ; glycémie
- * < 2,2 mmol/L (hypoglycémie) ou ≥ 14 mmol/L ; Glasgow ≤ 13 ; périmètre brachial < 115 mm
+ * Seuils : fièvre ≥ 38 °C ; hypothermie < 35,5 °C ; tachypnée selon l'âge exact (PCIME : ≥ 60
+ * avant 2 mois, ≥ 50 de 2 à 12 mois, ≥ 40 de 1 à 5 ans ; ≥ 30 de 5 à 14 ans ; ≥ 22 chez
+ * l'adulte) ; hypotension (PAS < 70 + 2 × âge de 1 à 10 ans, < 90 chez l'adulte) ; SpO2 < 90 % ;
+ * glycémie < 2,2 mmol/L ou ≥ 14 mmol/L ; Glasgow ≤ 13 ; périmètre brachial < 115 mm
  * (malnutrition aiguë sévère, 6 à 59 mois).
  */
-export function lireConstantes(constantes = {}, age = '') {
+export function lireConstantes(constantes = {}, age = '', mois = null) {
   const c = Object.fromEntries(Object.entries(constantes).map(([k, v]) => [k, nombre(v)]));
   const presents = [];
   const absents = [];
@@ -135,13 +170,11 @@ export function lireConstantes(constantes = {}, age = '') {
     if (c.temperature < 35.5) presents.push('Hypothermie');
   }
   if (c.fr) {
-    const seuil = { nn: 60, petit: 40, grand: 30 }[age] || 22;
-    if (c.fr >= seuil) presents.push('Tachypnée');
+    if (c.fr >= seuilTachypnee(age, mois)) presents.push('Tachypnée');
     else absents.push('Tachypnée');
   }
   if (c.tas) {
-    const seuil = { nn: 60, petit: 70, grand: 80 }[age] || 90;
-    if (c.tas < seuil) presents.push('Hypotension');
+    if (c.tas < seuilHypotension(age, mois)) presents.push('Hypotension');
     else absents.push('Hypotension');
   }
   if (c.spo2 !== null && c.spo2 !== undefined && c.spo2 < 90) {
@@ -165,7 +198,7 @@ export function lireConstantes(constantes = {}, age = '') {
     const seuil = { nn: 180, petit: 160, grand: 130 }[age] || 120;
     if (c.fc >= seuil) alertes.push(`Tachycardie (${c.fc}/min)`);
   }
-  if (c.pb && age === 'petit') {
+  if (c.pb && (mois !== null && mois !== undefined ? mois >= 6 && mois < 60 : age === 'petit')) {
     if (c.pb < 115) {
       alertes.push(`Périmètre brachial ${c.pb} mm : malnutrition aiguë sévère`);
       orientations.push('malnutrition');
@@ -184,7 +217,7 @@ export function etatDesSignes(index, cas) {
     else if (etat === 'absent') absents.add(n);
   }
   if (cas.motif) presents.add(Number(cas.motif));
-  const lecture = lireConstantes(cas.constantes, cas.age);
+  const lecture = lireConstantes(cas.constantes, cas.age, ageEnMois(cas));
   const deduits = [];
   for (const nom of lecture.presents) {
     const id = index.parNom.get(nom);

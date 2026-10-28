@@ -280,3 +280,21 @@ describe('aide au diagnostic : signes clés des syndromes', () => {
     ]);
   });
 });
+
+describe('aide au diagnostic : âge exact', () => {
+  it('âge en mois, tranche déduite et seuils PCIME précis', async () => {
+    const { ageEnMois, trancheDepuisAge } = await import('../src/core/diagnostic.js');
+    expect(ageEnMois({ ageValeur: '3', ageUnite: 'ans' })).toBe(36);
+    expect(ageEnMois({ ageValeur: '15', ageUnite: 'jours' })).toBeCloseTo(0.49, 2);
+    expect(trancheDepuisAge(ageEnMois({ ageValeur: '6', ageUnite: 'mois' }))).toBe('petit');
+    expect(trancheDepuisAge(ageEnMois({ ageValeur: '70', ageUnite: 'ans' }))).toBe('age');
+    // Fréquence respiratoire 45 : tachypnée à 8 mois (seuil 50 : non), à 2 ans (seuil 40 : oui)
+    expect(lireConstantes({ fr: '45' }, 'petit', 8).presents).toEqual([]);
+    expect(lireConstantes({ fr: '45' }, 'petit', 24).presents).toEqual(['Tachypnée']);
+    // Tension 75 à 6 ans : seuil 70 + 2 × 6 = 82 → hypotension
+    expect(lireConstantes({ tas: '75' }, 'grand', 72).presents).toEqual(['Hypotension']);
+    // Périmètre brachial seulement de 6 à 59 mois
+    expect(lireConstantes({ pb: '110' }, 'petit', 3).alertes).toEqual([]);
+    expect(lireConstantes({ pb: '110' }, 'petit', 18).alertes).toHaveLength(1);
+  });
+});

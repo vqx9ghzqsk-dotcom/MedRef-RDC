@@ -6,6 +6,7 @@ import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView } from '../components/Status.jsx';
 import { LienProduit, PhotoProduit } from '../components/Produits.jsx';
 import {
+  ageEnMois,
   analyser,
   DUREES,
   effetsIndesirablesPossibles,
@@ -21,6 +22,7 @@ import {
   terrainPossible,
   terrainsAPreciser,
   TRANCHES_AGE,
+  trancheDepuisAge,
 } from '../../core/diagnostic.js';
 import { calculerDose } from '../../core/posologie.js';
 import { LIGNES } from '../../core/labels.js';
@@ -57,10 +59,18 @@ const CONSTANTES = [
   ['pb', 'Périmètre brachial', 'mm'],
 ];
 
+const UNITES_AGE = [
+  ['jours', 'jours'],
+  ['mois', 'mois'],
+  ['ans', 'ans'],
+];
+
 const EXAMENS_RAPIDES = ['tdr-paludisme', 'goutte-epaisse', 'xpert-mtb-rif', 'hemocultures', 'lcr'];
 
 const CAS_VIDE = {
   age: '',
+  ageValeur: '',
+  ageUnite: 'ans',
   sexe: '',
   grossesse: false,
   terme: '',
@@ -218,7 +228,9 @@ function Moteur({ donnees }) {
               </button>
             ))}
           </nav>
-          {etape === 'motif' && <EtapeMotif index={index} cas={cas} maj={maj} profil={profil} />}
+          {etape === 'motif' && (
+            <EtapeMotif index={index} cas={cas} maj={maj} setCas={setCas} profil={profil} />
+          )}
           {etape === 'terrain' && (
             <EtapeTerrain
               donnees={donnees}
@@ -316,16 +328,50 @@ function Moteur({ donnees }) {
 
 /* ---------- Étape 1 : motif et histoire de la maladie ---------- */
 
-function EtapeMotif({ index, cas, maj, profil }) {
+function EtapeMotif({ index, cas, maj, setCas, profil }) {
   const idHistoire = useId();
+  // L'âge exact fixe la tranche d'âge (seuils PCIME, fiches et doses de l'âge)
+  const majAge = (valeur, unite) =>
+    setCas((c) => {
+      const suite = { ...c, ageValeur: valeur, ageUnite: unite };
+      const tranche = trancheDepuisAge(ageEnMois(suite));
+      return { ...suite, age: tranche || (valeur ? c.age : '') };
+    });
   return (
     <>
       <h2>Le patient</h2>
+      <fieldset className="diag-champ">
+        <legend>Âge exact</legend>
+        <div className="diag-ligne">
+          <label className="diag-petit-champ">
+            <input
+              type="text"
+              inputMode="decimal"
+              aria-label="Âge"
+              value={cas.ageValeur}
+              onChange={(e) => majAge(e.target.value, cas.ageUnite)}
+            />
+          </label>
+          <div className="chips">
+            {UNITES_AGE.map(([id, libelle]) => (
+              <button
+                key={id}
+                type="button"
+                className="chip chip-bouton"
+                aria-pressed={cas.ageUnite === id}
+                onClick={() => majAge(cas.ageValeur, id)}
+              >
+                {libelle}
+              </button>
+            ))}
+          </div>
+        </div>
+      </fieldset>
       <Boutons
-        legende="Âge"
+        legende="Ou tranche d’âge (si l’âge exact est inconnu)"
         options={TRANCHES_AGE.map((t) => [t.id, t.libelle])}
         valeur={cas.age}
-        onChange={(v) => maj('age', v)}
+        onChange={(v) => setCas((c) => ({ ...c, age: v, ageValeur: '' }))}
       />
       <Boutons
         legende="Sexe"
@@ -1106,7 +1152,9 @@ function Observation({ cas, index, donnees, resultat }) {
         <dt>Patient</dt>
         <dd>
           {[
-            TRANCHES_AGE.find((t) => t.id === cas.age)?.libelle,
+            cas.ageValeur
+              ? `${cas.ageValeur} ${cas.ageUnite}`
+              : TRANCHES_AGE.find((t) => t.id === cas.age)?.libelle,
             { M: 'masculin', F: 'féminin' }[cas.sexe],
             cas.poids && `${cas.poids} kg`,
             cas.grossesse && `enceinte${cas.terme ? ` (${cas.terme} SA)` : ''}`,

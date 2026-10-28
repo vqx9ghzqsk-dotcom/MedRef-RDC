@@ -111,7 +111,19 @@ router.get(
         liens: liens.map((l) => [l.pathologie_id, l.symptome_id, FREQUENCES[l.frequence] ?? 2]),
         examens: [...examensUtiles.values()].sort((a, b) => a.nom.localeCompare(b.nom, 'fr')),
         syndromes: syndromes
-          .map((x) => ({ ...x, symptomes: signesDe.get(x.id) || [] }))
+          .map((x) => {
+            const cles = referentiel.SIGNES_CLES[x.slug] || {};
+            return {
+              ...x,
+              symptomes: signesDe.get(x.id) || [],
+              cles: {
+                tous: ids(cles.tous || []),
+                un: ids(cles.un || []),
+                grossesse: Boolean(cles.grossesse),
+                terrain: cles.terrain || null,
+              },
+            };
+          })
           .filter((x) => x.symptomes.length >= 2),
         molecules,
         appareils: referentiel.APPAREILS.map((a) => ({ id: a.id, nom: a.nom, symptomes: ids(a.symptomes) })),

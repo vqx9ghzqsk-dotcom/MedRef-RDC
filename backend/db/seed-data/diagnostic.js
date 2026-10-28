@@ -728,4 +728,70 @@ const RESTRICTIONS = [
   },
 ];
 
-module.exports = { APPAREILS, PHYSIQUES, TERRAINS, CONTEXTES, RESTRICTIONS };
+/**
+ * Signes clés de chaque syndrome (synthèse syndromique) : `tous` doivent être présents, au moins
+ * un des signes `un` aussi ; `grossesse` ou `terrain` exigent ce contexte. Un syndrome n'est
+ * jamais affiché sur des signes banals seuls (pas de syndrome méningé sans raideur de nuque ni
+ * fontanelle bombée).
+ */
+const SIGNES_CLES = {
+  'syndrome-d-alteration-de-l-etat-general': { tous: ['Perte de poids'], un: ['Asthénie', 'Anorexie'] },
+  'syndrome-convulsif': { tous: ['Convulsions'] },
+  'syndrome-vaso-occlusif': { tous: ['Douleurs osseuses'], terrain: 'drepanocytose' },
+  'syndrome-de-choc': { tous: ['Hypotension'] },
+  'syndrome-de-malnutrition-oedemateuse': {
+    tous: ['Œdèmes'],
+    un: ['Anorexie', 'Diarrhée', 'Perte de poids'],
+  },
+  'syndrome-anemique': { tous: ['Pâleur'] },
+  'syndrome-bronchique-obstructif': { tous: ['Sibilants'] },
+  'syndrome-cardinal-diabetique': { tous: ['Polyurie-polydipsie'] },
+  'syndrome-choleriforme': { tous: ['Diarrhée'], un: ['Vomissements'] },
+  'syndrome-d-engagement-cerebral': { tous: ['Troubles de la conscience'], un: ['Déficit moteur', 'Myosis'] },
+  'syndrome-d-epanchement-pleural-liquidien': { tous: ['Douleur thoracique'], un: ['Dyspnée', 'Toux'] },
+  'syndrome-d-hemorragie-interne': { tous: ['Pâleur'], un: ['Hypotension', 'Troubles de la conscience'] },
+  'syndrome-d-hypertension-intracranienne': { tous: ['Céphalées', 'Vomissements'] },
+  'syndrome-d-hypertension-portale': { tous: ['Splénomégalie'], un: ['Distension abdominale', 'Hématémèse'] },
+  'syndrome-d-impregnation-tuberculeuse': { tous: ['Perte de poids'], un: ['Sueurs nocturnes', 'Fièvre'] },
+  'syndrome-d-insuffisance-cardiaque-droite': {
+    tous: ['Œdèmes'],
+    un: ['Hépatomégalie', 'Distension abdominale'],
+  },
+  'syndrome-d-insuffisance-cardiaque-gauche': { tous: ['Dyspnée'], un: ['Palpitations', 'Tachypnée'] },
+  'syndrome-d-insuffisance-hepatocellulaire': { tous: ['Ictère'] },
+  'syndrome-d-irritation-peritoneale': { tous: ['Douleur abdominale'], un: ['Fièvre', 'Vomissements'] },
+  'syndrome-de-condensation-pulmonaire': { tous: ['Toux'], un: ['Fièvre', 'Douleur thoracique'] },
+  'syndrome-de-deshydratation-extracellulaire': { un: ['Hypotension', 'Oligurie'] },
+  'syndrome-de-deshydratation-intracellulaire': {
+    tous: ['Fièvre'],
+    un: ['Troubles de la conscience', 'Convulsions'],
+  },
+  'syndrome-de-detresse-respiratoire': { un: ['Tachypnée', 'Cyanose', 'Geignement expiratoire', 'Stridor'] },
+  'syndrome-de-reponse-inflammatoire-systemique': { tous: ['Tachypnée'], un: ['Fièvre', 'Hypothermie'] },
+  'syndrome-de-retention-hydrosodee': { tous: ['Œdèmes'] },
+  'syndrome-dysenterique': { tous: ['Diarrhée sanglante'] },
+  'syndrome-hellp': { tous: ['Douleur abdominale'], grossesse: true },
+  'syndrome-hemolytique': { tous: ['Ictère', 'Pâleur'] },
+  'syndrome-hemorragique': {
+    un: [
+      'Hémorragies',
+      'Hémoptysie',
+      'Saignement vaginal',
+      'Hématémèse',
+      'Méléna',
+      'Épistaxis',
+      'Purpura',
+      'Ecchymoses',
+      'Saignement des gencives',
+    ],
+  },
+  'syndrome-infectieux': { un: ['Fièvre', 'Hypothermie'] },
+  'syndrome-meninge': { un: ['Raideur de nuque', 'Fontanelle bombée'] },
+  'syndrome-occlusif': { tous: ['Arrêt des matières et des gaz'] },
+  'syndrome-de-pre-eclampsie': { un: ['Céphalées', 'Troubles visuels', 'Œdèmes'], grossesse: true },
+  'syndrome-pyramidal': { tous: ['Déficit moteur'] },
+  'syndrome-thoracique-aigu': { tous: ['Douleur thoracique'], terrain: 'drepanocytose' },
+  'syndrome-uremique': { un: ['Oligurie', 'Anurie'] },
+};
+
+module.exports = { APPAREILS, PHYSIQUES, TERRAINS, CONTEXTES, RESTRICTIONS, SIGNES_CLES };

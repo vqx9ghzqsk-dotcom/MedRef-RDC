@@ -259,7 +259,7 @@ export function analyser(index, cas) {
   const { presents, absents, deduits, lecture } = etatDesSignes(index, cas);
   const signes = [...presents].filter((s) => symptomes.has(s));
   const gravite = signes.map((s) => symptomes.get(s)).filter((s) => SIGNES_GRAVITE.has(s.nom));
-  const syndromes = syntheseSyndromique(index, presents, absents);
+  const syndromes = syntheseSyndromique(index, presents, absents, cas);
   const vide = {
     hypotheses: [],
     gravite,
@@ -345,30 +345,34 @@ export function analyser(index, cas) {
   };
 }
 
+/** Les signes clés du syndrome sont-ils réunis ? (référentiel SIGNES_CLES ; sans clés : non) */
+function clesReunies(cles, presents, cas) {
+  if (!cles || (!cles.tous?.length && !cles.un?.length)) return false;
+  if (cles.grossesse && cas.grossesse !== true) return false;
+  if (cles.terrain && !(cas.terrains || []).includes(cles.terrain)) return false;
+  if (!(cles.tous || []).every((s) => presents.has(s))) return false;
+  return !cles.un?.length || cles.un.some((s) => presents.has(s));
+}
+
 /**
- * Synthèse syndromique : syndromes dont au moins deux signes et la moitié des signes sont
- * présents, dont un signe caractéristique (présent dans quatre syndromes au plus : la fièvre ou
- * les troubles de la conscience appartiennent à trop de syndromes pour en fonder un), et dont
- * les signes notés absents ne l'emportent pas sur les signes présents.
+ * Synthèse syndromique : un syndrome est retenu quand ses signes clés sont réunis (pas de
+ * syndrome méningé sans raideur de nuque ni fontanelle bombée), avec au moins deux de ses signes
+ * présents, et que ses signes notés absents ne l'emportent pas sur les signes présents.
  */
-export function syntheseSyndromique(index, presents, absents = new Set()) {
-  const syndromes = index.donnees.syndromes || [];
-  const partage = new Map();
-  for (const sy of syndromes) for (const s of sy.symptomes) partage.set(s, (partage.get(s) || 0) + 1);
-  return syndromes
+export function syntheseSyndromique(index, presents, absents = new Set(), cas = {}) {
+  return (index.donnees.syndromes || [])
     .map((sy) => {
-      const vus = sy.symptomes.filter((s) => presents.has(s));
+      const cles = [...(sy.cles?.tous || []), ...(sy.cles?.un || [])];
+      const vus = [...new Set([...sy.symptomes, ...cles])].filter((s) => presents.has(s));
       return {
         ...sy,
         signes: vus.map((s) => index.symptomes.get(s)?.nom).filter(Boolean),
         part: vus.length / sy.symptomes.length,
-        caracteristique: vus.some((s) => partage.get(s) <= 4),
+        reuni: clesReunies(sy.cles, presents, cas),
         contre: sy.symptomes.filter((s) => absents.has(s)).length,
       };
     })
-    .filter(
-      (sy) => sy.signes.length >= 2 && sy.part >= 0.5 && sy.caracteristique && sy.contre < sy.signes.length,
-    )
+    .filter((sy) => sy.reuni && sy.signes.length >= 2 && sy.contre < sy.signes.length)
     .sort((a, b) => b.part - a.part || b.signes.length - a.signes.length);
 }
 

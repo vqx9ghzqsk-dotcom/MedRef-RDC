@@ -73,7 +73,15 @@ const donnees = {
     [103, 2, 3],
     [103, 3, 2],
   ],
-  syndromes: [{ id: 50, nom: 'Syndrome méningé', slug: 'syndrome-meninge', symptomes: [1, 4] }],
+  syndromes: [
+    {
+      id: 50,
+      nom: 'Syndrome méningé',
+      slug: 'syndrome-meninge',
+      symptomes: [1, 4],
+      cles: { tous: [], un: [4] },
+    },
+  ],
   physiques: [4, 6],
   terrains: [{ id: 'vih', libelle: 'Infection à VIH', motif: 'meningite' }],
   contextes: [],
@@ -236,5 +244,39 @@ describe('aide au diagnostic : moteur', () => {
     expect(terrainPossible({ sexe: 'F' }, { sexe: 'M' })).toBe(false);
     expect(terrainPossible({ ages: ['adulte'] }, { age: 'petit' })).toBe(false);
     expect(terrainPossible({ ages: ['adulte'] }, {})).toBe(true);
+  });
+});
+
+describe('aide au diagnostic : signes clés des syndromes', () => {
+  it('pas de syndrome méningé sans raideur de nuque ; contexte exigé', () => {
+    const d = {
+      symptomes: [
+        { id: 1, nom: 'Fièvre' },
+        { id: 2, nom: 'Céphalées' },
+        { id: 3, nom: 'Raideur de nuque' },
+        { id: 4, nom: 'Douleur thoracique' },
+      ],
+      examens: [],
+      pathologies: [{ id: 9, nom: 'X', slug: 'x', public: {}, tests: {} }],
+      liens: [[9, 1, 3]],
+      syndromes: [
+        { id: 1, nom: 'Syndrome méningé', slug: 'm', symptomes: [1, 2, 3], cles: { tous: [], un: [3] } },
+        {
+          id: 2,
+          nom: 'Syndrome thoracique aigu',
+          slug: 't',
+          symptomes: [1, 4],
+          cles: { tous: [4], un: [], terrain: 'drepanocytose' },
+        },
+      ],
+    };
+    const idx = indexer(d);
+    const noms = (cas) => analyser(idx, cas).syndromes.map((s) => s.nom);
+    expect(noms({ signes: { 1: 'present', 2: 'present' } })).toEqual([]);
+    expect(noms({ signes: { 1: 'present', 2: 'present', 3: 'present' } })).toEqual(['Syndrome méningé']);
+    expect(noms({ signes: { 1: 'present', 4: 'present' } })).toEqual([]);
+    expect(noms({ signes: { 1: 'present', 4: 'present' }, terrains: ['drepanocytose'] })).toEqual([
+      'Syndrome thoracique aigu',
+    ]);
   });
 });

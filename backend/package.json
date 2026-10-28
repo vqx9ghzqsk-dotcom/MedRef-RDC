@@ -26,7 +26,8 @@
     "posologies:structurer": "node scripts/structurer-posologies.js",
     "veille": "node scripts/veille.js",
     "diagnostic:banc": "node scripts/banc-diagnostic.mjs",
-    "diagnostic:signes": "node scripts/rapport-signes.js"
+    "diagnostic:signes": "node scripts/rapport-signes.js",
+    "diagnostic:epidemiologie": "node scripts/rapport-epidemiologie.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

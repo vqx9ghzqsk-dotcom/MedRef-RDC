@@ -416,6 +416,16 @@ function niveau(score, premier) {
   return 'possible';
 }
 
+/** Bonus de probabilité de départ selon la fréquence de la maladie en RDC. */
+export const PRIOR_FREQUENCE = { tres_frequente: 0.06, frequente: 0.03, peu_frequente: 0, rare: -0.05 };
+
+export const LIBELLES_FREQUENCE_RDC = {
+  tres_frequente: 'Très fréquente en RDC',
+  frequente: 'Fréquente en RDC',
+  peu_frequente: 'Peu fréquente en RDC',
+  rare: 'Rare en RDC',
+};
+
 /** Coup de pouce du terrain, du contexte, des constantes et de la durée (plafonné). */
 function orientation(index, fiche, cas, lecture) {
   const nom = index.nomsFiches.get(fiche.id) || '';
@@ -442,6 +452,21 @@ function orientation(index, fiche, cas, lecture) {
     }
   }
   bonus = Math.min(bonus, 0.2);
+  // Probabilité de départ en RDC : fréquence, saison et foyers géographiques (à valider)
+  const prior = PRIOR_FREQUENCE[fiche.frequence] || 0;
+  bonus += prior;
+  if (prior > 0)
+    raisons.push(fiche.frequence === 'tres_frequente' ? 'très fréquente en RDC' : 'fréquente en RDC');
+  if (cas.saison && fiche.saison === cas.saison) {
+    bonus += 0.03;
+    raisons.push(cas.saison === 'pluies' ? 'saison des pluies' : 'saison sèche');
+  }
+  if (cas.province && fiche.foyers) {
+    if (fiche.foyers.includes(cas.province)) {
+      bonus += 0.08;
+      raisons.push(`foyer connu (${cas.province})`);
+    } else bonus -= 0.04;
+  }
   const chronique = /chronique/.test(nom);
   const aigue = /aigu/.test(nom);
   if (cas.duree === 'semaines' || cas.duree === 'mois') {

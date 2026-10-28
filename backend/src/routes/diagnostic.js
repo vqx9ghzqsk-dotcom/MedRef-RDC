@@ -5,6 +5,7 @@ const db = require('../db');
 const { asyncHandler } = require('../utils/http');
 const { requireAuth } = require('../middleware/auth');
 const referentiel = require('../../db/seed-data/diagnostic');
+const epidemiologie = require('../../db/seed-data/epidemiologie');
 
 const router = express.Router();
 
@@ -113,6 +114,10 @@ router.get(
           public: publicVise(p.nom, p.specialite),
           diagnostic: estDiagnostic(p.nom),
           tests: tests.get(p.id) || {},
+          // Épidémiologie en RDC (à valider) : fréquence, saison, provinces de foyer
+          frequence: epidemiologie.frequenceDe(p.slug),
+          saison: epidemiologie.saisonDe(p.slug),
+          foyers: epidemiologie.FOYERS[p.slug] || null,
         })),
         symptomes,
         // [pathologie, symptôme, fréquence 0 à 3]
@@ -143,6 +148,7 @@ router.get(
           ...referentiel.NIVEAUX_EXAMENS.centre_sante.map((slug) => [slug, 1]),
           ...referentiel.NIVEAUX_EXAMENS.hopital_general.map((slug) => [slug, 2]),
         ]),
+        provinces: epidemiologie.PROVINCES,
         restrictions: referentiel.RESTRICTIONS.map(({ signes, ...r }) => ({ ...r, symptomes: ids(signes) })),
       },
     });

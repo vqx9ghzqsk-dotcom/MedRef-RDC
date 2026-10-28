@@ -2013,6 +2013,7 @@ describe('Aide au diagnostic', () => {
   beforeEach(() => {
     sessionStorage.clear();
     localStorage.removeItem('medref.diagnostic.niveau');
+    localStorage.removeItem('medref.diagnostic.lieu');
   });
 
   it('la saisie survit au départ de la page (touche retour, passage par une fiche)', async () => {
@@ -2102,7 +2103,7 @@ describe('Aide au diagnostic', () => {
     expect(hypotheses[0]).toHaveTextContent('Paludisme grave');
     const meningite = hypotheses.find((h) => h.textContent.includes('Méningite'));
     expect(meningite).toHaveTextContent('Contre : Raideur de nuque absent');
-    expect(meningite).toHaveTextContent('Terrain : Infection à VIH');
+    expect(meningite).toHaveTextContent('Terrain et épidémiologie : Infection à VIH');
     // Observation imprimable
     const observation = screen.getByRole('region', { name: 'Observation' });
     expect(observation).toHaveTextContent('Convulsions');

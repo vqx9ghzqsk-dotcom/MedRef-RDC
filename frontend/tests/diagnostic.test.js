@@ -392,3 +392,47 @@ describe('aide au diagnostic : triage d’urgence ABCDE', () => {
     expect(r.triage.categorie).toBe('urgence');
   });
 });
+
+describe('aide au diagnostic : épidémiologie en RDC', () => {
+  it('à tableau égal, la maladie fréquente passe devant la rare ; saison et foyer comptent', () => {
+    const fiche = (id, slug, extra) => ({
+      id,
+      slug,
+      nom: slug,
+      specialite: 'Infectiologie',
+      validee: false,
+      public: { ages: null, sexe: null, obstetrique: false },
+      tests: {},
+      ...extra,
+    });
+    const d = {
+      symptomes: [
+        { id: 1, nom: 'Fièvre' },
+        { id: 2, nom: 'Céphalées' },
+      ],
+      examens: [],
+      pathologies: [
+        fiche(1, 'rare', { frequence: 'rare' }),
+        fiche(2, 'commune', { frequence: 'tres_frequente', saison: 'pluies' }),
+        fiche(3, 'focale', { frequence: 'peu_frequente', foyers: ['Ituri'] }),
+      ],
+      liens: [1, 2, 3].flatMap((p) => [
+        [p, 1, 3],
+        [p, 2, 2],
+      ]),
+      syndromes: [],
+      terrains: [],
+      contextes: [],
+    };
+    const index = indexer(d);
+    const cas = { age: 'adulte', signes: { 1: 'present', 2: 'present' } };
+    const ordre = (c) => analyser(index, c).hypotheses.map((h) => h.fiche.slug);
+    expect(ordre(cas)).toEqual(['commune', 'focale', 'rare']);
+    const h = analyser(index, { ...cas, saison: 'pluies' }).hypotheses[0];
+    expect(h.raisons).toEqual(expect.arrayContaining(['très fréquente en RDC', 'saison des pluies']));
+    // Dans son foyer, la maladie focale remonte ; ailleurs elle perd des points sans disparaître
+    expect(ordre({ ...cas, province: 'Ituri' })[0]).toBe('focale');
+    const score = (c) => analyser(index, c).hypotheses.find((x) => x.fiche.slug === 'focale').score;
+    expect(score({ ...cas, province: 'Kinshasa' })).toBeLessThan(score(cas));
+  });
+});

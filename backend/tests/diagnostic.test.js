@@ -65,3 +65,23 @@ describe('aide au diagnostic : fiches proposées comme hypothèses', () => {
     expect(estDiagnostic('AVC ischémique')).toBe(true);
   });
 });
+
+describe('aide au diagnostic : épidémiologie en RDC', () => {
+  const data = require('../db/seed-data');
+  const epi = require('../db/seed-data/epidemiologie');
+  const slugs = new Set([...data.pathologies, ...(data.ajouts.fiches || [])].map((p) => p.slug));
+
+  it('chaque fiche classée existe, une seule fréquence par fiche, foyers dans les 26 provinces', () => {
+    const classees = [...epi.TRES_FREQUENTES, ...epi.FREQUENTES, ...epi.RARES];
+    expect(classees.filter((s) => !slugs.has(s))).toEqual([]);
+    expect(new Set(classees).size).toBe(classees.length);
+    expect(epi.PROVINCES).toHaveLength(26);
+    for (const [slug, provinces] of Object.entries(epi.FOYERS)) {
+      expect(slugs.has(slug)).toBe(true);
+      expect(provinces.filter((p) => !epi.PROVINCES.includes(p))).toEqual([]);
+    }
+    expect(epi.frequenceDe('paludisme-simple')).toBe('tres_frequente');
+    expect(epi.frequenceDe('fiche-inconnue')).toBe('peu_frequente');
+    expect(epi.saisonDe('cholera-enfant')).toBe('pluies');
+  });
+});

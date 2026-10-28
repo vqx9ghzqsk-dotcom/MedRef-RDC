@@ -14,6 +14,7 @@ import {
   examensUtiles,
   indexer,
   LIBELLES_FREQUENCE,
+  LIBELLES_FREQUENCE_RDC,
   motifsFrequents,
   NORMES,
   pertinenceSignes,
@@ -151,6 +152,16 @@ const CLE_CAS = 'medref.diagnostic.cas';
 
 /** Lieu de soins du soignant (préférence de l'appareil, pas une donnée du patient). */
 const CLE_NIVEAU = 'medref.diagnostic.niveau';
+// Province et saison du lieu d'exercice : gardées sur l'appareil, elles servent à chaque cas
+const CLE_LIEU = 'medref.diagnostic.lieu';
+
+function lieuEnregistre() {
+  try {
+    return { province: '', saison: '', ...JSON.parse(localStorage.getItem(CLE_LIEU) || '{}') };
+  } catch {
+    return { province: '', saison: '' };
+  }
+}
 const NIVEAUX_LIEU = [
   ['centre_sante', 'Centre de santé', 1],
   ['hopital_general', 'Hôpital général', 2],
@@ -228,7 +239,20 @@ function Moteur({ donnees }) {
       // Stockage indisponible (navigation privée) : la saisie reste en mémoire
     }
   }, [cas]);
-  const resultat = useMemo(() => analyser(index, cas), [index, cas]);
+  const [lieu, setLieu] = useState(lieuEnregistre);
+  const choisirLieu = (champ, valeur) => {
+    const suite = { ...lieu, [champ]: valeur };
+    setLieu(suite);
+    try {
+      localStorage.setItem(CLE_LIEU, JSON.stringify(suite));
+    } catch {
+      // préférence non gardée (stockage indisponible)
+    }
+  };
+  const resultat = useMemo(
+    () => analyser(index, { ...cas, province: lieu.province, saison: lieu.saison }),
+    [index, cas, lieu],
+  );
   // Parcours adaptatif : le profil restreint les signes possibles, le motif et les hypothèses
   // en tête ordonnent ce qu'il faut rechercher ensuite
   const profil = useMemo(
@@ -288,6 +312,35 @@ function Moteur({ donnees }) {
                   {libelle}
                 </button>
               ))}
+            </div>
+            <div className="diag-lieu-epidemio">
+              <label>
+                Province{' '}
+                <select value={lieu.province} onChange={(e) => choisirLieu('province', e.target.value)}>
+                  <option value="">—</option>
+                  {(donnees.provinces || []).map((pr) => (
+                    <option key={pr} value={pr}>
+                      {pr}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <span className="chips" role="group" aria-label="Saison">
+                {[
+                  ['pluies', 'Saison des pluies'],
+                  ['seche', 'Saison sèche'],
+                ].map(([id, libelle]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className="chip chip-bouton"
+                    aria-pressed={lieu.saison === id}
+                    onClick={() => choisirLieu('saison', lieu.saison === id ? '' : id)}
+                  >
+                    {libelle}
+                  </button>
+                ))}
+              </span>
             </div>
           </fieldset>
           {urgence ? (
@@ -1185,6 +1238,11 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
         <h3>
           <Link to={`/pathologies/${h.fiche.slug}`}>{h.fiche.nom}</Link>
         </h3>
+        {h.fiche.frequence && h.fiche.frequence !== 'peu_frequente' && (
+          <span className={`tag diag-freq-${h.fiche.frequence}`}>
+            {LIBELLES_FREQUENCE_RDC[h.fiche.frequence]}
+          </span>
+        )}
         {h.fiche.validee ? (
           <span className="tag tag-ok">Fiche validée</span>
         ) : (
@@ -1219,7 +1277,7 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
       )}
       {h.raisons.length > 0 && (
         <p className="diag-detail">
-          <b>Terrain :</b> {h.raisons.join(', ')}
+          <b>Terrain et épidémiologie :</b> {h.raisons.join(', ')}
         </p>
       )}
       {h.aRechercher.length > 0 && (

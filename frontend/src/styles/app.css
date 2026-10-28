@@ -3979,3 +3979,19 @@ p.diag-triage-priorite {
   margin: 0.4rem 0;
   padding-left: 1.1rem;
 }
+
+/* Épidémiologie : province, saison, fréquence en RDC */
+.diag-lieu-epidemio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+.diag-freq-tres_frequente {
+  background: color-mix(in srgb, var(--link) 18%, transparent);
+}
+.diag-freq-rare {
+  opacity: 0.75;
+  font-style: italic;
+}

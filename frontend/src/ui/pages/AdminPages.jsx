@@ -44,6 +44,7 @@ import {
 } from '../../core/labels.js';
 import { ActualitesAdmin } from '../components/ActualitesAdmin.jsx';
 import { AvisAdmin } from '../components/AvisAdmin.jsx';
+import { DiagnosticAdmin } from '../components/DiagnosticAdmin.jsx';
 
 const entries = (obj) => Object.entries(obj).map(([k, v]) => [k, typeof v === 'string' ? v : v.label]);
 
@@ -81,6 +82,7 @@ const ONGLETS_ADMIN = [
   ['semiologie', 'Glossaire et syndromes'],
   ['actualites', 'Actualités'],
   ['avis', 'Avis'],
+  ['diagnostic', 'Aide au diagnostic'],
   ['historique', 'Historique'],
   ['comptes', 'Comptes', 'admin'],
 ];
@@ -151,7 +153,9 @@ function AdminHome() {
                 ))}
               </div>
 
-              {!['historique', 'catalogue', 'comptes', 'actualites', 'avis'].includes(onglet) && (
+              {!['historique', 'catalogue', 'comptes', 'actualites', 'avis', 'diagnostic'].includes(
+                onglet,
+              ) && (
                 <form className="filter-bar" onSubmit={(e) => e.preventDefault()} aria-label="Filtres">
                   <div className="field">
                     <label htmlFor="admin-q">Rechercher</label>
@@ -182,6 +186,7 @@ function AdminHome() {
 
               {onglet === 'actualites' && <ActualitesAdmin user={user} />}
               {onglet === 'avis' && <AvisAdmin user={user} />}
+              {onglet === 'diagnostic' && <DiagnosticAdmin />}
 
               {onglet === 'fiches' && (
                 <FichesAdmin

@@ -4095,3 +4095,11 @@ p.diag-triage-priorite {
     width: 2.2rem;
   }
 }
+
+/* Diagnostic retenu, signalement */
+.diag-retenu h3 {
+  margin-top: 0;
+}
+.diag-signalement textarea {
+  width: 100%;
+}

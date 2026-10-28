@@ -554,6 +554,9 @@ function Moteur({ donnees }) {
               </ul>
             </div>
           )}
+          {resultat.hypotheses.length > 0 && (
+            <DiagnosticRetenu resultat={resultat} donnees={donnees} cas={cas} niveau={niveau} choix={choix} />
+          )}
           {choisie && (
             <Traitement
               fiche={choisie.fiche}
@@ -1478,6 +1481,134 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
         Traitement et produits
       </button>
     </li>
+  );
+}
+
+/* ---------- Diagnostic retenu et signalement ---------- */
+
+const VERSION_MOTEUR = '2026-10';
+const AUCUN = [];
+const TYPES_SIGNALEMENT = [
+  ['hypothese_manquante', 'Le bon diagnostic manque'],
+  ['hypothese_inadaptee', 'Une hypothèse est inadaptée'],
+  ['fiche', 'Erreur dans une fiche'],
+  ['traitement', 'Traitement ou dose'],
+  ['autre', 'Autre'],
+];
+
+/**
+ * Diagnostic finalement retenu (enregistré sans aucune donnée de patient : fiche, rang parmi
+ * les hypothèses, tranche d'âge, niveau de soins) et signalement d'une erreur en un clic.
+ */
+function DiagnosticRetenu({ resultat, donnees, cas, niveau, choix }) {
+  const { api } = useServices();
+  const [retenue, setRetenue] = useState(choix || '');
+  const [etat, setEtat] = useState(null);
+  const [signaler, setSignaler] = useState(false);
+  const [type, setType] = useState('hypothese_manquante');
+  const [message, setMessage] = useState('');
+  const idMessage = useId();
+  useEffect(() => {
+    if (choix) setRetenue(choix);
+  }, [choix]);
+  const autres = useMemo(
+    () => donnees.pathologies.filter((p) => p.diagnostic !== false).map((p) => ({ id: p.slug, nom: p.nom })),
+    [donnees.pathologies],
+  );
+  const nomDe = (slug) => donnees.pathologies.find((p) => p.slug === slug)?.nom;
+  const enregistrer = async () => {
+    const rang = resultat.hypotheses.findIndex((h) => h.fiche.slug === retenue) + 1;
+    try {
+      await api.diagnosticRetenu({
+        pathologie: retenue,
+        premiere: resultat.hypotheses[0]?.fiche.slug,
+        rang,
+        nbHypotheses: resultat.hypotheses.length,
+        tranche: cas.age || undefined,
+        niveau: niveau || undefined,
+        version: VERSION_MOTEUR,
+      });
+      setEtat('retenu');
+    } catch (ex) {
+      setEtat(ex.message);
+    }
+  };
+  const envoyer = async (e) => {
+    e.preventDefault();
+    try {
+      await api.diagnosticSignalement({ type, pathologie: retenue || undefined, message });
+      setEtat('signale');
+      setSignaler(false);
+      setMessage('');
+    } catch (ex) {
+      setEtat(ex.message);
+    }
+  };
+  return (
+    <div className="card diag-retenu">
+      <h3>Diagnostic retenu</h3>
+      <p className="muted">
+        Enregistré sans aucune donnée du patient ; il sert à mesurer et à améliorer la justesse des
+        hypothèses.
+      </p>
+      <div className="diag-ligne">
+        <select aria-label="Diagnostic retenu" value={retenue} onChange={(e) => setRetenue(e.target.value)}>
+          <option value="">— Choisir —</option>
+          {resultat.hypotheses.map((h, i) => (
+            <option key={h.fiche.slug} value={h.fiche.slug}>
+              {i + 1}. {h.fiche.nom}
+            </option>
+          ))}
+          {retenue && !resultat.hypotheses.some((h) => h.fiche.slug === retenue) && (
+            <option value={retenue}>{nomDe(retenue)}</option>
+          )}
+        </select>
+        <button type="button" className="btn btn-primary btn-small" disabled={!retenue} onClick={enregistrer}>
+          Enregistrer
+        </button>
+      </div>
+      <RechercheListe
+        libelle="Autre diagnostic (absent de la liste)"
+        elements={autres}
+        dejaPris={AUCUN}
+        onChoix={(e) => setRetenue(e.id)}
+      />
+      {etat === 'retenu' && <p role="status">Merci : diagnostic retenu enregistré.</p>}
+      {etat === 'signale' && <p role="status">Merci : signalement transmis aux relecteurs.</p>}
+      {etat && !['retenu', 'signale'].includes(etat) && <p className="form-error">{etat}</p>}
+      {signaler ? (
+        <form onSubmit={envoyer} className="diag-signalement">
+          <Boutons
+            legende="Problème"
+            options={TYPES_SIGNALEMENT}
+            valeur={type}
+            onChange={(v) => setType(v || type)}
+          />
+          <label htmlFor={idMessage} className="diag-etiquette">
+            Décrivez le problème (sans nom ni identité du patient)
+          </label>
+          <textarea
+            id={idMessage}
+            rows={3}
+            maxLength={1000}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <div className="diag-actions">
+            <button type="submit" className="btn btn-primary btn-small" disabled={message.trim().length < 5}>
+              Envoyer le signalement
+            </button>
+            <button type="button" className="btn btn-ghost btn-small" onClick={() => setSignaler(false)}>
+              Annuler
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button type="button" className="btn btn-ghost btn-small" onClick={() => setSignaler(true)}>
+          Signaler une erreur
+        </button>
+      )}
+    </div>
   );
 }
 

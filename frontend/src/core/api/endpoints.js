@@ -54,6 +54,8 @@ export function createMedRefApi(client) {
     urgence: (slug) => data(client.get(`/api/urgences/${enc(slug)}`)),
     symptomes: () => data(client.get('/api/symptomes')),
     diagnosticDonnees: () => data(client.get('/api/diagnostic/donnees')),
+    diagnosticRetenu: (payload) => data(client.post('/api/diagnostic/retenu', payload)),
+    diagnosticSignalement: (payload) => data(client.post('/api/diagnostic/signalement', payload)),
     symptome: (slug) => data(client.get(`/api/symptomes/${enc(slug)}`)),
     scores: () => data(client.get('/api/scores')),
     score: (slug) => data(client.get(`/api/scores/${enc(slug)}`)),
@@ -77,6 +79,9 @@ export function createMedRefApi(client) {
 
     // Administration (rôles admin et medecin)
     adminResume: () => data(client.get('/api/admin/resume')),
+    adminCalibrationDiagnostic: () => data(client.get('/api/admin/diagnostic/calibration')),
+    adminTraiterSignalementDiagnostic: (id) =>
+      data(client.post(`/api/admin/diagnostic/signalements/${enc(id)}/traite`, {})),
     adminPathologie: (id) => data(client.get(`/api/admin/pathologies/${enc(id)}`)),
     adminSavePathologie: (id, payload) => client.put(`/api/admin/pathologies/${enc(id)}`, payload),
     adminValiderPathologies: (ids, confirme) =>

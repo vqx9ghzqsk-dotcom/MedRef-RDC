@@ -922,6 +922,38 @@ describe('Administration', () => {
     expect(screen.queryByRole('link', { name: 'Administration' })).toBeNull();
   });
 
+  it('onglet « Aide au diagnostic » : calibration et signalements à traiter', async () => {
+    const user = userEvent.setup();
+    const adminTraiterSignalementDiagnostic = vi.fn(async () => ({}));
+    const adminCalibrationDiagnostic = vi.fn(async () => ({
+      total: 10,
+      premier: 7,
+      trois: 9,
+      absent: 1,
+      fiches: [{ nom: 'Paludisme grave', slug: 'paludisme-grave', total: 4, premier: 2, absent: 0 }],
+      signalements: [{ id: 5, type: 'hypothese_manquante', message: 'GEU absente', statut: 'nouveau' }],
+    }));
+    renderApp(
+      '/admin?onglet=diagnostic',
+      {
+        adminResume: vi.fn(async () => ({
+          statuts: {},
+          pathologies: [],
+          molecules: [],
+          medicaments: [],
+          modifications: [],
+        })),
+        adminCalibrationDiagnostic,
+        adminTraiterSignalementDiagnostic,
+      },
+      { id: 1, nom: 'Dr', email: 'd@x.cd', role: 'medecin' },
+    );
+    expect(await screen.findByText(/bon diagnostic en 1re position/)).toHaveTextContent('70 %');
+    expect(screen.getByRole('link', { name: 'Paludisme grave' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Marquer traité' }));
+    expect(adminTraiterSignalementDiagnostic).toHaveBeenCalledWith(5);
+  });
+
   it('affiche le tableau de bord et le lien de menu pour un administrateur', async () => {
     const adminResume = vi.fn(async () => ({
       statuts: { brouillon: 0, a_valider: 1, valide: 1 },
@@ -2095,6 +2127,40 @@ describe('Aide au diagnostic', () => {
     await user.click(within(form).getByRole('button', { name: 'Évitement' }));
     expect(within(form).getByRole('status')).toHaveTextContent('Total 8 : coma');
     expect(screen.getByRole('button', { name: 'Glasgow : 8' })).toBeInTheDocument();
+  });
+
+  it('diagnostic retenu enregistré sans donnée du patient, signalement en un clic', async () => {
+    const user = userEvent.setup();
+    const diagnosticRetenu = vi.fn(async () => ({ enregistre: true }));
+    const diagnosticSignalement = vi.fn(async () => ({ enregistre: true }));
+    const api = {
+      diagnosticDonnees: vi.fn(async () => donneesDiag),
+      diagnosticRetenu,
+      diagnosticSignalement,
+    };
+    renderApp('/diagnostic', api, MEDECIN);
+    await user.click(await screen.findByRole('button', { name: 'Adulte' }));
+    await user.type(screen.getByLabelText('Plainte principale'), 'conv{Enter}');
+    const bloc = (await screen.findByRole('heading', { name: 'Diagnostic retenu' })).closest('div');
+    await user.selectOptions(within(bloc).getByRole('combobox', { name: 'Diagnostic retenu' }), 'meningite');
+    await user.click(within(bloc).getByRole('button', { name: 'Enregistrer' }));
+    expect(diagnosticRetenu).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathologie: 'meningite',
+        tranche: 'adulte',
+        nbHypotheses: expect.any(Number),
+      }),
+    );
+    expect(Object.keys(diagnosticRetenu.mock.calls[0][0])).not.toContain('signes');
+    expect(await within(bloc).findByText(/diagnostic retenu enregistré/)).toBeInTheDocument();
+    await user.click(within(bloc).getByRole('button', { name: 'Signaler une erreur' }));
+    await user.type(within(bloc).getByLabelText(/Décrivez le problème/), 'La fiche manque un signe');
+    await user.click(within(bloc).getByRole('button', { name: 'Envoyer le signalement' }));
+    expect(diagnosticSignalement).toHaveBeenCalledWith({
+      type: 'hypothese_manquante',
+      pathologie: 'meningite',
+      message: 'La fiche manque un signe',
+    });
   });
 
   it('réservée aux comptes connectés', async () => {

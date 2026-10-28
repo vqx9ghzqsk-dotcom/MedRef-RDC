@@ -2,8 +2,8 @@
 
 const express = require('express');
 const db = require('../db');
-const { asyncHandler } = require('../utils/http');
-const { requireAuth } = require('../middleware/auth');
+const { asyncHandler, HttpError, toInt } = require('../utils/http');
+const { requireAuth, requireRole, EDITOR_ROLES } = require('../middleware/auth');
 const referentiel = require('../../db/seed-data/diagnostic');
 const epidemiologie = require('../../db/seed-data/epidemiologie');
 const { SIGNES_FICHES } = require('../../db/seed-data/signes-fiches');
@@ -202,6 +202,127 @@ router.get(
         restrictions: referentiel.RESTRICTIONS.map(({ signes, ...r }) => ({ ...r, symptomes: ids(signes) })),
       },
     });
+  }),
+);
+
+const TRANCHES = ['nn', 'petit', 'grand', 'adulte', 'age'];
+const NIVEAUX_LIEU = ['centre_sante', 'hopital_general', 'tertiaire'];
+const TYPES_SIGNALEMENT = ['hypothese_manquante', 'hypothese_inadaptee', 'fiche', 'traitement', 'autre'];
+
+/** Identifiant d'une fiche existante d'après son slug (null si absent ou inconnu). */
+async function idDeFiche(slug) {
+  if (!slug) return null;
+  const [p] = await db.query('SELECT id FROM pathologies WHERE slug = ?', [String(slug).slice(0, 190)]);
+  return p ? p.id : null;
+}
+
+/**
+ * Diagnostic finalement retenu, enregistré sans aucune donnée de patient ni compte : fiche
+ * retenue, première hypothèse, rang, tranche d'âge, niveau de soins, jour.
+ */
+router.post(
+  '/diagnostic/retenu',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const b = req.body || {};
+    const pathologie = await idDeFiche(b.pathologie);
+    if (!pathologie) throw new HttpError(400, 'Fiche retenue inconnue');
+    await db.query(
+      `INSERT INTO diagnostic_retenus
+         (pathologie_id, premiere_id, rang, nb_hypotheses, tranche_age, niveau, version_moteur, cree_le)
+       VALUES (?, ?, ?, ?, ?, ?, ?, CURDATE())`,
+      [
+        pathologie,
+        await idDeFiche(b.premiere),
+        toInt(b.rang, { min: 0, max: 50, fallback: 0 }),
+        toInt(b.nbHypotheses, { min: 0, max: 50, fallback: 0 }),
+        TRANCHES.includes(b.tranche) ? b.tranche : null,
+        NIVEAUX_LIEU.includes(b.niveau) ? b.niveau : null,
+        typeof b.version === 'string' ? b.version.slice(0, 20) : null,
+      ],
+    );
+    res.status(201).json({ data: { enregistre: true } });
+  }),
+);
+
+/** Signalement d'une erreur par un professionnel (sans identité de patient). */
+router.post(
+  '/diagnostic/signalement',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const b = req.body || {};
+    const message = String(b.message || '').trim();
+    if (!TYPES_SIGNALEMENT.includes(b.type)) throw new HttpError(400, 'Type de signalement inconnu');
+    if (message.length < 5) throw new HttpError(400, 'Décrivez le problème en quelques mots');
+    await db.query(
+      'INSERT INTO diagnostic_signalements (type, pathologie_id, message, user_id) VALUES (?, ?, ?, ?)',
+      [b.type, await idDeFiche(b.pathologie), message.slice(0, 1000), req.user.id],
+    );
+    res.status(201).json({ data: { enregistre: true } });
+  }),
+);
+
+/**
+ * Calibration (relecteurs) : bon diagnostic en 1re position et dans les 3 premiers, fiches le
+ * plus souvent manquées, signalements à traiter.
+ */
+router.get(
+  '/admin/diagnostic/calibration',
+  requireAuth,
+  requireRole(...EDITOR_ROLES),
+  asyncHandler(async (_req, res) => {
+    const [[totaux], parFiche, signalements] = await Promise.all([
+      db.query(
+        `SELECT COUNT(*) AS total,
+                SUM(rang = 1) AS premier,
+                SUM(rang BETWEEN 1 AND 3) AS trois,
+                SUM(rang = 0) AS absent
+           FROM diagnostic_retenus`,
+      ),
+      db.query(
+        `SELECT p.nom, p.slug, COUNT(*) AS total, SUM(r.rang = 1) AS premier, SUM(r.rang = 0) AS absent
+           FROM diagnostic_retenus r JOIN pathologies p ON p.id = r.pathologie_id
+          GROUP BY p.id, p.nom, p.slug
+          ORDER BY SUM(r.rang <> 1) DESC, COUNT(*) DESC
+          LIMIT 30`,
+      ),
+      db.query(
+        `SELECT s.id, s.type, s.message, s.statut, s.cree_le, p.nom AS pathologie, p.slug
+           FROM diagnostic_signalements s LEFT JOIN pathologies p ON p.id = s.pathologie_id
+          ORDER BY s.statut = 'nouveau' DESC, s.cree_le DESC
+          LIMIT 100`,
+      ),
+    ]);
+    const n = (x) => Number(x) || 0;
+    res.json({
+      data: {
+        total: n(totaux.total),
+        premier: n(totaux.premier),
+        trois: n(totaux.trois),
+        absent: n(totaux.absent),
+        fiches: parFiche.map((f) => ({
+          ...f,
+          total: n(f.total),
+          premier: n(f.premier),
+          absent: n(f.absent),
+        })),
+        signalements,
+      },
+    });
+  }),
+);
+
+router.post(
+  '/admin/diagnostic/signalements/:id/traite',
+  requireAuth,
+  requireRole(...EDITOR_ROLES),
+  asyncHandler(async (req, res) => {
+    const id = toInt(req.params.id);
+    if (!id) throw new HttpError(400, 'Identifiant invalide');
+    await db.query("UPDATE diagnostic_signalements SET statut = 'traite', traite_le = NOW() WHERE id = ?", [
+      id,
+    ]);
+    res.json({ data: { id, statut: 'traite' } });
   }),
 );
 

@@ -1010,6 +1010,12 @@ function EtapeParaclinique({
           <li key={e.id}>
             <span>
               {e.nom} <BadgeDispo slug={e.slug} niveau={niveau} niveauxExamens={niveauxExamens} />
+              {e.performance && (
+                <span className="muted diag-perf" title="Sensibilité et spécificité (à valider)">
+                  {' '}
+                  Se {e.performance[0]} % · Sp {e.performance[1]} %
+                </span>
+              )}
               {pour.has(e.id) && (
                 <span className="muted diag-examen-pour">
                   {' '}
@@ -1279,6 +1285,12 @@ function EffetsTraitements({ traitements, donnees, index, cas }) {
   );
 }
 
+/** Rapport de vraisemblance lisible : 19, 4,2, 0,05. */
+function arrondiRv(x) {
+  const n = x >= 10 ? Math.round(x) : x >= 1 ? Math.round(x * 10) / 10 : Math.round(x * 100) / 100;
+  return String(n).replace('.', ',');
+}
+
 function Hypothese({ h, rang, choisie, onChoisir }) {
   return (
     <li className={`card diag-hypothese diag-${h.niveau}${choisie ? ' diag-choisie' : ''}`}>
@@ -1313,7 +1325,7 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
         <b>Pour :</b> {h.concordants.map((c) => `${c.nom} (${LIBELLES_FREQUENCE[c.frequence]})`).join(', ')}
         {h.tests
           .filter((t) => t.resultat === 'positif')
-          .map((t) => ` · ${t.nom} positif`)
+          .map((t) => ` · ${t.nom} positif${t.rv ? ` (RV+ ${arrondiRv(t.rv.positif)})` : ''}`)
           .join('')}
       </p>
       {(h.discordants.length > 0 || h.tests.some((t) => t.resultat === 'negatif')) && (
@@ -1323,7 +1335,9 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
             ...h.discordants.map((c) =>
               c.exclusion ? `${c.nom} présent (argument contre)` : `${c.nom} absent`,
             ),
-            ...h.tests.filter((t) => t.resultat === 'negatif').map((t) => `${t.nom} négatif`),
+            ...h.tests
+              .filter((t) => t.resultat === 'negatif')
+              .map((t) => `${t.nom} négatif${t.rv ? ` (RV− ${arrondiRv(t.rv.negatif)})` : ''}`),
           ].join(', ')}
         </p>
       )}

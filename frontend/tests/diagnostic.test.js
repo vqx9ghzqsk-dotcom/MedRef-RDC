@@ -106,7 +106,7 @@ describe('aide au diagnostic : moteur', () => {
     const positif = analyser(index, { age: 'petit', symptomes: [1, 2, 3], examens: { 10: 'positif' } });
     const negatif = analyser(index, { age: 'petit', symptomes: [1, 2, 3], examens: { 10: 'negatif' } });
     expect(positif.hypotheses[0].fiche.slug).toBe('palu-grave-enfant');
-    expect(positif.hypotheses[0].tests).toEqual([{ nom: 'TDR paludisme', resultat: 'positif', role: 'c' }]);
+    expect(positif.hypotheses[0].tests).toEqual([{ nom: 'TDR paludisme', resultat: 'positif', role: 'c', rv: null }]);
     expect(negatif.hypotheses[0].fiche.slug).toBe('meningite');
   });
 
@@ -565,5 +565,53 @@ describe('aide au diagnostic : maladies simultanées et diagnostics à ne pas ma
     expect(r.aNePasManquer.find((g) => g.fiche.slug === 'meningite').aRechercher).toContain(
       'Raideur de nuque',
     );
+  });
+});
+
+describe('aide au diagnostic : rapports de vraisemblance des examens', () => {
+  it('un examen très spécifique pèse plus, un négatif peu sensible exclut peu', async () => {
+    const { rapportsDeVraisemblance } = await import('../src/core/diagnostic.js');
+    const tdr = rapportsDeVraisemblance([95, 95]);
+    expect(tdr.positif).toBeCloseTo(19, 0);
+    expect(tdr.negatif).toBeCloseTo(0.053, 2);
+    expect(rapportsDeVraisemblance(null)).toBeNull();
+    const d = {
+      symptomes: [
+        { id: 1, nom: 'Toux' },
+        { id: 2, nom: 'Fièvre' },
+        { id: 3, nom: 'Perte de poids' },
+      ],
+      examens: [
+        { id: 20, slug: 'bacilloscopie', nom: 'Bacilloscopie', performance: [55, 98] },
+        { id: 21, slug: 'xpert', nom: 'Xpert', performance: [85, 98] },
+      ],
+      pathologies: [
+        {
+          id: 1,
+          slug: 'tb',
+          nom: 'Tuberculose',
+          specialite: 'X',
+          public: { ages: null, sexe: null, obstetrique: false },
+          tests: { 20: 'c', 21: 'c' },
+        },
+      ],
+      liens: [
+        [1, 1, 3],
+        [1, 2, 2],
+        [1, 3, 3],
+      ],
+      syndromes: [],
+      terrains: [],
+      contextes: [],
+    };
+    const index = indexer(d);
+    const cas = { age: 'adulte', signes: { 1: 'present', 2: 'present' } };
+    const score = (examens) => analyser(index, { ...cas, examens }).hypotheses[0]?.score || 0;
+    const base = score({});
+    // Bacilloscopie négative (Se 55 %) : l'hypothèse reste ; Xpert négatif (Se 85 %) l'affaiblit plus
+    expect(score({ 20: 'negatif' })).toBeGreaterThan(base * 0.7);
+    expect(score({ 21: 'negatif' })).toBeLessThan(score({ 20: 'negatif' }));
+    const h = analyser(index, { ...cas, examens: { 21: 'positif' } }).hypotheses[0];
+    expect(h.tests[0].rv.positif).toBeCloseTo(42.5, 0);
   });
 });

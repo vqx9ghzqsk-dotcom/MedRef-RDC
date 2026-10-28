@@ -416,6 +416,17 @@ function niveau(score, premier) {
   return 'possible';
 }
 
+/**
+ * Rapports de vraisemblance d'un examen à partir de [sensibilité %, spécificité %] :
+ * RV+ = Se / (1 − Sp), RV− = (1 − Se) / Sp (null si les performances sont inconnues).
+ */
+export function rapportsDeVraisemblance(performance) {
+  if (!performance) return null;
+  const se = performance[0] / 100;
+  const sp = performance[1] / 100;
+  return { positif: se / Math.max(1 - sp, 0.005), negatif: Math.max(1 - se, 0.005) / sp };
+}
+
 /** Bonus de probabilité de départ selon la fréquence de la maladie en RDC. */
 export const PRIOR_FREQUENCE = { tres_frequente: 0.06, frequente: 0.03, peu_frequente: 0, rare: -0.05 };
 
@@ -547,10 +558,20 @@ export function analyser(index, cas) {
     for (const [id, resultat] of Object.entries(examens)) {
       const role = fiche.tests?.[id];
       if (!role || !resultat) continue;
-      const nom = donnees.examens.find((e) => String(e.id) === String(id))?.nom || '';
-      if (resultat === 'positif') score += role === 'c' ? 0.25 : 0.1;
-      else score *= role === 'c' ? 0.4 : 0.75;
-      tests.push({ nom, resultat, role });
+      const examen = donnees.examens.find((e) => String(e.id) === String(id));
+      const nom = examen?.nom || '';
+      const rv = rapportsDeVraisemblance(examen?.performance);
+      if (resultat === 'positif') {
+        // Avec Se et Sp connues, le poids suit le rapport de vraisemblance positif
+        score += rv
+          ? Math.min(0.3, (role === 'c' ? 0.2 : 0.1) * Math.log10(rv.positif))
+          : role === 'c'
+            ? 0.25
+            : 0.1;
+      } else {
+        score *= rv ? Math.max(0.25, rv.negatif ** (role === 'c' ? 0.35 : 0.2)) : role === 'c' ? 0.4 : 0.75;
+      }
+      tests.push({ nom, resultat, role, rv });
     }
     const { bonus, raisons } = orientation(index, fiche, cas, lecture);
     score += bonus;
@@ -883,11 +904,20 @@ export function examensUtiles(index, hypotheses, dejaFaits = {}, nombreMax = 8) 
       if (!parExamen.has(id)) parExamen.set(id, { poids: 0, hypotheses: [] });
       const e = parExamen.get(id);
       e.poids += h.score * (role === 'c' ? 1 : 0.5);
+      e.role = e.role === 'c' ? 'c' : role;
       e.hypotheses.push({ nom: h.fiche.nom, role });
     }
   }
   return [...parExamen]
-    .map(([id, e]) => ({ examen: index.donnees.examens.find((x) => String(x.id) === id), ...e }))
+    .map(([id, e]) => {
+      const examen = index.donnees.examens.find((x) => String(x.id) === id);
+      // Un examen discriminant (RV+ élevé, RV− bas) passe devant un examen peu informatif
+      const rv = rapportsDeVraisemblance(examen?.performance);
+      const pouvoir = rv
+        ? Math.min(1.5, Math.max(0.4, (Math.log10(rv.positif) - Math.log10(rv.negatif)) / 2.5))
+        : 1;
+      return { examen, ...e, poids: e.poids * pouvoir };
+    })
     .filter((e) => e.examen)
     .sort((a, b) => b.poids - a.poids)
     .slice(0, nombreMax);

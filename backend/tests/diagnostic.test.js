@@ -115,3 +115,19 @@ describe('aide au diagnostic : signes discriminants des fiches', () => {
     expect(periodeObstetricale('eclampsie', 'Pathologies obstétricales')).toBeNull();
   });
 });
+
+describe('aide au diagnostic : performances des examens', () => {
+  const data = require('../db/seed-data');
+  const { PERFORMANCES } = require('../db/seed-data/performances-examens');
+  const texte = JSON.stringify([data.examens, data.pathologies, data.ajouts]);
+
+  it('examens connus, sensibilité et spécificité entre 1 et 100', () => {
+    for (const [slug, [se, sp]] of Object.entries(PERFORMANCES)) {
+      expect(texte.includes(`"${slug}"`)).toBe(true);
+      expect(se).toBeGreaterThan(0);
+      expect(se).toBeLessThanOrEqual(100);
+      expect(sp).toBeGreaterThan(0);
+      expect(sp).toBeLessThanOrEqual(100);
+    }
+  });
+});

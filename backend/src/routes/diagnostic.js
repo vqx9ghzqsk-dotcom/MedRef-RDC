@@ -7,6 +7,7 @@ const { requireAuth } = require('../middleware/auth');
 const referentiel = require('../../db/seed-data/diagnostic');
 const epidemiologie = require('../../db/seed-data/epidemiologie');
 const { SIGNES_FICHES } = require('../../db/seed-data/signes-fiches');
+const { PERFORMANCES } = require('../../db/seed-data/performances-examens');
 
 const router = express.Router();
 
@@ -145,7 +146,10 @@ router.get(
         symptomes,
         // [pathologie, symptôme, fréquence 0 à 3]
         liens: [...tableau.values()],
-        examens: [...examensUtiles.values()].sort((a, b) => a.nom.localeCompare(b.nom, 'fr')),
+        // Sensibilité et spécificité connues (à valider) : [Se %, Sp %]
+        examens: [...examensUtiles.values()]
+          .map((e) => ({ ...e, performance: PERFORMANCES[e.slug] || null }))
+          .sort((a, b) => a.nom.localeCompare(b.nom, 'fr')),
         syndromes: syndromes
           .map((x) => {
             const cles = referentiel.SIGNES_CLES[x.slug] || {};

@@ -825,3 +825,45 @@ describe('aide au diagnostic : parcours guidés', () => {
     ).toEqual(['pcima', 'saignement-grossesse']);
   });
 });
+
+describe('aide au diagnostic : export FHIR', () => {
+  it('paquet FHIR R4 sans identité : constantes LOINC, signes, hypothèses CIM-10', async () => {
+    const { exporterFHIR } = await import('../src/core/fhir.js');
+    const index = indexer(donnees);
+    const resultat = {
+      hypotheses: [
+        { fiche: { nom: 'Paludisme grave', cim10: 'B50.8' }, score: 0.8 },
+        { fiche: { nom: 'Méningite', cim10: null }, score: 0.5 },
+      ],
+    };
+    const paquet = exporterFHIR(
+      {
+        sexe: 'F',
+        poids: '12',
+        constantes: { temperature: '39,5', fr: '' },
+        signes: { 1: 'present', 4: 'absent' },
+      },
+      index,
+      resultat,
+      '2026-10-28T10:00:00Z',
+    );
+    expect(paquet).toMatchObject({ resourceType: 'Bundle', type: 'collection' });
+    const res = paquet.entry.map((e) => e.resource);
+    expect(res[0]).toEqual({ resourceType: 'Patient', id: 'patient', gender: 'female' });
+    const temp = res.find((r) => r.code?.coding?.[0]?.code === '8310-5');
+    expect(temp.valueQuantity).toEqual({
+      value: 39.5,
+      unit: '°C',
+      system: 'http://unitsofmeasure.org',
+      code: 'Cel',
+    });
+    expect(res.some((r) => r.code?.coding?.[0]?.code === '9279-1')).toBe(false);
+    expect(res.find((r) => r.code?.text === 'Raideur de nuque').valueBoolean).toBe(false);
+    const [h1, h2] = res.filter((r) => r.resourceType === 'Condition');
+    expect(h1.code.coding[0]).toMatchObject({ system: 'http://hl7.org/fhir/sid/icd-10', code: 'B50.8' });
+    expect(h1.verificationStatus.coding[0].code).toBe('provisional');
+    expect(h2.verificationStatus.coding[0].code).toBe('differential');
+    expect(h2.code.coding).toBeUndefined();
+    expect(JSON.stringify(paquet)).not.toMatch(/"name"|birthDate/);
+  });
+});

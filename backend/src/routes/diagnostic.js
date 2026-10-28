@@ -9,6 +9,7 @@ const epidemiologie = require('../../db/seed-data/epidemiologie');
 const { SIGNES_FICHES } = require('../../db/seed-data/signes-fiches');
 const { PERFORMANCES } = require('../../db/seed-data/performances-examens');
 const essentiels = require('../../db/seed-data/medicaments-essentiels');
+const { CIM10 } = require('../../db/seed-data/codes-cim10');
 
 const router = express.Router();
 
@@ -158,6 +159,7 @@ router.get(
           public: publicVise(p.nom, p.specialite),
           diagnostic: estDiagnostic(p.nom),
           periode: periodeObstetricale(p.slug, p.specialite),
+          cim10: CIM10[p.slug] || null,
           tests: tests.get(p.id) || {},
           traitements: traitePar.get(p.id) || [],
           // Épidémiologie en RDC (à valider) : fréquence, saison, provinces de foyer

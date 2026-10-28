@@ -168,3 +168,16 @@ describe('aide au diagnostic : parcours guidés', () => {
     expect(cites.filter((n) => !signes.has(n))).toEqual([]);
   });
 });
+
+describe('aide au diagnostic : codes CIM-10', () => {
+  const data = require('../db/seed-data');
+  const { CIM10 } = require('../db/seed-data/codes-cim10');
+  const epi = require('../db/seed-data/epidemiologie');
+  const slugs = new Set([...data.pathologies, ...(data.ajouts.fiches || [])].map((p) => p.slug));
+
+  it('fiches existantes, codes bien formés, toutes les fiches fréquentes codées', () => {
+    expect(Object.keys(CIM10).filter((s) => !slugs.has(s))).toEqual([]);
+    expect(Object.values(CIM10).filter((c) => !/^[A-Z]\d{2}(\.\d)?$/.test(c))).toEqual([]);
+    expect([...epi.TRES_FREQUENTES, ...epi.FREQUENTES].filter((s) => !CIM10[s])).toEqual([]);
+  });
+});

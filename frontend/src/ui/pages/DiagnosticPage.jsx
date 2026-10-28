@@ -33,6 +33,7 @@ import {
 } from '../../core/diagnostic.js';
 import { calculerDose } from '../../core/posologie.js';
 import { conseilsPatient } from '../../core/conseils.js';
+import { exporterFHIR } from '../../core/fhir.js';
 import { PARCOURS, profilParcours, questionsVisibles, signesDuParcours } from '../../core/parcours.js';
 import { evaluerScoreGuide, profilScores, SCORES_GUIDES } from '../../core/scoresGuides.js';
 import { LIGNES } from '../../core/labels.js';
@@ -1534,6 +1535,7 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
         {h.aEliminer && <span className="tag tag-alerte">À éliminer</span>}
         <h3>
           <Link to={`/pathologies/${h.fiche.slug}`}>{h.fiche.nom}</Link>
+          {h.fiche.cim10 && <span className="diag-cim"> {h.fiche.cim10}</span>}
         </h3>
         {h.fiche.frequence && h.fiche.frequence !== 'peu_frequente' && (
           <span className={`tag diag-freq-${h.fiche.frequence}`}>
@@ -2256,6 +2258,18 @@ function DetailMolecule({ slug, pathologie, contexte, cas, donnees, calcul, elim
 
 /* ---------- Observation imprimable ---------- */
 
+/** Télécharge l'observation au format FHIR R4 (fichier JSON, sans identité). */
+function telechargerFHIR(cas, index, resultat) {
+  const paquet = exporterFHIR(cas, index, resultat);
+  const lien = document.createElement('a');
+  lien.href = URL.createObjectURL(
+    new Blob([JSON.stringify(paquet, null, 2)], { type: 'application/fhir+json' }),
+  );
+  lien.download = `observation-${new Date().toISOString().slice(0, 10)}.fhir.json`;
+  lien.click();
+  setTimeout(() => URL.revokeObjectURL(lien.href), 1000);
+}
+
 function Observation({ cas, index, donnees, resultat }) {
   const nom = (id) => index.symptomes.get(Number(id))?.nom;
   const presents = Object.entries(cas.signes)
@@ -2278,9 +2292,19 @@ function Observation({ cas, index, donnees, resultat }) {
     <section className="card diag-observation" aria-labelledby="diag-obs-titre">
       <div className="diag-hyp-tete">
         <h2 id="diag-obs-titre">Observation</h2>
-        <button type="button" className="btn btn-secondary btn-small no-print" onClick={() => window.print()}>
-          Imprimer
-        </button>
+        <span className="diag-actions no-print">
+          <button type="button" className="btn btn-secondary btn-small" onClick={() => window.print()}>
+            Imprimer
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost btn-small"
+            title="Format FHIR R4 (dossier patient informatisé), sans identité du patient"
+            onClick={() => telechargerFHIR(cas, index, resultat)}
+          >
+            Exporter (FHIR)
+          </button>
+        </span>
       </div>
       <dl className="diag-obs">
         <dt>Patient</dt>
@@ -2369,7 +2393,10 @@ function Observation({ cas, index, donnees, resultat }) {
         <dd>
           {resultat.hypotheses
             .slice(0, 4)
-            .map((h) => `${h.fiche.nom} (${NIVEAUX[h.niveau].toLowerCase()})`)
+            .map(
+              (h) =>
+                `${h.fiche.nom}${h.fiche.cim10 ? ` [${h.fiche.cim10}]` : ''} (${NIVEAUX[h.niveau].toLowerCase()})`,
+            )
             .join(' ; ') || '—'}
         </dd>
       </dl>

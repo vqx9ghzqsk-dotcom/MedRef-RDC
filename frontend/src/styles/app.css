@@ -4151,3 +4151,11 @@ p.diag-triage-priorite {
   border-color: #2e8b57;
   background: color-mix(in srgb, #2e8b57 12%, transparent);
 }
+
+/* Code CIM-10 à côté du nom de la fiche */
+.diag-cim {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted, #667);
+  font-family: ui-monospace, monospace;
+}

@@ -418,8 +418,9 @@ export function etatDesSignes(index, cas) {
   return { presents, absents, deduits, lecture };
 }
 
-function niveau(score, premier) {
-  if (premier && score >= 0.7) return 'tres_probable';
+/** « Très probable » exige une nette avance sur la 2e hypothèse (sinon la certitude serait contredite). */
+function niveau(score, premier, avance) {
+  if (premier && score >= 0.7 && avance >= 0.1) return 'tres_probable';
   if (score >= 0.55) return 'probable';
   return 'possible';
 }
@@ -700,7 +701,8 @@ export function analyser(index, casSaisi) {
   const hypotheses = resultats.slice(0, MAX_HYPOTHESES).map((h, i) => {
     const aEliminer = i > 0 && h.fiche.urgence && h.score >= 0.5 && graves < 2;
     if (aEliminer) graves += 1;
-    return { ...h, niveau: niveau(h.score, i === 0), aEliminer };
+    const avance = h.score - (resultats[i + 1]?.score || 0);
+    return { ...h, niveau: niveau(h.score, i === 0, avance), aEliminer };
   });
   const questions = questionsSuivantes(index, hypotheses, presents, absents);
   // Échec d'un traitement déjà reçu : causes à vérifier avant de changer de diagnostic

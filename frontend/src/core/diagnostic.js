@@ -307,6 +307,7 @@ export function analyser(index, cas) {
     questions: [],
     aRechercher: [],
     biologie: lecture.biologie,
+    scores: calculerScores(index, cas, presents, absents),
   };
   if (!signes.length) return vide;
 
@@ -730,4 +731,132 @@ export function lireBiologie(bio = {}, age = '', mois = null) {
     else noter('lactates', 'normaux');
   }
   return { interpretations, alertes, orientations };
+}
+
+/* ---------- Scores calculés à partir de la saisie ---------- */
+
+/**
+ * Scores et classifications déduits automatiquement de l'âge, des constantes, de la biologie
+ * et des signes notés : qSOFA (adulte), critères de SRIS, index de choc, IMC, score de
+ * Centor-McIsaac (mal de gorge) et classification PCIME de la toux (2 mois – 5 ans).
+ * Un score n'est donné que si ses éléments ont été saisis.
+ */
+export function calculerScores(index, cas, presents, absents) {
+  const c = Object.fromEntries(Object.entries(cas.constantes || {}).map(([k, x]) => [k, nombre(x)]));
+  const b = Object.fromEntries(Object.entries(cas.biologie || {}).map(([k, x]) => [k, nombre(x)]));
+  const mois = ageEnMois(cas);
+  const adulte = mois !== null ? mois >= 216 : ['adulte', 'age'].includes(cas.age);
+  const present = (nom) => presents.has(index.parNom.get(nom));
+  const absent = (nom) => absents.has(index.parNom.get(nom));
+  const scores = [];
+  const connu = (x) => x !== null && x !== undefined;
+
+  if (adulte && (connu(c.fr) || connu(c.tas) || connu(c.glasgow))) {
+    const points =
+      (c.fr >= 22 ? 1 : 0) +
+      (connu(c.tas) && c.tas <= 100 ? 1 : 0) +
+      (connu(c.glasgow) && c.glasgow < 15 ? 1 : 0);
+    scores.push({
+      nom: 'qSOFA',
+      valeur: `${points}/3`,
+      interpretation:
+        points >= 2
+          ? 'risque élevé de sepsis grave : bilan et antibiothérapie sans délai si infection'
+          : 'risque faible',
+      grave: points >= 2,
+    });
+  }
+  const criteres = [
+    connu(c.temperature) ? c.temperature > 38 || c.temperature < 36 : null,
+    connu(c.fc) ? c.fc > 90 : null,
+    connu(c.fr) ? c.fr > 20 : null,
+    connu(b.gb) ? b.gb > 12 || b.gb < 4 : null,
+  ].filter((x) => x !== null);
+  if (adulte && criteres.length >= 2) {
+    const n = criteres.filter(Boolean).length;
+    scores.push({
+      nom: 'Critères de SRIS',
+      valeur: `${n}/${criteres.length}`,
+      interpretation: n >= 2 ? 'réponse inflammatoire systémique' : 'non réunis',
+      grave: false,
+    });
+  }
+  if (connu(c.fc) && connu(c.tas) && c.tas > 0) {
+    const ic = Math.round((c.fc / c.tas) * 10) / 10;
+    if (adulte) {
+      scores.push({
+        nom: 'Index de choc',
+        valeur: String(ic).replace('.', ','),
+        interpretation:
+          ic >= 1
+            ? 'choc probable : remplissage et recherche de la cause'
+            : ic >= 0.9
+              ? 'à surveiller'
+              : 'normal',
+        grave: ic >= 1,
+      });
+    }
+  }
+  if (connu(c.taille) && cas.poids && adulte) {
+    const poids = nombre(cas.poids);
+    const imc = Math.round((poids / (c.taille / 100) ** 2) * 10) / 10;
+    if (Number.isFinite(imc)) {
+      const lecture =
+        imc < 16
+          ? 'dénutrition sévère'
+          : imc < 18.5
+            ? 'maigreur'
+            : imc < 25
+              ? 'normal'
+              : imc < 30
+                ? 'surpoids'
+                : 'obésité';
+      scores.push({
+        nom: 'IMC',
+        valeur: `${String(imc).replace('.', ',')} kg/m²`,
+        interpretation: lecture,
+        grave: imc < 16,
+      });
+    }
+  }
+  if (present('Mal de gorge')) {
+    const ans = mois !== null ? mois / 12 : null;
+    let points = 0;
+    if (present('Fièvre')) points += 1;
+    if (absent('Toux')) points += 1;
+    if (present('Adénopathies')) points += 1;
+    if (ans !== null && ans >= 3 && ans < 15) points += 1;
+    if (ans !== null && ans >= 45) points -= 1;
+    scores.push({
+      nom: 'Centor-McIsaac (sans l’exsudat amygdalien, à rechercher)',
+      valeur: `${points}/5`,
+      interpretation:
+        points >= 3
+          ? 'angine bactérienne possible : test rapide ou antibiotique selon le protocole'
+          : 'angine probablement virale',
+      grave: false,
+    });
+  }
+  const petitEnfant = mois !== null ? mois >= 2 && mois < 60 : cas.age === 'petit';
+  if (petitEnfant && (present('Toux') || present('Dyspnée'))) {
+    const danger = ['Convulsions', 'Troubles de la conscience', 'Stridor', 'Cyanose'].filter(present);
+    const tachypnee = present('Tachypnée');
+    scores.push({
+      nom: 'PCIME : toux ou difficulté respiratoire',
+      valeur: danger.length
+        ? 'Pneumonie grave ou maladie très grave'
+        : tachypnee
+          ? 'Pneumonie'
+          : 'Pas de pneumonie : toux ou rhume',
+      interpretation: danger.length
+        ? `signe de danger (${danger.join(', ')}) : première dose d’antibiotique et transfert urgent`
+        : tachypnee
+          ? 'respiration rapide : amoxicilline orale selon la PCIME'
+          : connu(c.fr)
+            ? 'fréquence respiratoire normale pour l’âge'
+            : 'compter la fréquence respiratoire pendant une minute',
+      grave: danger.length > 0,
+    });
+  }
+  return scores;
 }

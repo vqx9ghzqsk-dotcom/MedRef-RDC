@@ -327,3 +327,49 @@ describe('aide au diagnostic : résultats biologiques chiffrés', () => {
     expect(avec.biologie).toEqual([{ cle: 'plaquettes', texte: 'thrombopénie', grave: false }]);
   });
 });
+
+describe('aide au diagnostic : scores calculés', () => {
+  it('qSOFA, index de choc, IMC, Centor et PCIME à partir de la saisie', async () => {
+    const { calculerScores } = await import('../src/core/diagnostic.js');
+    const d = {
+      symptomes: [
+        { id: 1, nom: 'Fièvre' },
+        { id: 2, nom: 'Toux' },
+        { id: 3, nom: 'Mal de gorge' },
+        { id: 4, nom: 'Adénopathies' },
+        { id: 5, nom: 'Tachypnée' },
+        { id: 6, nom: 'Convulsions' },
+      ],
+      examens: [],
+      pathologies: [],
+      liens: [],
+    };
+    const idx = indexer(d);
+    const nomme = (r) => Object.fromEntries(r.map((s) => [s.nom.split(' ')[0], s]));
+    const adulte = nomme(
+      calculerScores(
+        idx,
+        {
+          age: 'adulte',
+          poids: '45',
+          constantes: { fr: '26', tas: '85', glasgow: '14', fc: '120', taille: '170' },
+        },
+        new Set(),
+        new Set(),
+      ),
+    );
+    expect(adulte.qSOFA).toMatchObject({ valeur: '3/3', grave: true });
+    expect(adulte.Index).toMatchObject({ valeur: '1,4', grave: true });
+    expect(adulte.IMC.interpretation).toBe('dénutrition sévère');
+    const angine = nomme(
+      calculerScores(idx, { ageValeur: '8', ageUnite: 'ans' }, new Set([1, 3, 4]), new Set([2])),
+    );
+    expect(angine['Centor-McIsaac'].valeur).toBe('4/5');
+    const enfant = nomme(
+      calculerScores(idx, { ageValeur: '2', ageUnite: 'ans' }, new Set([2, 5]), new Set()),
+    );
+    expect(enfant['PCIME'].valeur).toBe('Pneumonie');
+    const grave = nomme(calculerScores(idx, { ageValeur: '2', ageUnite: 'ans' }, new Set([2, 6]), new Set()));
+    expect(grave['PCIME']).toMatchObject({ valeur: 'Pneumonie grave ou maladie très grave', grave: true });
+  });
+});

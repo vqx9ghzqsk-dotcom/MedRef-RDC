@@ -3866,3 +3866,8 @@ details.forme {
   width: 100%;
   font: inherit;
 }
+
+/* Scores calculés */
+.diag-score-grave {
+  color: var(--urgence);
+}

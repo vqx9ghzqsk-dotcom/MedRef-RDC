@@ -58,6 +58,7 @@ const CONSTANTES = [
   ['glycemie', 'Glycémie', 'mmol/L'],
   ['glasgow', 'Score de Glasgow', '/15'],
   ['pb', 'Périmètre brachial', 'mm'],
+  ['taille', 'Taille', 'cm'],
 ];
 
 const UNITES_AGE = [
@@ -349,6 +350,21 @@ function Moteur({ donnees }) {
 
         <section className="diag-resultats no-print" aria-label="Synthèse et hypothèses" aria-live="polite">
           <Alertes resultat={resultat} />
+          {resultat.scores?.length > 0 && (
+            <div className="card">
+              <h2>Scores calculés</h2>
+              <ul className="diag-liste">
+                {resultat.scores.map((sc) => (
+                  <li key={sc.nom} className={sc.grave ? 'diag-score-grave' : undefined}>
+                    <b>
+                      {sc.nom} : {sc.valeur}
+                    </b>{' '}
+                    · {sc.interpretation}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {resultat.syndromes.length > 0 && (
             <div className="card">
               <h2>Synthèse syndromique</h2>
@@ -1433,6 +1449,11 @@ function Observation({ cas, index, donnees, resultat }) {
               return `${l} ${cas.biologie[id]} ${u}${lu ? ` (${lu.texte})` : ''}`;
             }),
           ].join(' ; ') || '—'}
+        </dd>
+        <dt>Scores</dt>
+        <dd>
+          {(resultat.scores || []).map((sc) => `${sc.nom} ${sc.valeur} (${sc.interpretation})`).join(' ; ') ||
+            '—'}
         </dd>
         <dt>Synthèse</dt>
         <dd>{resultat.syndromes.map((s) => s.nom).join(', ') || '—'}</dd>

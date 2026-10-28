@@ -4014,3 +4014,11 @@ p.diag-triage-priorite {
 .diag-echec {
   border-left: 4px solid #e0a100;
 }
+
+/* Scores guidés */
+.diag-scores-guides {
+  margin: 1rem 0;
+}
+.diag-score-form {
+  margin-top: 0.75rem;
+}

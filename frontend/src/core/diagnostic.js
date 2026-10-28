@@ -18,6 +18,8 @@
  *  - les fiches d'un autre public (âge, sexe, grossesse) sont écartées.
  */
 
+import { scoresGuidesDuCas } from './scoresGuides.js';
+
 /** Poids d'un signe selon sa fréquence dans la fiche (rare, occasionnel, fréquent, très fréquent). */
 const POIDS_FREQUENCE = [0.3, 0.5, 0.8, 1];
 export const LIBELLES_FREQUENCE = ['rare', 'occasionnel', 'fréquent', 'très fréquent'];
@@ -392,6 +394,12 @@ export function etatDesSignes(index, cas) {
   lecture.orientations.push(...bio.orientations);
   lecture.biologie = bio.interpretations;
   for (const t of TRIAGE) if (t.signe && cas.triage?.[t.id]) lecture.presents.push(t.signe);
+  // Scores guidés : conscience (Blantyre), alertes et orientations (CURB-65, Wells…)
+  for (const sg of scoresGuidesDuCas(cas)) {
+    if (sg.id === 'blantyre' && sg.total <= 4) lecture.presents.push('Troubles de la conscience');
+    if (sg.grave && sg.id !== 'glasgow') lecture.alertes.push(`${sg.nom} ${sg.total} : ${sg.texte}`);
+    if (sg.orientation) lecture.orientations.push(sg.orientation);
+  }
   const deduits = [];
   for (const nom of lecture.presents) {
     const id = index.parNom.get(nom);
@@ -517,7 +525,13 @@ function orientation(index, fiche, cas, lecture) {
  * (`symptomes: [id]` reste accepté : signes présents.)
  * Renvoie { hypotheses, gravite, alertes, deduits, syndromes, questions, aRechercher }.
  */
-export function analyser(index, cas) {
+export function analyser(index, casSaisi) {
+  // Le Glasgow guidé tient lieu de constante quand elle n'a pas été saisie
+  const glasgow = scoresGuidesDuCas(casSaisi).find((x) => x.id === 'glasgow');
+  const cas =
+    glasgow && !casSaisi.constantes?.glasgow
+      ? { ...casSaisi, constantes: { ...casSaisi.constantes, glasgow: String(glasgow.total) } }
+      : casSaisi;
   const { donnees, symptomes, parFiche, rarete } = index;
   const { presents, absents, deduits, lecture } = etatDesSignes(index, cas);
   const signes = [...presents].filter((s) => symptomes.has(s));
@@ -1213,6 +1227,14 @@ export function calculerScores(index, cas, presents, absents) {
             ? 'fréquence respiratoire normale pour l’âge'
             : 'compter la fréquence respiratoire pendant une minute',
       grave: danger.length > 0,
+    });
+  }
+  for (const sg of scoresGuidesDuCas(cas)) {
+    scores.push({
+      nom: sg.nom,
+      valeur: String(sg.total).replace('.', ','),
+      interpretation: sg.texte,
+      grave: sg.grave,
     });
   }
   return scores;

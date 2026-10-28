@@ -2055,6 +2055,22 @@ describe('Aide au diagnostic', () => {
     expect(screen.queryByRole('region', { name: "Triage d'urgence ABCDE" })).not.toBeInTheDocument();
   });
 
+  it('scores guidés : Glasgow item par item, total et interprétation', async () => {
+    const user = userEvent.setup();
+    const api = { diagnosticDonnees: vi.fn(async () => donneesDiag) };
+    renderApp('/diagnostic', api, MEDECIN);
+    await user.click(await screen.findByRole('button', { name: 'Adulte' }));
+    await user.click(screen.getByRole('button', { name: '3 · Examen clinique' }));
+    await user.click(screen.getByRole('button', { name: 'Glasgow' }));
+    const form = screen.getByRole('group', { name: 'Glasgow' });
+    expect(within(form).getByRole('status')).toHaveTextContent('Répondez à chaque item');
+    await user.click(within(form).getByRole('button', { name: 'À la douleur' }));
+    await user.click(within(form).getByRole('button', { name: 'Sons incompréhensibles' }));
+    await user.click(within(form).getByRole('button', { name: 'Évitement' }));
+    expect(within(form).getByRole('status')).toHaveTextContent('Total 8 : coma');
+    expect(screen.getByRole('button', { name: 'Glasgow : 8' })).toBeInTheDocument();
+  });
+
   it('réservée aux comptes connectés', async () => {
     renderApp('/diagnostic');
     expect(await screen.findByText(/réservé aux professionnels de santé/)).toBeInTheDocument();

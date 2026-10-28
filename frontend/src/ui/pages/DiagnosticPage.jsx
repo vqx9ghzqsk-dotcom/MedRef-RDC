@@ -28,6 +28,7 @@ import {
   trancheDepuisAge,
 } from '../../core/diagnostic.js';
 import { calculerDose } from '../../core/posologie.js';
+import { evaluerScoreGuide, profilScores, SCORES_GUIDES } from '../../core/scoresGuides.js';
 import { LIGNES } from '../../core/labels.js';
 
 const NIVEAUX = { tres_probable: 'Très probable', probable: 'Probable', possible: 'Possible' };
@@ -91,6 +92,7 @@ const CAS_VIDE = {
   duree: '',
   evolution: '',
   premierSigne: null,
+  scoresGuides: {},
   reponse: '',
   histoire: '',
   terrains: [],
@@ -919,6 +921,7 @@ function EtapeExamen({ donnees, index, cas, maj, regler, deduits, profil, pertin
           </label>
         ))}
       </div>
+      <ScoresGuides cas={cas} maj={maj} />
       {cles.length > 0 && (
         <div className="diag-prioritaire">
           <h2>
@@ -1132,6 +1135,63 @@ function EtapeParaclinique({
         onChoix={(e) => regler(e.id, 'positif')}
       />
     </>
+  );
+}
+
+/**
+ * Scores cliniques guidés (Glasgow, Blantyre, CURB-65, Wells, Apgar, Bishop) : seuls ceux qui
+ * conviennent au patient sont proposés ; le total s'affiche quand tous les items sont remplis.
+ */
+function ScoresGuides({ cas, maj }) {
+  const [ouvert, setOuvert] = useState(null);
+  const profil = profilScores(cas, ageEnMois(cas));
+  const proposes = SCORES_GUIDES.filter((d) => d.public(profil));
+  if (!proposes.length) return null;
+  const reponses = cas.scoresGuides || {};
+  const repondre = (score, item, valeur) =>
+    maj('scoresGuides', { ...reponses, [score]: { ...reponses[score], [item]: valeur } });
+  const def = proposes.find((d) => d.id === ouvert);
+  const resultat = def && evaluerScoreGuide(def, reponses[def.id]);
+  return (
+    <div className="diag-scores-guides">
+      <h2>Scores guidés</h2>
+      <div className="chips">
+        {proposes.map((d) => {
+          const r = evaluerScoreGuide(d, reponses[d.id]);
+          return (
+            <button
+              key={d.id}
+              type="button"
+              className="chip chip-bouton"
+              aria-pressed={ouvert === d.id}
+              onClick={() => setOuvert(ouvert === d.id ? null : d.id)}
+            >
+              {d.nom}
+              {r && ` : ${String(r.total).replace('.', ',')}`}
+            </button>
+          );
+        })}
+      </div>
+      {def && (
+        <fieldset className="diag-champ diag-score-form">
+          <legend>{def.nom}</legend>
+          {def.items.map((item) => (
+            <Boutons
+              key={item.id}
+              legende={item.libelle}
+              options={item.options.map(([v, l]) => [String(v), l])}
+              valeur={reponses[def.id]?.[item.id] !== undefined ? String(reponses[def.id][item.id]) : ''}
+              onChange={(v) => repondre(def.id, item.id, v === '' ? undefined : Number(v))}
+            />
+          ))}
+          <p className={resultat?.grave ? 'diag-score-grave' : undefined} role="status">
+            {resultat
+              ? `Total ${String(resultat.total).replace('.', ',')} : ${resultat.texte}`
+              : 'Répondez à chaque item pour obtenir le total.'}
+          </p>
+        </fieldset>
+      )}
+    </div>
   );
 }
 

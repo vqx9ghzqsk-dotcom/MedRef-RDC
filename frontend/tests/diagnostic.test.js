@@ -671,3 +671,43 @@ describe('aide au diagnostic : chronologie, début, échec du traitement', () =>
     expect(analyser(index, { age: 'adulte', ...resp, reponse: 'amelioration' }).echec).toBeNull();
   });
 });
+
+describe('aide au diagnostic : scores guidés', () => {
+  it('totaux, interprétations, scores proposés selon le patient et effet sur le moteur', async () => {
+    const { SCORES_GUIDES, evaluerScoreGuide, profilScores } = await import('../src/core/scoresGuides.js');
+    const def = (id) => SCORES_GUIDES.find((d) => d.id === id);
+    expect(evaluerScoreGuide(def('glasgow'), { y: 2, v: 2 })).toBeNull();
+    expect(evaluerScoreGuide(def('glasgow'), { y: 2, v: 2, m: 4 })).toMatchObject({ total: 8, grave: true });
+    expect(evaluerScoreGuide(def('curb65'), { c: 1, u: 1, r: 1, b: 0, a: 0 })).toMatchObject({
+      total: 3,
+      grave: true,
+    });
+    expect(
+      evaluerScoreGuide(def('wells-tvp'), {
+        cancer: 1,
+        paralysie: 0,
+        alitement: 0,
+        trajet: 1,
+        membre: 0,
+        mollet: 1,
+        godet: 0,
+        veines: 0,
+        atcd: 0,
+        autre: -2,
+      }).total,
+    ).toBe(1);
+    const enfant = profilScores({ ageValeur: '2', ageUnite: 'ans' }, 24);
+    expect(SCORES_GUIDES.filter((d) => d.public(enfant)).map((d) => d.id)).toEqual(['blantyre']);
+    // Blantyre ≤ 2 : trouble de la conscience présent et alerte de coma
+    const r = analyser(indexer(donnees), {
+      ageValeur: '2',
+      ageUnite: 'ans',
+      age: 'petit',
+      signes: { 1: 'present' },
+      scoresGuides: { blantyre: { yeux: 0, moteur: 1, verbal: 1 } },
+    });
+    expect(r.gravite.map((s) => s.nom)).toContain('Troubles de la conscience');
+    expect(r.alertes.some((a) => a.includes('Blantyre'))).toBe(true);
+    expect(r.scores.some((s) => s.nom.startsWith('Blantyre') && s.valeur === '2')).toBe(true);
+  });
+});

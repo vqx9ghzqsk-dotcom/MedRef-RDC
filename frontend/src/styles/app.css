@@ -3995,3 +3995,17 @@ p.diag-triage-priorite {
   opacity: 0.75;
   font-style: italic;
 }
+
+/* Diagnostics graves à ne pas manquer, maladies simultanées */
+.diag-ne-pas-manquer {
+  border-left: 4px solid var(--urgence);
+}
+.diag-ne-pas-manquer h2 {
+  color: var(--urgence);
+}
+.diag-association {
+  border-left: 4px solid var(--link);
+}
+.diag-association h3 {
+  margin-top: 0;
+}

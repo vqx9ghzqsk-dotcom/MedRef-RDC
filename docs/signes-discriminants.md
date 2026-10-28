@@ -10,7 +10,7 @@ Ces signes complètent les fiches dans l’aide au diagnostic seulement :
 
 Dites-moi simplement ce qu’il faut corriger (fiche, signe, fréquence).
 
-**53 fiches** traitées.
+**54 fiches** traitées.
 
 ## Accident vasculaire cérébral (AVC)
 
@@ -235,6 +235,11 @@ Dites-moi simplement ce qu’il faut corriger (fiche, signe, fréquence).
 - Tableau actuel : Fièvre (très fréquent), Troubles de la conscience (très fréquent), Convulsions (fréquent), Ictère (occasionnel), Oligurie (occasionnel), Céphalées (fréquent)
 - Signes ajoutés : Vomissements (fréquent), Frissons (fréquent), Pâleur (fréquent)
 - Signes clés : Fièvre, Troubles de la conscience
+
+## Neutropénie fébrile
+
+- Tableau actuel : Fièvre (très fréquent), Frissons (fréquent), Hypotension (occasionnel), Tachypnée (occasionnel)
+- Terrain ou contexte requis (l’un des) : Cancer connu, Corticoïdes au long cours, chimiothérapie
 
 ## Otite moyenne aiguë
 

@@ -155,6 +155,9 @@ const SIGNES_FICHES = {
   'coinfection-tuberculose-vih': {
     requiert: { terrains: ['vih', 'immunodepression'] },
   },
+  'neutropenie-febrile': {
+    requiert: { terrains: ['cancer', 'immunodepression'] },
+  },
   'tuberculose-pharmacoresistante': {
     requiert: { terrains: ['tuberculose'], contextes: ['tb-contact'] },
   },

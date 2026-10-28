@@ -505,3 +505,65 @@ describe('aide au diagnostic : signes clés, exclusion, terrain requis, période
     expect(ordre('grossesse')).toEqual(['avant', 'apres']);
   });
 });
+
+describe('aide au diagnostic : maladies simultanées et diagnostics à ne pas manquer', () => {
+  it('propose l’association qui explique les signes restants et sépare les fiches graves', () => {
+    const fiche = (id, slug, nom, extra) => ({
+      id,
+      slug,
+      nom,
+      specialite: 'X',
+      validee: false,
+      public: { ages: null, sexe: null, obstetrique: false },
+      tests: {},
+      ...extra,
+    });
+    const d = {
+      symptomes: [
+        { id: 1, nom: 'Fièvre' },
+        { id: 2, nom: 'Frissons' },
+        { id: 3, nom: 'Céphalées' },
+        { id: 4, nom: 'Toux' },
+        { id: 5, nom: 'Tachypnée' },
+        { id: 6, nom: 'Raideur de nuque' },
+      ],
+      examens: [],
+      pathologies: [
+        fiche(1, 'palu', 'Paludisme simple'),
+        fiche(2, 'palu-grave', 'Paludisme grave', { urgence: true }),
+        fiche(3, 'pneumo', 'Pneumonie'),
+        fiche(4, 'meningite', 'Méningite', { urgence: true }),
+      ],
+      liens: [
+        [1, 1, 3],
+        [1, 2, 3],
+        [1, 3, 2],
+        [2, 1, 3],
+        [2, 2, 2],
+        [2, 4, 1],
+        [3, 4, 3],
+        [3, 5, 3],
+        [3, 1, 2],
+        [4, 1, 3],
+        [4, 3, 3],
+        [4, 6, 2],
+      ],
+      syndromes: [],
+      terrains: [],
+      contextes: [],
+    };
+    const r = analyser(indexer(d), {
+      age: 'adulte',
+      motif: 2,
+      signes: { 1: 'present', 2: 'present', 3: 'present', 4: 'present', 5: 'present' },
+    });
+    expect(r.hypotheses[0].fiche.slug).toBe('palu');
+    // Paludisme grave n'est pas une « association » du paludisme simple
+    expect(r.associations.map((a) => a.associee.slug)).toEqual(['pneumo']);
+    expect(r.associations[0].expliques).toEqual(['Toux', 'Tachypnée']);
+    expect(r.aNePasManquer.map((g) => g.fiche.slug)).toContain('meningite');
+    expect(r.aNePasManquer.find((g) => g.fiche.slug === 'meningite').aRechercher).toContain(
+      'Raideur de nuque',
+    );
+  });
+});

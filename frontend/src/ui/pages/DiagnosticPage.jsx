@@ -474,6 +474,19 @@ function Moteur({ donnees }) {
           )}
           <EffetsTraitements traitements={cas.traitements} donnees={donnees} index={index} cas={cas} />
           <h2>Hypothèses diagnostiques</h2>
+          {resultat.associations?.length > 0 && (
+            <div className="card diag-association">
+              <h3>Deux maladies à la fois ?</h3>
+              <ul className="diag-liste">
+                {resultat.associations.map((a) => (
+                  <li key={a.associee.id}>
+                    <b>{a.principale.nom}</b> n’explique pas {a.expliques.join(', ')} :{' '}
+                    <Link to={`/pathologies/${a.associee.slug}`}>{a.associee.nom}</Link> associée ?
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {!resultat.hypotheses.length ? (
             <p className="muted">
               Indiquez le motif de consultation, puis les signes présents ou absents : les hypothèses
@@ -491,6 +504,24 @@ function Moteur({ donnees }) {
                 />
               ))}
             </ol>
+          )}
+          {resultat.aNePasManquer?.length > 0 && (
+            <div className="card diag-ne-pas-manquer">
+              <h2>À ne pas manquer</h2>
+              <p className="muted">
+                Diagnostics graves compatibles avec le cas : à éliminer avant de conclure.
+              </p>
+              <ul className="diag-liste">
+                {resultat.aNePasManquer.map((g) => (
+                  <li key={g.fiche.id}>
+                    <Link to={`/pathologies/${g.fiche.slug}`}>
+                      <b>{g.fiche.nom}</b>
+                    </Link>
+                    {g.aRechercher.length > 0 && <> · rechercher : {g.aRechercher.join(', ')}</>}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
           {choisie && (
             <Traitement

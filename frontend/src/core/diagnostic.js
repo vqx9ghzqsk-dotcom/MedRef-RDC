@@ -500,6 +500,8 @@ export function analyser(index, cas) {
     syndromes,
     questions: [],
     aRechercher: [],
+    aNePasManquer: [],
+    associations: [],
     biologie: lecture.biologie,
     scores: calculerScores(index, cas, presents, absents),
     triage: triageUrgence(cas),
@@ -597,12 +599,59 @@ export function analyser(index, cas) {
     return { ...h, niveau: niveau(h.score, i === 0), aEliminer };
   });
   const questions = questionsSuivantes(index, hypotheses, presents, absents);
+  // Diagnostics graves à ne pas manquer : fiches d'urgence compatibles, même hors des premières
+  // places (score ≥ 0,3), présentées à part avec ce qu'il faut rechercher pour les éliminer
+  const premiere = hypotheses[0]?.fiche.id;
+  const aNePasManquer = resultats
+    .filter((h) => h.fiche.urgence && h.fiche.id !== premiere && h.score >= 0.3)
+    .slice(0, 3)
+    .map((h) => ({ fiche: h.fiche, score: h.score, aRechercher: h.aRechercher }));
   return {
     ...vide,
     hypotheses,
     questions,
+    aNePasManquer,
+    associations: associations(index, resultats, presents),
     aRechercher: questions.map((q) => q.symptome),
   };
+}
+
+/**
+ * Maladies simultanées : quand la première hypothèse laisse des signes importants inexpliqués,
+ * cherche l'hypothèse qui les explique (paludisme et pneumonie, VIH et tuberculose…).
+ * Renvoie au plus 2 associations { principale, associee, expliques: [noms] }.
+ */
+function associations(index, resultats, presents) {
+  const { parFiche, rarete, symptomes } = index;
+  const premiere = resultats[0];
+  if (!premiere) return [];
+  const tableau = parFiche.get(premiere.fiche.id);
+  // Signes présents que la première hypothèse n'explique pas, pondérés par leur rareté
+  const restants = [...presents].filter((s) => symptomes.has(s) && !tableau.has(s));
+  const poids = restants.reduce((t, s) => t + (rarete.get(s) || 0), 0);
+  const poidsTotal = [...presents]
+    .filter((s) => symptomes.has(s))
+    .reduce((t, s) => t + (rarete.get(s) || 0), 0);
+  if (!restants.length || poids < 0.25 * poidsTotal) return [];
+  // Deux formes de la même maladie (paludisme simple et grave) ne font pas une association
+  const radical = (f) => sansAccents(f.nom).split(/[^a-z]+/)[0];
+  return resultats
+    .slice(1)
+    .filter((h) => radical(h.fiche) !== radical(premiere.fiche))
+    .map((h) => {
+      const t = parFiche.get(h.fiche.id);
+      const expliques = restants.filter((s) => t.has(s));
+      const part = expliques.reduce((x, s) => x + (rarete.get(s) || 0), 0) / poids;
+      return { h, expliques, part };
+    })
+    .filter((x) => x.part >= 0.5 && x.h.score >= 0.25)
+    .sort((a, b) => b.part - a.part || b.h.score - a.h.score)
+    .slice(0, 2)
+    .map((x) => ({
+      principale: premiere.fiche,
+      associee: x.h.fiche,
+      expliques: x.expliques.map((s) => symptomes.get(s).nom),
+    }));
 }
 
 /** Les signes clés du syndrome sont-ils réunis ? (référentiel SIGNES_CLES ; sans clés : non) */

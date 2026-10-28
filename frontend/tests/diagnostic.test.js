@@ -750,3 +750,23 @@ describe('aide au diagnostic : fonctions rénale et hépatique', () => {
     expect(fonctionsElimination({ terrains: [] })).toMatchObject({ renale: false, hepatique: false });
   });
 });
+
+describe('aide au diagnostic : conseils au patient', () => {
+  it('conseils de la famille de fiches, signes de danger selon l’âge, réévaluation', async () => {
+    const { conseilsPatient } = await import('../src/core/conseils.js');
+    const palu = conseilsPatient(
+      { nom: 'Paludisme simple de l’enfant' },
+      { ageValeur: '3', ageUnite: 'ans' },
+    );
+    expect(palu.conseils.map(([, t]) => t)).toContain('Dormir sous moustiquaire imprégnée, toute la famille');
+    expect(palu.revenir.map(([, t]) => t)).toContain('Ne peut plus boire ni téter');
+    expect(palu.reevaluation).toMatch(/3e jour/);
+    const adulte = conseilsPatient({ nom: 'Hypertension artérielle' }, { age: 'adulte' });
+    expect(adulte.revenir.map(([, t]) => t)).not.toContain('Ne peut plus boire ni téter');
+    expect(adulte.conseils.length).toBeGreaterThan(0);
+    // « pharmacorésistante » ne déclenche pas les conseils des IST
+    const tb = conseilsPatient({ nom: 'Tuberculose pharmacorésistante' }, { age: 'adulte' });
+    expect(tb.conseils.map(([, t]) => t)).not.toContain('Traiter aussi le ou les partenaires');
+    expect(conseilsPatient({ nom: 'Fiche inconnue', urgence: true }, {}).reevaluation).toMatch(/heures/);
+  });
+});

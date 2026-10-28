@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
@@ -30,6 +31,7 @@ import {
   trancheDepuisAge,
 } from '../../core/diagnostic.js';
 import { calculerDose } from '../../core/posologie.js';
+import { conseilsPatient } from '../../core/conseils.js';
 import { evaluerScoreGuide, profilScores, SCORES_GUIDES } from '../../core/scoresGuides.js';
 import { LIGNES } from '../../core/labels.js';
 
@@ -1646,11 +1648,74 @@ function Traitement({ fiche, cas, donnees, niveau, onReference }) {
                 </Link>
               </div>
               <p className="muted">Posologies de la fiche, à vérifier par le prescripteur.</p>
+              <ConseilsPatient fiche={fiche} cas={cas} />
             </>
           );
         }}
       </AsyncView>
     </section>
+  );
+}
+
+/**
+ * Conseils au patient, signes qui doivent le faire revenir sans attendre et date de
+ * réévaluation ; « Imprimer pour le patient » imprime cette feuille seule (pictogrammes).
+ */
+function ConseilsPatient({ fiche, cas }) {
+  const c = conseilsPatient(fiche, cas);
+  const imprimer = () => {
+    document.body.classList.add('impression-conseils');
+    const fin = () => {
+      document.body.classList.remove('impression-conseils');
+      window.removeEventListener('afterprint', fin);
+    };
+    window.addEventListener('afterprint', fin);
+    window.print();
+  };
+  const contenu = (
+    <>
+      {c.conseils.length > 0 && (
+        <>
+          <h4>À faire</h4>
+          <ul className="diag-pictos">
+            {c.conseils.map(([picto, texte]) => (
+              <li key={texte}>
+                <span aria-hidden="true">{picto}</span> {texte}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      <h4>Revenir tout de suite si</h4>
+      <ul className="diag-pictos diag-pictos-danger">
+        {c.revenir.map(([picto, texte]) => (
+          <li key={texte}>
+            <span aria-hidden="true">{picto}</span> {texte}
+          </li>
+        ))}
+      </ul>
+      <p>
+        <b>Prochain rendez-vous :</b> {c.reevaluation}
+      </p>
+    </>
+  );
+  return (
+    <div className="diag-conseils">
+      <div className="diag-hyp-tete">
+        <h3>Conseils au patient et consignes de retour</h3>
+        <button type="button" className="btn btn-secondary btn-small" onClick={imprimer}>
+          Imprimer pour le patient
+        </button>
+      </div>
+      {contenu}
+      {createPortal(
+        <section className="diag-conseils-impression" aria-hidden="true">
+          <h2>Vos consignes</h2>
+          {contenu}
+        </section>,
+        document.body,
+      )}
+    </div>
   );
 }
 

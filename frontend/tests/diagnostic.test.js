@@ -436,3 +436,72 @@ describe('aide au diagnostic : épidémiologie en RDC', () => {
     expect(score({ ...cas, province: 'Kinshasa' })).toBeLessThan(score(cas));
   });
 });
+
+describe('aide au diagnostic : signes clés, exclusion, terrain requis, période', () => {
+  it('ajustent le classement à tableau égal', () => {
+    const fiche = (id, slug, extra) => ({
+      id,
+      slug,
+      nom: slug,
+      specialite: 'X',
+      validee: false,
+      public: { ages: null, sexe: null, obstetrique: false },
+      tests: {},
+      ...extra,
+    });
+    const d = {
+      symptomes: [
+        { id: 1, nom: 'Fièvre' },
+        { id: 2, nom: 'Céphalées' },
+        { id: 3, nom: 'Raideur de nuque' },
+        { id: 4, nom: 'Toux' },
+        { id: 5, nom: 'Asthénie' },
+      ],
+      examens: [],
+      pathologies: [
+        fiche(1, 'a', { cles: [1] }),
+        fiche(2, 'b', { exclusion: [3] }),
+        fiche(3, 'c', { requiert: { terrains: ['vih'], contextes: [] } }),
+      ],
+      liens: [1, 2, 3].flatMap((p) => [
+        [p, 1, 3],
+        [p, 2, 3],
+        [p, 4, 3],
+        [p, 5, 3],
+      ]),
+      syndromes: [],
+      terrains: [],
+      contextes: [],
+    };
+    const index = indexer(d);
+    const score = (cas, slug) => analyser(index, cas).hypotheses.find((h) => h.fiche.slug === slug)?.score;
+    const base = { age: 'adulte', signes: { 1: 'present', 2: 'present' } };
+    expect(score(base, 'a')).toBeGreaterThan(score(base, 'b'));
+    expect(score({ ...base, signes: { 1: 'absent', 2: 'present' } }, 'a')).toBeLessThan(
+      score(base, 'a') * 0.7,
+    );
+    const avecRaideur = analyser(index, { ...base, signes: { ...base.signes, 3: 'present' } });
+    const b = avecRaideur.hypotheses.find((h) => h.fiche.slug === 'b');
+    expect(b.discordants).toEqual([expect.objectContaining({ nom: 'Raideur de nuque', exclusion: true })]);
+    expect(score({ ...base, terrains: ['vih'] }, 'c')).toBeGreaterThan(score(base, 'c'));
+
+    // Accouchée récemment : la fiche de la grossesse en cours recule
+    const o = indexer({
+      ...d,
+      pathologies: [
+        fiche(4, 'avant', { periode: 'avant', public: { ages: null, sexe: 'F', obstetrique: true } }),
+        fiche(5, 'apres', { periode: 'apres', public: { ages: null, sexe: 'F', obstetrique: true } }),
+      ],
+      liens: [4, 5].flatMap((p) => [
+        [p, 1, 3],
+        [p, 2, 3],
+        [p, 4, 3],
+        [p, 5, 3],
+      ]),
+    });
+    const ordre = (periode) =>
+      analyser(o, { ...base, sexe: 'F', grossesse: true, periode }).hypotheses.map((h) => h.fiche.slug);
+    expect(ordre('post-partum')).toEqual(['apres', 'avant']);
+    expect(ordre('grossesse')).toEqual(['avant', 'apres']);
+  });
+});

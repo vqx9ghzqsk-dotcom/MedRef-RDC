@@ -77,6 +77,7 @@ const CAS_VIDE = {
   ageUnite: 'ans',
   sexe: '',
   grossesse: false,
+  periode: '',
   terme: '',
   poids: '',
   motif: null,
@@ -581,6 +582,24 @@ function EtapeMotif({ index, cas, maj, setCas, profil }) {
             Enceinte ou accouchée récemment
           </label>
           {cas.grossesse && (
+            <span className="chips" role="group" aria-label="Période">
+              {[
+                ['grossesse', 'Enceinte'],
+                ['post-partum', 'Accouchée (moins de 6 semaines)'],
+              ].map(([id, libelle]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className="chip chip-bouton"
+                  aria-pressed={cas.periode === id}
+                  onClick={() => maj('periode', cas.periode === id ? '' : id)}
+                >
+                  {libelle}
+                </button>
+              ))}
+            </span>
+          )}
+          {cas.grossesse && cas.periode !== 'post-partum' && (
             <label className="diag-petit-champ">
               Terme (SA)
               <input
@@ -1270,7 +1289,9 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
         <p className="diag-detail">
           <b>Contre :</b>{' '}
           {[
-            ...h.discordants.map((c) => `${c.nom} absent`),
+            ...h.discordants.map((c) =>
+              c.exclusion ? `${c.nom} présent (argument contre)` : `${c.nom} absent`,
+            ),
             ...h.tests.filter((t) => t.resultat === 'negatif').map((t) => `${t.nom} négatif`),
           ].join(', ')}
         </p>
@@ -1616,7 +1637,10 @@ function Observation({ cas, index, donnees, resultat }) {
               : TRANCHES_AGE.find((t) => t.id === cas.age)?.libelle,
             { M: 'masculin', F: 'féminin' }[cas.sexe],
             cas.poids && `${cas.poids} kg`,
-            cas.grossesse && `enceinte${cas.terme ? ` (${cas.terme} SA)` : ''}`,
+            cas.grossesse &&
+              (cas.periode === 'post-partum'
+                ? 'accouchée récemment'
+                : `enceinte${cas.terme ? ` (${cas.terme} SA)` : ''}`),
           ]
             .filter(Boolean)
             .join(', ') || '—'}

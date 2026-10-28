@@ -6,6 +6,7 @@ const { asyncHandler } = require('../utils/http');
 const { requireAuth } = require('../middleware/auth');
 const referentiel = require('../../db/seed-data/diagnostic');
 const epidemiologie = require('../../db/seed-data/epidemiologie');
+const { SIGNES_FICHES } = require('../../db/seed-data/signes-fiches');
 
 const router = express.Router();
 
@@ -89,6 +90,26 @@ router.get(
       ]);
     const idSymptome = new Map(symptomes.map((x) => [x.nom, x.id]));
     const ids = (noms) => noms.map((n) => idSymptome.get(n)).filter(Boolean);
+    // Signes discriminants (à valider) : les signes manquants complètent le tableau des fiches,
+    // la fréquence la plus haute l'emportant
+    const idFiche = new Map(pathologies.map((p) => [p.slug, p.id]));
+    const tableau = new Map(
+      liens.map((l) => [
+        `${l.pathologie_id}-${l.symptome_id}`,
+        [l.pathologie_id, l.symptome_id, FREQUENCES[l.frequence] ?? 2],
+      ]),
+    );
+    for (const [slug, s] of Object.entries(SIGNES_FICHES)) {
+      const p = idFiche.get(slug);
+      if (!p) continue;
+      for (const [nom, frequence] of s.ajouter || []) {
+        const sy = idSymptome.get(nom);
+        if (!sy) continue;
+        const cle = `${p}-${sy}`;
+        const f = FREQUENCES[frequence];
+        if (!tableau.has(cle) || tableau.get(cle)[2] < f) tableau.set(cle, [p, sy, f]);
+      }
+    }
     const signesDe = new Map();
     for (const l of syndromeSignes) {
       if (!signesDe.has(l.syndrome_id)) signesDe.set(l.syndrome_id, []);
@@ -113,15 +134,17 @@ router.get(
           urgence: urgentes.has(p.id),
           public: publicVise(p.nom, p.specialite),
           diagnostic: estDiagnostic(p.nom),
+          periode: periodeObstetricale(p.slug, p.specialite),
           tests: tests.get(p.id) || {},
           // Épidémiologie en RDC (à valider) : fréquence, saison, provinces de foyer
           frequence: epidemiologie.frequenceDe(p.slug),
           saison: epidemiologie.saisonDe(p.slug),
           foyers: epidemiologie.FOYERS[p.slug] || null,
+          ...discriminants(SIGNES_FICHES[p.slug], ids),
         })),
         symptomes,
         // [pathologie, symptôme, fréquence 0 à 3]
-        liens: liens.map((l) => [l.pathologie_id, l.symptome_id, FREQUENCES[l.frequence] ?? 2]),
+        liens: [...tableau.values()],
         examens: [...examensUtiles.values()].sort((a, b) => a.nom.localeCompare(b.nom, 'fr')),
         syndromes: syndromes
           .map((x) => {
@@ -156,6 +179,39 @@ router.get(
 );
 
 /**
+ * Moment de la grossesse où la fiche se pose : 'avant' (grossesse en cours, travail compris)
+ * ou 'apres' (accouchement récent) ; null si les deux ou hors grossesse.
+ */
+function periodeObstetricale(slug, specialite) {
+  if (
+    /post-partum|puerper|puerp|retention-placentaire|inversion-uterine|endometrite|dechirures-perineales|mastite|allaitement|infection-plaie-cesarienne|depression-du-post/.test(
+      slug,
+    ) ||
+    specialite === 'Post-partum'
+  ) {
+    return 'apres';
+  }
+  if (
+    /praevia|retroplacentaire|menace-accouchement|rupture-prematuree|troisieme-trimestre|premier-trimestre|avortement|mole-hydatiforme|hyperemesis|retard-croissance|oligoamnios|mort-foetale|macrosomie|beance|cholestase-gravidique|diabete-gestationnel|presentation|dystocie|travail-prolonge|procidence|souffrance-foetale|chorioamniotite|placenta-accreta|grossesse-abdominale|rupture-uterine/.test(
+      slug,
+    )
+  ) {
+    return 'avant';
+  }
+  return null;
+}
+
+/** Signes clés, d'exclusion et terrain requis d'une fiche, en identifiants (absents : rien). */
+function discriminants(s, ids) {
+  if (!s) return {};
+  const d = {};
+  if (s.cles?.length) d.cles = ids(s.cles);
+  if (s.exclusion?.length) d.exclusion = ids(s.exclusion);
+  if (s.requiert) d.requiert = { terrains: s.requiert.terrains || [], contextes: s.requiert.contextes || [] };
+  return d;
+}
+
+/**
  * Fiches de prise en charge ou de prévention (contraception, suivi, rééducation, dépistage…) :
  * elles ne sont pas des diagnostics et ne sont pas proposées comme hypothèses.
  */
@@ -168,3 +224,4 @@ function estDiagnostic(nom) {
 module.exports = router;
 module.exports.publicVise = publicVise;
 module.exports.estDiagnostic = estDiagnostic;
+module.exports.periodeObstetricale = periodeObstetricale;

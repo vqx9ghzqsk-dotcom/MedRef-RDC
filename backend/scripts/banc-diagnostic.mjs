@@ -5,6 +5,7 @@
  * 3 premiers, et écrit le rapport docs/banc-diagnostic.md.
  *   npm run diagnostic:banc
  */
+/* global console, process */
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -47,6 +48,7 @@ const resultats = CAS.map((c) => {
     ageUnite: c.ageUnite || 'ans',
     sexe: c.sexe || '',
     grossesse: Boolean(c.grossesse),
+    periode: c.periode || '',
     motif: c.motif ? idSigne(c.motif) : null,
     duree: c.duree || '',
     signes,
@@ -80,6 +82,7 @@ const lignes = [
 ];
 fs.writeFileSync(path.join(racine, 'docs/banc-diagnostic.md'), lignes.join('\n'));
 console.log(`${n} cas · 1re position : ${top1} (${pct(top1)}) · 3 premiers : ${top3} (${pct(top3)})`);
-for (const r of resultats.filter((x) => x.rang !== 1)) console.log(`  rang ${r.rang || '—'} · ${r.titre} → ${r.tete.join(' ; ')}`);
+for (const r of resultats.filter((x) => x.rang !== 1))
+  console.log(`  rang ${r.rang || '—'} · ${r.titre} → ${r.tete.join(' ; ')}`);
 await db.end?.();
 process.exit(0);

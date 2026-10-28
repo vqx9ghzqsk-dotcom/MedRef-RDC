@@ -531,6 +531,11 @@ export function analyser(index, cas) {
         discordants.push({ id: s, nom: symptomes.get(s).nom, frequence: f });
       }
     }
+    // Signes discriminants de la fiche (à valider) : clés, exclusion, terrain requis
+    for (const s of fiche.exclusion || []) {
+      if (presents.has(s) && symptomes.has(s))
+        discordants.push({ id: s, nom: symptomes.get(s).nom, exclusion: true });
+    }
     if (!concordants.length) continue;
     let score =
       0.7 * (explique / poidsCas) + 0.3 * (explique / (poidsFiche || 1)) - 0.5 * (contre / (poidsFiche || 1));
@@ -547,10 +552,28 @@ export function analyser(index, cas) {
     }
     const { bonus, raisons } = orientation(index, fiche, cas, lecture);
     score += bonus;
+    const cles = fiche.cles || [];
+    score += Math.min(0.08, 0.04 * cles.filter((s) => presents.has(s)).length);
+    if (cles.some((s) => absents.has(s))) score *= 0.6;
+    if (discordants.some((d) => d.exclusion)) score *= 0.7;
+    const requis = fiche.requiert;
+    if (
+      requis &&
+      !requis.terrains.some((t) => (cas.terrains || []).includes(t)) &&
+      !requis.contextes.some((c) => (cas.contextes || []).includes(c))
+    ) {
+      score *= 0.85;
+    }
     // À tableau égal, la fiche consacrée à l'âge du patient passe devant la fiche générale
     if (cas.age && fiche.public?.ages?.includes(cas.age)) score += 0.04;
     // Pendant la grossesse, la fiche obstétricale passe devant la fiche générale ou gynécologique
     if (cas.grossesse === true && fiche.public?.obstetrique) score += 0.06;
+    // Enceinte ou accouchée : les fiches de l'autre période reculent nettement
+    if (cas.grossesse === true && cas.periode && fiche.periode) {
+      const moment = cas.periode === 'post-partum' ? 'apres' : 'avant';
+      if (fiche.periode === moment) score += 0.04;
+      else score *= 0.5;
+    }
     const manquants = [...tableau]
       .filter(([s, f]) => f >= 2 && !presents.has(s) && !absents.has(s))
       .sort((a, b) => b[1] - a[1] || (rarete.get(b[0]) || 0) - (rarete.get(a[0]) || 0))

@@ -85,3 +85,33 @@ describe('aide au diagnostic : épidémiologie en RDC', () => {
     expect(epi.saisonDe('cholera-enfant')).toBe('pluies');
   });
 });
+
+describe('aide au diagnostic : signes discriminants des fiches', () => {
+  const data = require('../db/seed-data');
+  const { SIGNES_FICHES } = require('../db/seed-data/signes-fiches');
+  const { APPAREILS, TERRAINS, CONTEXTES } = require('../db/seed-data/diagnostic');
+  const { periodeObstetricale } = require('../src/routes/diagnostic');
+  const slugs = new Set([...data.pathologies, ...(data.ajouts.fiches || [])].map((p) => p.slug));
+  const signes = new Set(APPAREILS.flatMap((a) => a.symptomes));
+
+  it('fiches, signes, fréquences, terrains et contextes existent', () => {
+    const frequences = ['tres_frequent', 'frequent', 'occasionnel', 'rare'];
+    for (const [slug, s] of Object.entries(SIGNES_FICHES)) {
+      expect(slugs.has(slug)).toBe(true);
+      for (const [nom, f] of s.ajouter || []) {
+        expect(signes.has(nom)).toBe(true);
+        expect(frequences).toContain(f);
+      }
+      for (const nom of [...(s.cles || []), ...(s.exclusion || [])]) expect(signes.has(nom)).toBe(true);
+      for (const t of s.requiert?.terrains || []) expect(TERRAINS.some((x) => x.id === t)).toBe(true);
+      for (const c of s.requiert?.contextes || []) expect(CONTEXTES.some((x) => x.id === c)).toBe(true);
+    }
+  });
+
+  it('période obstétricale : avant ou après l’accouchement', () => {
+    expect(periodeObstetricale('hemorragie-post-partum', 'Urgences obstétricales')).toBe('apres');
+    expect(periodeObstetricale('mastite-abces-du-sein', 'Post-partum')).toBe('apres');
+    expect(periodeObstetricale('placenta-praevia', 'Pathologies obstétricales')).toBe('avant');
+    expect(periodeObstetricale('eclampsie', 'Pathologies obstétricales')).toBeNull();
+  });
+});

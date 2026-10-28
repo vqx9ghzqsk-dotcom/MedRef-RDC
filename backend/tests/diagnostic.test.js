@@ -181,3 +181,23 @@ describe('aide au diagnostic : codes CIM-10', () => {
     expect([...epi.TRES_FREQUENTES, ...epi.FREQUENTES].filter((s) => !CIM10[s])).toEqual([]);
   });
 });
+
+describe('aide au diagnostic : banc de validation', () => {
+  const data = require('../db/seed-data');
+  const { CAS_VALIDATION } = require('../db/seed-data/cas-validation');
+  const { CAS } = require('../db/seed-data/cas-cliniques');
+  const { APPAREILS } = require('../db/seed-data/diagnostic');
+  const slugs = new Set([...data.pathologies, ...(data.ajouts.fiches || [])].map((p) => p.slug));
+  const signes = new Set(APPAREILS.flatMap((a) => a.symptomes));
+
+  it('cas indépendants du banc de réglage, signes et fiches existants', () => {
+    const titres = new Set(CAS.map((c) => c.titre));
+    expect(CAS_VALIDATION.filter((c) => titres.has(c.titre))).toEqual([]);
+    for (const c of CAS_VALIDATION) {
+      for (const n of [c.motif, ...(c.presents || []), ...(c.absents || [])].filter(Boolean)) {
+        expect(signes.has(n)).toBe(true);
+      }
+      expect(c.attendu.some((s) => slugs.has(s))).toBe(true);
+    }
+  });
+});

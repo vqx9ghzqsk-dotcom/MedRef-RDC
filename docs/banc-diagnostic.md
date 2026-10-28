@@ -1,8 +1,56 @@
 # Banc de cas cliniques de l’aide au diagnostic
 
-Généré le 28/10/2026 par `npm run diagnostic:banc` (cas : backend/db/seed-data/cas-cliniques.js, à valider).
+Généré le 28/10/2026 par `npm run diagnostic:banc` (cas à valider).
 
-- **60 cas** · bon diagnostic **en 1re position : 57 (95 %)** · **dans les 3 premiers : 60 (100 %)**
+- **Banc de validation (cas indépendants, jamais utilisés pour régler le moteur)** : 40 cas · 1re position : 32 (80 %) · 3 premiers : 37 (93 %)
+- Banc de réglage (cas ayant servi à corriger les fiches, donc optimiste) : 60 cas · 1re position : 57 (95 %) · 3 premiers : 60 (100 %)
+
+## Validation (backend/db/seed-data/cas-validation.js)
+
+| Cas | Rang du bon diagnostic | 3 premières hypothèses |
+|---|---|---|
+| Nourrisson fébrile qui tousse et respire vite | 1 | Pneumonie de l'enfant ; Toux et difficultés respiratoires de l’enfant (PCIME) ; Staphylococcie pleuropulmonaire |
+| Enfant de 4 ans, diarrhée aqueuse et vomissements | 1 | Diarrhée aiguë et déshydratation de l'enfant ; Vomissements de l’enfant ; Choléra de l’enfant |
+| Enfant de 3 ans, selles glaireuses et sanglantes | 1 | Shigellose (dysenterie bacillaire) ; Dysenterie de l’enfant ; Amibiase intestinale |
+| Enfant de 2 ans, fièvre, éruption et yeux rouges | 1 | Rougeole ; Rubéole ; Impétigo |
+| Enfant de 18 mois, œdèmes des pieds et cheveux clairsemés | 1 | Malnutrition aiguë sévère ; Kwashiorkor ; Malnutrition de l’enfant infecté par le VIH |
+| Enfant de 5 ans, otalgie fébrile | 1 | Otite moyenne aiguë ; Mastoïdite ; Otite externe |
+| Enfant de 7 ans, mal de gorge fébrile | 1 | Angine et pharyngite de l’enfant ; Abcès péri-amygdalien ; Diphtérie |
+| Enfant de 2 ans, fièvre et convulsion brève, examen normal ensuite | 1 | Convulsions fébriles ; Encéphalites virales de l’enfant ; Épilepsie et VIH |
+| Nourrisson de 3 mois, toux quinteuse et vomissements | 1 | Coqueluche ; Asthme de l’enfant ; Arrêt cardiorespiratoire de l’enfant |
+| Enfant drépanocytaire, douleurs des membres | 2 | Infections de l’enfant drépanocytaire ; Crise vaso-occlusive de l’enfant drépanocytaire ; Drépanocytose |
+| Nouveau-né de 5 jours, jaune | 1 | Ictère néonatal ; Prématurité ; Polyglobulie néonatale |
+| Nouveau-né de 8 jours, ombilic rouge et fièvre | 1 | Omphalite ; Tétanos néonatal ; Paludisme grave de l’enfant |
+| Enfant de 9 ans, prurit nocturne familial | 1 | Gale ; Gale de l’enfant ; Molluscum contagiosum |
+| Adulte, toux productive et douleur thoracique fébriles | 1 | Pneumonie communautaire de l’adulte ; Syndrome thoracique aigu drépanocytaire ; Abcès pulmonaire |
+| Femme, brûlures mictionnelles sans fièvre | 1 | Infections urinaires de l’adulte (cystite, pyélonéphrite) ; Infections urinaires récidivantes de la femme ; Infections sexuellement transmissibles (approche syndromique) |
+| Femme, leucorrhées malodorantes et prurit | 1 | Infections génitales basses (vaginoses, candidoses, trichomonase) ; Cervicites ; Fistules obstétricales vésico-vaginales et recto-vaginales |
+| Adulte, fièvre prolongée, douleurs abdominales et constipation | 1 | Fièvre typhoïde ; Maladie à virus Ebola ; Grippe |
+| Adulte, diarrhée aqueuse profuse en contexte d’épidémie | 1 | Choléra ; Maladie à virus Ebola ; Malnutrition aiguë sévère |
+| Adulte VIH, dysphagie douloureuse | 3 | Corps étrangers ORL ; Abcès péri-amygdalien ; Candidose oropharyngée et œsophagienne |
+| Adulte, vésicules en bande douloureuses sur le thorax | 1 | Zona ; Herpès cutanéo-muqueux ; Mpox (variole simienne) |
+| Homme, ulcération génitale indolore | 1 | Syphilis ; Herpès cutanéo-muqueux ; Mpox (variole simienne) |
+| Adulte, jambe rouge chaude et fièvre | absent | Abcès et phlegmons des parties molles ; Pyomyosite tropicale ; Infection du site opératoire |
+| Adulte, ictère fébrile après quelques jours de malaise | 1 | Hépatites virales aiguës (A et E) ; Déficit en G6PD ; Angiocholite |
+| Adulte, polyurie, soif et amaigrissement | 2 | Diabète de type 1 de l’adulte ; Diabète de type 2 ; État hyperosmolaire hyperglycémique |
+| Hypertendu, céphalées et vision trouble | 4 | Troubles de la réfraction ; Hypertension intracrânienne ; Rétinopathies diabétique et hypertensive |
+| Adulte, crise de dyspnée sifflante | 1 | Asthme ; Asthme aigu grave ; Bronchopneumopathie chronique obstructive |
+| Adulte, brûlure épigastrique chronique | 1 | Dyspepsie et gastrite ; Reflux gastro-œsophagien ; Perforation d’ulcère gastroduodénal |
+| Adulte, douleur de la fosse iliaque droite et fièvre | 1 | Appendicite aiguë ; Hépatites virales aiguës (A et E) ; Infection à Helicobacter pylori |
+| Adulte, arrêt des matières et ventre distendu | 1 | Occlusion intestinale aiguë ; Volvulus du sigmoïde ; Péritonite aiguë généralisée |
+| Homme âgé, difficulté à uriner | 1 | Rétention aiguë d’urine ; Rétrécissement urétral ; Hypertrophie bénigne de la prostate |
+| Adulte, humeur triste et perte d’intérêt depuis 2 mois | 1 | Dépression ; Troubles psychiques des maladies chroniques ; Deuil compliqué |
+| Adulte, crise convulsive généralisée chez un épileptique connu | 1 | Épilepsie ; État de mal épileptique ; Première crise convulsive de l’adulte (démarche) |
+| Adulte, morsure de serpent avec saignement des gencives | 2 | Gingivites et parodontites ; Envenimations par morsure de serpent ; Thrombose veineuse profonde |
+| Adulte, gros genou chaud et très douloureux nocturne | 1 | Goutte ; Arthrite septique ; Polyarthrite rhumatoïde |
+| Enceinte de 34 SA, céphalées et œdèmes avec hypertension | 1 | Pré-éclampsie sévère ; Éclampsie ; Hypertension gravidique |
+| Enceinte de 30 SA, saignement indolore rouge vif | 1 | Placenta prævia ; Môle hydatiforme ; Saignements du premier trimestre (démarche) |
+| Enceinte de 10 SA, vomissements incoercibles | 1 | Hyperemesis gravidarum ; Hépatite E et grossesse ; Sténose du pylore de l’adulte |
+| Accouchée de 5 jours, sein rouge douloureux et fièvre | 2 | Difficultés de l’allaitement ; Mastite et abcès du sein ; Mastodynies |
+| Femme, ménorragies et masse pelvienne | 1 | Fibromes utérins ; Sarcomes utérins ; Ménométrorragies |
+| Enceinte de 33 SA, contractions régulières | 4 | Dystocie et disproportion fœto-pelvienne ; Souffrance fœtale aiguë ; Travail prolongé et partogramme |
+
+## Réglage (backend/db/seed-data/cas-cliniques.js)
 
 | Cas | Rang du bon diagnostic | 3 premières hypothèses |
 |---|---|---|

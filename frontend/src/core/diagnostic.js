@@ -744,6 +744,58 @@ export const CAUSES_ECHEC = [
   'Autre diagnostic ou maladie associée (VIH, tuberculose, drépanocytose, malnutrition)',
 ];
 
+const ABREGES_CONSTANTES = {
+  temperature: 'T°',
+  fc: 'FC',
+  fr: 'FR',
+  tas: 'PAS',
+  tad: 'PAD',
+  spo2: 'SpO2',
+  glycemie: 'Glycémie',
+  glasgow: 'Glasgow',
+  taille: 'Taille',
+  pb: 'PB',
+};
+
+/**
+ * Résumé anonyme d'un cas pour demander l'avis d'un collègue (message, SMS) : tranche d'âge,
+ * sexe, grossesse, motif, durée, signes, constantes, résultats, hypothèses. Jamais les notes
+ * libres (elles pourraient contenir un nom) ni l'âge exact.
+ */
+export function resumeAnonyme(cas, index, resultat) {
+  const nom = (id) => index.symptomes.get(Number(id))?.nom;
+  const tranche = TRANCHES_AGE.find((t) => t.id === cas.age)?.libelle;
+  const signes = (etat) =>
+    Object.entries(cas.signes || {})
+      .filter(([, e]) => e === etat)
+      .map(([id]) => nom(id))
+      .filter(Boolean);
+  const constantes = Object.entries(cas.constantes || {})
+    .filter(([, v]) => v !== '' && v !== null && v !== undefined)
+    .map(([k, v]) => `${ABREGES_CONSTANTES[k] || k} ${v}`);
+  const lignes = [
+    'Avis demandé (cas anonyme, MedRef RDC)',
+    [
+      tranche,
+      { M: 'homme', F: 'femme' }[cas.sexe],
+      cas.grossesse === true && (cas.periode === 'post-partum' ? 'accouchée récemment' : 'enceinte'),
+    ]
+      .filter(Boolean)
+      .join(', '),
+    cas.motif &&
+      `Motif : ${nom(cas.motif)}${cas.duree ? ` (${DUREES.find((d) => d.id === cas.duree)?.libelle.toLowerCase()})` : ''}`,
+    signes('present').length > 0 && `Signes : ${signes('present').join(', ')}`,
+    signes('absent').length > 0 && `Absents : ${signes('absent').join(', ')}`,
+    constantes.length > 0 && `Constantes : ${constantes.join(' ; ')}`,
+    resultat.hypotheses.length > 0 &&
+      `Hypothèses : ${resultat.hypotheses
+        .slice(0, 3)
+        .map((h, i) => `${i + 1}. ${h.fiche.nom}`)
+        .join(' ; ')}`,
+  ];
+  return lignes.filter(Boolean).join('\n');
+}
+
 /**
  * Degré de certitude de la synthèse, pour ne pas laisser croire à une conclusion quand les
  * données manquent : nombre de signes notés, avance de la 1re hypothèse sur la 2e, examen de

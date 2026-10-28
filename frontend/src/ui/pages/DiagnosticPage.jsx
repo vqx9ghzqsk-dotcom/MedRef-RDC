@@ -22,6 +22,7 @@ import {
   motifsFrequents,
   NORMES,
   pertinenceSignes,
+  resumeAnonyme,
   posologiePour,
   profilDuPatient,
   sansAccents,
@@ -2258,6 +2259,34 @@ function DetailMolecule({ slug, pathologie, contexte, cas, donnees, calcul, elim
 
 /* ---------- Observation imprimable ---------- */
 
+/** Partage le résumé anonyme (feuille de partage du téléphone, sinon copie dans le presse-papiers). */
+function PartagerCas({ texte }) {
+  const [etat, setEtat] = useState(null);
+  const partager = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Avis demandé', text: texte });
+        setEtat('partage');
+      } else {
+        await navigator.clipboard.writeText(texte);
+        setEtat('copie');
+      }
+    } catch {
+      setEtat(null);
+    }
+  };
+  return (
+    <button
+      type="button"
+      className="btn btn-ghost btn-small"
+      title="Résumé sans nom, sans âge exact ni notes libres, pour demander l’avis d’un collègue"
+      onClick={partager}
+    >
+      {etat === 'copie' ? 'Résumé copié' : 'Partager (anonyme)'}
+    </button>
+  );
+}
+
 /** Télécharge l'observation au format FHIR R4 (fichier JSON, sans identité). */
 function telechargerFHIR(cas, index, resultat) {
   const paquet = exporterFHIR(cas, index, resultat);
@@ -2304,6 +2333,7 @@ function Observation({ cas, index, donnees, resultat }) {
           >
             Exporter (FHIR)
           </button>
+          <PartagerCas texte={resumeAnonyme(cas, index, resultat)} />
         </span>
       </div>
       <dl className="diag-obs">

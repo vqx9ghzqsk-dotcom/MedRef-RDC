@@ -867,3 +867,29 @@ describe('aide au diagnostic : export FHIR', () => {
     expect(JSON.stringify(paquet)).not.toMatch(/"name"|birthDate/);
   });
 });
+
+describe('aide au diagnostic : partage anonyme', () => {
+  it('résumé sans notes libres ni âge exact', async () => {
+    const { resumeAnonyme } = await import('../src/core/diagnostic.js');
+    const texte = resumeAnonyme(
+      {
+        age: 'petit',
+        ageValeur: '3',
+        ageUnite: 'ans',
+        sexe: 'M',
+        motif: 2,
+        signes: { 1: 'present', 4: 'absent' },
+        constantes: { temperature: '39' },
+        histoire: 'Enfant de Jean Kabila, quartier Matonge',
+      },
+      indexer(donnees),
+      { hypotheses: [{ fiche: { nom: 'Paludisme grave' } }] },
+    );
+    expect(texte).toMatch(/Motif : Convulsions/);
+    expect(texte).toMatch(/Constantes : T° 39/);
+    expect(texte).toMatch(/Signes : Fièvre/);
+    expect(texte).toMatch(/Absents : Raideur de nuque/);
+    expect(texte).toMatch(/1\. Paludisme grave/);
+    expect(texte).not.toMatch(/Jean|Matonge|3 ans/);
+  });
+});

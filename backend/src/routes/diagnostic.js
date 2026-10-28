@@ -8,6 +8,7 @@ const referentiel = require('../../db/seed-data/diagnostic');
 const epidemiologie = require('../../db/seed-data/epidemiologie');
 const { SIGNES_FICHES } = require('../../db/seed-data/signes-fiches');
 const { PERFORMANCES } = require('../../db/seed-data/performances-examens');
+const essentiels = require('../../db/seed-data/medicaments-essentiels');
 
 const router = express.Router();
 
@@ -182,7 +183,12 @@ router.get(
             };
           })
           .filter((x) => x.symptomes.length >= 2),
-        molecules,
+        // Liste nationale des médicaments essentiels (2020) et groupe AWaRe des antibiotiques (à valider)
+        molecules: molecules.map((m) => ({
+          ...m,
+          lnme: essentiels.LNME.includes(m.slug),
+          aware: essentiels.awareDe(m.slug),
+        })),
         appareils: referentiel.APPAREILS.map((a) => ({ id: a.id, nom: a.nom, symptomes: ids(a.symptomes) })),
         physiques: ids(referentiel.PHYSIQUES),
         terrains: referentiel.TERRAINS,

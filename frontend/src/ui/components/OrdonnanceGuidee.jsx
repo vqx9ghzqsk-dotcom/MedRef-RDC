@@ -34,6 +34,7 @@ import {
  */
 
 const CLE_BROUILLON = 'medref.ordonnance.brouillon';
+export const CLE_PLAN_DIAGNOSTIC = 'medref.ordonnance.depuisDiagnostic';
 
 const patientVide = () => ({
   code: '',
@@ -829,6 +830,39 @@ export function OrdonnanceGuidee({ onCreate }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, slugsMol]);
+
+  // Plan préparé dans l'aide au diagnostic (molécules cochées, patient) : gardé sur l'appareil,
+  // jamais dans l'adresse ; repris une seule fois
+  useEffect(() => {
+    let plan = null;
+    try {
+      plan = JSON.parse(sessionStorage.getItem(CLE_PLAN_DIAGNOSTIC) || 'null');
+      sessionStorage.removeItem(CLE_PLAN_DIAGNOSTIC);
+    } catch {
+      plan = null;
+    }
+    if (!plan) return;
+    setB((x) => ({
+      ...x,
+      patient: { ...x.patient, ...plan.patient },
+      traitements: [
+        ...x.traitements,
+        ...plan.molecules
+          .filter((m) => !x.traitements.some((t) => t.slug === m.slug))
+          .map((m) => ({
+            cle: nouvelleCle(),
+            slug: m.slug,
+            dci: m.dci,
+            ligne: m.ligne || null,
+            contexte: m.contexte || null,
+            diagnostic: plan.diagnostic || null,
+            posologie: null,
+            presentation: null,
+            duree: null,
+          })),
+      ],
+    }));
+  }, []);
 
   // Pré-remplissage depuis une fiche (?pathologie=slug)
   const depuis = params.get('pathologie');

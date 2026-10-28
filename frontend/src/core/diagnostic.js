@@ -435,6 +435,39 @@ export function rapportsDeVraisemblance(performance) {
   return { positif: se / Math.max(1 - sp, 0.005), negatif: Math.max(1 - se, 0.005) / sp };
 }
 
+/**
+ * Clairance de la créatinine (mL/min) : Cockcroft-Gault chez l'adulte (âge, poids, sexe,
+ * créatinine en µmol/L), Schwartz chez l'enfant (taille en cm, k = 36,5). Null si incalculable.
+ */
+export function clairanceCreatinine(cas) {
+  const creat = nombre(cas.biologie?.creatinine);
+  if (!creat) return null;
+  const mois = ageEnMois(cas);
+  const ans = mois !== null && mois !== undefined ? mois / 12 : null;
+  const poids = nombre(cas.poids);
+  const taille = nombre(cas.constantes?.taille);
+  if (ans !== null && ans < 18) {
+    return taille ? { valeur: Math.round((36.5 * taille) / creat), methode: 'Schwartz' } : null;
+  }
+  const age = ans ?? { adulte: 40, age: 70 }[cas.age];
+  if (!age || !poids || !cas.sexe) return null;
+  const k = cas.sexe === 'F' ? 1.04 : 1.23;
+  return { valeur: Math.round(((140 - age) * poids * k) / creat), methode: 'Cockcroft-Gault' };
+}
+
+/**
+ * Fonctions d'élimination du patient pour adapter les doses : insuffisance rénale (terrain ou
+ * clairance < 60 mL/min) et hépatique (terrain hépatopathie ou bilirubine > 50 µmol/L).
+ */
+export function fonctionsElimination(cas) {
+  const clairance = clairanceCreatinine(cas);
+  const renale = (cas.terrains || []).includes('insuffisance-renale') || (clairance && clairance.valeur < 60);
+  const bili = nombre(cas.biologie?.bilirubine);
+  const hepatique =
+    (cas.terrains || []).includes('hepatopathie') || (bili !== null && bili !== undefined && bili > 50);
+  return { clairance, renale: Boolean(renale), hepatique: Boolean(hepatique) };
+}
+
 /** Bonus de probabilité de départ selon la fréquence de la maladie en RDC. */
 export const PRIOR_FREQUENCE = { tres_frequente: 0.06, frequente: 0.03, peu_frequente: 0, rare: -0.05 };
 
@@ -1010,6 +1043,7 @@ export const BIOLOGIE = [
   ['plaquettes', 'Plaquettes', 'G/L'],
   ['crp', 'CRP', 'mg/L'],
   ['creatinine', 'Créatinine', 'µmol/L'],
+  ['bilirubine', 'Bilirubine totale', 'µmol/L'],
   ['sodium', 'Sodium', 'mmol/L'],
   ['potassium', 'Potassium', 'mmol/L'],
   ['lactates', 'Lactates', 'mmol/L'],
@@ -1069,6 +1103,15 @@ export function lireBiologie(bio = {}, age = '', mois = null) {
       if (v.creatinine > 3 * seuil)
         alertes.push(`Créatinine ${v.creatinine} µmol/L : insuffisance rénale sévère`);
     } else noter('creatinine', 'normale');
+  }
+  // Nouveau-né : seuils selon l'âge en heures (ictère néonatal), hors de cette lecture simple
+  const neonatal = mois !== null && mois !== undefined ? mois < 1 : age === 'nn';
+  if (v.bilirubine !== null && v.bilirubine !== undefined && !neonatal) {
+    if (v.bilirubine > 50) {
+      noter('bilirubine', 'ictère, atteinte hépatique ou hémolyse', v.bilirubine > 200);
+      orientations.push('hepat|cirrho|palud|leptospir|hemoly|drepano|cholest|angiochol|fievre jaune');
+    } else if (v.bilirubine > 20) noter('bilirubine', 'légèrement élevée');
+    else noter('bilirubine', 'normale');
   }
   if (v.sodium !== null && v.sodium !== undefined) {
     if (v.sodium < 125) {

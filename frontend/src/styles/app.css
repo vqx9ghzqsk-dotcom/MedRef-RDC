@@ -4022,3 +4022,34 @@ p.diag-triage-priorite {
 .diag-score-form {
   margin-top: 0.75rem;
 }
+
+/* Plan de traitement : LNME, AWaRe, bon usage des antibiotiques */
+.diag-aware-acces {
+  background: color-mix(in srgb, #2e8b57 20%, transparent);
+}
+.diag-aware-surveillance {
+  background: color-mix(in srgb, #e0a100 24%, transparent);
+}
+.diag-aware-reserve {
+  background: color-mix(in srgb, var(--urgence) 22%, transparent);
+}
+.diag-bon-usage {
+  border-left: 4px solid #2e8b57;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 0.75rem;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, #2e8b57 8%, transparent);
+}
+.diag-bon-usage ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+}
+.diag-retenir {
+  display: inline-flex;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+}
+.diag-retenir input {
+  width: 1.15rem;
+  height: 1.15rem;
+}

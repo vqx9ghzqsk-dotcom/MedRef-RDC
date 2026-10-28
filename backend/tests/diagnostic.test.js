@@ -131,3 +131,20 @@ describe('aide au diagnostic : performances des examens', () => {
     }
   });
 });
+
+describe('aide au diagnostic : médicaments essentiels et AWaRe', () => {
+  const data = require('../db/seed-data');
+  const ess = require('../db/seed-data/medicaments-essentiels');
+  const texte = JSON.stringify([data.molecules, data.ajouts, data.posologiesAjoutees]);
+
+  it('groupes AWaRe valides, LNME sans doublon, priorité à la LNME pour le groupe', () => {
+    for (const g of [...Object.values(ess.AWARE_LNME), ...Object.values(ess.AWARE_OMS)]) {
+      expect(['acces', 'surveillance', 'reserve']).toContain(g);
+    }
+    expect(new Set(ess.LNME).size).toBe(ess.LNME.length);
+    expect(ess.awareDe('amoxicilline')).toEqual({ groupe: 'acces', source: 'LNME 2020' });
+    expect(ess.awareDe('levofloxacine')).toEqual({ groupe: 'surveillance', source: 'OMS AWaRe 2023' });
+    expect(ess.awareDe('paracetamol')).toBeNull();
+    expect(texte.includes('"amoxicilline"')).toBe(true);
+  });
+});

@@ -711,3 +711,42 @@ describe('aide au diagnostic : scores guidés', () => {
     expect(r.scores.some((s) => s.nom.startsWith('Blantyre') && s.valeur === '2')).toBe(true);
   });
 });
+
+describe('aide au diagnostic : fonctions rénale et hépatique', () => {
+  it('clairance de Cockcroft-Gault ou de Schwartz, insuffisance rénale et hépatique', async () => {
+    const { clairanceCreatinine, fonctionsElimination } = await import('../src/core/diagnostic.js');
+    // (140 − 60) × 70 × 1,23 / 200 = 34
+    expect(
+      clairanceCreatinine({
+        ageValeur: '60',
+        ageUnite: 'ans',
+        sexe: 'M',
+        poids: '70',
+        biologie: { creatinine: '200' },
+      }),
+    ).toEqual({ valeur: 34, methode: 'Cockcroft-Gault' });
+    // Enfant : 36,5 × 110 / 50 = 80
+    expect(
+      clairanceCreatinine({
+        ageValeur: '6',
+        ageUnite: 'ans',
+        constantes: { taille: '110' },
+        biologie: { creatinine: '50' },
+      }),
+    ).toEqual({ valeur: 80, methode: 'Schwartz' });
+    expect(
+      clairanceCreatinine({ ageValeur: '60', ageUnite: 'ans', biologie: { creatinine: '200' } }),
+    ).toBeNull();
+    const f = fonctionsElimination({
+      ageValeur: '60',
+      ageUnite: 'ans',
+      sexe: 'M',
+      poids: '70',
+      biologie: { creatinine: '200', bilirubine: '80' },
+      terrains: [],
+    });
+    expect(f).toMatchObject({ renale: true, hepatique: true });
+    expect(fonctionsElimination({ terrains: ['insuffisance-renale'] }).renale).toBe(true);
+    expect(fonctionsElimination({ terrains: [] })).toMatchObject({ renale: false, hepatique: false });
+  });
+});

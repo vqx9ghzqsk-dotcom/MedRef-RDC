@@ -1784,6 +1784,32 @@ describe('Ordonnance guidée (lot C)', () => {
       /24 h \(Au moins, puis relais oral\)/,
     );
   });
+
+  it('reprend le plan préparé dans l’aide au diagnostic : patient et molécules cochées', async () => {
+    try {
+      globalThis.localStorage?.removeItem('medref.ordonnance.brouillon');
+    } catch {
+      /* rien */
+    }
+    sessionStorage.setItem(
+      'medref.ordonnance.depuisDiagnostic',
+      JSON.stringify({
+        diagnostic: 'Paludisme grave',
+        molecules: [{ slug: 'artesunate', dci: 'Artésunate', ligne: 'premiere' }],
+        patient: { age: { valeur: '4', unite: 'ans' }, poids: '15', insuffisance_renale: false },
+      }),
+    );
+    renderApp('/prescriptions?pathologie=paludisme-grave', {
+      pathologies: vi.fn(async () => [
+        { nom: 'Paludisme grave', slug: 'paludisme-grave', statut: 'a_valider' },
+      ]),
+      molecules: vi.fn(async () => [{ dci: 'Artésunate', slug: 'artesunate', classe: 'Antipaludiques' }]),
+      molecule: vi.fn(async () => artesunate),
+    });
+    expect(await screen.findByText(/3 mg\/kg × 15 kg = 45 mg par prise/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Poids/)).toHaveValue('15');
+    expect(sessionStorage.getItem('medref.ordonnance.depuisDiagnostic')).toBeNull();
+  });
 });
 
 describe('Accueil personnalisé (lot D)', () => {
@@ -1997,7 +2023,7 @@ describe('Aide au diagnostic', () => {
     ],
     syndromes: [],
     molecules: [
-      { id: 3, dci: 'Artésunate', slug: 'artesunate', classe_id: 1, classe: 'Antipaludiques' },
+      { id: 3, dci: 'Artésunate', slug: 'artesunate', classe_id: 1, classe: 'Antipaludiques', lnme: true },
       { id: 9, dci: 'Amoxicilline', slug: 'amoxicilline', classe_id: 2, classe: 'Pénicillines' },
     ],
     appareils: [
@@ -2130,9 +2156,17 @@ describe('Aide au diagnostic', () => {
     const traitement = await screen.findByRole('region', { name: /Paludisme grave : traitement/ });
     expect(await within(traitement).findByText('120 mg par prise')).toBeInTheDocument();
     expect(within(traitement).getByText('À votre niveau : Centre de santé')).toBeInTheDocument();
-    expect(within(traitement).getByRole('link', { name: 'Préparer l’ordonnance' })).toHaveAttribute(
-      'href',
-      '/prescriptions?pathologie=paludisme-grave',
-    );
+    // Plan de traitement : 1re ligne cochée, LNME signalée ; le plan part vers l'ordonnance sans passer par l'adresse
+    expect(within(traitement).getByText('LNME')).toBeInTheDocument();
+    expect(within(traitement).getByRole('checkbox', { name: 'Prescrire Artésunate' })).toBeChecked();
+    // L'ordonnance reprend le plan aussitôt (et l'efface) : on lit ce qui a été écrit
+    const ecrit = vi.spyOn(Storage.prototype, 'setItem');
+    await user.click(within(traitement).getByRole('button', { name: 'Préparer l’ordonnance (1 molécule)' }));
+    const appel = ecrit.mock.calls.find(([cle]) => cle === 'medref.ordonnance.depuisDiagnostic');
+    ecrit.mockRestore();
+    const plan = JSON.parse(appel[1]);
+    expect(plan.diagnostic).toBe('Paludisme grave');
+    expect(plan.molecules.map((m) => m.slug)).toEqual(['artesunate']);
+    expect(plan.patient.poids).toBe('50');
   });
 });

@@ -1,10 +1,11 @@
 import { useEffect, useId, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useServices } from '../context/services.jsx';
 import { useAuth } from '../context/auth.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView } from '../components/Status.jsx';
 import { LienProduit, PhotoProduit } from '../components/Produits.jsx';
+import { CLE_PLAN_DIAGNOSTIC } from '../components/OrdonnanceGuidee.jsx';
 import {
   ageEnMois,
   analyser,
@@ -12,6 +13,7 @@ import {
   DUREES,
   effetsIndesirablesPossibles,
   examensUtiles,
+  fonctionsElimination,
   indexer,
   LIBELLES_FREQUENCE,
   LIBELLES_FREQUENCE_RDC,
@@ -1479,9 +1481,40 @@ function Hypothese({ h, rang, choisie, onChoisir }) {
 
 /* ---------- Traitement de l'hypothèse choisie ---------- */
 
+const RANG_LIGNE = { premiere: 0, deuxieme: 1, alternative: 2, adjuvant: 3 };
+const AWARE = {
+  acces: ['Accès', 'diag-aware-acces'],
+  surveillance: ['Surveillance', 'diag-aware-surveillance'],
+  reserve: ['Réserve', 'diag-aware-reserve'],
+};
+
+/** Patient transmis à l'ordonnance (sans identité) : âge, sexe, poids, taille, grossesse, reins, foie. */
+function patientPourOrdonnance(cas, donnees, elimination) {
+  const dci = (ids) =>
+    ids
+      .map((id) => donnees.molecules.find((m) => m.id === id)?.dci)
+      .filter(Boolean)
+      .join(', ');
+  return {
+    ...(cas.ageValeur ? { age: { valeur: cas.ageValeur, unite: cas.ageUnite } } : {}),
+    ...(cas.sexe ? { sexe: cas.sexe } : {}),
+    ...(cas.poids ? { poids: cas.poids } : {}),
+    ...(cas.constantes?.taille ? { taille: cas.constantes.taille } : {}),
+    grossesse: cas.grossesse === true && cas.periode !== 'post-partum',
+    insuffisance_renale: elimination.renale,
+    insuffisance_hepatique: elimination.hepatique,
+    ...(cas.allergies.length ? { allergies: dci(cas.allergies) } : {}),
+    ...(cas.traitements.length ? { traitements_en_cours: dci(cas.traitements) } : {}),
+  };
+}
+
 function Traitement({ fiche, cas, donnees, niveau, onReference }) {
   const { api } = useServices();
+  const navigate = useNavigate();
   const state = useAsync(() => api.pathologie(fiche.slug), [api, fiche.slug]);
+  const [retenues, setRetenues] = useState(null);
+  const elimination = fonctionsElimination(cas);
+  const infoMolecule = (m) => donnees.molecules.find((x) => x.slug === m.slug) || {};
   return (
     <section className="card diag-traitement" aria-labelledby="diag-trait-titre">
       <h2 id="diag-trait-titre">{fiche.nom} : traitement</h2>
@@ -1490,7 +1523,42 @@ function Traitement({ fiche, cas, donnees, niveau, onReference }) {
           const examens = (p.onglets?.diagnostic?.examens || []).filter((e) =>
             ['confirmation', 'gravite', 'premiere_intention'].includes(e.categorie),
           );
-          const molecules = p.onglets?.therapeutique?.molecules || [];
+          // Ligne de traitement d'abord, puis les molécules de la Liste nationale (LNME)
+          const molecules = [...(p.onglets?.therapeutique?.molecules || [])].sort(
+            (a, b) =>
+              (RANG_LIGNE[a.ligne] ?? 4) - (RANG_LIGNE[b.ligne] ?? 4) ||
+              Number(Boolean(infoMolecule(b).lnme)) - Number(Boolean(infoMolecule(a).lnme)),
+          );
+          // Cochées par défaut : 1re ligne sans allergie déclarée
+          const coches =
+            retenues ??
+            new Set(
+              molecules
+                .filter((m) => m.ligne === 'premiere' && !allergie(m, cas, donnees))
+                .map((m) => m.slug),
+            );
+          const basculer = (slug) => {
+            const suite = new Set(coches);
+            if (suite.has(slug)) suite.delete(slug);
+            else suite.add(slug);
+            setRetenues(suite);
+          };
+          const antibiotiques = molecules.filter((m) => infoMolecule(m).aware);
+          const preparer = () => {
+            const plan = {
+              diagnostic: p.nom,
+              molecules: molecules
+                .filter((m) => coches.has(m.slug))
+                .map((m) => ({ slug: m.slug, dci: m.dci, ligne: m.ligne, contexte: m.contexte })),
+              patient: patientPourOrdonnance(cas, donnees, elimination),
+            };
+            try {
+              sessionStorage.setItem(CLE_PLAN_DIAGNOSTIC, JSON.stringify(plan));
+            } catch {
+              // stockage indisponible : l'ordonnance reprend seulement le diagnostic
+            }
+            navigate(`/prescriptions?pathologie=${encodeURIComponent(p.slug)}`);
+          };
           return (
             <>
               {p.urgences?.length > 0 && (
@@ -1525,19 +1593,54 @@ function Traitement({ fiche, cas, donnees, niveau, onReference }) {
                 donnees={donnees}
                 onReference={onReference}
               />
-              <h3>Molécules</h3>
+              <h3>Plan de traitement</h3>
+              {(elimination.renale || elimination.hepatique) && (
+                <p className="diag-securite">
+                  {elimination.renale &&
+                    `Insuffisance rénale${elimination.clairance ? ` (clairance ${elimination.clairance.valeur} mL/min, ${elimination.clairance.methode})` : ''} : adapter les doses et éviter les néphrotoxiques. `}
+                  {elimination.hepatique &&
+                    'Atteinte hépatique : prudence avec les médicaments à élimination hépatique.'}
+                </p>
+              )}
+              {antibiotiques.length > 0 && (
+                <div className="diag-bon-usage">
+                  <b>Bon usage des antibiotiques</b>
+                  <ul>
+                    <li>
+                      Prélèvements utiles avant la première dose quand c’est possible (hémocultures, ECBU,
+                      pus).
+                    </li>
+                    <li>
+                      Préférer le groupe Accès ; Surveillance si nécessaire ; Réserve sur avis spécialisé.
+                    </li>
+                    <li>
+                      Réévaluer à 48-72 h : désescalade selon les résultats, relais oral dès que possible.
+                    </li>
+                    <li>Durée la plus courte efficace, fixée dès la prescription.</li>
+                  </ul>
+                </div>
+              )}
               <ul className="diag-molecules">
                 {molecules.map((m) => (
-                  <Molecule key={m.id} m={m} pathologie={p.nom} cas={cas} donnees={donnees} />
+                  <Molecule
+                    key={m.id}
+                    m={m}
+                    pathologie={p.nom}
+                    cas={cas}
+                    donnees={donnees}
+                    info={infoMolecule(m)}
+                    elimination={elimination}
+                    retenue={coches.has(m.slug)}
+                    onRetenir={() => basculer(m.slug)}
+                  />
                 ))}
               </ul>
               <div className="diag-actions">
-                <Link
-                  to={`/prescriptions?pathologie=${encodeURIComponent(p.slug)}`}
-                  className="btn btn-primary"
-                >
-                  Préparer l’ordonnance
-                </Link>
+                <button type="button" className="btn btn-primary" onClick={preparer}>
+                  {coches.size
+                    ? `Préparer l’ordonnance (${coches.size} molécule${coches.size > 1 ? 's' : ''})`
+                    : 'Préparer l’ordonnance'}
+                </button>
                 <Link to={`/pathologies/${p.slug}?onglet=therapeutique`} className="btn btn-secondary">
                   Fiche complète
                 </Link>
@@ -1668,7 +1771,7 @@ function allergie(m, cas, donnees) {
   return declarees.find((a) => a.id === m.id || (a.classe_id && fiche?.classe_id === a.classe_id));
 }
 
-function Molecule({ m, pathologie, cas, donnees }) {
+function Molecule({ m, pathologie, cas, donnees, info = {}, elimination = {}, retenue, onRetenir }) {
   // Chez l'enfant, les présentations pédiatriques d'abord ; puis les produits en photo
   const enfant = ['nn', 'petit', 'grand'].includes(cas.age);
   const rang = (pr) => (enfant && pr.pediatrique ? 2 : 0) + (pr.photo_url ? 1 : 0);
@@ -1678,10 +1781,29 @@ function Molecule({ m, pathologie, cas, donnees }) {
   return (
     <li className={`diag-molecule${principal ? ' diag-molecule-principale' : ''}`}>
       <p>
+        {onRetenir && (
+          <label className="diag-retenir">
+            <input type="checkbox" checked={Boolean(retenue)} onChange={onRetenir} />
+            <span className="visually-hidden">Prescrire {m.dci}</span>
+          </label>
+        )}
         <span className="tag">{LIGNES[m.ligne] || m.ligne}</span>{' '}
         <Link to={`/molecules/${m.slug}`}>
           <b>{m.dci}</b>
         </Link>
+        {info.lnme && (
+          <span className="tag tag-ok" title="Liste nationale des médicaments essentiels (2020)">
+            LNME
+          </span>
+        )}
+        {info.aware && (
+          <span
+            className={`tag ${AWARE[info.aware.groupe][1]}`}
+            title={`Groupe AWaRe (${info.aware.source})`}
+          >
+            {AWARE[info.aware.groupe][0]}
+          </span>
+        )}
         {m.contexte ? ` · ${m.contexte}` : ''}
       </p>
       {allergique && (
@@ -1691,7 +1813,11 @@ function Molecule({ m, pathologie, cas, donnees }) {
           Choisir une alternative.
         </p>
       )}
-      {(principal || cas.grossesse || cas.traitements.length > 0) && (
+      {(principal ||
+        cas.grossesse ||
+        cas.traitements.length > 0 ||
+        elimination.renale ||
+        elimination.hepatique) && (
         <DetailMolecule
           slug={m.slug}
           pathologie={pathologie}
@@ -1699,6 +1825,7 @@ function Molecule({ m, pathologie, cas, donnees }) {
           cas={cas}
           donnees={donnees}
           calcul={principal}
+          elimination={elimination}
         />
       )}
       {produits.length > 0 && (
@@ -1719,7 +1846,7 @@ function Molecule({ m, pathologie, cas, donnees }) {
 }
 
 /** Dose au poids, grossesse et interactions avec les traitements en cours (fiche molécule). */
-function DetailMolecule({ slug, pathologie, contexte, cas, donnees, calcul }) {
+function DetailMolecule({ slug, pathologie, contexte, cas, donnees, calcul, elimination = {} }) {
   const { api } = useServices();
   const state = useAsync(() => api.molecule(slug), [api, slug]);
   if (!state.data) return null;
@@ -1727,6 +1854,11 @@ function DetailMolecule({ slug, pathologie, contexte, cas, donnees, calcul }) {
   const poso = calcul ? posologiePour(mol.posologies, pathologie, cas.age, contexte) : null;
   const dose = poso && cas.poids ? calculerDose(poso, cas.poids) : null;
   const texteInteractions = sansAccents(mol.interactions);
+  // Adaptation à la fonction rénale ou hépatique : la fiche de la molécule en parle-t-elle ?
+  const risque = sansAccents(`${mol.contre_indications || ''} ${mol.precautions || ''}`);
+  const adapterRein = elimination.renale && /renal|renale|clairance|dfg|creatinin/.test(risque);
+  const adapterFoie = elimination.hepatique && /hepati/.test(risque);
+  const duree = poso?.duree || poso?.durees?.find((d) => d.defaut)?.contexte || null;
   const interactions = cas.traitements
     .map((id) => donnees.molecules.find((x) => x.id === id))
     .filter((t) => t && t.slug !== slug && texteInteractions.includes(sansAccents(t.dci).split(' ')[0]));
@@ -1748,9 +1880,16 @@ function DetailMolecule({ slug, pathologie, contexte, cas, donnees, calcul }) {
           )}
           {poso.voie ? ` · ${poso.voie}` : ''}
           {poso.frequence ? ` · ${poso.frequence}` : ''}
+          {duree ? ` · durée : ${duree}` : ''}
           {poso.remarque ? <span className="muted"> · {poso.remarque}</span> : null}
         </p>
       )}
+      {adapterRein && (
+        <p className="diag-securite">
+          Insuffisance rénale : la fiche prévoit une adaptation ou une précaution.
+        </p>
+      )}
+      {adapterFoie && <p className="diag-securite">Atteinte hépatique : voir les précautions de la fiche.</p>}
       {cas.grossesse && mol.grossesse_allaitement && (
         <p className="diag-securite">Grossesse : {mol.grossesse_allaitement}</p>
       )}

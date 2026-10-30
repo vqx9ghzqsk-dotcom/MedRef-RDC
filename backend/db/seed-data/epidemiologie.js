@@ -56,6 +56,7 @@ const TRES_FREQUENTES = [
 ];
 
 const FREQUENTES = [
+  'uretrites-et-gonococcie-de-l-homme',
   // Infections
   'paludisme-congenital',
   'rougeole',
@@ -232,6 +233,9 @@ const FREQUENTES = [
 ];
 
 const RARES = [
+  'maladie-a-virus-marburg',
+  'charbon-anthrax',
+  'borrelioses-recurrentes',
   'maladie-a-virus-ebola',
   'peste',
   'rage',

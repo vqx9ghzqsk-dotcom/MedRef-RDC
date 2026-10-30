@@ -6,6 +6,17 @@
  */
 
 const CIM10 = {
+  // Lot 77 (phase 3)
+  'uretrites-et-gonococcie-de-l-homme': 'A54.0',
+  'hepatite-d-delta': 'B18.0',
+  'charbon-anthrax': 'A22.9',
+  brucellose: 'A23.9',
+  dengue: 'A97.9',
+  chikungunya: 'A92.0',
+  'maladie-a-virus-marburg': 'A98.3',
+  rickettsioses: 'A79.9',
+  'borrelioses-recurrentes': 'A68.9',
+  histoplasmoses: 'B39.9',
   // Paludisme
   'paludisme-simple': 'B54',
   'paludisme-simple-enfant': 'B54',

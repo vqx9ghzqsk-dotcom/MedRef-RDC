@@ -1504,6 +1504,69 @@ const examens = [
       'Cartographie artérielle et veineuse du bras avant la création d’une fistule artério-veineuse (diamètres, perméabilité) ; surveillance de la fistule (débit, sténose, thrombose) ; thrombose veineuse du membre supérieur.',
     valeurs_normales: '- Artères et veines perméables, sans sténose ni thrombose',
   },
+  // --- Lot 77 (phase 3)
+  {
+    slug: 'prelevement-uretral',
+    nom: 'Prélèvement urétral (frottis, Gram, culture, TAAN gonocoque et chlamydia)',
+    type: 'biologie',
+    description:
+      'Écoulement ou écouvillon urétral (ou premier jet d’urine pour le TAAN) : diplocoques Gram négatif intracellulaires, culture avec antibiogramme, amplification génique de N. gonorrhoeae et C. trachomatis.',
+    valeurs_normales:
+      '- Absence de diplocoques intracellulaires ; TAAN négatif\n- Culture utile pour la résistance du gonocoque',
+  },
+  {
+    slug: 'serologie-vhd',
+    nom: 'Sérologie et ARN du virus de l’hépatite D (delta)',
+    type: 'biologie',
+    description: 'Anticorps anti-VHD chez tout porteur de l’AgHBs, puis ARN du VHD (PCR) si positifs.',
+    valeurs_normales: '- Anti-VHD négatifs\n- ARN VHD indétectable',
+  },
+  {
+    slug: 'serologie-brucellose',
+    nom: 'Sérologie de la brucellose (Rose Bengale, séro-agglutination)',
+    type: 'biologie',
+    description:
+      'Dépistage au Rose Bengale, confirmé par séro-agglutination de Wright ; hémocultures prolongées.',
+    valeurs_normales: '- Rose Bengale négatif\n- Wright < 1/160',
+  },
+  {
+    slug: 'tdr-dengue',
+    nom: 'TDR dengue (antigène NS1 et IgM/IgG)',
+    type: 'biologie',
+    description: 'NS1 positif les 5 premiers jours de fièvre ; IgM à partir du 5e jour.',
+    valeurs_normales: '- NS1, IgM et IgG négatifs\n- Un test négatif précoce n’élimine pas la dengue',
+  },
+  {
+    slug: 'serologie-arbovirus',
+    nom: 'RT-PCR et sérologie des arbovirus (dengue, chikungunya, Zika)',
+    type: 'biologie',
+    description:
+      'RT-PCR pendant la première semaine de fièvre, IgM ensuite ; laboratoire de référence (INRB).',
+    valeurs_normales: '- Négatives',
+  },
+  {
+    slug: 'pcr-marburg',
+    nom: 'RT-PCR virus Marburg',
+    type: 'biologie',
+    description:
+      'Sang total prélevé avec équipement de protection, triple emballage, laboratoire de référence (INRB) ; notification immédiate.',
+    valeurs_normales: '- Négative',
+  },
+  {
+    slug: 'serologie-rickettsies',
+    nom: 'Sérologie des rickettsioses (immunofluorescence) et PCR sur escarre',
+    type: 'biologie',
+    description:
+      'Séroconversion sur deux prélèvements à 2-3 semaines d’intervalle ; PCR sur biopsie ou écouvillon d’escarre d’inoculation.',
+    valeurs_normales: '- Négatives',
+  },
+  {
+    slug: 'antigene-histoplasma',
+    nom: 'Antigène urinaire et sérique d’Histoplasma',
+    type: 'biologie',
+    description: 'Très sensible dans les formes disséminées du VIH avancé (OMS 2020).',
+    valeurs_normales: '- Négatif',
+  },
 ];
 
 const symptomes = [

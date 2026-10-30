@@ -162,6 +162,8 @@ const LOTS = [
   'lot-75-neurogeriatrie',
   'lot-76-neuropsychiatrie-sommeil',
   'lot-76-myopathies',
+  'lot-77-infectiologie-a',
+  'lot-77-infectiologie-b',
 ];
 
 const fiches = LOTS.flatMap((lot) => require(`./${lot}`));

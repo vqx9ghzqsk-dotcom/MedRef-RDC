@@ -1,6 +1,6 @@
 # Banc de cas cliniques de l’aide au diagnostic
 
-Généré le 28/10/2026 par `npm run diagnostic:banc` (cas à valider).
+Généré le 29/10/2026 par `npm run diagnostic:banc` (cas à valider).
 
 - **Banc de validation (cas indépendants, jamais utilisés pour régler le moteur)** : 40 cas · 1re position : 32 (80 %) · 3 premiers : 38 (95 %)
 - Banc de réglage (cas ayant servi à corriger les fiches, donc optimiste) : 60 cas · 1re position : 57 (95 %) · 3 premiers : 60 (100 %)
@@ -23,15 +23,15 @@ Généré le 28/10/2026 par `npm run diagnostic:banc` (cas à valider).
 | Nouveau-né de 8 jours, ombilic rouge et fièvre | 1 | Omphalite ; Tétanos néonatal ; Paludisme grave de l’enfant |
 | Enfant de 9 ans, prurit nocturne familial | 1 | Gale ; Gale de l’enfant ; Molluscum contagiosum |
 | Adulte, toux productive et douleur thoracique fébriles | 1 | Pneumonie communautaire de l’adulte ; Syndrome thoracique aigu drépanocytaire ; Abcès pulmonaire |
-| Femme, brûlures mictionnelles sans fièvre | 1 | Infections urinaires de l’adulte (cystite, pyélonéphrite) ; Infections urinaires récidivantes de la femme ; Infections sexuellement transmissibles (approche syndromique) |
+| Femme, brûlures mictionnelles sans fièvre | 1 | Infections urinaires de l’adulte (cystite, pyélonéphrite) ; Infections urinaires récidivantes de la femme ; Urétrites et gonococcie de l’homme |
 | Femme, leucorrhées malodorantes et prurit | 1 | Infections génitales basses (vaginoses, candidoses, trichomonase) ; Cervicites ; Fistules obstétricales vésico-vaginales et recto-vaginales |
 | Adulte, fièvre prolongée, douleurs abdominales et constipation | 1 | Fièvre typhoïde ; Maladie à virus Ebola ; Grippe |
-| Adulte, diarrhée aqueuse profuse en contexte d’épidémie | 1 | Choléra ; Maladie à virus Ebola ; Malnutrition aiguë sévère |
+| Adulte, diarrhée aqueuse profuse en contexte d’épidémie | 1 | Choléra ; Maladie à virus Ebola ; Maladie à virus Marburg |
 | Adulte VIH, dysphagie douloureuse | 3 | Corps étrangers ORL ; Abcès péri-amygdalien ; Candidose oropharyngée et œsophagienne |
 | Adulte, vésicules en bande douloureuses sur le thorax | 1 | Zona ; Herpès cutanéo-muqueux ; Mpox (variole simienne) |
 | Homme, ulcération génitale indolore | 1 | Syphilis ; Herpès cutanéo-muqueux ; Mpox (variole simienne) |
 | Adulte, jambe rouge chaude et fièvre | absent | Abcès et phlegmons des parties molles ; Pyomyosite tropicale ; Infection du site opératoire |
-| Adulte, ictère fébrile après quelques jours de malaise | 1 | Hépatites virales aiguës (A et E) ; Déficit en G6PD ; Angiocholite |
+| Adulte, ictère fébrile après quelques jours de malaise | 1 | Hépatites virales aiguës (A et E) ; Déficit en G6PD ; Hépatite D (delta) |
 | Adulte, polyurie, soif et amaigrissement | 2 | Diabète de type 1 de l’adulte ; Diabète de type 2 ; État hyperosmolaire hyperglycémique |
 | Hypertendu, céphalées et vision trouble | 3 | Hypertension intracrânienne ; Rétinopathies diabétique et hypertensive ; Urgences hypertensives |
 | Adulte, crise de dyspnée sifflante | 1 | Asthme ; Asthme aigu grave ; Bronchopneumopathie chronique obstructive |
@@ -82,11 +82,11 @@ Généré le 28/10/2026 par `npm run diagnostic:banc` (cas à valider).
 | Pneumonie de l’adulte | 1 | Pneumonie communautaire de l’adulte ; Syndrome thoracique aigu drépanocytaire ; Tuberculose pulmonaire |
 | Diarrhée aqueuse profuse en zone de choléra | 1 | Choléra ; Malnutrition aiguë sévère ; Maladie à virus Ebola |
 | Fièvre prolongée en plateau avec troubles digestifs | 1 | Fièvre typhoïde ; Maladie à virus Ebola ; Grippe |
-| Fièvre hémorragique en zone d’Ebola | 1 | Maladie à virus Ebola ; Leucémies aiguës de l’adulte ; Paludisme simple |
+| Fièvre hémorragique en zone d’Ebola | 1 | Maladie à virus Ebola ; Maladie à virus Marburg ; Paludisme simple |
 | Éruption vésiculeuse fébrile, contact mpox | 1 | Mpox (variole simienne) ; Herpès cutanéo-muqueux ; Zona |
 | Morsure de chien puis hydrophobie | 1 | Rage ; Sevrage alcoolique et delirium tremens ; Usage de substances chez l’adolescent |
 | Trismus après une plaie souillée | 1 | Tétanos ; Abcès péri-amygdalien ; Cellulite cervico-faciale |
-| Écoulement urétral purulent | 1 | Infections sexuellement transmissibles de l’adolescent ; Infections sexuellement transmissibles (approche syndromique) ; Rétrécissement urétral |
+| Écoulement urétral purulent | 1 | Urétrites et gonococcie de l’homme ; Infections sexuellement transmissibles de l’adolescent ; Infections sexuellement transmissibles (approche syndromique) |
 | Ulcération génitale indolore | 1 | Syphilis ; Herpès cutanéo-muqueux ; Mpox (variole simienne) |
 | Somnolence diurne en zone de trypanosomiase | 1 | Trypanosomiase humaine africaine (maladie du sommeil) ; Trypanosomiase en phase neurologique ; Traumatismes liés aux conflits armés |
 | Plaie chronique indolore en zone rurale | 1 | Ulcère de Buruli ; Escarres ; Ulcères chroniques de jambe |

@@ -321,7 +321,11 @@ const CAS = [
     motif: 'Écoulement urétral',
     presents: ['Brûlures mictionnelles', 'Dysurie'],
     contextes: ['rapports-risque'],
-    attendu: ['ist-adolescent'],
+    attendu: [
+      'uretrites-et-gonococcie-de-l-homme',
+      'ist-adolescent',
+      'infections-sexuellement-transmissibles',
+    ],
   }, // pas de fiche « urétrite de l'adulte » : lacune à combler
   {
     titre: 'Ulcération génitale indolore',

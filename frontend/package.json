@@ -7,6 +7,8 @@
   "author": "Dr Ben Mingalu <bmingalu@gmail.com>",
   "scripts": {
     "dev": "vite",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",

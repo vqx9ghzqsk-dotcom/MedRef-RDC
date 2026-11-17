@@ -4,7 +4,7 @@ import { useServices } from '../context/services.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
-import { FREQUENCES, groupByInitial } from '../../core/labels.js';
+import { groupByInitial } from '../../core/labels.js';
 
 const normalize = (s) =>
   s
@@ -81,12 +81,7 @@ export function SymptomePage() {
               {s.pathologies.map((p) => (
                 <li key={p.id}>
                   <Link to={`/pathologies/${p.slug}`}>
-                    <span className="patho-name">
-                      {p.nom} <span className={`tag freq-${p.frequence}`}>{FREQUENCES[p.frequence]}</span>
-                    </span>
-                    <span className="patho-resume">
-                      {p.departement}, {p.specialite}
-                    </span>
+                    <span className="patho-name">{p.nom}</span>
                   </Link>
                 </li>
               ))}

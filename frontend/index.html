@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="MedRef RDC — bibliothèque médicale de référence adaptée à la République démocratique du Congo, par le Dr Ben Mingalu." />
-    <meta name="theme-color" content="#12323d" />
+    <meta name="description" content="MedRef RDC - bibliothèque médicale de référence adaptée à la RDC" />
+    <meta name="theme-color" content="#f5f6ff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MedRef RDC" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
@@ -14,5 +17,14 @@
     <div id="root"></div>
     <noscript>MedRef RDC nécessite JavaScript.</noscript>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((reg) => console.log('Service Worker enregistré', reg))
+            .catch((err) => console.log('Erreur d\'enregistrement', err));
+        });
+      }
+    </script>
   </body>
 </html>

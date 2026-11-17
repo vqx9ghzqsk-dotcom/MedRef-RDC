@@ -5,15 +5,11 @@ import { useAuth } from '../context/auth.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { SearchBar } from '../components/SearchBar.jsx';
 import { AsyncView } from '../components/Status.jsx';
-import { QUICK_ACCESS } from '../components/Layout.jsx';
-import { PROFILS, VERIFICATIONS } from '../../core/labels.js';
-import { PROFILS_PRESCRIPTEURS } from '../../core/prescription.js';
-import { dateLocale } from '../../core/dates.js';
+import { IconeAcces, QUICK_ACCESS } from '../components/Layout.jsx';
+import { ORGANISATION_DOCUMENT } from '../../core/organisationDocument.js';
 
 const plural = (n, one, many) => `${n} ${n > 1 ? many : one}`;
 const nombre = (n) => Number(n || 0).toLocaleString('fr-FR');
-const court = (t, n) => (t && t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t);
-const date = (d) => (d ? dateLocale(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '');
 
 /** Charge une donnée facultative de l'accueil : un bloc absent ne bloque jamais la page. */
 function useFacultatif(charger, deps) {
@@ -32,175 +28,38 @@ function useFacultatif(charger, deps) {
   return valeur;
 }
 
-function PourVous({ moi, derniere }) {
-  if (!moi && !derniere) return null;
-  const elements = [];
-  if (moi) {
-    const prescripteur = PROFILS_PRESCRIPTEURS.includes(moi.profil);
-    if (!moi.profil) {
-      elements.push(
-        <li key="profil">
-          Indiquez votre profil professionnel dans <Link to="/compte">Mon compte</Link> pour un accueil
-          adapté.
-        </li>,
-      );
-    } else if (prescripteur && moi.verification !== 'verifie') {
-      elements.push(
-        <li key="verif">
-          {PROFILS[moi.profil]} — {VERIFICATIONS[moi.verification] || 'Non vérifié'} :{' '}
-          <Link to="/compte">faites vérifier votre numéro d’ordre</Link> pour imprimer des ordonnances à
-          en-tête.
-        </li>,
-      );
-    }
-    if (moi.fiches_a_valider) {
-      elements.push(
-        <li key="valider">
-          <Link to="/admin">{plural(moi.fiches_a_valider, 'fiche à valider', 'fiches à valider')}</Link>
-        </li>,
-      );
-    }
-    if (moi.fiches_a_revoir) {
-      elements.push(
-        <li key="revoir">
-          <Link to="/admin">{plural(moi.fiches_a_revoir, 'fiche à revoir', 'fiches à revoir')}</Link>{' '}
-          (révision dépassée)
-        </li>,
-      );
-    }
-    if (moi.actualites_a_publier) {
-      elements.push(
-        <li key="actu">
-          <Link to="/admin">
-            {plural(moi.actualites_a_publier, 'actualité en brouillon', 'actualités en brouillon')}
-          </Link>
-        </li>,
-      );
-    }
-    if (moi.comptes_a_verifier) {
-      elements.push(
-        <li key="comptes">
-          <Link to="/admin">{plural(moi.comptes_a_verifier, 'compte à vérifier', 'comptes à vérifier')}</Link>
-        </li>,
-      );
-    }
-  }
-  if (moi && PROFILS_PRESCRIPTEURS.concat('pharmacien').includes(moi.profil)) {
-    elements.push(
-      <li key="avis">
-        <Link to="/avis">Mes avis et avis à examiner</Link> sur les produits et les traitements
-      </li>,
-    );
-  }
-  if (derniere) {
-    elements.push(
-      <li key="rx">
-        Dernière prescription :{' '}
-        <Link to={`/prescriptions/${derniere.id}`}>{derniere.patient_label || 'patient non précisé'}</Link>
-        <span className="muted"> · {date(derniere.updated_at)}</span>
-      </li>,
-    );
-  }
-  if (!elements.length) return null;
-  return (
-    <section aria-labelledby="moi-title" className="section card">
-      <h2 id="moi-title" className="section-title">
-        Pour vous
-      </h2>
-      <ul className="moi-liste">{elements}</ul>
-    </section>
-  );
-}
+function RepereCatalogue({ accueil }) {
+  const totaux = accueil?.totaux || {};
+  const reperes = [
+    { valeur: totaux.fiches, libelle: 'Fiches cliniques' },
+    { valeur: totaux.produits, libelle: 'Produits au catalogue' },
+    { valeur: totaux.molecules, libelle: 'Molécules référencées' },
+  ].filter((repere) => repere.valeur !== null && repere.valeur !== undefined);
 
-function Nouveautes({ accueil }) {
-  const {
-    produits = [],
-    fiches_validees: validees = [],
-    fiches_mises_a_jour: majs = [],
-    totaux = {},
-  } = accueil;
+  if (!reperes.length) return null;
+
   return (
-    <section aria-labelledby="nouv-title" className="section">
-      <h2 id="nouv-title" className="section-title">
-        Nouveautés
+    <section className="section" aria-labelledby="reperes-title">
+      <h2 id="reperes-title" className="section-title">
+        Dans votre bibliothèque
       </h2>
-      <div className="nouv-grid">
-        <div className="card">
-          <h3>Traitements et recommandations</h3>
-          {validees.length ? (
-            <ul className="nouv-liste">
-              {validees.map((f) => (
-                <li key={f.slug}>
-                  <Link to={`/pathologies/${f.slug}`}>{f.nom}</Link>
-                  <span className="row-sub">
-                    Validée le {date(f.valide_le)}
-                    {f.valide_par && ` par ${f.valide_par}`}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="muted">
-              Aucune fiche encore validée : {nombre(totaux.fiches)} fiches en relecture médicale.
-            </p>
-          )}
-          {majs.length > 0 && (
-            <>
-              <h4>Mises à jour récentes</h4>
-              <ul className="nouv-liste">
-                {majs.slice(0, 5).map((f) => (
-                  <li key={f.slug}>
-                    <Link to={`/pathologies/${f.slug}`}>{f.nom}</Link>
-                    <span className="row-sub">
-                      {date(f.updated_at)}
-                      {f.statut !== 'valide' && ' · à valider'}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-        <div className="card">
-          <h3>Produits ajoutés au catalogue</h3>
-          {produits.length ? (
-            <ul className="nouv-liste">
-              {produits.slice(0, 8).map((p) => (
-                <li key={p.id}>
-                  <Link to={`/medicaments/${p.id}`}>{p.nom_commercial}</Link>
-                  <span className="row-sub">
-                    {[court(p.dci, 80), p.operateur].filter(Boolean).join(' · ')}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="muted">Aucun produit récent.</p>
-          )}
-          <p className="hint">
-            {nombre(totaux.produits)} produits consultables, {nombre(totaux.amm)} AMM ACOREP au répertoire,{' '}
-            {nombre(totaux.molecules)} molécules.
-          </p>
-        </div>
-      </div>
+      <ul className="repere-grid">
+        {reperes.map((repere) => (
+          <li className="repere-card" key={repere.libelle}>
+            <span className="repere-value">{nombre(repere.valeur)}</span>
+            <span className="repere-label">{repere.libelle}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
 
 export function HomePage() {
-  const { api, repo } = useServices();
+  const { api } = useServices();
   const { user } = useAuth();
   const departements = useAsync(() => api.departements(), [api]);
   const accueil = useFacultatif(() => (typeof api.accueil === 'function' ? api.accueil() : null), [api]);
-  const moi = useFacultatif(
-    () => (user && typeof api.accueilPourMoi === 'function' ? api.accueilPourMoi() : null),
-    [api, user?.id],
-  );
-  const derniere = useFacultatif(
-    async () =>
-      repo && typeof repo.list === 'function' ? (await repo.list(user ? user.id : null))[0] : null,
-    [repo, user?.id],
-  );
 
   // Mon espace est réservé aux comptes connectés
   if (!user) return <Navigate to="/connexion" state={{ from: '/espace' }} replace />;
@@ -209,17 +68,64 @@ export function HomePage() {
   return (
     <>
       <section className="hero" aria-labelledby="hero-title">
-        <p className="hero-espace">Mon espace · {user.nom}</p>
+        <p className="hero-espace">Bienvenue dans votre espace</p>
         <h1 id="hero-title">
-          MedRef RDC
-          <span className="hero-byline">par le Dr Ben Mingalu</span>
+          Bonjour, {user.nom}
+          <span className="hero-byline">MedRef RDC</span>
         </h1>
+        <p className="hero-author">par le Dr Ben Mingalu</p>
         <p className="hero-lead">
-          La référence clinique pensée pour la République démocratique du Congo : pathologies, urgences,
-          médicaments disponibles localement et protocoles nationaux, reliés entre eux.
+          <strong>De quoi avez-vous besoin aujourd’hui ?</strong>
+          <br />
+          Pathologies, urgences, médicaments et protocoles pensés pour la pratique en RDC.
         </p>
         <SearchBar size="large" />
       </section>
+
+      <section aria-labelledby="dep-title" className="section">
+        <h2 id="dep-title" className="section-title">
+          Explorer par département
+        </h2>
+        <AsyncView state={departements}>
+          {(deps) => {
+            const parSlug = new Map(deps.map((item) => [item.slug, item]));
+            const presents = ORGANISATION_DOCUMENT.map((organisation) => ({
+              organisation,
+              departement: parSlug.get(organisation.slug),
+            })).filter((item) => item.departement);
+            const supplementaires = deps
+              .filter(
+                (item) => !ORGANISATION_DOCUMENT.some((organisation) => organisation.slug === item.slug),
+              )
+              .map((departement) => ({ organisation: departement, departement }));
+            return (
+              <ul className="dep-grid">
+                {[...presents, ...supplementaires].map(({ organisation, departement }) => (
+                  <li key={departement.id}>
+                    <Link to={`/departements/${departement.slug}`} className="dep-card">
+                      <span className="dep-icon" aria-hidden="true">
+                        {organisation.icone || departement.icone}
+                      </span>
+                      <span className="dep-name">{organisation.nom}</span>
+                      <span className="dep-desc">{departement.description}</span>
+                      <span className="dep-count">
+                        {plural(
+                          organisation.sections?.length ?? Number(departement.nb_specialites),
+                          'spécialité',
+                          'spécialités',
+                        )}
+                        , {plural(Number(departement.nb_pathologies), 'fiche', 'fiches')}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            );
+          }}
+        </AsyncView>
+      </section>
+
+      <RepereCatalogue accueil={accueil} />
 
       <section aria-labelledby="acces-title" className="section">
         <h2 id="acces-title" className="section-title">
@@ -229,43 +135,15 @@ export function HomePage() {
           {QUICK_ACCESS.map((q) => (
             <li key={q.to}>
               <Link to={q.to} className={`quick-tile${q.tone ? ` quick-${q.tone}` : ''}`}>
+                <span className="quick-icon">
+                  <IconeAcces to={q.to} />
+                </span>
                 <span className="quick-label">{q.label}</span>
                 <span className="quick-hint">{q.hint}</span>
               </Link>
             </li>
           ))}
         </ul>
-      </section>
-
-      <PourVous moi={moi} derniere={derniere} />
-
-      {accueil && <Nouveautes accueil={accueil} />}
-
-      <section aria-labelledby="dep-title" className="section">
-        <h2 id="dep-title" className="section-title">
-          Départements
-        </h2>
-        <AsyncView state={departements}>
-          {(deps) => (
-            <ul className="dep-grid">
-              {deps.map((d) => (
-                <li key={d.id}>
-                  <Link to={`/departements/${d.slug}`} className="dep-card">
-                    <span className="dep-icon" aria-hidden="true">
-                      {d.icone}
-                    </span>
-                    <span className="dep-name">{d.nom}</span>
-                    <span className="dep-desc">{d.description}</span>
-                    <span className="dep-count">
-                      {plural(Number(d.nb_specialites), 'spécialité', 'spécialités')},{' '}
-                      {plural(Number(d.nb_pathologies), 'fiche', 'fiches')}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </AsyncView>
       </section>
     </>
   );

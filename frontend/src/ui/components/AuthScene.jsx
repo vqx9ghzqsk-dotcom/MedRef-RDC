@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Foret } from './ForetFond.jsx';
+import { LogoMedRef } from './LogoMedRef.jsx';
 import '../../styles/auth-scene.css';
 
 /**
@@ -52,15 +53,7 @@ export function AuthScene({ children }) {
       <Foret className="auth-fond" />
       <header className="auth-haut">
         <Link to="/" className="auth-brand" aria-label="MedRef RDC, retour à l’accueil">
-          <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="#2563eb" />
-            <path d="M13 7h6v6h6v6h-6v6h-6v-6H7v-6h6z" fill="#fff" />
-            <path
-              d="M24.5 4.5l1 2.2 2.4.2-1.8 1.6.6 2.3-2.2-1.2-2.1 1.2.5-2.3-1.8-1.6 2.4-.2z"
-              fill="#f7d618"
-            />
-          </svg>
-          <span>MedRef RDC</span>
+          <LogoMedRef />
         </Link>
         <Link to="/" className="auth-retour">
           Accueil

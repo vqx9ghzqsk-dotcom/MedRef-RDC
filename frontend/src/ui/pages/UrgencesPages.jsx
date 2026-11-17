@@ -101,11 +101,8 @@ export function UrgencePage() {
               <ul className="patho-list">
                 {u.pathologies.map((p) => (
                   <li key={p.id}>
-                    <Link to={`/pathologies/${p.slug}`}>
-                      <span className="patho-name">{p.nom}</span>
-                      <span className="patho-resume">
-                        {p.departement}, {p.specialite}
-                      </span>
+                    <Link to={`/pathologies/${p.slug}`} className="patho-name">
+                      {p.nom}
                     </Link>
                   </li>
                 ))}

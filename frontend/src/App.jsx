@@ -9,7 +9,12 @@ import {
   RegisterPage,
   ReinitialiserMotDePassePage,
 } from './ui/pages/AuthPages.jsx';
-import { DepartementPage, SpecialitePage } from './ui/pages/CataloguePages.jsx';
+import {
+  DepartementPage,
+  OrganisationGroupePage,
+  OrganisationSectionPage,
+  SpecialitePage,
+} from './ui/pages/CataloguePages.jsx';
 import { PathologiePage } from './ui/pages/PathologiePage.jsx';
 import { UrgencePage, UrgencesPage } from './ui/pages/UrgencesPages.jsx';
 import { SymptomePage, SymptomesPage } from './ui/pages/SymptomesPages.jsx';
@@ -62,6 +67,11 @@ export function AppRoutes() {
         <Route path="mot-de-passe-oublie" element={<MotDePasseOubliePage />} />
         <Route path="reinitialiser-mot-de-passe" element={<ReinitialiserMotDePassePage />} />
         <Route path="departements/:slug" element={<DepartementPage />} />
+        <Route
+          path="organisation/:departementSlug/:sectionSlug/:groupSlug"
+          element={<OrganisationGroupePage />}
+        />
+        <Route path="organisation/:departementSlug/:sectionSlug" element={<OrganisationSectionPage />} />
         <Route path="specialites/:slug" element={<SpecialitePage />} />
         <Route path="pathologies/:slug" element={<PathologiePage />} />
         <Route path="urgences" element={<UrgencesPage />} />

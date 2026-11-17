@@ -212,10 +212,6 @@ export function SyndromePage() {
                     <Link to={`/pathologies/${p.slug}?onglet=diagnostic`} className="patho-name">
                       {p.nom}
                     </Link>
-                    <span className="row-sub">{p.specialite}</span>
-                    <p className="patho-resume">
-                      Forme{p.formes.length > 1 ? 's' : ''} : {p.formes.join(' ; ')}
-                    </p>
                   </li>
                 ))}
               </ul>

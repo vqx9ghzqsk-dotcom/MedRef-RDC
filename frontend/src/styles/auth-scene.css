@@ -1,19 +1,15 @@
-/* =====================================================================
-   Fenêtre de connexion / inscription : forêt, okapi, carte en verre dépoli.
-   La scène est toujours claire (même en thème sombre) : les couleurs de la
-   carte sont donc redéfinies localement.
-   ===================================================================== */
+/* Écran de connexion et d'inscription, harmonisé avec l'interface lavande. */
 
 .auth-scene {
-  --ink: #0b1b3f;
-  --ink-soft: #2e4468;
-  --line: rgba(11, 27, 63, 0.35);
-  --link: #12306b;
-  --link-bg: #e5eeff;
-  --urgence: #a80c27;
-  --urgence-bg: #fdeced;
-  --ok: #17603a;
-  --ok-bg: #e2f3ea;
+  --ink: #191b36;
+  --ink-soft: #555b70;
+  --line: #e0e3f2;
+  --link: #4d60b9;
+  --link-bg: #e8ebff;
+  --urgence: #b61138;
+  --urgence-bg: #fff0f3;
+  --ok: #138263;
+  --ok-bg: #e6f6ef;
   color-scheme: light;
   color: var(--ink);
   position: fixed;
@@ -23,15 +19,11 @@
   flex-direction: column;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: #9bbbe4;
+  background: #f5f6ff;
 }
 
 .auth-fond {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+  display: none;
 }
 
 .auth-haut {
@@ -47,23 +39,23 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #fff;
+  color: var(--ink);
   text-decoration: none;
   font-weight: 800;
   font-size: 1.15rem;
-  text-shadow: 0 1px 8px rgba(7, 18, 43, 0.5);
+  text-shadow: none;
 }
 .auth-retour {
-  color: #fff;
+  color: var(--link);
   text-decoration: none;
   font-weight: 600;
   padding: 9px 20px;
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: rgba(11, 27, 63, 0.25);
+  background: #ffffff;
 }
 .auth-retour:hover {
-  background: rgba(11, 27, 63, 0.45);
+  background: var(--link-bg);
 }
 
 .auth-centre {
@@ -81,18 +73,18 @@
   width: min(430px, 100%);
   padding: 34px 32px 28px;
   border-radius: 26px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 0 24px 60px rgba(7, 18, 43, 0.35);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  backdrop-filter: blur(18px) saturate(1.2);
+  background: #ffffff;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 32px rgba(35, 44, 91, 0.12);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 .auth-carte:focus {
   outline: none;
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .auth-carte {
-    background: rgba(245, 249, 255, 0.96);
+    background: #ffffff;
   }
 }
 
@@ -106,11 +98,11 @@
   width: 44px;
   height: 44px;
   border-radius: 0 26px 0 18px;
-  background: #0b1b3f;
-  color: #fff;
+  background: var(--link-bg);
+  color: var(--link);
 }
 .auth-fermer:hover {
-  background: #12306b;
+  background: #dfe3ff;
 }
 
 /* ---- Contenu du formulaire --------------------------------------- */
@@ -121,10 +113,10 @@
 }
 .auth-carte h1 {
   margin: 0 36px 6px 0;
-  font-family: var(--serif);
+  font-family: var(--font);
   font-size: 1.9rem;
   text-align: left;
-  color: #0b1b3f;
+  color: var(--ink);
 }
 .auth-carte .muted {
   color: var(--ink-soft);
@@ -142,32 +134,31 @@
 .auth-carte .field input,
 .auth-carte .field select {
   width: 100%;
-  background: transparent;
-  color: #0b1b3f;
-  border: 0;
-  border-bottom: 2px solid #0b1b3f;
-  border-radius: 0;
-  padding: 0.55rem 2.4rem 0.55rem 0.1rem;
+  background: #eef0ff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.65rem 2.4rem 0.65rem 0.8rem;
   box-shadow: none;
 }
 .auth-carte .field select {
   padding-right: 0.5rem;
 }
 .auth-carte .field input::placeholder {
-  color: rgba(11, 27, 63, 0.5);
+  color: #777d91;
 }
 .auth-carte .field input:focus,
 .auth-carte .field select:focus {
   outline: none;
-  border-bottom-color: #2563eb;
-  box-shadow: 0 2px 0 0 #2563eb;
+  border-color: var(--link);
+  box-shadow: 0 0 0 3px rgba(77, 96, 185, 0.16);
 }
 .auth-carte .field input[type='email'] {
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b1b3f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='m3 7 9 6 9-6'/%3E%3C/svg%3E")
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23191b36' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='m3 7 9 6 9-6'/%3E%3C/svg%3E")
     no-repeat right 0.2rem center / 18px;
 }
 .auth-carte .field input[aria-invalid='true'] {
-  border-bottom-color: var(--urgence);
+  border-color: var(--urgence);
 }
 
 .field-mdp {
@@ -187,12 +178,12 @@
   justify-content: center;
   border: 0;
   background: transparent;
-  color: #0b1b3f;
+  color: var(--ink);
   border-radius: 10px;
   cursor: pointer;
 }
 .field-mdp-voir:hover {
-  background: rgba(11, 27, 63, 0.08);
+  background: var(--link-bg);
 }
 
 .auth-carte .hint {
@@ -200,14 +191,14 @@
   font-size: 0.85rem;
 }
 .auth-carte .btn-primary {
-  background: #0b1b3f;
+  background: #0d9875;
   color: #fff;
   border-radius: 12px;
   min-height: 48px;
   margin-top: 6px;
 }
 .auth-carte .btn-primary:hover:not(:disabled) {
-  background: #12306b;
+  background: #087a5e;
 }
 /* « Rester connecté » et « Mot de passe oublié ? » sur une ligne, au-dessus du bouton */
 .auth-options {
@@ -221,7 +212,7 @@
   color: var(--ink-soft);
 }
 .auth-options a {
-  color: #0b1b3f;
+  color: var(--link);
   font-weight: 700;
 }
 .auth-rester {
@@ -233,7 +224,7 @@
 .auth-rester input {
   width: 16px;
   height: 16px;
-  accent-color: #0b1b3f;
+  accent-color: #0d9875;
 }
 .auth-carte .auth-switch {
   margin: 18px 0 0;
@@ -242,7 +233,7 @@
   color: var(--ink-soft);
 }
 .auth-carte .auth-switch a {
-  color: #0b1b3f;
+  color: var(--link);
   font-weight: 700;
 }
 .auth-carte .form-error,
@@ -251,10 +242,102 @@
 }
 
 @media (max-width: 480px) {
-  .auth-carte {
-    padding: 28px 20px 22px;
+  .auth-scene {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    background: #f5f6ff;
   }
+
+  .auth-fond {
+    display: none;
+  }
+
+  .auth-haut {
+    padding: 18px 20px 12px;
+  }
+
+  .auth-brand {
+    color: #191b36;
+    text-shadow: none;
+  }
+
   .auth-retour {
-    padding: 8px 14px;
+    display: none;
+  }
+
+  .auth-centre {
+    align-items: center;
+    padding: 12px 16px 24px;
+  }
+
+  .auth-carte {
+    padding: 30px 22px 24px;
+    color: #191b36;
+    background: #ffffff;
+    border: 1px solid #e0e3f2;
+    border-radius: 24px;
+    box-shadow: 0 12px 32px rgba(35, 44, 91, 0.12);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .auth-carte h1 {
+    color: #191b36;
+    font-family: var(--font);
+    font-size: 1.75rem;
+    letter-spacing: -0.03em;
+  }
+
+  .auth-carte .muted,
+  .auth-carte .field label,
+  .auth-options,
+  .auth-carte .auth-switch {
+    color: #555b70;
+  }
+
+  .auth-carte .field input,
+  .auth-carte .field select {
+    color: #191b36;
+    background-color: #eef0ff;
+    border: 1px solid #e0e3f2;
+    border-radius: 12px;
+    padding: 0.78rem 2.5rem 0.78rem 0.85rem;
+  }
+
+  .auth-carte .field input::placeholder {
+    color: #777d91;
+  }
+
+  .auth-carte .field input:focus,
+  .auth-carte .field select:focus {
+    border-color: #4d60b9;
+    box-shadow: 0 0 0 3px rgba(77, 96, 185, 0.16);
+  }
+
+  .field-mdp-voir {
+    color: #555b70;
+  }
+
+  .auth-options a,
+  .auth-carte .auth-switch a {
+    color: #4d60b9;
+  }
+
+  .auth-carte .btn-primary {
+    color: #ffffff;
+    background: #0d9875;
+  }
+
+  .auth-carte .btn-primary:hover:not(:disabled) {
+    background: #087a5e;
+  }
+
+  .auth-fermer {
+    color: #4d60b9;
+    background: #e8ebff;
+  }
+
+  .auth-fermer:hover {
+    background: #dfe3ff;
   }
 }

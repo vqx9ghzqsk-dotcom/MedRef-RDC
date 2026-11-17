@@ -88,7 +88,7 @@ function BarreSynchro({ canSync, online, pending, syncState, sync }) {
             ) : (
               <span className="tag tag-ok">Tout est synchronisé</span>
             )}{' '}
-            {!online && 'Hors connexion : envoi automatique au retour du réseau.'}
+            {!online && 'Hors connexion : envoi au retour du réseau ou à la réouverture de l’application.'}
             {syncState.error && <span className="form-error"> Échec de l’envoi : {syncState.error}</span>}
           </p>
           <button
@@ -116,7 +116,8 @@ export function PrescriptionsPage() {
         <h1>Prescriptions</h1>
         <p className="lead">
           Ordonnance guidée par les fiches : diagnostics, bilans, traitements avec calcul de dose au poids et
-          durées de la fiche. Utilisable sans réseau ; envoi dès que la connexion revient.
+          durées de la fiche. Utilisable sans réseau ; envoi automatique au retour du réseau ou à la réouverture
+          de l’application.
         </p>
       </header>
 

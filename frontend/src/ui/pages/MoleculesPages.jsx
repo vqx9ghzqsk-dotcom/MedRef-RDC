@@ -6,7 +6,6 @@ import { AsyncView } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { FichePharmaco, Posologies } from '../components/Pharmaco.jsx';
 import { ProduitsGalerie } from '../components/Produits.jsx';
-import { LIGNES } from '../../core/labels.js';
 import { AvisCible } from '../components/Avis.jsx';
 
 export function MoleculesPage() {
@@ -161,8 +160,6 @@ export function MoleculePage() {
                       {m.pathologies.map((p) => (
                         <li key={p.id}>
                           <Link to={`/pathologies/${p.slug}?onglet=therapeutique`}>{p.nom}</Link>
-                          <span className={`tag ligne-${p.ligne}`}>{LIGNES[p.ligne]}</span>
-                          {p.contexte && <span className="row-sub">{p.contexte}</span>}
                         </li>
                       ))}
                     </ul>

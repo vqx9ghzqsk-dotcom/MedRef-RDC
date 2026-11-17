@@ -7,6 +7,30 @@ import { compterEnCache, ecrireEtat, lireEtat, telechargerTout, viderCache } fro
 
 const swActif = () => typeof navigator !== 'undefined' && Boolean(navigator.serviceWorker?.controller);
 
+function useServiceWorkerActif() {
+  const [actif, setActif] = useState(swActif);
+
+  useEffect(() => {
+    const serviceWorker = typeof navigator === 'undefined' ? null : navigator.serviceWorker;
+    if (!serviceWorker) return undefined;
+
+    let monte = true;
+    const actualiser = () => {
+      if (monte) setActif(swActif());
+    };
+    serviceWorker.addEventListener('controllerchange', actualiser);
+    serviceWorker.ready.then(actualiser);
+    actualiser();
+
+    return () => {
+      monte = false;
+      serviceWorker.removeEventListener('controllerchange', actualiser);
+    };
+  }, []);
+
+  return actif;
+}
+
 function formatDate(iso) {
   return iso ? new Date(iso).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) : null;
 }
@@ -22,7 +46,7 @@ export function HorsLignePage() {
   const [erreur, setErreur] = useState(null);
   const [actus, setActus] = useState(null);
   const [actusEnCours, setActusEnCours] = useState(false);
-  const disponible = swActif();
+  const disponible = useServiceWorkerActif();
 
   // Actualités gardées sur l'appareil (lot de nouveautés, expiration automatique)
   useEffect(() => {
@@ -204,12 +228,21 @@ export function HorsLignePage() {
       <h2>Bon à savoir</h2>
       <ul>
         <li>
+          Les fiches téléchargées restent dans le cache de cet appareil. Les prescriptions créées hors connexion
+          sont gardées dans IndexedDB sur cet iPhone ou iPad, puis synchronisées avec votre compte lorsque
+          MedRef est actif avec une connexion ou à sa réouverture.
+        </li>
+        <li>
           Hors connexion, chaque fiche affiche la dernière version téléchargée : mettez à jour régulièrement,
           en particulier après une correction ou une validation.
         </li>
         <li>
-          Installez l’application sur l’écran d’accueil (menu du navigateur, « Installer » ou « Ajouter à
-          l’écran d’accueil ») pour l’ouvrir même sans réseau.
+          Sur iPhone ou iPad, ouvrez MedRef dans Safari, touchez Partager, puis « Sur l’écran d’accueil » pour
+          installer l’application et l’ouvrir sans les commandes du navigateur.
+        </li>
+        <li>
+          iOS peut suspendre l’application en arrière-plan : les prescriptions en attente se synchronisent
+          lorsque vous revenez dans MedRef avec une connexion.
         </li>
         <li>La recherche plein texte et la connexion au compte nécessitent le réseau.</li>
       </ul>

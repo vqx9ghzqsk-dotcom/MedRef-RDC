@@ -6,7 +6,9 @@ import { useActualisationAuRetour } from '../hooks/useActualisationAuRetour.js';
 import { accueilHorsLigne } from '../../core/offline/actualitesHorsLigne.js';
 import { calculerDose } from '../../core/posologie.js';
 import { TYPES_ACTUALITE } from '../../core/labels.js';
+import { ORGANISATION_DOCUMENT } from '../../core/organisationDocument.js';
 import { BandeauActualites } from '../components/BandeauActualites.jsx';
+import { LogoMedRef } from '../components/LogoMedRef.jsx';
 import '../../styles/vitrine.css';
 import { dateLocale } from '../../core/dates.js';
 
@@ -23,6 +25,7 @@ import { dateLocale } from '../../core/dates.js';
  */
 
 const LIENS = [
+  { href: '#organisation', label: 'Pathologies' },
   { href: '#actualites', label: 'Actualités' },
   { href: '#contenu-ref', label: 'Ce qu’on y trouve' },
   { href: '#pour-qui', label: 'Pour qui' },
@@ -56,22 +59,6 @@ const Icone = ({ children, taille = 26 }) => (
     {children}
   </svg>
 );
-
-function Marque({ sousTitre = true }) {
-  return (
-    <>
-      <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true" className="v-marque">
-        <rect width="32" height="32" rx="8" fill="#2f80d8" />
-        <path d="M13 7h6v6h6v6h-6v6h-6v-6H7v-6h6z" fill="#fff" />
-        <path d="M24.5 4.5l1 2.2 2.4.2-1.8 1.6.6 2.3-2.2-1.2-2.1 1.2.5-2.3-1.8-1.6 2.4-.2z" fill="#f7d618" />
-      </svg>
-      <span className="v-marque-nom">
-        MedRef RDC
-        {sousTitre && <small>Référence clinique</small>}
-      </span>
-    </>
-  );
-}
 
 // ------------------------------------------------------------------ données
 
@@ -808,7 +795,7 @@ export function VitrinePage() {
         <div className="v-entete">
           <div className="v-nav">
             <a href="#actualites" className="v-brand" aria-label="MedRef RDC, actualités">
-              <Marque />
+              <LogoMedRef sousTitre />
             </a>
             <nav
               id="v-menu"
@@ -880,6 +867,26 @@ export function VitrinePage() {
       )}
 
       <main>
+        <section id="organisation" className="v-section v-section-serree">
+          <h2 className="v-titre">Explorer les pathologies par département</h2>
+          <p className="v-sous-titre">
+            Choisissez un département, puis une spécialité organisée comme dans le document de référence.
+          </p>
+          <ul className="v-cartes v-organisation">
+            {ORGANISATION_DOCUMENT.map((departement) => (
+              <li key={departement.slug}>
+                <Link to={`/departements/${departement.slug}`} className="v-carte v-organisation-carte">
+                  <span className="v-carte-icone" aria-hidden="true">
+                    {departement.icone}
+                  </span>
+                  <h3>{departement.nom}</h3>
+                  <p>{departement.sections.length} spécialités organisées</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <Actualites accueil={accueil} erreur={erreur} />
 
         <section id="contenu-ref" className="v-section v-section-serree">
@@ -988,7 +995,7 @@ export function VitrinePage() {
         <div className="v-pied-grille">
           <div>
             <a href="#actualites" className="v-brand" aria-label="MedRef RDC, haut de page">
-              <Marque sousTitre={false} />
+              <LogoMedRef />
             </a>
             <p>
               Bibliothèque de référence pour les professionnels de santé de la République démocratique du

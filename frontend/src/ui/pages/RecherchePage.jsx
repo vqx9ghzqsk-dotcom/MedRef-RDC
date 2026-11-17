@@ -12,7 +12,6 @@ const GROUPS = [
     title: 'Pathologies',
     to: (r) => `/pathologies/${r.slug}`,
     label: (r) => r.nom,
-    sub: (r) => `${r.departement}, ${r.specialite}`,
   },
   {
     key: 'urgences',

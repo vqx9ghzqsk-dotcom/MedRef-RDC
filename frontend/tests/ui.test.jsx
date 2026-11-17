@@ -193,6 +193,8 @@ function renderApp(path, apiOverrides = {}, user = null, autresServices = {}) {
     ]),
     pathologie: vi.fn(async () => fiche),
     me: vi.fn(async () => user),
+    prescriptions: vi.fn(async () => []),
+    syncPrescriptions: vi.fn(async () => ({ results: [], data: [] })),
     suggestionsProduits: vi.fn(async () => ({ produits: [], molecules: [] })),
     medicamentDomaines: vi.fn(async () => ({ groupes: [], formes: [], enfant: 0, firmes: [] })),
     ...apiOverrides,
@@ -206,7 +208,11 @@ function renderApp(path, apiOverrides = {}, user = null, autresServices = {}) {
       setUser: vi.fn(),
       clear: vi.fn(),
     },
-    repo: { list: vi.fn(async () => []) },
+    repo: {
+      list: vi.fn(async () => []),
+      pending: vi.fn(async () => []),
+      applyServerState: vi.fn(async () => {}),
+    },
     onSessionExpired: () => () => {},
     ...autresServices,
   };
@@ -577,6 +583,9 @@ describe('Accueil', () => {
       'href',
       '/diagnostic',
     );
+    expect(
+      within(screen.getByRole('navigation', { name: 'Navigation mobile' })).getAllByRole('link'),
+    ).toHaveLength(4);
     expect(await screen.findByRole('link', { name: /Pédiatrie/ })).toHaveAttribute(
       'href',
       '/departements/pediatrie',
@@ -585,6 +594,12 @@ describe('Accueil', () => {
       'href',
       'mailto:bmingalu@gmail.com',
     );
+  });
+
+  it('synchronise les prescriptions gardées dès l’ouverture de l’espace', async () => {
+    const prescriptions = vi.fn(async () => []);
+    renderApp('/espace', { prescriptions }, MEDECIN);
+    await waitFor(() => expect(prescriptions).toHaveBeenCalledTimes(1));
   });
 });
 
@@ -1845,7 +1860,7 @@ describe('Ordonnance guidée (lot C)', () => {
 });
 
 describe('Accueil personnalisé (lot D)', () => {
-  it('Mon espace : nouveautés et bloc personnel ; les alertes restent sur l’accueil (pastille seule)', async () => {
+  it('Mon espace masque les blocs personnels et les nouveautés, mais garde les repères et les alertes', async () => {
     renderApp(
       '/espace',
       {
@@ -1870,27 +1885,22 @@ describe('Accueil personnalisé (lot D)', () => {
           ],
           totaux: { fiches: 792, produits: 1799, amm: 6352, molecules: 702 },
         })),
-        accueilPourMoi: vi.fn(async () => ({
-          role: 'admin',
-          profil: 'medecin_generaliste',
-          verification: 'non_demandee',
-          fiches_a_valider: 792,
-          comptes_a_verifier: 2,
-        })),
       },
       { id: 7, nom: 'Admin', role: 'admin', email: 'a@b.cd' },
     );
-    expect(await screen.findByText(/792 fiches en relecture médicale/)).toBeInTheDocument();
+    const reperes = await screen.findByRole('region', { name: 'Dans votre bibliothèque' });
+    expect(within(reperes).getByText('792')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Pour vous' })).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'Nouveautés' })).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'Produits ajoutés au catalogue' })).toBeNull();
+    expect(screen.queryByText('Aerius')).toBeNull();
+    expect(screen.queryByText('Rougeole')).toBeNull();
     // Aucune alerte dans l'espace : seulement la pastille qui renvoie vers l'accueil
     expect(screen.queryByRole('heading', { name: 'Alertes sanitaires' })).toBeNull();
     expect(screen.queryByText('Épidémie de choléra')).toBeNull();
     expect(screen.queryByRole('region', { name: /Fil d’actualités/ })).toBeNull();
     expect(await screen.findByRole('link', { name: /1 alerte en cours/ })).toHaveAttribute('href', '/');
     expect(screen.getByRole('link', { name: /retour à l’accueil/ })).toHaveAttribute('href', '/');
-    expect(screen.getByRole('link', { name: 'Aerius' })).toHaveAttribute('href', '/medicaments/9');
-    expect(await screen.findByRole('link', { name: '792 fiches à valider' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '2 comptes à vérifier' })).toBeInTheDocument();
-    expect(screen.getByText(/faites vérifier votre numéro d’ordre/)).toBeInTheDocument();
   });
 });
 

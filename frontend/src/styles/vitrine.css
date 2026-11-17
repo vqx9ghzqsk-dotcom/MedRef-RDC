@@ -163,19 +163,6 @@
   color: #fff;
   margin-right: auto;
 }
-.v-marque-nom {
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  line-height: 1.15;
-}
-.v-marque-nom small {
-  display: block;
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--v-ciel);
-}
 .v-liens {
   display: flex;
   align-items: center;
@@ -602,6 +589,21 @@
   font-size: 0.83rem;
   color: var(--v-doux);
 }
+.v-organisation {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+}
+.v-organisation-carte {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+.v-organisation-carte:focus-visible {
+  outline: 3px solid var(--v-bleu);
+  outline-offset: 3px;
+}
 
 /* Bande des chiffres réels */
 .v-chiffres {
@@ -865,7 +867,7 @@
   .v-entete {
     padding: 0 12px;
   }
-  .v-marque-nom small {
+  .logo-medref-subtitle {
     display: none;
   }
   .v-heros-corps {

@@ -4,9 +4,9 @@ import { useAsync } from '../hooks/useAsync.js';
 import { AsyncView, Empty } from '../components/Status.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { FicheProduit } from '../components/FicheProduit.jsx';
-import { LienProduit } from '../components/Produits.jsx';
+import { LienProduit, PhotoProduit } from '../components/Produits.jsx';
 import { RechercheProduit } from '../components/RechercheProduit.jsx';
-import { LIGNES, NATURES_PRODUIT } from '../../core/labels.js';
+import { NATURES_PRODUIT } from '../../core/labels.js';
 import { AvisCible } from '../components/Avis.jsx';
 
 const FILTER_KEYS = ['q', 'groupe', 'forme', 'enfant', 'operateur', 'classe', 'molecule'];
@@ -285,11 +285,7 @@ export function MedicamentPage() {
             <Breadcrumb items={[{ label: 'Médicaments', to: '/medicaments' }, { label: m.nom_commercial }]} />
             <header className="page-header med-header">
               <div className="med-photo">
-                {m.photo_url ? (
-                  <img src={m.photo_url} alt={`Conditionnement de ${m.nom_commercial}`} />
-                ) : (
-                  <span className="med-photo-empty">Photo à venir</span>
-                )}
+                <PhotoProduit produit={m} grande />
               </div>
               <div>
                 <h1>{m.nom_commercial}</h1>
@@ -334,7 +330,6 @@ export function MedicamentPage() {
                   {m.pathologies.map((p) => (
                     <li key={p.id}>
                       <Link to={`/pathologies/${p.slug}`}>{p.nom}</Link>
-                      <span className={`tag ligne-${p.ligne}`}>{LIGNES[p.ligne]}</span>
                     </li>
                   ))}
                 </ul>

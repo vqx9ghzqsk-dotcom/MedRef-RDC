@@ -9,7 +9,7 @@
     "dev": "vite",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "build": "vite build",
+    "build": "npm run build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

@@ -1,0 +1,1385 @@
+/**
+ * Moteur d'aide au diagnostic, sans dépendance UI et utilisable hors connexion. Il suit la
+ * démarche sémiologique : motif et histoire de la maladie, terrain, examen clinique (constantes
+ * et signes présents ou absents par appareil), synthèse syndromique, hypothèses, question
+ * suivante.
+ *
+ * Données (GET /api/diagnostic/donnees) : fiches avec leur public visé, symptômes, liens
+ * [pathologie, symptôme, fréquence 0-3], examens de confirmation (c) ou de présomption (p),
+ * syndromes, molécules et référentiel (appareils, signes d'examen, terrains, contextes).
+ *
+ * Score d'une fiche :
+ *  - chaque signe présent pèse selon sa rareté parmi les fiches (la fièvre départage peu) et sa
+ *    fréquence dans la fiche ; le motif de consultation pèse davantage et doit être expliqué ;
+ *  - part du cas expliquée par la fiche (70 %) et part du tableau de la fiche retrouvée (30 %) ;
+ *  - un signe noté ABSENT que la fiche attend fait reculer la fiche (c'est ainsi qu'on élimine) ;
+ *  - examens : un examen de confirmation positif fait monter, négatif fait reculer ;
+ *  - terrain, contexte épidémique, constantes anormales et durée orientent sans décider ;
+ *  - les fiches d'un autre public (âge, sexe, grossesse) sont écartées.
+ */
+
+import { scoresGuidesDuCas } from './scoresGuides.js';
+
+/** Poids d'un signe selon sa fréquence dans la fiche (rare, occasionnel, fréquent, très fréquent). */
+const POIDS_FREQUENCE = [0.3, 0.5, 0.8, 1];
+export const LIBELLES_FREQUENCE = ['rare', 'occasionnel', 'fréquent', 'très fréquent'];
+
+export const TRANCHES_AGE = [
+  { id: 'nn', libelle: 'Moins de 2 mois' },
+  { id: 'petit', libelle: '2 mois – 5 ans' },
+  { id: 'grand', libelle: '5 – 14 ans' },
+  { id: 'adulte', libelle: 'Adulte' },
+  { id: 'age', libelle: 'Plus de 65 ans' },
+];
+const ENFANT = ['nn', 'petit', 'grand'];
+
+export const DUREES = [
+  { id: 'heures', libelle: 'Quelques heures' },
+  { id: 'jours', libelle: 'Quelques jours (moins de 2 semaines)' },
+  { id: 'semaines', libelle: '2 à 6 semaines' },
+  { id: 'mois', libelle: 'Plus de 6 semaines' },
+];
+
+/** Signes qui imposent une conduite d'urgence, quel que soit le diagnostic. */
+export const SIGNES_GRAVITE = new Set([
+  'Convulsions',
+  'Troubles de la conscience',
+  'Stupeur',
+  'Hypotension',
+  'Cyanose',
+  'Stridor',
+  'Geignement expiratoire',
+  'Hémorragies',
+  'Hématémèse',
+  'Méléna',
+  'Purpura',
+  'Syncope',
+  'Raideur de nuque',
+  'Fontanelle bombée',
+  'Paralysie flasque',
+  'Membre froid et pâle',
+  'Refus de téter',
+  'Anurie',
+  'Idées suicidaires',
+]);
+
+const MAX_HYPOTHESES = 8;
+
+export const sansAccents = (s) =>
+  String(s || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase();
+
+/** Index construit une fois par jeu de données (le moteur est rappelé à chaque saisie). */
+export function indexer(donnees) {
+  const symptomes = new Map(donnees.symptomes.map((s) => [s.id, s]));
+  const parNom = new Map(donnees.symptomes.map((s) => [s.nom, s.id]));
+  const parFiche = new Map();
+  const nbFiches = new Map();
+  for (const [p, s, f] of donnees.liens) {
+    if (!parFiche.has(p)) parFiche.set(p, new Map());
+    parFiche.get(p).set(s, f);
+    nbFiches.set(s, (nbFiches.get(s) || 0) + 1);
+  }
+  const total = donnees.pathologies.length || 1;
+  const rarete = new Map();
+  for (const [s, n] of nbFiches) rarete.set(s, Math.log(1 + total / n));
+  const nomsFiches = new Map(donnees.pathologies.map((p) => [p.id, sansAccents(p.nom)]));
+  const motifs = (liste) => new Map((liste || []).map((t) => [t.id, new RegExp(t.motif)]));
+  return {
+    donnees,
+    symptomes,
+    parNom,
+    parFiche,
+    rarete,
+    nomsFiches,
+    physiques: new Set(donnees.physiques || []),
+    terrains: motifs(donnees.terrains),
+    contextes: motifs(donnees.contextes),
+  };
+}
+
+/** La fiche s'adresse-t-elle à ce patient ? (critère manquant = pas de restriction) */
+export function convientAuPatient(fiche, cas) {
+  const pub = fiche.public || {};
+  if (cas.age && pub.ages && !pub.ages.includes(cas.age)) return false;
+  if (cas.sexe && pub.sexe && pub.sexe !== cas.sexe) return false;
+  // Une fiche de la grossesse n'est proposée que si la grossesse (ou l'accouchement récent) est indiquée
+  if (pub.obstetrique && cas.grossesse !== true) return false;
+  if (pub.horsGrossesse && cas.grossesse === true) return false;
+  // Les fiches de prise en charge (contraception, suivi, rééducation…) ne sont pas des hypothèses
+  if (fiche.diagnostic === false) return false;
+  if (pub.obstetrique && (cas.sexe === 'M' || ['nn', 'petit'].includes(cas.age))) return false;
+  return true;
+}
+
+const nombre = (v) => {
+  if (v === '' || v === null || v === undefined) return null;
+  const n = Number(String(v).replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+};
+
+/** Âge exact du cas en mois (âge saisi en jours, mois ou années), ou null. */
+export function ageEnMois(cas = {}) {
+  const v = nombre(cas.ageValeur);
+  if (v === null || v < 0) return null;
+  if (cas.ageUnite === 'jours') return v / 30.44;
+  if (cas.ageUnite === 'mois') return v;
+  return v * 12;
+}
+
+/** Tranche d'âge déduite de l'âge exact. */
+export function trancheDepuisAge(mois) {
+  if (mois === null || mois === undefined) return '';
+  if (mois < 2) return 'nn';
+  if (mois < 60) return 'petit';
+  if (mois < 180) return 'grand';
+  if (mois < 780) return 'adulte';
+  return 'age';
+}
+
+/** Seuil de tachypnée : PCIME avant 5 ans (60, 50, 40), puis 30 jusqu'à 14 ans, 22 chez l'adulte. */
+function seuilTachypnee(age, mois) {
+  if (mois !== null && mois !== undefined && mois < 60) return mois < 2 ? 60 : mois < 12 ? 50 : 40;
+  return { nn: 60, petit: 40, grand: 30 }[age] || 22;
+}
+
+/** Seuil d'hypotension : 60 avant 1 mois, 70 avant 1 an, 70 + 2 × âge (années) de 1 à 10 ans, 90 ensuite. */
+function seuilHypotension(age, mois) {
+  if (mois !== null && mois !== undefined && mois < 120) {
+    if (mois < 1) return 60;
+    if (mois < 12) return 70;
+    return 70 + 2 * Math.floor(mois / 12);
+  }
+  return { nn: 60, petit: 70, grand: 80 }[age] || 90;
+}
+
+/**
+ * Triage d'urgence (démarche ABCDE ; signes d'urgence et de priorité de l'ETAT/OMS chez l'enfant).
+ * Chaque critère : lettre ABCDE, niveau (urgence = traiter immédiatement, priorite = voir avant
+ * les autres), conduite immédiate, signe de l'examen qu'il coche, et public (enfant/adulte).
+ * À valider par le Dr Mingalu.
+ */
+export const TRIAGE = [
+  {
+    id: 'obstruction',
+    lettre: 'A',
+    niveau: 'urgence',
+    libelle: 'Voies aériennes obstruées (bruits, ronflement, corps étranger)',
+    conduite:
+      'Libérer les voies aériennes : position, aspiration, manœuvre de désobstruction si corps étranger.',
+    signe: 'Stridor',
+  },
+  {
+    id: 'apnee',
+    lettre: 'B',
+    niveau: 'urgence',
+    libelle: 'Ne respire pas ou respiration agonique',
+    conduite: 'Ventiler au ballon et masque, appeler à l’aide, débuter la réanimation si pas de pouls.',
+  },
+  {
+    id: 'cyanose',
+    lettre: 'B',
+    niveau: 'urgence',
+    libelle: 'Cyanose centrale',
+    conduite: 'Oxygène sans attendre ; cible SpO2 ≥ 94 %.',
+    signe: 'Cyanose',
+  },
+  {
+    id: 'detresse',
+    lettre: 'B',
+    niveau: 'urgence',
+    libelle: 'Détresse respiratoire sévère (tirage marqué, geignement, épuisement)',
+    conduite: 'Oxygène, position assise (adulte) ou demi-assise, surveillance rapprochée.',
+    signe: 'Geignement expiratoire',
+  },
+  {
+    id: 'choc',
+    lettre: 'C',
+    niveau: 'urgence',
+    libelle: 'Signes de choc : extrémités froides, recoloration > 3 s, pouls faible et rapide',
+    conduite:
+      'Voie veineuse ou intra-osseuse, remplissage (prudence si malnutrition sévère ou insuffisance cardiaque), glycémie.',
+    signe: 'Hypotension',
+  },
+  {
+    id: 'hemorragie',
+    lettre: 'C',
+    niveau: 'urgence',
+    libelle: 'Hémorragie active importante',
+    conduite: 'Compression directe, deux voies veineuses, groupage et transfusion à préparer.',
+    signe: 'Hémorragies',
+  },
+  {
+    id: 'coma',
+    lettre: 'D',
+    niveau: 'urgence',
+    libelle: 'Coma ou ne réagit qu’à la douleur (AVPU : P ou U)',
+    conduite: 'Position latérale de sécurité, protéger les voies aériennes, glycémie capillaire.',
+    signe: 'Troubles de la conscience',
+  },
+  {
+    id: 'convulsions',
+    lettre: 'D',
+    niveau: 'urgence',
+    libelle: 'Convulsions en cours',
+    conduite: 'Protéger, diazépam intrarectal ou midazolam selon le poids, glycémie, oxygène.',
+    signe: 'Convulsions',
+  },
+  {
+    id: 'deshydratation',
+    lettre: 'E',
+    niveau: 'urgence',
+    public: 'enfant',
+    libelle: 'Diarrhée avec déshydratation sévère (léthargie, yeux enfoncés, pli cutané très lent)',
+    conduite: 'Réhydratation selon le plan C (sauf malnutrition sévère : ReSoMal et protocole adapté).',
+  },
+  {
+    id: 'nourrisson',
+    lettre: 'E',
+    niveau: 'priorite',
+    public: 'enfant',
+    libelle: 'Nourrisson de moins de 2 mois malade',
+    conduite: 'Examiner en priorité : rechercher une infection grave.',
+  },
+  {
+    id: 'fievre',
+    lettre: 'E',
+    niveau: 'priorite',
+    libelle: 'Température très élevée (≥ 39,5 °C) ou hypothermie',
+    conduite: 'Antipyrétique ou réchauffement ; TDR paludisme et recherche d’un sepsis.',
+  },
+  {
+    id: 'trauma',
+    lettre: 'E',
+    niveau: 'priorite',
+    libelle: 'Traumatisme grave, brûlure étendue ou intoxication',
+    conduite: 'Immobiliser le rachis si traumatisme, refroidir la brûlure, identifier le toxique.',
+  },
+  {
+    id: 'paleur',
+    lettre: 'C',
+    niveau: 'priorite',
+    libelle: 'Pâleur palmaire sévère',
+    conduite: 'Hémoglobine en urgence, transfusion à discuter.',
+  },
+  {
+    id: 'agitation',
+    lettre: 'D',
+    niveau: 'priorite',
+    libelle: 'Agitation, irritabilité ou somnolence inhabituelles',
+    conduite: 'Glycémie capillaire, rechercher méningite, paludisme grave, hypoxie.',
+  },
+  {
+    id: 'mas',
+    lettre: 'E',
+    niveau: 'priorite',
+    public: 'enfant',
+    libelle: 'Émaciation visible sévère ou œdèmes des deux pieds',
+    conduite: 'Périmètre brachial, poids/taille ; prise en charge de la malnutrition aiguë sévère.',
+  },
+  {
+    id: 'douleur',
+    lettre: 'E',
+    niveau: 'priorite',
+    libelle: 'Douleur intense',
+    conduite: 'Antalgique adapté avant la suite de l’examen.',
+  },
+];
+
+/**
+ * Catégorie de triage du cas : critères cochés (cas.triage) et critères déduits des constantes
+ * (SpO2 < 90 %, hypotension, Glasgow ≤ 8, hypoglycémie, température extrême).
+ * Renvoie { categorie: 'urgence' | 'priorite' | 'non-urgent' | null, criteres: [{…, auto}] }.
+ */
+export function triageUrgence(cas) {
+  const coches = cas.triage || {};
+  const mois = ageEnMois(cas);
+  const enfant = mois !== null && mois !== undefined ? mois < 180 : ENFANT.includes(cas.age);
+  const c = Object.fromEntries(Object.entries(cas.constantes || {}).map(([k, v]) => [k, nombre(v)]));
+  const auto = new Set();
+  if (c.spo2 !== null && c.spo2 !== undefined && c.spo2 < 90) auto.add('cyanose');
+  if (c.tas && c.tas < seuilHypotension(cas.age, mois)) auto.add('choc');
+  if (c.glasgow && c.glasgow <= 8) auto.add('coma');
+  if (c.glycemie !== null && c.glycemie !== undefined && c.glycemie < 2.2) auto.add('agitation');
+  if (c.temperature && (c.temperature >= 39.5 || c.temperature < 35.5)) auto.add('fievre');
+  if (mois !== null && mois !== undefined ? mois < 2 : cas.age === 'nn') auto.add('nourrisson');
+  const criteres = TRIAGE.filter((t) => coches[t.id] || auto.has(t.id))
+    .filter((t) => t.public !== 'enfant' || enfant || coches[t.id])
+    .map((t) => ({ ...t, auto: !coches[t.id] }));
+  const evalue = Object.keys(coches).length > 0 || criteres.length > 0 || cas.triageFait === true;
+  const categorie = criteres.some((t) => t.niveau === 'urgence')
+    ? 'urgence'
+    : criteres.some((t) => t.niveau === 'priorite')
+      ? 'priorite'
+      : evalue
+        ? 'non-urgent'
+        : null;
+  return { categorie, criteres, enfant };
+}
+
+/**
+ * Lecture des constantes : signes déduits (présents ou absents), alertes et orientations.
+ * Seuils : fièvre ≥ 38 °C ; hypothermie < 35,5 °C ; tachypnée selon l'âge exact (PCIME : ≥ 60
+ * avant 2 mois, ≥ 50 de 2 à 12 mois, ≥ 40 de 1 à 5 ans ; ≥ 30 de 5 à 14 ans ; ≥ 22 chez
+ * l'adulte) ; hypotension (PAS < 70 + 2 × âge de 1 à 10 ans, < 90 chez l'adulte) ; SpO2 < 90 % ;
+ * glycémie < 2,2 mmol/L ou ≥ 14 mmol/L ; Glasgow ≤ 13 ; périmètre brachial < 115 mm
+ * (malnutrition aiguë sévère, 6 à 59 mois).
+ */
+export function lireConstantes(constantes = {}, age = '', mois = null) {
+  const c = Object.fromEntries(Object.entries(constantes).map(([k, v]) => [k, nombre(v)]));
+  const presents = [];
+  const absents = [];
+  const alertes = [];
+  const orientations = [];
+  if (c.temperature !== null && c.temperature !== undefined) {
+    if (c.temperature >= 38) presents.push('Fièvre');
+    else if (c.temperature >= 35.5) absents.push('Fièvre');
+    if (c.temperature >= 40) presents.push('Hyperthermie');
+    if (c.temperature < 35.5) presents.push('Hypothermie');
+  }
+  if (c.fr) {
+    if (c.fr >= seuilTachypnee(age, mois)) presents.push('Tachypnée');
+    else absents.push('Tachypnée');
+  }
+  if (c.tas) {
+    if (c.tas < seuilHypotension(age, mois)) presents.push('Hypotension');
+    else absents.push('Hypotension');
+  }
+  // Pression élevée (adulte et grand enfant) : poussée sévère ≥ 180/110, hypertension ≥ 140/90
+  const adulteOuGrand = mois !== null && mois !== undefined ? mois >= 144 : ['adulte', 'age'].includes(age);
+  if (adulteOuGrand && (c.tas || c.tad)) {
+    if (c.tas >= 180 || c.tad >= 110) {
+      alertes.push(
+        `Pression artérielle ${c.tas || '?'}/${c.tad || '?'} mmHg : poussée sévère, rechercher une atteinte d’organe (céphalées, troubles visuels, déficit, douleur thoracique ; protéinurie si grossesse)`,
+      );
+      orientations.push('hypertens|eclampsie');
+    } else if (c.tas >= 140 || c.tad >= 90) {
+      orientations.push('hypertens|eclampsie');
+    }
+  }
+  if (c.spo2 !== null && c.spo2 !== undefined && c.spo2 < 90) {
+    alertes.push(`Hypoxémie (SpO2 ${c.spo2} %) : oxygène sans attendre`);
+  }
+  if (c.glycemie !== null && c.glycemie !== undefined) {
+    if (c.glycemie < 2.2) {
+      alertes.push(`Hypoglycémie (${c.glycemie} mmol/L) : sucre par voie IV ou orale immédiatement`);
+      orientations.push('hypoglyc');
+    } else if (c.glycemie >= 14) {
+      alertes.push(`Hyperglycémie (${c.glycemie} mmol/L) : rechercher une cétose`);
+      orientations.push('diabet|acidocetose|hyperosmolaire');
+    }
+  }
+  if (c.glasgow) {
+    if (c.glasgow <= 13) presents.push('Troubles de la conscience');
+    else if (c.glasgow === 15) absents.push('Troubles de la conscience');
+    if (c.glasgow <= 8) alertes.push(`Glasgow ${c.glasgow} : coma, protéger les voies aériennes`);
+  }
+  if (c.fc) {
+    const seuil = { nn: 180, petit: 160, grand: 130 }[age] || 120;
+    if (c.fc >= seuil) alertes.push(`Tachycardie (${c.fc}/min)`);
+  }
+  if (c.pb && (mois !== null && mois !== undefined ? mois >= 6 && mois < 60 : age === 'petit')) {
+    if (c.pb < 115) {
+      alertes.push(`Périmètre brachial ${c.pb} mm : malnutrition aiguë sévère`);
+      orientations.push('malnutrition');
+    } else if (c.pb < 125) orientations.push('malnutrition');
+  }
+  return { presents, absents, alertes, orientations };
+}
+
+/** Signes présents et absents du cas : saisis, puis déduits des constantes s'ils ne l'ont pas été. */
+export function etatDesSignes(index, cas) {
+  const presents = new Set(cas.symptomes || []);
+  const absents = new Set();
+  for (const [id, etat] of Object.entries(cas.signes || {})) {
+    const n = Number(id);
+    if (etat === 'present') presents.add(n);
+    else if (etat === 'absent') absents.add(n);
+  }
+  if (cas.motif) presents.add(Number(cas.motif));
+  const lecture = lireConstantes(cas.constantes, cas.age, ageEnMois(cas));
+  // Résultats biologiques chiffrés : alertes et orientations s'ajoutent à celles des constantes
+  const bio = lireBiologie(cas.biologie, cas.age, ageEnMois(cas));
+  lecture.alertes.push(...bio.alertes);
+  lecture.orientations.push(...bio.orientations);
+  lecture.biologie = bio.interpretations;
+  for (const t of TRIAGE) if (t.signe && cas.triage?.[t.id]) lecture.presents.push(t.signe);
+  // Scores guidés : conscience (Blantyre), alertes et orientations (CURB-65, Wells…)
+  for (const sg of scoresGuidesDuCas(cas)) {
+    if (sg.id === 'blantyre' && sg.total <= 4) lecture.presents.push('Troubles de la conscience');
+    if (sg.grave && sg.id !== 'glasgow') lecture.alertes.push(`${sg.nom} ${sg.total} : ${sg.texte}`);
+    if (sg.orientation) lecture.orientations.push(sg.orientation);
+  }
+  const deduits = [];
+  for (const nom of lecture.presents) {
+    const id = index.parNom.get(nom);
+    if (id && !presents.has(id) && !absents.has(id)) {
+      presents.add(id);
+      deduits.push({ id, nom, etat: 'present' });
+    }
+  }
+  for (const nom of lecture.absents) {
+    const id = index.parNom.get(nom);
+    if (id && !presents.has(id) && !absents.has(id)) {
+      absents.add(id);
+      deduits.push({ id, nom, etat: 'absent' });
+    }
+  }
+  return { presents, absents, deduits, lecture };
+}
+
+/** « Très probable » exige une nette avance sur la 2e hypothèse (sinon la certitude serait contredite). */
+function niveau(score, premier, avance) {
+  if (premier && score >= 0.7 && avance >= 0.1) return 'tres_probable';
+  if (score >= 0.55) return 'probable';
+  return 'possible';
+}
+
+/**
+ * Rapports de vraisemblance d'un examen à partir de [sensibilité %, spécificité %] :
+ * RV+ = Se / (1 − Sp), RV− = (1 − Se) / Sp (null si les performances sont inconnues).
+ */
+export function rapportsDeVraisemblance(performance) {
+  if (!performance) return null;
+  const se = performance[0] / 100;
+  const sp = performance[1] / 100;
+  return { positif: se / Math.max(1 - sp, 0.005), negatif: Math.max(1 - se, 0.005) / sp };
+}
+
+/**
+ * Clairance de la créatinine (mL/min) : Cockcroft-Gault chez l'adulte (âge, poids, sexe,
+ * créatinine en µmol/L), Schwartz chez l'enfant (taille en cm, k = 36,5). Null si incalculable.
+ */
+export function clairanceCreatinine(cas) {
+  const creat = nombre(cas.biologie?.creatinine);
+  if (!creat) return null;
+  const mois = ageEnMois(cas);
+  const ans = mois !== null && mois !== undefined ? mois / 12 : null;
+  const poids = nombre(cas.poids);
+  const taille = nombre(cas.constantes?.taille);
+  if (ans !== null && ans < 18) {
+    return taille ? { valeur: Math.round((36.5 * taille) / creat), methode: 'Schwartz' } : null;
+  }
+  const age = ans ?? { adulte: 40, age: 70 }[cas.age];
+  if (!age || !poids || !cas.sexe) return null;
+  const k = cas.sexe === 'F' ? 1.04 : 1.23;
+  return { valeur: Math.round(((140 - age) * poids * k) / creat), methode: 'Cockcroft-Gault' };
+}
+
+/**
+ * Fonctions d'élimination du patient pour adapter les doses : insuffisance rénale (terrain ou
+ * clairance < 60 mL/min) et hépatique (terrain hépatopathie ou bilirubine > 50 µmol/L).
+ */
+export function fonctionsElimination(cas) {
+  const clairance = clairanceCreatinine(cas);
+  const renale = (cas.terrains || []).includes('insuffisance-renale') || (clairance && clairance.valeur < 60);
+  const bili = nombre(cas.biologie?.bilirubine);
+  const hepatique =
+    (cas.terrains || []).includes('hepatopathie') || (bili !== null && bili !== undefined && bili > 50);
+  return { clairance, renale: Boolean(renale), hepatique: Boolean(hepatique) };
+}
+
+/** Bonus de probabilité de départ selon la fréquence de la maladie en RDC. */
+export const PRIOR_FREQUENCE = { tres_frequente: 0.06, frequente: 0.03, peu_frequente: 0, rare: -0.05 };
+
+export const LIBELLES_FREQUENCE_RDC = {
+  tres_frequente: 'Très fréquente en RDC',
+  frequente: 'Fréquente en RDC',
+  peu_frequente: 'Peu fréquente en RDC',
+  rare: 'Rare en RDC',
+};
+
+/** Fiches dont le début est typiquement brutal, progressif, ou qui évoluent par épisodes (sur le nom). */
+const DEBUT_BRUTAL =
+  /avc|accident ischemique|embolie|hemorragie|torsion|perforation|rupture|syndrome coronarien|pneumothorax|colique|dissection|occlusion|invagination|volvulus|choc|anaphyla|intoxication|traumat|fracture|convuls|etat de mal|eclampsie|hematome|abdomen aigu|ischemie aigue/;
+const DEBUT_PROGRESSIF =
+  /chronique|cancer|carcinome|tumeur|lymphome|leucemie|myelome|insuffisance renale chronique|cirrhose|demence|alzheimer|parkinson|tuberculose|diabete|hypothyroidie|malnutrition|sclerose|myopathie|arthrose/;
+const PAR_EPISODES =
+  /epilep|migraine|cephalees|angor|asthme|paludisme|crise|colique|lithiase|urticaire|trouble panique|syncope|vertige|dysmenorrhee|goutte|bipolaire/;
+
+/** Coup de pouce du terrain, du contexte, des constantes et de la durée (plafonné). */
+function orientation(index, fiche, cas, lecture) {
+  const nom = index.nomsFiches.get(fiche.id) || '';
+  const raisons = [];
+  let bonus = 0;
+  for (const id of cas.terrains || []) {
+    const motif = index.terrains.get(id);
+    if (motif?.test(nom)) {
+      bonus += 0.06;
+      raisons.push(index.donnees.terrains.find((t) => t.id === id).libelle);
+    }
+  }
+  for (const id of cas.contextes || []) {
+    const motif = index.contextes.get(id);
+    if (motif?.test(nom)) {
+      bonus += 0.08;
+      raisons.push(index.donnees.contextes.find((t) => t.id === id).libelle);
+    }
+  }
+  for (const motif of lecture.orientations) {
+    if (new RegExp(motif).test(nom)) {
+      bonus += 0.1;
+      raisons.push('constantes ou résultats biologiques');
+    }
+  }
+  bonus = Math.min(bonus, 0.2);
+  // Probabilité de départ en RDC : fréquence, saison et foyers géographiques (à valider)
+  const prior = PRIOR_FREQUENCE[fiche.frequence] || 0;
+  bonus += prior;
+  if (prior > 0)
+    raisons.push(fiche.frequence === 'tres_frequente' ? 'très fréquente en RDC' : 'fréquente en RDC');
+  if (cas.saison && fiche.saison === cas.saison) {
+    bonus += 0.03;
+    raisons.push(cas.saison === 'pluies' ? 'saison des pluies' : 'saison sèche');
+  }
+  if (cas.province && fiche.foyers) {
+    if (fiche.foyers.includes(cas.province)) {
+      bonus += 0.08;
+      raisons.push(`foyer connu (${cas.province})`);
+    } else bonus -= 0.04;
+  }
+  // Mode de début et évolution (à valider)
+  if (cas.debut === 'brutal' && DEBUT_BRUTAL.test(nom)) {
+    bonus += 0.04;
+    raisons.push('début brutal');
+  } else if (cas.debut === 'progressif' && DEBUT_PROGRESSIF.test(nom)) {
+    bonus += 0.03;
+    raisons.push('début progressif');
+  }
+  if (cas.evolution === 'intermittente' && PAR_EPISODES.test(nom)) {
+    bonus += 0.03;
+    raisons.push('évolution par épisodes');
+  }
+  const chronique = /chronique/.test(nom);
+  const aigue = /aigu/.test(nom);
+  if (cas.duree === 'semaines' || cas.duree === 'mois') {
+    if (chronique) bonus += 0.05;
+    if (aigue) bonus -= 0.08;
+  } else if (cas.duree === 'heures' || cas.duree === 'jours') {
+    if (aigue) bonus += 0.03;
+    if (chronique) bonus -= 0.08;
+  }
+  return { bonus, raisons: [...new Set(raisons)] };
+}
+
+/**
+ * Hypothèses classées pour un cas :
+ *   cas = { age, sexe, grossesse, motif, duree, signes: { [id]: 'present' | 'absent' },
+ *           constantes, terrains, contextes, examens: { [id]: 'positif' | 'negatif' } }
+ * (`symptomes: [id]` reste accepté : signes présents.)
+ * Renvoie { hypotheses, gravite, alertes, deduits, syndromes, questions, aRechercher }.
+ */
+export function analyser(index, casSaisi) {
+  // Le Glasgow guidé tient lieu de constante quand elle n'a pas été saisie
+  const glasgow = scoresGuidesDuCas(casSaisi).find((x) => x.id === 'glasgow');
+  const cas =
+    glasgow && !casSaisi.constantes?.glasgow
+      ? { ...casSaisi, constantes: { ...casSaisi.constantes, glasgow: String(glasgow.total) } }
+      : casSaisi;
+  const { donnees, symptomes, parFiche, rarete } = index;
+  const { presents, absents, deduits, lecture } = etatDesSignes(index, cas);
+  const signes = [...presents].filter((s) => symptomes.has(s));
+  const gravite = signes.map((s) => symptomes.get(s)).filter((s) => SIGNES_GRAVITE.has(s.nom));
+  const syndromes = syntheseSyndromique(index, presents, absents, cas);
+  const vide = {
+    hypotheses: [],
+    gravite,
+    alertes: lecture.alertes,
+    deduits,
+    syndromes,
+    questions: [],
+    aRechercher: [],
+    aNePasManquer: [],
+    echec: null,
+    associations: [],
+    biologie: lecture.biologie,
+    scores: calculerScores(index, cas, presents, absents),
+    triage: triageUrgence(cas),
+  };
+  if (!signes.length) return vide;
+
+  const motif = cas.motif ? Number(cas.motif) : null;
+  const poidsSigne = (s) => (rarete.get(s) || 0) * (s === motif ? 1.5 : 1);
+  const poidsCas = signes.reduce((t, s) => t + poidsSigne(s), 0) || 1;
+  const examens = cas.examens || {};
+  const resultats = [];
+  for (const fiche of donnees.pathologies) {
+    if (!convientAuPatient(fiche, cas)) continue;
+    const tableau = parFiche.get(fiche.id);
+    if (!tableau) continue;
+    let explique = 0;
+    let poidsFiche = 0;
+    let contre = 0;
+    const concordants = [];
+    const discordants = [];
+    for (const [s, f] of tableau) {
+      const w = (rarete.get(s) || 0) * POIDS_FREQUENCE[f];
+      poidsFiche += w;
+      if (presents.has(s)) {
+        explique += w * (s === motif ? 1.5 : 1);
+        concordants.push({ id: s, nom: symptomes.get(s).nom, frequence: f });
+      } else if (absents.has(s)) {
+        contre += w;
+        discordants.push({ id: s, nom: symptomes.get(s).nom, frequence: f });
+      }
+    }
+    // Signes discriminants de la fiche (à valider) : clés, exclusion, terrain requis
+    for (const s of fiche.exclusion || []) {
+      if (presents.has(s) && symptomes.has(s))
+        discordants.push({ id: s, nom: symptomes.get(s).nom, exclusion: true });
+    }
+    if (!concordants.length) continue;
+    // Le premier signe apparu compte un peu plus que les autres
+    if (cas.premierSigne && presents.has(Number(cas.premierSigne)) && tableau.has(Number(cas.premierSigne))) {
+      const p = Number(cas.premierSigne);
+      if (p !== motif) explique += 0.25 * (rarete.get(p) || 0) * POIDS_FREQUENCE[tableau.get(p)];
+    }
+    let score =
+      0.7 * (explique / poidsCas) + 0.3 * (explique / (poidsFiche || 1)) - 0.5 * (contre / (poidsFiche || 1));
+    // Le motif de consultation doit être expliqué par l'hypothèse
+    if (motif && !tableau.has(motif)) score *= 0.8;
+    const tests = [];
+    for (const [id, resultat] of Object.entries(examens)) {
+      const role = fiche.tests?.[id];
+      if (!role || !resultat) continue;
+      const examen = donnees.examens.find((e) => String(e.id) === String(id));
+      const nom = examen?.nom || '';
+      const rv = rapportsDeVraisemblance(examen?.performance);
+      if (resultat === 'positif') {
+        // Avec Se et Sp connues, le poids suit le rapport de vraisemblance positif
+        score += rv
+          ? Math.min(0.3, (role === 'c' ? 0.2 : 0.1) * Math.log10(rv.positif))
+          : role === 'c'
+            ? 0.25
+            : 0.1;
+      } else {
+        score *= rv ? Math.max(0.25, rv.negatif ** (role === 'c' ? 0.35 : 0.2)) : role === 'c' ? 0.4 : 0.75;
+      }
+      tests.push({ nom, resultat, role, rv });
+    }
+    const { bonus, raisons } = orientation(index, fiche, cas, lecture);
+    score += bonus;
+    // Chronologie : le premier signe apparu doit être expliqué, comme le motif (un peu moins)
+    const premier = cas.premierSigne ? Number(cas.premierSigne) : null;
+    if (premier && premier !== motif && presents.has(premier) && !tableau.has(premier)) score *= 0.9;
+    // Déjà traité pour cet épisode sans amélioration : la fiche traitée par ces molécules recule
+    const traitee =
+      cas.reponse === 'echec' && (fiche.traitements || []).some((m) => (cas.traitements || []).includes(m));
+    if (traitee) {
+      score *= 0.75;
+      raisons.push('échec du traitement déjà reçu');
+    }
+    const cles = fiche.cles || [];
+    score += Math.min(0.08, 0.04 * cles.filter((s) => presents.has(s)).length);
+    if (cles.some((s) => absents.has(s))) score *= 0.6;
+    if (discordants.some((d) => d.exclusion)) score *= 0.7;
+    const requis = fiche.requiert;
+    if (
+      requis &&
+      !requis.terrains.some((t) => (cas.terrains || []).includes(t)) &&
+      !requis.contextes.some((c) => (cas.contextes || []).includes(c))
+    ) {
+      score *= 0.85;
+    }
+    // À tableau égal, la fiche consacrée à l'âge du patient passe devant la fiche générale
+    if (cas.age && fiche.public?.ages?.includes(cas.age)) score += 0.04;
+    // Pendant la grossesse, la fiche obstétricale passe devant la fiche générale ou gynécologique
+    if (cas.grossesse === true && fiche.public?.obstetrique) score += 0.06;
+    // Enceinte ou accouchée : les fiches de l'autre période reculent nettement
+    if (cas.grossesse === true && cas.periode && fiche.periode) {
+      const moment = cas.periode === 'post-partum' ? 'apres' : 'avant';
+      if (fiche.periode === moment) score += 0.04;
+      else score *= 0.5;
+    }
+    const manquants = [...tableau]
+      .filter(([s, f]) => f >= 2 && !presents.has(s) && !absents.has(s))
+      .sort((a, b) => b[1] - a[1] || (rarete.get(b[0]) || 0) - (rarete.get(a[0]) || 0))
+      .map(([s]) => symptomes.get(s).nom);
+    resultats.push({
+      fiche,
+      score: Math.max(0, Math.min(score, 1)),
+      concordants: concordants.sort((a, b) => b.frequence - a.frequence),
+      discordants,
+      aRechercher: manquants.slice(0, 4),
+      tests,
+      raisons,
+    });
+  }
+  resultats.sort((a, b) => b.score - a.score || a.fiche.nom.localeCompare(b.fiche.nom, 'fr'));
+  // Les deux fiches graves les mieux placées après la première : à éliminer avant de conclure
+  let graves = 0;
+  const hypotheses = resultats.slice(0, MAX_HYPOTHESES).map((h, i) => {
+    const aEliminer = i > 0 && h.fiche.urgence && h.score >= 0.5 && graves < 2;
+    if (aEliminer) graves += 1;
+    const avance = h.score - (resultats[i + 1]?.score || 0);
+    return { ...h, niveau: niveau(h.score, i === 0, avance), aEliminer };
+  });
+  const questions = questionsSuivantes(index, hypotheses, presents, absents);
+  // Échec d'un traitement déjà reçu : causes à vérifier avant de changer de diagnostic
+  const echec =
+    cas.reponse === 'echec' && (cas.traitements || []).length
+      ? {
+          fiches: donnees.pathologies
+            .filter((f) => (f.traitements || []).some((m) => cas.traitements.includes(m)))
+            .filter((f) => resultats.some((r) => r.fiche.id === f.id))
+            .map((f) => f.nom)
+            .slice(0, 4),
+          causes: CAUSES_ECHEC,
+        }
+      : null;
+  // Diagnostics graves à ne pas manquer : fiches d'urgence compatibles, même hors des premières
+  // places (score ≥ 0,3), présentées à part avec ce qu'il faut rechercher pour les éliminer
+  const premiere = hypotheses[0]?.fiche.id;
+  const aNePasManquer = resultats
+    .filter((h) => h.fiche.urgence && h.fiche.id !== premiere && h.score >= 0.3)
+    .slice(0, 3)
+    .map((h) => ({ fiche: h.fiche, score: h.score, aRechercher: h.aRechercher }));
+  return {
+    ...vide,
+    hypotheses,
+    questions,
+    aNePasManquer,
+    echec,
+    associations: associations(index, resultats, presents),
+    aRechercher: questions.map((q) => q.symptome),
+  };
+}
+
+/** Causes d'échec d'un traitement à vérifier (à valider). */
+export const CAUSES_ECHEC = [
+  'Observance : doses prises, vomissements, durée suffisante (au moins 48 à 72 h)',
+  'Dose ou voie inadaptée au poids et à la gravité ; médicament de qualité douteuse',
+  'Résistance (antibiotique, antipaludique, antituberculeux) : prélèvements avant de changer',
+  'Complication (abcès, épanchement, méningite, anémie sévère…) ou forme grave méconnue',
+  'Autre diagnostic ou maladie associée (VIH, tuberculose, drépanocytose, malnutrition)',
+];
+
+const ABREGES_CONSTANTES = {
+  temperature: 'T°',
+  fc: 'FC',
+  fr: 'FR',
+  tas: 'PAS',
+  tad: 'PAD',
+  spo2: 'SpO2',
+  glycemie: 'Glycémie',
+  glasgow: 'Glasgow',
+  taille: 'Taille',
+  pb: 'PB',
+};
+
+/**
+ * Résumé anonyme d'un cas pour demander l'avis d'un collègue (message, SMS) : tranche d'âge,
+ * sexe, grossesse, motif, durée, signes, constantes, résultats, hypothèses. Jamais les notes
+ * libres (elles pourraient contenir un nom) ni l'âge exact.
+ */
+export function resumeAnonyme(cas, index, resultat) {
+  const nom = (id) => index.symptomes.get(Number(id))?.nom;
+  const tranche = TRANCHES_AGE.find((t) => t.id === cas.age)?.libelle;
+  const signes = (etat) =>
+    Object.entries(cas.signes || {})
+      .filter(([, e]) => e === etat)
+      .map(([id]) => nom(id))
+      .filter(Boolean);
+  const constantes = Object.entries(cas.constantes || {})
+    .filter(([, v]) => v !== '' && v !== null && v !== undefined)
+    .map(([k, v]) => `${ABREGES_CONSTANTES[k] || k} ${v}`);
+  const lignes = [
+    'Avis demandé (cas anonyme, MedRef RDC)',
+    [
+      tranche,
+      { M: 'homme', F: 'femme' }[cas.sexe],
+      cas.grossesse === true && (cas.periode === 'post-partum' ? 'accouchée récemment' : 'enceinte'),
+    ]
+      .filter(Boolean)
+      .join(', '),
+    cas.motif &&
+      `Motif : ${nom(cas.motif)}${cas.duree ? ` (${DUREES.find((d) => d.id === cas.duree)?.libelle.toLowerCase()})` : ''}`,
+    signes('present').length > 0 && `Signes : ${signes('present').join(', ')}`,
+    signes('absent').length > 0 && `Absents : ${signes('absent').join(', ')}`,
+    constantes.length > 0 && `Constantes : ${constantes.join(' ; ')}`,
+    resultat.hypotheses.length > 0 &&
+      `Hypothèses : ${resultat.hypotheses
+        .slice(0, 3)
+        .map((h, i) => `${i + 1}. ${h.fiche.nom}`)
+        .join(' ; ')}`,
+  ];
+  return lignes.filter(Boolean).join('\n');
+}
+
+/**
+ * Degré de certitude de la synthèse, pour ne pas laisser croire à une conclusion quand les
+ * données manquent : nombre de signes notés, avance de la 1re hypothèse sur la 2e, examen de
+ * confirmation positif. Renvoie { niveau: 'insuffisant' | 'faible' | 'modere' | 'eleve', texte }.
+ */
+export function degreDeCertitude(resultat, cas) {
+  const h = resultat.hypotheses;
+  if (!h.length) return null;
+  const notes = Object.keys(cas.signes || {}).length + (cas.motif ? 1 : 0);
+  const ecart = h[0].score - (h[1]?.score || 0);
+  const confirme = h[0].tests.some((t) => t.resultat === 'positif' && t.role === 'c');
+  if (notes < 3 && !confirme) {
+    return {
+      niveau: 'insuffisant',
+      texte: 'Données insuffisantes pour conclure : complétez l’interrogatoire et l’examen.',
+    };
+  }
+  if (confirme || (h[0].score >= 0.7 && ecart >= 0.15)) {
+    return {
+      niveau: 'eleve',
+      texte: 'Hypothèse bien étayée ; éliminez quand même les diagnostics graves signalés.',
+    };
+  }
+  if (h[0].score >= 0.5 && ecart >= 0.08) {
+    return {
+      niveau: 'modere',
+      texte: 'Hypothèse probable ; recherchez les signes et examens proposés pour confirmer.',
+    };
+  }
+  return {
+    niveau: 'faible',
+    texte: 'Plusieurs hypothèses proches : aucune ne s’impose, recherchez les signes qui les départagent.',
+  };
+}
+
+/**
+ * Maladies simultanées : quand la première hypothèse laisse des signes importants inexpliqués,
+ * cherche l'hypothèse qui les explique (paludisme et pneumonie, VIH et tuberculose…).
+ * Renvoie au plus 2 associations { principale, associee, expliques: [noms] }.
+ */
+function associations(index, resultats, presents) {
+  const { parFiche, rarete, symptomes } = index;
+  const premiere = resultats[0];
+  if (!premiere) return [];
+  const tableau = parFiche.get(premiere.fiche.id);
+  // Signes présents que la première hypothèse n'explique pas, pondérés par leur rareté
+  const restants = [...presents].filter((s) => symptomes.has(s) && !tableau.has(s));
+  const poids = restants.reduce((t, s) => t + (rarete.get(s) || 0), 0);
+  const poidsTotal = [...presents]
+    .filter((s) => symptomes.has(s))
+    .reduce((t, s) => t + (rarete.get(s) || 0), 0);
+  if (!restants.length || poids < 0.25 * poidsTotal) return [];
+  // Deux formes de la même maladie (paludisme simple et grave) ne font pas une association
+  const radical = (f) => sansAccents(f.nom).split(/[^a-z]+/)[0];
+  return resultats
+    .slice(1)
+    .filter((h) => radical(h.fiche) !== radical(premiere.fiche))
+    .map((h) => {
+      const t = parFiche.get(h.fiche.id);
+      const expliques = restants.filter((s) => t.has(s));
+      const part = expliques.reduce((x, s) => x + (rarete.get(s) || 0), 0) / poids;
+      return { h, expliques, part };
+    })
+    .filter((x) => x.part >= 0.5 && x.h.score >= 0.25)
+    .sort((a, b) => b.part - a.part || b.h.score - a.h.score)
+    .slice(0, 2)
+    .map((x) => ({
+      principale: premiere.fiche,
+      associee: x.h.fiche,
+      expliques: x.expliques.map((s) => symptomes.get(s).nom),
+    }));
+}
+
+/** Les signes clés du syndrome sont-ils réunis ? (référentiel SIGNES_CLES ; sans clés : non) */
+function clesReunies(cles, presents, cas) {
+  if (!cles || (!cles.tous?.length && !cles.un?.length)) return false;
+  if (cles.grossesse && cas.grossesse !== true) return false;
+  if (cles.terrain && !(cas.terrains || []).includes(cles.terrain)) return false;
+  if (!(cles.tous || []).every((s) => presents.has(s))) return false;
+  return !cles.un?.length || cles.un.some((s) => presents.has(s));
+}
+
+/**
+ * Synthèse syndromique : un syndrome est retenu quand ses signes clés sont réunis (pas de
+ * syndrome méningé sans raideur de nuque ni fontanelle bombée), avec au moins deux de ses signes
+ * présents, et que ses signes notés absents ne l'emportent pas sur les signes présents.
+ */
+export function syntheseSyndromique(index, presents, absents = new Set(), cas = {}) {
+  return (index.donnees.syndromes || [])
+    .map((sy) => {
+      const cles = [...(sy.cles?.tous || []), ...(sy.cles?.un || [])];
+      const vus = [...new Set([...sy.symptomes, ...cles])].filter((s) => presents.has(s));
+      return {
+        ...sy,
+        signes: vus.map((s) => index.symptomes.get(s)?.nom).filter(Boolean),
+        part: vus.length / sy.symptomes.length,
+        reuni: clesReunies(sy.cles, presents, cas),
+        contre: sy.symptomes.filter((s) => absents.has(s)).length,
+      };
+    })
+    .filter((sy) => sy.reuni && sy.signes.length >= 2 && sy.contre < sy.signes.length)
+    .sort((a, b) => b.part - a.part || b.signes.length - a.signes.length);
+}
+
+/**
+ * Question suivante : le signe pas encore exploré qui sépare le mieux les premières
+ * hypothèses (présent dans certaines, pas dans d'autres), pondéré par leur score. Les signes
+ * d'examen sont signalés comme tels (« à rechercher à l'examen »).
+ */
+export function questionsSuivantes(index, hypotheses, presents, absents, nombreMax = 3) {
+  const tete = hypotheses.slice(0, 6);
+  if (tete.length < 2) return [];
+  const poids = tete.map((h) => h.score ** 2 || 0.0001);
+  const total = poids.reduce((a, b) => a + b, 0);
+  const candidats = new Set();
+  for (const h of tete) {
+    for (const [s] of index.parFiche.get(h.fiche.id) || []) {
+      if (!presents.has(s) && !absents.has(s)) candidats.add(s);
+    }
+  }
+  return [...candidats]
+    .map((s) => {
+      let p = 0;
+      tete.forEach((h, i) => {
+        const f = index.parFiche.get(h.fiche.id)?.get(s);
+        if (f !== undefined) p += poids[i] * POIDS_FREQUENCE[f];
+      });
+      p /= total;
+      return { s, gain: p * (1 - p) * (0.5 + (index.rarete.get(s) || 0) / 6) };
+    })
+    .filter((x) => x.gain > 0)
+    .sort((a, b) => b.gain - a.gain)
+    .slice(0, nombreMax)
+    .map(({ s }) => ({
+      symptome: index.symptomes.get(s),
+      examen: index.physiques.has(s),
+    }));
+}
+
+/** Voie suggérée par le contexte de la molécule dans la fiche (« relais oral », « rectal pré-transfert »…). */
+const VOIES = [
+  [/relais oral|per os|\boral/, /oral/],
+  [/rectal/, /rectal/],
+  [/\biv\b|intraveineu|perfusion/, /\biv\b|intraveineu|perfusion/],
+  [/\bim\b|intramusculaire/, /\bim\b|intramusculaire/],
+];
+
+/**
+ * Posologie de la fiche molécule adaptée au cas : population enfant avant 15 ans, adulte
+ * ensuite ; puis la ligne dont l'indication correspond à la pathologie et dont la voie
+ * correspond au contexte de la molécule dans la fiche (relais oral, rectal, IV…).
+ */
+export function posologiePour(posologies, pathologieNom, age, contexte = '') {
+  const population = ENFANT.includes(age) ? 'enfant' : 'adulte';
+  const nom = sansAccents(pathologieNom);
+  const ctx = sansAccents(contexte);
+  const candidates = (posologies || []).filter((p) => p.population === population);
+  const liste = candidates.length ? candidates : posologies || [];
+  if (!liste.length) return null;
+  const points = (p) => {
+    const indication = sansAccents(p.indication);
+    const voie = sansAccents(p.voie);
+    let n = 0;
+    if (indication && nom.includes(indication)) n += 3;
+    else if (indication && indication.includes(nom.split(' de ')[0])) n += 2;
+    for (const [motif, voieAttendue] of VOIES) {
+      if (motif.test(ctx)) n += voieAttendue.test(voie) ? 4 : -2;
+    }
+    return n;
+  };
+  return liste.reduce((meilleure, p) => (points(p) > points(meilleure) ? p : meilleure), liste[0]);
+}
+
+/**
+ * Signes du cas qui peuvent être un effet indésirable d'un traitement en cours (recherche du
+ * nom du signe dans le texte « effets indésirables » de la fiche molécule).
+ */
+export function effetsIndesirablesPossibles(molecules, nomsSignes) {
+  const resultats = [];
+  for (const m of molecules) {
+    const texte = sansAccents(m.effets_indesirables);
+    if (!texte) continue;
+    const signes = nomsSignes.filter((n) => {
+      const cle = sansAccents(n).split(/[ ’']/)[0];
+      return cle.length >= 4 && texte.includes(cle);
+    });
+    if (signes.length) resultats.push({ molecule: m, signes });
+  }
+  return resultats;
+}
+
+/* ---------- Parcours adaptatif : chaque réponse oriente la suite ---------- */
+
+/** Normes des constantes selon l'âge, affichées en aide à la saisie. */
+export const NORMES = {
+  temperature: () => '36 – 37,5',
+  fr: (age) => ({ nn: '40 – 60', petit: '20 – 40', grand: '15 – 25' })[age] || '12 – 20',
+  fc: (age) => ({ nn: '100 – 180', petit: '80 – 150', grand: '70 – 120' })[age] || '60 – 100',
+  tas: (age) => ({ nn: '≥ 60', petit: '≥ 70', grand: '≥ 80' })[age] || '90 – 140',
+  tad: (age) => (ENFANT.includes(age) ? '' : '60 – 90'),
+  spo2: () => '≥ 94',
+  glycemie: () => '3,9 – 7,8',
+  glasgow: () => '15',
+  pb: () => '≥ 125',
+};
+
+/** Le terrain ou le contexte concerne-t-il ce patient ? (âge et sexe déclarés dans le référentiel) */
+export function terrainPossible(t, cas) {
+  if (t.sexe && cas.sexe && t.sexe !== cas.sexe) return false;
+  if (t.ages && cas.age && !t.ages.includes(cas.age)) return false;
+  return true;
+}
+
+/** Le patient satisfait-il la règle ? (critère non renseigné : la règle ne masque rien) */
+function respecte(regle, cas) {
+  if (regle.sexe && cas.sexe && regle.sexe !== cas.sexe) return false;
+  if (regle.ages && cas.age && !regle.ages.includes(cas.age)) return false;
+  if (regle.grossesse && cas.grossesse !== true) return false;
+  return true;
+}
+
+/**
+ * Profil du patient : fiches qui peuvent le concerner (âge, sexe, grossesse) et signes
+ * possibles. Un signe n'est masqué que s'il est impossible pour ce patient selon une règle
+ * clinique explicite du référentiel (aménorrhée chez un homme, fontanelle chez l'adulte,
+ * céphalées chez le nouveau-né) : l'absence d'une fiche ne suffit pas à cacher un signe.
+ * `masques` donne, pour chaque signe masqué, la règle en cause.
+ */
+export function profilDuPatient(index, cas) {
+  const fiches = index.donnees.pathologies.filter((f) => convientAuPatient(f, cas));
+  const masques = new Map();
+  for (const regle of index.donnees.restrictions || []) {
+    if (respecte(regle, cas)) continue;
+    for (const s of regle.symptomes) if (!masques.has(s)) masques.set(s, regle.motif);
+  }
+  const signes = new Set(index.donnees.symptomes.map((s) => s.id).filter((s) => !masques.has(s)));
+  return { fiches, signes, masques };
+}
+
+/**
+ * Pertinence de chaque signe pour la suite de l'examen :
+ *  - s'il y a des hypothèses, poids du signe dans les hypothèses en tête (selon leur score) ;
+ *  - sinon, si le motif est connu, dans les fiches possibles qui comportent ce motif ;
+ *  - sinon, nombre de fiches possibles où le signe est fréquent.
+ * Les signes déjà notés (présents ou absents) ne sont pas repris.
+ */
+export function pertinenceSignes(index, cas, hypotheses, profil) {
+  const scores = new Map();
+  const ajouter = (s, v) => scores.set(s, (scores.get(s) || 0) + v);
+  if (hypotheses.length) {
+    for (const h of hypotheses.slice(0, 8)) {
+      for (const [s, f] of index.parFiche.get(h.fiche.id) || [])
+        ajouter(s, h.score ** 2 * POIDS_FREQUENCE[f]);
+    }
+  } else if (cas.motif) {
+    for (const fiche of profil.fiches) {
+      const tableau = index.parFiche.get(fiche.id);
+      const fm = tableau?.get(Number(cas.motif));
+      if (fm === undefined) continue;
+      for (const [s, f] of tableau) ajouter(s, POIDS_FREQUENCE[fm] * POIDS_FREQUENCE[f]);
+    }
+  } else {
+    for (const fiche of profil.fiches) {
+      for (const [s, f] of index.parFiche.get(fiche.id) || []) if (f >= 2) ajouter(s, 1);
+    }
+  }
+  const notes = new Set([...Object.keys(cas.signes || {}).map(Number), Number(cas.motif)]);
+  for (const s of notes) scores.delete(s);
+  return scores;
+}
+
+/**
+ * Motifs de consultation les plus fréquents pour ce patient : signes très fréquents des fiches
+ * qui peuvent le concerner, les fiches propres à son âge ou à sa grossesse comptant triple.
+ */
+export function motifsFrequents(index, profil, nombreMax = 10, cas = {}) {
+  const compte = new Map();
+  for (const fiche of profil.fiches) {
+    const pub = fiche.public || {};
+    const propre = (cas.age && pub.ages?.includes(cas.age)) || (cas.grossesse && pub.obstetrique);
+    for (const [s, f] of index.parFiche.get(fiche.id) || []) {
+      if (f === 3 && profil.signes.has(s)) compte.set(s, (compte.get(s) || 0) + (propre ? 3 : 1));
+    }
+  }
+  return [...compte]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, nombreMax)
+    .map(([s]) => index.symptomes.get(s));
+}
+
+/**
+ * Examens utiles pour les hypothèses en tête : ceux qui confirment (ou orientent vers) une ou
+ * plusieurs d'entre elles, les plus discriminants d'abord, avec les hypothèses concernées.
+ */
+export function examensUtiles(index, hypotheses, dejaFaits = {}, nombreMax = 8) {
+  const parExamen = new Map();
+  for (const h of hypotheses.slice(0, 6)) {
+    for (const [id, role] of Object.entries(h.fiche.tests || {})) {
+      if (dejaFaits[id]) continue;
+      if (!parExamen.has(id)) parExamen.set(id, { poids: 0, hypotheses: [] });
+      const e = parExamen.get(id);
+      e.poids += h.score * (role === 'c' ? 1 : 0.5);
+      e.role = e.role === 'c' ? 'c' : role;
+      e.hypotheses.push({ nom: h.fiche.nom, role });
+    }
+  }
+  return [...parExamen]
+    .map(([id, e]) => {
+      const examen = index.donnees.examens.find((x) => String(x.id) === id);
+      // Un examen discriminant (RV+ élevé, RV− bas) passe devant un examen peu informatif
+      const rv = rapportsDeVraisemblance(examen?.performance);
+      const pouvoir = rv
+        ? Math.min(1.5, Math.max(0.4, (Math.log10(rv.positif) - Math.log10(rv.negatif)) / 2.5))
+        : 1;
+      return { examen, ...e, poids: e.poids * pouvoir };
+    })
+    .filter((e) => e.examen)
+    .sort((a, b) => b.poids - a.poids)
+    .slice(0, nombreMax);
+}
+
+/** Terrains et contextes qui pèseraient sur les hypothèses en tête (à demander au patient). */
+export function terrainsAPreciser(index, hypotheses, liste) {
+  const noms = hypotheses.slice(0, 5).map((h) => index.nomsFiches.get(h.fiche.id) || '');
+  return new Set((liste || []).filter((t) => noms.some((n) => new RegExp(t.motif).test(n))).map((t) => t.id));
+}
+
+/* ---------- Résultats biologiques chiffrés ---------- */
+
+/** Examens chiffrés proposés, avec leur unité. */
+export const BIOLOGIE = [
+  ['hb', 'Hémoglobine', 'g/dL'],
+  ['gb', 'Globules blancs', 'G/L'],
+  ['plaquettes', 'Plaquettes', 'G/L'],
+  ['crp', 'CRP', 'mg/L'],
+  ['creatinine', 'Créatinine', 'µmol/L'],
+  ['bilirubine', 'Bilirubine totale', 'µmol/L'],
+  ['sodium', 'Sodium', 'mmol/L'],
+  ['potassium', 'Potassium', 'mmol/L'],
+  ['lactates', 'Lactates', 'mmol/L'],
+];
+
+/**
+ * Lecture des résultats chiffrés selon des seuils usuels (OMS pour l'anémie sévère : Hb < 5 g/dL
+ * chez l'enfant de moins de 12 ans, < 7 g/dL au-delà) : interprétation de chaque valeur,
+ * alertes de gravité et orientations (motif sur le nom des fiches).
+ */
+export function lireBiologie(bio = {}, age = '', mois = null) {
+  const v = Object.fromEntries(Object.entries(bio).map(([k, x]) => [k, nombre(x)]));
+  const interpretations = [];
+  const alertes = [];
+  const orientations = [];
+  const noter = (cle, texte, grave = false) => interpretations.push({ cle, texte, grave });
+  const enfant = mois !== null && mois !== undefined ? mois < 144 : ENFANT.includes(age);
+  if (v.hb !== null && v.hb !== undefined) {
+    const severe = enfant ? 5 : 7;
+    if (v.hb < severe) {
+      noter('hb', 'anémie sévère', true);
+      alertes.push(`Anémie sévère (Hb ${v.hb} g/dL) : transfusion à discuter`);
+      orientations.push('anemi|palud|drepano|hemoly|hemorrag|ankylostom');
+    } else if (v.hb < (enfant ? 11 : 12)) {
+      noter('hb', 'anémie');
+      orientations.push('anemi|palud|drepano|hemoly|carence|ankylostom');
+    } else noter('hb', 'normale');
+  }
+  if (v.gb !== null && v.gb !== undefined) {
+    if (v.gb > 15) {
+      noter('gb', 'hyperleucocytose');
+      orientations.push('bacter|sepsis|pneumon|menin|abces|appendic|periton|pyelo|cellulite|osteomyel');
+    } else if (v.gb < 4) {
+      noter('gb', 'leucopénie');
+      orientations.push('vih|typho|palud|leucem|aplasie|dengue|ebola');
+    } else noter('gb', 'normaux');
+  }
+  if (v.plaquettes !== null && v.plaquettes !== undefined) {
+    if (v.plaquettes < 100) {
+      noter('plaquettes', 'thrombopénie', v.plaquettes < 20);
+      orientations.push('palud|dengue|ebola|hemorragique|hellp|coagulation|leucem|purpura');
+      if (v.plaquettes < 20) alertes.push(`Thrombopénie sévère (${v.plaquettes} G/L) : risque hémorragique`);
+    } else noter('plaquettes', 'normales');
+  }
+  if (v.crp !== null && v.crp !== undefined) {
+    if (v.crp >= 100) {
+      noter('crp', 'très élevée, en faveur d’une infection bactérienne');
+      orientations.push('bacter|sepsis|pneumon|menin|abces|pyelo|periton|osteomyel');
+    } else if (v.crp >= 10) noter('crp', 'élevée');
+    else noter('crp', 'normale');
+  }
+  if (v.creatinine !== null && v.creatinine !== undefined) {
+    const seuil = enfant ? 90 : 120;
+    if (v.creatinine > seuil) {
+      noter('creatinine', 'insuffisance rénale', v.creatinine > 3 * seuil);
+      orientations.push('renal|nephr|uremi|hellp|palud|leptospir|deshydrat');
+      if (v.creatinine > 3 * seuil)
+        alertes.push(`Créatinine ${v.creatinine} µmol/L : insuffisance rénale sévère`);
+    } else noter('creatinine', 'normale');
+  }
+  // Nouveau-né : seuils selon l'âge en heures (ictère néonatal), hors de cette lecture simple
+  const neonatal = mois !== null && mois !== undefined ? mois < 1 : age === 'nn';
+  if (v.bilirubine !== null && v.bilirubine !== undefined && !neonatal) {
+    if (v.bilirubine > 50) {
+      noter('bilirubine', 'ictère, atteinte hépatique ou hémolyse', v.bilirubine > 200);
+      orientations.push('hepat|cirrho|palud|leptospir|hemoly|drepano|cholest|angiochol|fievre jaune');
+    } else if (v.bilirubine > 20) noter('bilirubine', 'légèrement élevée');
+    else noter('bilirubine', 'normale');
+  }
+  if (v.sodium !== null && v.sodium !== undefined) {
+    if (v.sodium < 125) {
+      noter('sodium', 'hyponatrémie sévère', true);
+      alertes.push(`Hyponatrémie sévère (${v.sodium} mmol/L) : risque de convulsions`);
+    } else if (v.sodium < 135) noter('sodium', 'hyponatrémie');
+    else if (v.sodium > 150) {
+      noter('sodium', 'hypernatrémie', true);
+      alertes.push(`Hypernatrémie (${v.sodium} mmol/L) : déshydratation intracellulaire`);
+      orientations.push('deshydrat');
+    } else noter('sodium', 'normale');
+  }
+  if (v.potassium !== null && v.potassium !== undefined) {
+    if (v.potassium >= 6.5) {
+      noter('potassium', 'hyperkaliémie menaçante', true);
+      alertes.push(`Hyperkaliémie (${v.potassium} mmol/L) : ECG et traitement urgent`);
+      orientations.push('renal|hyperkali|acidocetose');
+    } else if (v.potassium > 5.5) noter('potassium', 'hyperkaliémie');
+    else if (v.potassium < 2.5) {
+      noter('potassium', 'hypokaliémie sévère', true);
+      alertes.push(`Hypokaliémie sévère (${v.potassium} mmol/L) : risque de troubles du rythme`);
+    } else if (v.potassium < 3.5) noter('potassium', 'hypokaliémie');
+    else noter('potassium', 'normale');
+  }
+  if (v.lactates !== null && v.lactates !== undefined) {
+    if (v.lactates >= 4) {
+      noter('lactates', 'hyperlactatémie', true);
+      alertes.push(`Lactates ${v.lactates} mmol/L : hypoperfusion, état de choc à rechercher`);
+      orientations.push('sepsis|choc|palud');
+    } else if (v.lactates > 2) noter('lactates', 'élevés');
+    else noter('lactates', 'normaux');
+  }
+  return { interpretations, alertes, orientations };
+}
+
+/* ---------- Scores calculés à partir de la saisie ---------- */
+
+/**
+ * Scores et classifications déduits automatiquement de l'âge, des constantes, de la biologie
+ * et des signes notés : qSOFA (adulte), critères de SRIS, index de choc, IMC, score de
+ * Centor-McIsaac (mal de gorge) et classification PCIME de la toux (2 mois – 5 ans).
+ * Un score n'est donné que si ses éléments ont été saisis.
+ */
+export function calculerScores(index, cas, presents, absents) {
+  const c = Object.fromEntries(Object.entries(cas.constantes || {}).map(([k, x]) => [k, nombre(x)]));
+  const b = Object.fromEntries(Object.entries(cas.biologie || {}).map(([k, x]) => [k, nombre(x)]));
+  const mois = ageEnMois(cas);
+  const adulte = mois !== null ? mois >= 216 : ['adulte', 'age'].includes(cas.age);
+  const present = (nom) => presents.has(index.parNom.get(nom));
+  const absent = (nom) => absents.has(index.parNom.get(nom));
+  const scores = [];
+  const connu = (x) => x !== null && x !== undefined;
+
+  if (adulte && (connu(c.fr) || connu(c.tas) || connu(c.glasgow))) {
+    const points =
+      (c.fr >= 22 ? 1 : 0) +
+      (connu(c.tas) && c.tas <= 100 ? 1 : 0) +
+      (connu(c.glasgow) && c.glasgow < 15 ? 1 : 0);
+    scores.push({
+      nom: 'qSOFA',
+      valeur: `${points}/3`,
+      interpretation:
+        points >= 2
+          ? 'risque élevé de sepsis grave : bilan et antibiothérapie sans délai si infection'
+          : 'risque faible',
+      grave: points >= 2,
+    });
+  }
+  const criteres = [
+    connu(c.temperature) ? c.temperature > 38 || c.temperature < 36 : null,
+    connu(c.fc) ? c.fc > 90 : null,
+    connu(c.fr) ? c.fr > 20 : null,
+    connu(b.gb) ? b.gb > 12 || b.gb < 4 : null,
+  ].filter((x) => x !== null);
+  if (adulte && criteres.length >= 2) {
+    const n = criteres.filter(Boolean).length;
+    scores.push({
+      nom: 'Critères de SRIS',
+      valeur: `${n}/${criteres.length}`,
+      interpretation: n >= 2 ? 'réponse inflammatoire systémique' : 'non réunis',
+      grave: false,
+    });
+  }
+  if (connu(c.fc) && connu(c.tas) && c.tas > 0) {
+    const ic = Math.round((c.fc / c.tas) * 10) / 10;
+    if (adulte) {
+      scores.push({
+        nom: 'Index de choc',
+        valeur: String(ic).replace('.', ','),
+        interpretation:
+          ic >= 1
+            ? 'choc probable : remplissage et recherche de la cause'
+            : ic >= 0.9
+              ? 'à surveiller'
+              : 'normal',
+        grave: ic >= 1,
+      });
+    }
+  }
+  if (connu(c.taille) && cas.poids && adulte) {
+    const poids = nombre(cas.poids);
+    const imc = Math.round((poids / (c.taille / 100) ** 2) * 10) / 10;
+    if (Number.isFinite(imc)) {
+      const lecture =
+        imc < 16
+          ? 'dénutrition sévère'
+          : imc < 18.5
+            ? 'maigreur'
+            : imc < 25
+              ? 'normal'
+              : imc < 30
+                ? 'surpoids'
+                : 'obésité';
+      scores.push({
+        nom: 'IMC',
+        valeur: `${String(imc).replace('.', ',')} kg/m²`,
+        interpretation: lecture,
+        grave: imc < 16,
+      });
+    }
+  }
+  if (present('Mal de gorge')) {
+    const ans = mois !== null ? mois / 12 : null;
+    let points = 0;
+    if (present('Fièvre')) points += 1;
+    if (absent('Toux')) points += 1;
+    if (present('Adénopathies')) points += 1;
+    if (ans !== null && ans >= 3 && ans < 15) points += 1;
+    if (ans !== null && ans >= 45) points -= 1;
+    scores.push({
+      nom: 'Centor-McIsaac (sans l’exsudat amygdalien, à rechercher)',
+      valeur: `${points}/5`,
+      interpretation:
+        points >= 3
+          ? 'angine bactérienne possible : test rapide ou antibiotique selon le protocole'
+          : 'angine probablement virale',
+      grave: false,
+    });
+  }
+  const petitEnfant = mois !== null ? mois >= 2 && mois < 60 : cas.age === 'petit';
+  if (petitEnfant && (present('Toux') || present('Dyspnée'))) {
+    const danger = ['Convulsions', 'Troubles de la conscience', 'Stridor', 'Cyanose'].filter(present);
+    const tachypnee = present('Tachypnée');
+    scores.push({
+      nom: 'PCIME : toux ou difficulté respiratoire',
+      valeur: danger.length
+        ? 'Pneumonie grave ou maladie très grave'
+        : tachypnee
+          ? 'Pneumonie'
+          : 'Pas de pneumonie : toux ou rhume',
+      interpretation: danger.length
+        ? `signe de danger (${danger.join(', ')}) : première dose d’antibiotique et transfert urgent`
+        : tachypnee
+          ? 'respiration rapide : amoxicilline orale selon la PCIME'
+          : connu(c.fr)
+            ? 'fréquence respiratoire normale pour l’âge'
+            : 'compter la fréquence respiratoire pendant une minute',
+      grave: danger.length > 0,
+    });
+  }
+  for (const sg of scoresGuidesDuCas(cas)) {
+    scores.push({
+      nom: sg.nom,
+      valeur: String(sg.total).replace('.', ','),
+      interpretation: sg.texte,
+      grave: sg.grave,
+    });
+  }
+  return scores;
+}

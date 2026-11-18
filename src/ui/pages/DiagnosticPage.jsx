@@ -1,0 +1,2535 @@
+import { useEffect, useId, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useServices } from '../context/services.jsx';
+import { useAuth } from '../context/auth.jsx';
+import { useAsync } from '../hooks/useAsync.js';
+import { AsyncView } from '../components/Status.jsx';
+import { LienProduit, PhotoProduit } from '../components/Produits.jsx';
+import { CLE_PLAN_DIAGNOSTIC } from '../components/OrdonnanceGuidee.jsx';
+import {
+  ageEnMois,
+  analyser,
+  BIOLOGIE,
+  degreDeCertitude,
+  DUREES,
+  effetsIndesirablesPossibles,
+  examensUtiles,
+  fonctionsElimination,
+  indexer,
+  LIBELLES_FREQUENCE,
+  LIBELLES_FREQUENCE_RDC,
+  motifsFrequents,
+  NORMES,
+  pertinenceSignes,
+  resumeAnonyme,
+  posologiePour,
+  profilDuPatient,
+  sansAccents,
+  terrainPossible,
+  terrainsAPreciser,
+  TRANCHES_AGE,
+  TRIAGE,
+  trancheDepuisAge,
+} from '../../core/diagnostic.js';
+import { calculerDose } from '../../core/posologie.js';
+import { conseilsPatient } from '../../core/conseils.js';
+import { exporterFHIR } from '../../core/fhir.js';
+import { PARCOURS, profilParcours, questionsVisibles, signesDuParcours } from '../../core/parcours.js';
+import { evaluerScoreGuide, profilScores, SCORES_GUIDES } from '../../core/scoresGuides.js';
+import { LIGNES } from '../../core/labels.js';
+
+const NIVEAUX = { tres_probable: 'Très probable', probable: 'Probable', possible: 'Possible' };
+
+const ETAPES = [
+  { id: 'motif', titre: '1 · Motif et histoire' },
+  { id: 'terrain', titre: '2 · Terrain' },
+  { id: 'examen', titre: '3 · Examen clinique' },
+  { id: 'paraclinique', titre: '4 · Paraclinique' },
+];
+
+const DEBUTS = [
+  ['brutal', 'Brutal'],
+  ['progressif', 'Progressif'],
+];
+const EVOLUTIONS = [
+  ['aggravation', 'S’aggrave'],
+  ['stable', 'Stable'],
+  ['amelioration', 'S’améliore'],
+  ['intermittente', 'Par épisodes'],
+];
+
+const REPONSES = [
+  ['non', 'Non'],
+  ['amelioration', 'Oui, il s’améliore'],
+  ['echec', 'Oui, sans amélioration après 48 à 72 h'],
+];
+
+const CONSTANTES = [
+  ['temperature', 'Température', '°C'],
+  ['fc', 'Fréquence cardiaque', '/min'],
+  ['fr', 'Fréquence respiratoire', '/min'],
+  ['tas', 'Pression systolique', 'mmHg'],
+  ['tad', 'Pression diastolique', 'mmHg'],
+  ['spo2', 'Saturation (SpO2)', '%'],
+  ['glycemie', 'Glycémie', 'mmol/L'],
+  ['glasgow', 'Score de Glasgow', '/15'],
+  ['pb', 'Périmètre brachial', 'mm'],
+  ['taille', 'Taille', 'cm'],
+];
+
+const UNITES_AGE = [
+  ['jours', 'jours'],
+  ['mois', 'mois'],
+  ['ans', 'ans'],
+];
+
+const EXAMENS_RAPIDES = ['tdr-paludisme', 'goutte-epaisse', 'xpert-mtb-rif', 'hemocultures', 'lcr'];
+
+const CAS_VIDE = {
+  age: '',
+  ageValeur: '',
+  ageUnite: 'ans',
+  sexe: '',
+  grossesse: false,
+  periode: '',
+  terme: '',
+  poids: '',
+  motif: null,
+  debut: '',
+  duree: '',
+  evolution: '',
+  premierSigne: null,
+  scoresGuides: {},
+  parcours: {},
+  reponse: '',
+  histoire: '',
+  terrains: [],
+  traitements: [],
+  allergies: [],
+  contextes: [],
+  constantes: {},
+  biologie: {},
+  signes: {},
+  examens: {},
+  triage: {},
+  triageFait: false,
+};
+
+/**
+ * Aide au diagnostic, selon la démarche sémiologique : motif et histoire de la maladie, terrain
+ * (antécédents, traitements en cours, allergies, contexte), examen clinique (constantes, signes
+ * présents ou absents par appareil), paraclinique ; synthèse syndromique, hypothèses, question
+ * suivante, traitement sécurisé et observation imprimable. Moteur hors connexion
+ * (core/diagnostic.js). Réservé aux comptes connectés ; rien n'est enregistré sur le serveur.
+ */
+export function DiagnosticPage() {
+  const { user } = useAuth();
+  if (!user) {
+    return (
+      <div className="page-header">
+        <h1>Aide au diagnostic</h1>
+        <p className="lead">
+          Outil réservé aux professionnels de santé.{' '}
+          <Link to="/connexion" state={{ from: '/diagnostic' }}>
+            Connectez-vous
+          </Link>{' '}
+          pour l’utiliser.
+        </p>
+      </div>
+    );
+  }
+  return <Diagnostic />;
+}
+
+function Diagnostic() {
+  const { api } = useServices();
+  const state = useAsync(() => api.diagnosticDonnees(), [api]);
+  return (
+    <>
+      <div className="page-header no-print">
+        <h1>Aide au diagnostic</h1>
+        <p className="lead">
+          Suivez la démarche : motif, terrain, examen clinique, paraclinique. La synthèse et les hypothèses se
+          mettent à jour à chaque information.
+        </p>
+        <p className="diag-avertissement">
+          Aide à la décision : elle ne remplace ni l’examen clinique ni le jugement du soignant. Aucune donnée
+          du patient n’est enregistrée.
+        </p>
+        <p>
+          <Link to="/diagnostic/apprentissage">Mode apprentissage : s’entraîner sur des cas cliniques</Link>
+        </p>
+      </div>
+      <AsyncView state={state}>{(donnees) => <Moteur donnees={donnees} />}</AsyncView>
+    </>
+  );
+}
+
+/**
+ * Cas en cours gardé dans l'onglet (sessionStorage) : la touche retour, le passage par une fiche
+ * ou un rechargement ne font plus perdre la saisie. Rien ne quitte l'appareil ; l'onglet fermé
+ * ou « Nouveau cas » l'effacent.
+ */
+const CLE_CAS = 'medref.diagnostic.cas';
+
+/** Lieu de soins du soignant (préférence de l'appareil, pas une donnée du patient). */
+const CLE_NIVEAU = 'medref.diagnostic.niveau';
+// Province et saison du lieu d'exercice : gardées sur l'appareil, elles servent à chaque cas
+const CLE_LIEU = 'medref.diagnostic.lieu';
+
+function lieuEnregistre() {
+  try {
+    return { province: '', saison: '', ...JSON.parse(localStorage.getItem(CLE_LIEU) || '{}') };
+  } catch {
+    return { province: '', saison: '' };
+  }
+}
+const NIVEAUX_LIEU = [
+  ['centre_sante', 'Centre de santé', 1],
+  ['hopital_general', 'Hôpital général', 2],
+  ['hopital_tertiaire', 'Hôpital tertiaire', 3],
+];
+const RANG_NIVEAU = Object.fromEntries(NIVEAUX_LIEU.map(([id, , rang]) => [id, rang]));
+const LIEU_NIVEAU = { 1: 'au centre de santé', 2: 'à l’hôpital général', 3: 'au niveau tertiaire' };
+
+/** Disponibilité d'un examen au lieu de soins choisi (référentiel NIVEAUX_EXAMENS). */
+function disponibilite(slug, niveau, niveauxExamens = {}) {
+  const requis = niveauxExamens[slug] || 3;
+  if (!niveau) return { ici: null, requis };
+  return { ici: requis <= RANG_NIVEAU[niveau], requis };
+}
+
+function BadgeDispo({ slug, niveau, niveauxExamens }) {
+  const d = disponibilite(slug, niveau, niveauxExamens);
+  if (d.ici === null) return null;
+  return d.ici ? (
+    <span className="tag tag-ok">disponible ici</span>
+  ) : (
+    <span className="tag tag-alerte">{LIEU_NIVEAU[d.requis]}</span>
+  );
+}
+
+function niveauEnregistre() {
+  try {
+    return localStorage.getItem(CLE_NIVEAU) || '';
+  } catch {
+    return '';
+  }
+}
+
+function casEnregistre() {
+  try {
+    const brut = sessionStorage.getItem(CLE_CAS);
+    return brut ? { ...CAS_VIDE, ...JSON.parse(brut) } : CAS_VIDE;
+  } catch {
+    return CAS_VIDE;
+  }
+}
+
+function Moteur({ donnees }) {
+  const index = useMemo(() => indexer(donnees), [donnees]);
+  const [cas, setCas] = useState(casEnregistre);
+  // L'étape est dans l'adresse (?etape=…) : la touche retour revient à l'étape précédente
+  const [params, setParams] = useSearchParams();
+  const etape = ETAPES.some((e) => e.id === params.get('etape')) ? params.get('etape') : 'motif';
+  const setEtape = (id) => {
+    if (id === etape) return;
+    const suite = new URLSearchParams(params);
+    suite.set('etape', id);
+    setParams(suite);
+  };
+  // Mode urgence (triage ABCDE) dans l'adresse aussi : la touche retour le referme
+  const urgence = params.get('urgence') === '1';
+  const setUrgence = (oui) => {
+    const suite = new URLSearchParams(params);
+    if (oui) suite.set('urgence', '1');
+    else suite.delete('urgence');
+    setParams(suite);
+  };
+  const choix = params.get('hypothese');
+  const setChoix = (slug) => {
+    const suite = new URLSearchParams(params);
+    if (slug) suite.set('hypothese', slug);
+    else suite.delete('hypothese');
+    setParams(suite);
+  };
+  useEffect(() => {
+    try {
+      if (cas === CAS_VIDE) sessionStorage.removeItem(CLE_CAS);
+      else sessionStorage.setItem(CLE_CAS, JSON.stringify(cas));
+    } catch {
+      // Stockage indisponible (navigation privée) : la saisie reste en mémoire
+    }
+  }, [cas]);
+  const [lieu, setLieu] = useState(lieuEnregistre);
+  const choisirLieu = (champ, valeur) => {
+    const suite = { ...lieu, [champ]: valeur };
+    setLieu(suite);
+    try {
+      localStorage.setItem(CLE_LIEU, JSON.stringify(suite));
+    } catch {
+      // préférence non gardée (stockage indisponible)
+    }
+  };
+  const resultat = useMemo(
+    () => analyser(index, { ...cas, province: lieu.province, saison: lieu.saison }),
+    [index, cas, lieu],
+  );
+  // Parcours adaptatif : le profil restreint les signes possibles, le motif et les hypothèses
+  // en tête ordonnent ce qu'il faut rechercher ensuite
+  const profil = useMemo(
+    () => profilDuPatient(index, cas),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [index, cas.age, cas.sexe, cas.grossesse],
+  );
+  const pertinence = useMemo(
+    () => pertinenceSignes(index, cas, resultat.hypotheses, profil),
+    [index, cas, resultat.hypotheses, profil],
+  );
+  const maj = (champ, valeur) => setCas((c) => ({ ...c, [champ]: valeur }));
+  const regler = (id, etat) =>
+    setCas((c) => {
+      const signes = { ...c.signes };
+      if (!etat || signes[id] === etat) delete signes[id];
+      else signes[id] = etat;
+      return { ...c, signes };
+    });
+  const basculer = (champ, id) =>
+    setCas((c) => ({
+      ...c,
+      [champ]: c[champ].includes(id) ? c[champ].filter((x) => x !== id) : [...c[champ], id],
+    }));
+  const choisie = resultat.hypotheses.find((h) => h.fiche.slug === choix);
+  const nouveau = () => {
+    setCas(CAS_VIDE);
+    setReference(null);
+    setParams({}, { replace: true });
+  };
+  const [niveau, setNiveau] = useState(niveauEnregistre);
+  const [reference, setReference] = useState(null);
+  const choisirNiveau = (id) => {
+    setNiveau(id);
+    try {
+      localStorage.setItem(CLE_NIVEAU, id);
+    } catch {
+      // préférence non gardée (stockage indisponible)
+    }
+  };
+
+  return (
+    <>
+      <div className="diag-grille">
+        <section id="diag-saisie" className="card diag-cas no-print" aria-label="Observation du patient">
+          <fieldset className="diag-champ diag-lieu">
+            <legend>Je travaille en</legend>
+            <div className="chips">
+              {NIVEAUX_LIEU.map(([id, libelle]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className="chip chip-bouton"
+                  aria-pressed={niveau === id}
+                  onClick={() => choisirNiveau(id)}
+                >
+                  {libelle}
+                </button>
+              ))}
+            </div>
+            <div className="diag-lieu-epidemio">
+              <label>
+                Province{' '}
+                <select value={lieu.province} onChange={(e) => choisirLieu('province', e.target.value)}>
+                  <option value="">—</option>
+                  {(donnees.provinces || []).map((pr) => (
+                    <option key={pr} value={pr}>
+                      {pr}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <span className="chips" role="group" aria-label="Saison">
+                {[
+                  ['pluies', 'Saison des pluies'],
+                  ['seche', 'Saison sèche'],
+                ].map(([id, libelle]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className="chip chip-bouton"
+                    aria-pressed={lieu.saison === id}
+                    onClick={() => choisirLieu('saison', lieu.saison === id ? '' : id)}
+                  >
+                    {libelle}
+                  </button>
+                ))}
+              </span>
+            </div>
+          </fieldset>
+          {urgence ? (
+            <TriageUrgence
+              cas={cas}
+              triage={resultat.triage}
+              setCas={setCas}
+              onTerminer={() => {
+                maj('triageFait', true);
+                setUrgence(false);
+              }}
+            />
+          ) : (
+            <button
+              type="button"
+              className="btn btn-danger diag-bouton-urgence"
+              onClick={() => setUrgence(true)}
+            >
+              Patient en détresse ? Triage ABCDE
+            </button>
+          )}
+          <nav className="diag-etapes" aria-label="Étapes de la démarche">
+            {ETAPES.map((e) => (
+              <button
+                key={e.id}
+                type="button"
+                className="chip chip-bouton"
+                aria-current={etape === e.id ? 'step' : undefined}
+                aria-pressed={etape === e.id}
+                onClick={() => setEtape(e.id)}
+              >
+                {e.titre}
+              </button>
+            ))}
+          </nav>
+          {etape === 'motif' && (
+            <EtapeMotif index={index} cas={cas} maj={maj} setCas={setCas} profil={profil} />
+          )}
+          {etape === 'terrain' && (
+            <EtapeTerrain
+              donnees={donnees}
+              index={index}
+              cas={cas}
+              maj={maj}
+              basculer={basculer}
+              hypotheses={resultat.hypotheses}
+            />
+          )}
+          {etape === 'examen' && (
+            <EtapeExamen
+              donnees={donnees}
+              index={index}
+              cas={cas}
+              maj={maj}
+              regler={regler}
+              deduits={resultat.deduits}
+              profil={profil}
+              pertinence={pertinence}
+            />
+          )}
+          {etape === 'paraclinique' && (
+            <EtapeParaclinique
+              index={index}
+              examens={donnees.examens}
+              valeurs={cas.examens}
+              hypotheses={resultat.hypotheses}
+              onChange={(v) => maj('examens', v)}
+              niveau={niveau}
+              niveauxExamens={donnees.niveauxExamens}
+              biologie={cas.biologie}
+              interpretations={resultat.biologie}
+              onBiologie={(v) => maj('biologie', v)}
+            />
+          )}
+          <div className="diag-pied-etape">
+            {etape !== 'paraclinique' && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setEtape(ETAPES[ETAPES.findIndex((e) => e.id === etape) + 1].id)}
+              >
+                Étape suivante
+              </button>
+            )}
+            <button type="button" className="btn btn-ghost" onClick={nouveau}>
+              Nouveau cas
+            </button>
+          </div>
+        </section>
+
+        <section
+          id="diag-synthese"
+          className="diag-resultats no-print"
+          aria-label="Synthèse et hypothèses"
+          aria-live="polite"
+        >
+          <Alertes resultat={resultat} />
+          {resultat.scores?.length > 0 && (
+            <div className="card">
+              <h2>Scores calculés</h2>
+              <ul className="diag-liste">
+                {resultat.scores.map((sc) => (
+                  <li key={sc.nom} className={sc.grave ? 'diag-score-grave' : undefined}>
+                    <b>
+                      {sc.nom} : {sc.valeur}
+                    </b>{' '}
+                    · {sc.interpretation}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {resultat.syndromes.length > 0 && (
+            <div className="card">
+              <h2>Synthèse syndromique</h2>
+              <ul className="diag-liste">
+                {resultat.syndromes.map((sy) => (
+                  <li key={sy.id}>
+                    <Link to={`/syndromes/${sy.slug}`}>
+                      <b>{sy.nom}</b>
+                    </Link>{' '}
+                    : {sy.signes.join(', ')}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {resultat.questions.length > 0 && (
+            <QuestionSuivante questions={resultat.questions} regler={regler} />
+          )}
+          <EffetsTraitements traitements={cas.traitements} donnees={donnees} index={index} cas={cas} />
+          <h2>Hypothèses diagnostiques</h2>
+          <Certitude resultat={resultat} cas={cas} />
+          {resultat.associations?.length > 0 && (
+            <div className="card diag-association">
+              <h3>Deux maladies à la fois ?</h3>
+              <ul className="diag-liste">
+                {resultat.associations.map((a) => (
+                  <li key={a.associee.id}>
+                    <b>{a.principale.nom}</b> n’explique pas {a.expliques.join(', ')} :{' '}
+                    <Link to={`/pathologies/${a.associee.slug}`}>{a.associee.nom}</Link> associée ?
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {!resultat.hypotheses.length ? (
+            <p className="muted">
+              Indiquez le motif de consultation, puis les signes présents ou absents : les hypothèses
+              apparaîtront ici.
+            </p>
+          ) : (
+            <ol className="diag-hypotheses">
+              {resultat.hypotheses.map((h, i) => (
+                <Hypothese
+                  key={h.fiche.id}
+                  h={h}
+                  rang={i + 1}
+                  choisie={h.fiche.slug === choix}
+                  onChoisir={() => setChoix(h.fiche.slug)}
+                />
+              ))}
+            </ol>
+          )}
+          {resultat.echec && (
+            <div className="card diag-echec">
+              <h2>Échec du traitement reçu</h2>
+              {resultat.echec.fiches.length > 0 && (
+                <p>
+                  Hypothèses traitées par ces médicaments, mises en retrait :{' '}
+                  {resultat.echec.fiches.join(', ')}.
+                </p>
+              )}
+              <p className="muted">Avant de conclure à une erreur de diagnostic, vérifier :</p>
+              <ul className="diag-liste">
+                {resultat.echec.causes.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {resultat.aNePasManquer?.length > 0 && (
+            <div className="card diag-ne-pas-manquer">
+              <h2>À ne pas manquer</h2>
+              <p className="muted">
+                Diagnostics graves compatibles avec le cas : à éliminer avant de conclure.
+              </p>
+              <ul className="diag-liste">
+                {resultat.aNePasManquer.map((g) => (
+                  <li key={g.fiche.id}>
+                    <Link to={`/pathologies/${g.fiche.slug}`}>
+                      <b>{g.fiche.nom}</b>
+                    </Link>
+                    {g.aRechercher.length > 0 && <> · rechercher : {g.aRechercher.join(', ')}</>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {resultat.hypotheses.length > 0 && (
+            <DiagnosticRetenu resultat={resultat} donnees={donnees} cas={cas} niveau={niveau} choix={choix} />
+          )}
+          {choisie && (
+            <Traitement
+              fiche={choisie.fiche}
+              cas={cas}
+              donnees={donnees}
+              niveau={niveau}
+              onReference={setReference}
+            />
+          )}
+        </section>
+      </div>
+      <VersionBase version={donnees.version} />
+      <BarreSynthese resultat={resultat} />
+      <Observation cas={cas} index={index} donnees={donnees} resultat={resultat} />
+      {reference && choisie?.fiche.slug === reference.slug && (
+        <FicheReference reference={reference} onFermer={() => setReference(null)} />
+      )}
+    </>
+  );
+}
+
+/* ---------- Étape 1 : motif et histoire de la maladie ---------- */
+
+function EtapeMotif({ index, cas, maj, setCas, profil }) {
+  const idHistoire = useId();
+  // Signes présents (motif compris) : le premier apparu est choisi parmi eux
+  const signesPresents = [
+    ...new Set([
+      ...(cas.motif ? [Number(cas.motif)] : []),
+      ...Object.entries(cas.signes)
+        .filter(([, e]) => e === 'present')
+        .map(([id]) => Number(id)),
+    ]),
+  ].filter((id) => index.symptomes.has(id));
+  // L'âge exact fixe la tranche d'âge (seuils PCIME, fiches et doses de l'âge)
+  const majAge = (valeur, unite) =>
+    setCas((c) => {
+      const suite = { ...c, ageValeur: valeur, ageUnite: unite };
+      const tranche = trancheDepuisAge(ageEnMois(suite));
+      return { ...suite, age: tranche || (valeur ? c.age : '') };
+    });
+  return (
+    <>
+      <h2>Le patient</h2>
+      <fieldset className="diag-champ">
+        <legend>Âge exact</legend>
+        <div className="diag-ligne">
+          <label className="diag-petit-champ">
+            <input
+              type="text"
+              inputMode="decimal"
+              aria-label="Âge"
+              value={cas.ageValeur}
+              onChange={(e) => majAge(e.target.value, cas.ageUnite)}
+            />
+          </label>
+          <div className="chips">
+            {UNITES_AGE.map(([id, libelle]) => (
+              <button
+                key={id}
+                type="button"
+                className="chip chip-bouton"
+                aria-pressed={cas.ageUnite === id}
+                onClick={() => majAge(cas.ageValeur, id)}
+              >
+                {libelle}
+              </button>
+            ))}
+          </div>
+        </div>
+      </fieldset>
+      <Boutons
+        legende="Ou tranche d’âge (si l’âge exact est inconnu)"
+        options={TRANCHES_AGE.map((t) => [t.id, t.libelle])}
+        valeur={cas.age}
+        onChange={(v) => setCas((c) => ({ ...c, age: v, ageValeur: '' }))}
+      />
+      <Boutons
+        legende="Sexe"
+        options={[
+          ['M', 'Masculin'],
+          ['F', 'Féminin'],
+        ]}
+        valeur={cas.sexe}
+        onChange={(v) => {
+          maj('sexe', v);
+          if (v !== 'F') maj('grossesse', false);
+        }}
+      />
+      {cas.sexe === 'F' && !['nn', 'petit'].includes(cas.age) && (
+        <div className="diag-ligne">
+          <label className="diag-case">
+            <input
+              type="checkbox"
+              checked={cas.grossesse}
+              onChange={(e) => maj('grossesse', e.target.checked)}
+            />{' '}
+            Enceinte ou accouchée récemment
+          </label>
+          {cas.grossesse && (
+            <span className="chips" role="group" aria-label="Période">
+              {[
+                ['grossesse', 'Enceinte'],
+                ['post-partum', 'Accouchée (moins de 6 semaines)'],
+              ].map(([id, libelle]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className="chip chip-bouton"
+                  aria-pressed={cas.periode === id}
+                  onClick={() => maj('periode', cas.periode === id ? '' : id)}
+                >
+                  {libelle}
+                </button>
+              ))}
+            </span>
+          )}
+          {cas.grossesse && cas.periode !== 'post-partum' && (
+            <label className="diag-petit-champ">
+              Terme (SA)
+              <input
+                type="text"
+                inputMode="decimal"
+                value={cas.terme}
+                onChange={(e) => maj('terme', e.target.value)}
+              />
+            </label>
+          )}
+        </div>
+      )}
+      <label className="diag-petit-champ">
+        Poids (kg)
+        <input
+          type="text"
+          inputMode="decimal"
+          value={cas.poids}
+          onChange={(e) => maj('poids', e.target.value)}
+        />
+      </label>
+
+      <ParcoursGuides index={index} cas={cas} maj={maj} setCas={setCas} />
+      <h2>Motif de consultation</h2>
+      {cas.motif ? (
+        <p className="diag-motif">
+          <b>{index.symptomes.get(cas.motif)?.nom}</b>{' '}
+          <button type="button" className="btn-link" onClick={() => maj('motif', null)}>
+            Changer
+          </button>
+        </p>
+      ) : (
+        <>
+          <RechercheListe
+            libelle="Plainte principale"
+            elements={index.donnees.symptomes.filter((s) => profil.signes.has(s.id))}
+            dejaPris={[]}
+            onChoix={(s) => maj('motif', s.id)}
+          />
+          <p className="muted">
+            Motifs fréquents
+            {cas.age || cas.sexe ? ' pour ce patient' : ''} :
+          </p>
+          <div className="chips">
+            {motifsFrequents(index, profil, 10, cas).map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                className="chip chip-bouton"
+                onClick={() => maj('motif', s.id)}
+              >
+                {s.nom}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      <h2>Histoire de la maladie</h2>
+      <Boutons legende="Début" options={DEBUTS} valeur={cas.debut} onChange={(v) => maj('debut', v)} />
+      <Boutons
+        legende="Durée"
+        options={DUREES.map((d) => [d.id, d.libelle])}
+        valeur={cas.duree}
+        onChange={(v) => maj('duree', v)}
+      />
+      <Boutons
+        legende="Évolution"
+        options={EVOLUTIONS}
+        valeur={cas.evolution}
+        onChange={(v) => maj('evolution', v)}
+      />
+      {signesPresents.length > 1 && (
+        <label className="diag-etiquette">
+          Premier signe apparu{' '}
+          <select
+            value={cas.premierSigne || ''}
+            onChange={(e) => maj('premierSigne', e.target.value ? Number(e.target.value) : null)}
+          >
+            <option value="">—</option>
+            {signesPresents.map((id) => (
+              <option key={id} value={id}>
+                {index.symptomes.get(id)?.nom}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      <Boutons
+        legende="Déjà traité pour cet épisode ?"
+        options={REPONSES}
+        valeur={cas.reponse}
+        onChange={(v) => maj('reponse', v)}
+      />
+      {cas.reponse && cas.reponse !== 'non' && !cas.traitements.length && (
+        <p className="muted">Indiquez les médicaments reçus à l’étape Terrain (traitements en cours).</p>
+      )}
+      <label htmlFor={idHistoire} className="diag-etiquette">
+        Chronologie, signes associés, traitements déjà pris (notes)
+      </label>
+      <textarea
+        id={idHistoire}
+        className="diag-notes"
+        rows={4}
+        value={cas.histoire}
+        onChange={(e) => maj('histoire', e.target.value)}
+        placeholder="Sans nom ni identité du patient"
+      />
+    </>
+  );
+}
+
+/**
+ * Parcours guidés officiels (PCIME, PCIMA, saignement pendant la grossesse) : questions oui/non,
+ * classification par couleur avec la conduite et la fiche ; les réponses peuvent être reportées
+ * comme signes présents ou absents dans l'examen.
+ */
+function ParcoursGuides({ index, cas, maj, setCas }) {
+  const [ouvert, setOuvert] = useState(null);
+  const profil = profilParcours(cas, ageEnMois(cas));
+  const proposes = PARCOURS.filter((d) => d.public(profil));
+  if (!proposes.length) return null;
+  const reponses = cas.parcours || {};
+  const def = proposes.find((d) => d.id === ouvert);
+  const r = def ? reponses[def.id] || {} : {};
+  const repondre = (q, valeur) =>
+    maj('parcours', { ...reponses, [def.id]: { ...r, [q]: r[q] === valeur ? undefined : valeur } });
+  const classes = def ? def.classer(r) : [];
+  const reporter = () => {
+    const parNom = signesDuParcours(def, r);
+    setCas((c) => {
+      const signes = { ...c.signes };
+      for (const [nom, etat] of Object.entries(parNom)) {
+        const id = index.parNom.get(nom);
+        if (id) signes[id] = etat;
+      }
+      return { ...c, signes };
+    });
+  };
+  return (
+    <div className="diag-parcours">
+      <h2>Parcours guidés</h2>
+      <div className="chips">
+        {proposes.map((d) => (
+          <button
+            key={d.id}
+            type="button"
+            className="chip chip-bouton"
+            aria-pressed={ouvert === d.id}
+            onClick={() => setOuvert(ouvert === d.id ? null : d.id)}
+          >
+            {d.nom}
+          </button>
+        ))}
+      </div>
+      {def && (
+        <section className="diag-parcours-corps" aria-label={def.nom}>
+          {questionsVisibles(def, r).map((g) => (
+            <fieldset key={g.titre} className="diag-champ">
+              <legend>{g.titre}</legend>
+              <ul className="diag-parcours-questions">
+                {g.questions.map((q) => (
+                  <li key={q.id}>
+                    <span>{q.libelle}</span>
+                    <span className="diag-tri">
+                      {[
+                        [true, 'Oui'],
+                        [false, 'Non'],
+                      ].map(([v, l]) => (
+                        <button
+                          key={l}
+                          type="button"
+                          className="chip chip-bouton"
+                          aria-pressed={r[q.id] === v}
+                          aria-label={`${q.libelle} : ${l}`}
+                          onClick={() => repondre(q.id, v)}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </fieldset>
+          ))}
+          {classes.length > 0 && (
+            <ul className="diag-classes" aria-label="Classification">
+              {classes.map((c) => (
+                <li key={c.titre} className={`diag-classe diag-classe-${c.couleur}`}>
+                  <b>{c.titre}</b>
+                  {c.fiche && (
+                    <>
+                      {' '}
+                      · <Link to={`/pathologies/${c.fiche}`}>fiche</Link>
+                    </>
+                  )}
+                  <ul>
+                    {c.actions.map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
+          <button type="button" className="btn btn-secondary btn-small" onClick={reporter}>
+            Reporter les réponses dans l’examen
+          </button>
+        </section>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Étape 2 : terrain ---------- */
+
+function EtapeTerrain({ donnees, index, cas, maj, basculer, hypotheses }) {
+  // Seuls les antécédents et contextes qui concernent ce patient ; ceux qui pèseraient sur les
+  // hypothèses en tête sont demandés en premier
+  const terrains = donnees.terrains.filter((t) => terrainPossible(t, cas));
+  const contextes = donnees.contextes.filter((t) => terrainPossible(t, cas));
+  const aPreciser = terrainsAPreciser(index, hypotheses, [...terrains, ...contextes]);
+  const groupes = [...new Set(terrains.filter((t) => !aPreciser.has(t.id)).map((t) => t.groupe))];
+  const molecule = (id) => donnees.molecules.find((m) => m.id === id);
+  const bouton = (t, champ) => (
+    <button
+      key={t.id}
+      type="button"
+      className={`chip chip-bouton${aPreciser.has(t.id) ? ' diag-a-preciser' : ''}`}
+      aria-pressed={cas[champ].includes(t.id)}
+      onClick={() => basculer(champ, t.id)}
+    >
+      {t.libelle}
+    </button>
+  );
+  const prioritaires = [...terrains, ...contextes].filter((t) => aPreciser.has(t.id));
+  return (
+    <>
+      {prioritaires.length > 0 && (
+        <div className="diag-prioritaire">
+          <h2>À préciser pour les hypothèses actuelles</h2>
+          <div className="chips">
+            {prioritaires.map((t) => bouton(t, terrains.includes(t) ? 'terrains' : 'contextes'))}
+          </div>
+        </div>
+      )}
+      <h2>Antécédents et terrain</h2>
+      {groupes.map((g) => (
+        <fieldset key={g} className="diag-champ">
+          <legend>{g}</legend>
+          <div className="chips">
+            {terrains.filter((t) => t.groupe === g && !aPreciser.has(t.id)).map((t) => bouton(t, 'terrains'))}
+          </div>
+        </fieldset>
+      ))}
+      <h2>Traitements en cours</h2>
+      <ListeMolecules
+        libelle="Ajouter un médicament pris actuellement"
+        molecules={donnees.molecules}
+        valeurs={cas.traitements}
+        onChange={(v) => maj('traitements', v)}
+        molecule={molecule}
+      />
+      <h2>Allergies médicamenteuses</h2>
+      <ListeMolecules
+        libelle="Ajouter une allergie (molécule)"
+        molecules={donnees.molecules}
+        valeurs={cas.allergies}
+        onChange={(v) => maj('allergies', v)}
+        molecule={molecule}
+        avecClasse
+      />
+      <h2>Exposition et contexte épidémique</h2>
+      <div className="chips">
+        {contextes.filter((c) => !aPreciser.has(c.id)).map((c) => bouton(c, 'contextes'))}
+      </div>
+    </>
+  );
+}
+
+function ListeMolecules({ libelle, molecules, valeurs, onChange, molecule, avecClasse = false }) {
+  const elements = useMemo(() => molecules.map((m) => ({ ...m, nom: m.dci })), [molecules]);
+  return (
+    <>
+      <RechercheListe
+        libelle={libelle}
+        elements={elements}
+        dejaPris={valeurs}
+        onChoix={(m) => onChange([...valeurs, m.id])}
+      />
+      {valeurs.length > 0 && (
+        <ul className="chips" aria-label={libelle}>
+          {valeurs.map((id) => {
+            const m = molecule(id);
+            return (
+              <li key={id} className="chip chip-retirable">
+                {m?.dci}
+                {avecClasse && m?.classe ? <span className="muted"> ({m.classe})</span> : null}
+                <button
+                  type="button"
+                  className="btn-link"
+                  aria-label={`Retirer ${m?.dci}`}
+                  onClick={() => onChange(valeurs.filter((x) => x !== id))}
+                >
+                  ×
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </>
+  );
+}
+
+/* ---------- Étape 3 : examen clinique ---------- */
+
+function EtapeExamen({ donnees, index, cas, maj, regler, deduits, profil, pertinence }) {
+  const [toutVoir, setToutVoir] = useState(false);
+  const physiques = index.physiques;
+  const deduitDe = new Map(deduits.map((d) => [d.id, d.etat]));
+  // Signes possibles pour ce patient (sauf s'ils sont déjà notés), triés par pertinence pour le cas
+  const visible = (s) => toutVoir || profil.signes.has(s) || cas.signes[s];
+  const rang = (s) => pertinence.get(s) || 0;
+  const cles = [...pertinence]
+    .filter(([s, v]) => v > 0 && profil.signes.has(s))
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([s]) => s);
+  const appareils = donnees.appareils
+    .map((a) => ({
+      ...a,
+      signes: a.symptomes.filter(visible).sort((x, y) => rang(y) - rang(x)),
+      poids: a.symptomes.reduce((t, s) => t + rang(s), 0),
+    }))
+    .filter((a) => a.signes.length)
+    .sort((a, b) => b.poids - a.poids);
+  const masques = donnees.symptomes.filter((s) => !profil.signes.has(s.id)).length;
+  const constantes = CONSTANTES.filter(([id]) => id !== 'pb' || cas.age === 'petit').filter(
+    ([id]) => id !== 'tad' || !['nn', 'petit', 'grand'].includes(cas.age),
+  );
+  return (
+    <>
+      <h2>Constantes</h2>
+      <div className="diag-constantes">
+        {constantes.map(([id, libelle, unite]) => (
+          <label key={id}>
+            {libelle} <span className="muted">({unite})</span>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={cas.constantes[id] ?? ''}
+              onChange={(e) => maj('constantes', { ...cas.constantes, [id]: e.target.value })}
+              placeholder={NORMES[id]?.(cas.age) ? `N : ${NORMES[id](cas.age)}` : undefined}
+            />
+          </label>
+        ))}
+      </div>
+      <ScoresGuides cas={cas} maj={maj} />
+      {cles.length > 0 && (
+        <div className="diag-prioritaire">
+          <h2>
+            {cas.motif || Object.keys(cas.signes).length
+              ? 'Signes clés pour ce cas'
+              : 'Signes les plus fréquents pour ce patient'}
+          </h2>
+          <ul className="diag-signes">
+            {cles.map((id) => (
+              <LigneSigne
+                key={id}
+                nom={index.symptomes.get(id)?.nom}
+                aide={index.symptomes.get(id)}
+                precision={physiques.has(id) ? 'examen' : 'interrogatoire'}
+                etat={cas.signes[id] || deduitDe.get(id) || ''}
+                deduit={!cas.signes[id] && deduitDe.has(id)}
+                onChange={(e) => regler(id, e)}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
+      <h2>Examen par appareil</h2>
+      <RechercheListe
+        libelle="Chercher un signe"
+        elements={donnees.symptomes.filter((s) => visible(s.id))}
+        dejaPris={Object.keys(cas.signes).map(Number)}
+        onChoix={(s) => regler(s.id, 'present')}
+      />
+      <p className="muted">
+        Appareils et signes classés selon le cas : <b>interrogatoire</b> (signes fonctionnels) puis{' '}
+        <b>examen</b> (signes physiques). Noter un signe <b>absent</b> aide autant à éliminer qu’un signe
+        présent à confirmer.
+        {masques > 0 && !toutVoir && (
+          <>
+            {' '}
+            {masques} signes impossibles pour ce patient (sexe, âge, grossesse) sont masqués.{' '}
+            <button type="button" className="btn-link" onClick={() => setToutVoir(true)}>
+              Tout afficher
+            </button>
+          </>
+        )}
+      </p>
+      {appareils.map((a) => {
+        const notes = a.symptomes.filter((s) => cas.signes[s]).length;
+        return (
+          <details key={a.id} className="diag-appareil">
+            <summary>
+              {a.nom}
+              {notes > 0 && <span className="tag">{notes}</span>}
+            </summary>
+            {[
+              ['Interrogatoire', a.signes.filter((s) => !physiques.has(s))],
+              ['Examen', a.signes.filter((s) => physiques.has(s))],
+            ]
+              .filter(([, liste]) => liste.length)
+              .map(([titre, liste]) => (
+                <div key={titre}>
+                  <h3>{titre}</h3>
+                  <ul className="diag-signes">
+                    {liste.map((id) => (
+                      <LigneSigne
+                        key={id}
+                        nom={index.symptomes.get(id)?.nom}
+                        aide={index.symptomes.get(id)}
+                        etat={cas.signes[id] || deduitDe.get(id) || ''}
+                        deduit={!cas.signes[id] && deduitDe.has(id)}
+                        onChange={(e) => regler(id, e)}
+                      />
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </details>
+        );
+      })}
+    </>
+  );
+}
+
+function LigneSigne({ nom, etat, deduit, precision, onChange, aide }) {
+  const [ouvert, setOuvert] = useState(false);
+  const explication = aide?.description || aide?.recherche;
+  return (
+    <li className={`diag-signe diag-signe-${etat || 'inconnu'}`}>
+      <span>
+        {nom}
+        {precision && <span className="muted"> ({precision})</span>}
+        {deduit && <span className="muted"> (d’après les constantes)</span>}
+        {explication && (
+          <button
+            type="button"
+            className="diag-aide-signe"
+            aria-expanded={ouvert}
+            aria-label={`Comment rechercher : ${nom}`}
+            onClick={() => setOuvert(!ouvert)}
+          >
+            ?
+          </button>
+        )}
+        {ouvert && (
+          <span className="diag-explication">
+            {aide.description && <span>{aide.description}</span>}
+            {aide.recherche && (
+              <span>
+                <b>Rechercher :</b> {aide.recherche}
+              </span>
+            )}
+          </span>
+        )}
+      </span>
+      <span className="diag-tri">
+        <button
+          type="button"
+          aria-pressed={etat === 'present'}
+          aria-label={`${nom} : présent`}
+          onClick={() => onChange('present')}
+        >
+          Présent
+        </button>
+        <button
+          type="button"
+          aria-pressed={etat === 'absent'}
+          aria-label={`${nom} : absent`}
+          onClick={() => onChange('absent')}
+        >
+          Absent
+        </button>
+      </span>
+    </li>
+  );
+}
+
+/* ---------- Étape 4 : paraclinique ---------- */
+
+function EtapeParaclinique({
+  index,
+  examens,
+  valeurs,
+  hypotheses,
+  onChange,
+  niveau,
+  niveauxExamens,
+  biologie,
+  interpretations,
+  onBiologie,
+}) {
+  // Examens qui confirment ou orientent vers les hypothèses en tête ; sans hypothèse, les
+  // examens rapides courants
+  const utiles = examensUtiles(index, hypotheses, valeurs);
+  const proposes = utiles.length
+    ? utiles.map((u) => u.examen)
+    : EXAMENS_RAPIDES.map((slug) => examens.find((e) => e.slug === slug)).filter(Boolean);
+  const pour = new Map(utiles.map((u) => [u.examen.id, u.hypotheses]));
+  const faits = Object.keys(valeurs)
+    .map((id) => examens.find((e) => String(e.id) === id))
+    .filter(Boolean);
+  const liste = [...faits, ...proposes.filter((e) => !faits.includes(e))];
+  const regler = (id, v) => {
+    const suite = { ...valeurs };
+    if (!v || suite[id] === v) delete suite[id];
+    else suite[id] = v;
+    onChange(suite);
+  };
+  return (
+    <>
+      <h2>{utiles.length ? 'Examens utiles pour les hypothèses actuelles' : 'Examens complémentaires'}</h2>
+      <p className="muted">
+        Résultat positif (en faveur) ou négatif ; laisser vide si l’examen n’a pas été fait.
+      </p>
+      <ul className="diag-examens">
+        {liste.map((e) => (
+          <li key={e.id}>
+            <span>
+              {e.nom} <BadgeDispo slug={e.slug} niveau={niveau} niveauxExamens={niveauxExamens} />
+              {e.performance && (
+                <span className="muted diag-perf" title="Sensibilité et spécificité (à valider)">
+                  {' '}
+                  Se {e.performance[0]} % · Sp {e.performance[1]} %
+                </span>
+              )}
+              {pour.has(e.id) && (
+                <span className="muted diag-examen-pour">
+                  {' '}
+                  {pour
+                    .get(e.id)
+                    .map((h) => `${h.role === 'c' ? 'confirme' : 'oriente vers'} ${h.nom}`)
+                    .join(' ; ')}
+                </span>
+              )}
+            </span>
+            <span className="diag-tri">
+              {[
+                ['positif', 'Positif'],
+                ['negatif', 'Négatif'],
+              ].map(([v, libelle]) => (
+                <button
+                  key={v}
+                  type="button"
+                  aria-pressed={valeurs[e.id] === v}
+                  aria-label={`${e.nom} : ${libelle}`}
+                  onClick={() => regler(e.id, v)}
+                >
+                  {libelle}
+                </button>
+              ))}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <h2>Résultats chiffrés</h2>
+      <p className="muted">
+        Interprétés selon l’âge ; ils orientent les hypothèses et déclenchent les alertes.
+      </p>
+      <div className="diag-constantes">
+        {BIOLOGIE.map(([id, libelle, unite]) => {
+          const lu = (interpretations || []).find((x) => x.cle === id);
+          return (
+            <label key={id}>
+              {libelle} <span className="muted">({unite})</span>
+              <input
+                type="text"
+                inputMode="decimal"
+                value={biologie[id] ?? ''}
+                onChange={(e) => onBiologie({ ...biologie, [id]: e.target.value })}
+              />
+              {lu && <span className={`tag${lu.grave ? ' tag-alerte' : ''}`}>{lu.texte}</span>}
+            </label>
+          );
+        })}
+      </div>
+      <RechercheListe
+        libelle="Ajouter un autre examen"
+        elements={examens}
+        dejaPris={liste.map((e) => e.id)}
+        onChoix={(e) => regler(e.id, 'positif')}
+      />
+    </>
+  );
+}
+
+/**
+ * Scores cliniques guidés (Glasgow, Blantyre, CURB-65, Wells, Apgar, Bishop) : seuls ceux qui
+ * conviennent au patient sont proposés ; le total s'affiche quand tous les items sont remplis.
+ */
+function ScoresGuides({ cas, maj }) {
+  const [ouvert, setOuvert] = useState(null);
+  const profil = profilScores(cas, ageEnMois(cas));
+  const proposes = SCORES_GUIDES.filter((d) => d.public(profil));
+  if (!proposes.length) return null;
+  const reponses = cas.scoresGuides || {};
+  const repondre = (score, item, valeur) =>
+    maj('scoresGuides', { ...reponses, [score]: { ...reponses[score], [item]: valeur } });
+  const def = proposes.find((d) => d.id === ouvert);
+  const resultat = def && evaluerScoreGuide(def, reponses[def.id]);
+  return (
+    <div className="diag-scores-guides">
+      <h2>Scores guidés</h2>
+      <div className="chips">
+        {proposes.map((d) => {
+          const r = evaluerScoreGuide(d, reponses[d.id]);
+          return (
+            <button
+              key={d.id}
+              type="button"
+              className="chip chip-bouton"
+              aria-pressed={ouvert === d.id}
+              onClick={() => setOuvert(ouvert === d.id ? null : d.id)}
+            >
+              {d.nom}
+              {r && ` : ${String(r.total).replace('.', ',')}`}
+            </button>
+          );
+        })}
+      </div>
+      {def && (
+        <fieldset className="diag-champ diag-score-form">
+          <legend>{def.nom}</legend>
+          {def.items.map((item) => (
+            <Boutons
+              key={item.id}
+              legende={item.libelle}
+              options={item.options.map(([v, l]) => [String(v), l])}
+              valeur={reponses[def.id]?.[item.id] !== undefined ? String(reponses[def.id][item.id]) : ''}
+              onChange={(v) => repondre(def.id, item.id, v === '' ? undefined : Number(v))}
+            />
+          ))}
+          <p className={resultat?.grave ? 'diag-score-grave' : undefined} role="status">
+            {resultat
+              ? `Total ${String(resultat.total).replace('.', ',')} : ${resultat.texte}`
+              : 'Répondez à chaque item pour obtenir le total.'}
+          </p>
+        </fieldset>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Synthèse ---------- */
+
+/**
+ * Barre fixe en bas de l'écran sur téléphone : nombre d'hypothèses, la première, repère
+ * d'urgence, et passage de la saisie aux hypothèses sans faire défiler toute la page.
+ */
+function BarreSynthese({ resultat }) {
+  const premiere = resultat.hypotheses[0];
+  const urgence = resultat.gravite.length > 0 || resultat.alertes.length > 0;
+  const aller = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  return (
+    <div className="diag-barre-mobile no-print" role="region" aria-label="Résumé du cas">
+      <p>
+        {urgence && <span className="tag tag-alerte">Urgence</span>}{' '}
+        {premiere ? (
+          <>
+            <b>{resultat.hypotheses.length} hypothèses</b> · 1re : {premiere.fiche.nom}
+          </>
+        ) : (
+          'Aucune hypothèse pour l’instant'
+        )}
+      </p>
+      <span className="diag-barre-boutons">
+        <button type="button" className="btn btn-secondary btn-small" onClick={() => aller('diag-saisie')}>
+          Saisie
+        </button>
+        <button type="button" className="btn btn-primary btn-small" onClick={() => aller('diag-synthese')}>
+          Hypothèses
+        </button>
+      </span>
+    </div>
+  );
+}
+
+function Alertes({ resultat }) {
+  const t = resultat.triage;
+  if (!resultat.gravite.length && !resultat.alertes.length && t?.categorie !== 'priorite') return null;
+  if (!resultat.gravite.length && !resultat.alertes.length && t.categorie === 'priorite') {
+    return (
+      <div className="diag-priorite" role="status">
+        <strong>Triage : prioritaire</strong> — à examiner avant les autres patients :{' '}
+        {t.criteres.map((c) => c.libelle).join(' ; ')}.
+      </div>
+    );
+  }
+  return (
+    <div className="diag-urgence" role="alert">
+      <strong>{t?.categorie === 'urgence' ? 'Triage : urgence' : 'Urgence'}</strong>
+      {t?.categorie === 'urgence' && (
+        <ol className="diag-conduites">
+          {t.criteres
+            .filter((c) => c.niveau === 'urgence')
+            .map((c) => (
+              <li key={c.id}>
+                <b>{c.lettre}</b> · {c.conduite}
+              </li>
+            ))}
+        </ol>
+      )}
+      <ul>
+        {resultat.gravite.length > 0 && (
+          <li>
+            Signes de gravité : {resultat.gravite.map((s) => s.nom).join(', ')}. Conduite ABCDE, glycémie
+            capillaire.
+          </li>
+        )}
+        {resultat.alertes.map((a) => (
+          <li key={a}>{a}</li>
+        ))}
+      </ul>
+      <Link to="/urgences">Conduites d’urgence</Link>
+    </div>
+  );
+}
+
+/**
+ * Triage d'urgence avant la démarche : critères ABCDE à cocher en quelques secondes, conduite
+ * immédiate pour chacun, catégorie (urgence, prioritaire, non urgent). Les critères cochés valent
+ * signes présents à l'examen ; ceux déduits des constantes sont signalés.
+ */
+function TriageUrgence({ cas, triage, setCas, onTerminer }) {
+  const coches = cas.triage || {};
+  const basculer = (id) =>
+    setCas((c) => {
+      const t = { ...(c.triage || {}) };
+      if (t[id]) delete t[id];
+      else t[id] = true;
+      return { ...c, triage: t };
+    });
+  const auto = new Set(triage.criteres.filter((c) => c.auto).map((c) => c.id));
+  const visibles = TRIAGE.filter((t) => t.public !== 'enfant' || triage.enfant);
+  const titres = {
+    A: 'A · Voies aériennes',
+    B: 'B · Respiration',
+    C: 'C · Circulation',
+    D: 'D · Conscience (AVPU, glycémie)',
+    E: 'E · Exposition et priorités',
+  };
+  const libelleCategorie = {
+    urgence: 'URGENCE : traiter immédiatement',
+    priorite: 'PRIORITAIRE : examiner avant les autres',
+    'non-urgent': 'Non urgent : suivre la démarche habituelle',
+  };
+  return (
+    <section className="diag-triage" aria-label="Triage d'urgence ABCDE">
+      <h2>Triage ABCDE</h2>
+      <p className="muted">
+        Cochez ce que vous voyez en moins d’une minute ; la conduite s’affiche aussitôt.
+      </p>
+      {Object.entries(titres).map(([lettre, titre]) => {
+        const items = visibles.filter((t) => t.lettre === lettre);
+        if (!items.length) return null;
+        return (
+          <fieldset key={lettre} className="diag-champ">
+            <legend>{titre}</legend>
+            <ul className="diag-triage-liste">
+              {items.map((t) => {
+                const actif = Boolean(coches[t.id]) || auto.has(t.id);
+                return (
+                  <li key={t.id} className={actif ? `diag-triage-${t.niveau}` : undefined}>
+                    <label>
+                      <input type="checkbox" checked={actif} onChange={() => basculer(t.id)} /> {t.libelle}
+                      {auto.has(t.id) && <span className="tag">d’après les constantes</span>}
+                    </label>
+                    {actif && <p className="diag-triage-conduite">{t.conduite}</p>}
+                  </li>
+                );
+              })}
+            </ul>
+          </fieldset>
+        );
+      })}
+      <p className={`diag-triage-categorie diag-triage-${triage.categorie || 'vide'}`} role="status">
+        {triage.categorie ? libelleCategorie[triage.categorie] : 'Aucun critère coché pour l’instant'}
+      </p>
+      <button type="button" className="btn btn-primary" onClick={onTerminer}>
+        Triage fait : continuer la démarche
+      </button>
+    </section>
+  );
+}
+
+function QuestionSuivante({ questions, regler }) {
+  return (
+    <div className="card diag-question">
+      <h2>À explorer maintenant</h2>
+      <p className="muted">Ces signes départagent le mieux les hypothèses en tête.</p>
+      <ul className="diag-signes">
+        {questions.map(({ symptome, examen }) => (
+          <li key={symptome.id} className="diag-signe">
+            <span>
+              <b>{symptome.nom}</b>{' '}
+              <span className="muted">{examen ? '(à l’examen)' : '(à l’interrogatoire)'}</span>
+            </span>
+            <span className="diag-tri">
+              <button
+                type="button"
+                aria-label={`${symptome.nom} : présent`}
+                onClick={() => regler(symptome.id, 'present')}
+              >
+                Présent
+              </button>
+              <button
+                type="button"
+                aria-label={`${symptome.nom} : absent`}
+                onClick={() => regler(symptome.id, 'absent')}
+              >
+                Absent
+              </button>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function EffetsTraitements({ traitements, donnees, index, cas }) {
+  const { api } = useServices();
+  const slugs = traitements.map((id) => donnees.molecules.find((m) => m.id === id)?.slug).filter(Boolean);
+  const state = useAsync(
+    () => Promise.all(slugs.map((s) => api.molecule(s).catch(() => null))),
+    [api, slugs.join(',')],
+  );
+  const presents = Object.entries(cas.signes)
+    .filter(([, e]) => e === 'present')
+    .map(([id]) => index.symptomes.get(Number(id))?.nom)
+    .concat(cas.motif ? [index.symptomes.get(cas.motif)?.nom] : [])
+    .filter(Boolean);
+  if (!slugs.length || !presents.length || !state.data) return null;
+  const effets = effetsIndesirablesPossibles(state.data.filter(Boolean), presents);
+  if (!effets.length) return null;
+  return (
+    <div className="card diag-effets">
+      <h2>Cause médicamenteuse possible</h2>
+      <ul className="diag-liste">
+        {effets.map(({ molecule, signes }) => (
+          <li key={molecule.slug}>
+            <Link to={`/molecules/${molecule.slug}`}>
+              <b>{molecule.dci}</b>
+            </Link>{' '}
+            peut donner : {signes.join(', ')}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Rapport de vraisemblance lisible : 19, 4,2, 0,05. */
+function arrondiRv(x) {
+  const n = x >= 10 ? Math.round(x) : x >= 1 ? Math.round(x * 10) / 10 : Math.round(x * 100) / 100;
+  return String(n).replace('.', ',');
+}
+
+function Hypothese({ h, rang, choisie, onChoisir }) {
+  return (
+    <li className={`card diag-hypothese diag-${h.niveau}${choisie ? ' diag-choisie' : ''}`}>
+      <div className="diag-hyp-tete">
+        <span className="tag">{`${rang} · ${NIVEAUX[h.niveau]}`}</span>
+        {h.aEliminer && <span className="tag tag-alerte">À éliminer</span>}
+        <h3>
+          <Link to={`/pathologies/${h.fiche.slug}`}>{h.fiche.nom}</Link>
+          {h.fiche.cim10 && <span className="diag-cim"> {h.fiche.cim10}</span>}
+        </h3>
+        {h.fiche.frequence && h.fiche.frequence !== 'peu_frequente' && (
+          <span className={`tag diag-freq-${h.fiche.frequence}`}>
+            {LIBELLES_FREQUENCE_RDC[h.fiche.frequence]}
+          </span>
+        )}
+        {h.fiche.validee ? (
+          <span className="tag tag-ok">Fiche validée</span>
+        ) : (
+          <span className="tag tag-pending">À valider</span>
+        )}
+      </div>
+      <div
+        className="diag-barre"
+        role="meter"
+        aria-label="Concordance avec le cas"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(h.score * 100)}
+      >
+        <i style={{ width: `${Math.round(h.score * 100)}%` }} />
+      </div>
+      <p className="diag-detail">
+        <b>Pour :</b> {h.concordants.map((c) => `${c.nom} (${LIBELLES_FREQUENCE[c.frequence]})`).join(', ')}
+        {h.tests
+          .filter((t) => t.resultat === 'positif')
+          .map((t) => ` · ${t.nom} positif${t.rv ? ` (RV+ ${arrondiRv(t.rv.positif)})` : ''}`)
+          .join('')}
+      </p>
+      {(h.discordants.length > 0 || h.tests.some((t) => t.resultat === 'negatif')) && (
+        <p className="diag-detail">
+          <b>Contre :</b>{' '}
+          {[
+            ...h.discordants.map((c) =>
+              c.exclusion ? `${c.nom} présent (argument contre)` : `${c.nom} absent`,
+            ),
+            ...h.tests
+              .filter((t) => t.resultat === 'negatif')
+              .map((t) => `${t.nom} négatif${t.rv ? ` (RV− ${arrondiRv(t.rv.negatif)})` : ''}`),
+          ].join(', ')}
+        </p>
+      )}
+      {h.raisons.length > 0 && (
+        <p className="diag-detail">
+          <b>Terrain et épidémiologie :</b> {h.raisons.join(', ')}
+        </p>
+      )}
+      {h.aRechercher.length > 0 && (
+        <p className="diag-detail">
+          <b>À rechercher :</b> {h.aRechercher.join(', ')}
+        </p>
+      )}
+      <button type="button" className="btn btn-primary btn-small" onClick={onChoisir} aria-pressed={choisie}>
+        Traitement et produits
+      </button>
+    </li>
+  );
+}
+
+/* ---------- Transparence : certitude, version de la base ---------- */
+
+const CERTITUDES = { insuffisant: 'Insuffisante', faible: 'Faible', modere: 'Modérée', eleve: 'Élevée' };
+
+function Certitude({ resultat, cas }) {
+  const c = degreDeCertitude(resultat, cas);
+  if (!c) return null;
+  return (
+    <p className={`diag-certitude diag-certitude-${c.niveau}`} role="status">
+      <b>Certitude : {CERTITUDES[c.niveau]}.</b> {c.texte} L’outil propose, le soignant décide.
+    </p>
+  );
+}
+
+function VersionBase({ version }) {
+  if (!version) return null;
+  const date = version.miseAJour ? new Date(version.miseAJour).toLocaleDateString('fr-FR') : null;
+  return (
+    <p className="muted diag-version no-print">
+      Base de connaissances{date ? ` du ${date}` : ''} · {version.fiches} fiches, dont {version.validees}{' '}
+      validées par un médecin · moteur {VERSION_MOTEUR} · référentiels (épidémiologie, signes discriminants,
+      performances des examens, LNME) à valider.
+    </p>
+  );
+}
+
+/* ---------- Diagnostic retenu et signalement ---------- */
+
+const VERSION_MOTEUR = '2026-10';
+const AUCUN = [];
+const TYPES_SIGNALEMENT = [
+  ['hypothese_manquante', 'Le bon diagnostic manque'],
+  ['hypothese_inadaptee', 'Une hypothèse est inadaptée'],
+  ['fiche', 'Erreur dans une fiche'],
+  ['traitement', 'Traitement ou dose'],
+  ['autre', 'Autre'],
+];
+
+/**
+ * Diagnostic finalement retenu (enregistré sans aucune donnée de patient : fiche, rang parmi
+ * les hypothèses, tranche d'âge, niveau de soins) et signalement d'une erreur en un clic.
+ */
+function DiagnosticRetenu({ resultat, donnees, cas, niveau, choix }) {
+  const { api } = useServices();
+  const [retenue, setRetenue] = useState(choix || '');
+  const [etat, setEtat] = useState(null);
+  const [signaler, setSignaler] = useState(false);
+  const [type, setType] = useState('hypothese_manquante');
+  const [message, setMessage] = useState('');
+  const idMessage = useId();
+  useEffect(() => {
+    if (choix) setRetenue(choix);
+  }, [choix]);
+  const autres = useMemo(
+    () => donnees.pathologies.filter((p) => p.diagnostic !== false).map((p) => ({ id: p.slug, nom: p.nom })),
+    [donnees.pathologies],
+  );
+  const nomDe = (slug) => donnees.pathologies.find((p) => p.slug === slug)?.nom;
+  const enregistrer = async () => {
+    const rang = resultat.hypotheses.findIndex((h) => h.fiche.slug === retenue) + 1;
+    try {
+      await api.diagnosticRetenu({
+        pathologie: retenue,
+        premiere: resultat.hypotheses[0]?.fiche.slug,
+        rang,
+        nbHypotheses: resultat.hypotheses.length,
+        tranche: cas.age || undefined,
+        niveau: niveau || undefined,
+        version: VERSION_MOTEUR,
+      });
+      setEtat('retenu');
+    } catch (ex) {
+      setEtat(ex.message);
+    }
+  };
+  const envoyer = async (e) => {
+    e.preventDefault();
+    try {
+      await api.diagnosticSignalement({ type, pathologie: retenue || undefined, message });
+      setEtat('signale');
+      setSignaler(false);
+      setMessage('');
+    } catch (ex) {
+      setEtat(ex.message);
+    }
+  };
+  return (
+    <div className="card diag-retenu">
+      <h3>Diagnostic retenu</h3>
+      <p className="muted">
+        Enregistré sans aucune donnée du patient ; il sert à mesurer et à améliorer la justesse des
+        hypothèses.
+      </p>
+      <div className="diag-ligne">
+        <select aria-label="Diagnostic retenu" value={retenue} onChange={(e) => setRetenue(e.target.value)}>
+          <option value="">— Choisir —</option>
+          {resultat.hypotheses.map((h, i) => (
+            <option key={h.fiche.slug} value={h.fiche.slug}>
+              {i + 1}. {h.fiche.nom}
+            </option>
+          ))}
+          {retenue && !resultat.hypotheses.some((h) => h.fiche.slug === retenue) && (
+            <option value={retenue}>{nomDe(retenue)}</option>
+          )}
+        </select>
+        <button type="button" className="btn btn-primary btn-small" disabled={!retenue} onClick={enregistrer}>
+          Enregistrer
+        </button>
+      </div>
+      <RechercheListe
+        libelle="Autre diagnostic (absent de la liste)"
+        elements={autres}
+        dejaPris={AUCUN}
+        onChoix={(e) => setRetenue(e.id)}
+      />
+      {etat === 'retenu' && <p role="status">Merci : diagnostic retenu enregistré.</p>}
+      {etat === 'signale' && <p role="status">Merci : signalement transmis aux relecteurs.</p>}
+      {etat && !['retenu', 'signale'].includes(etat) && <p className="form-error">{etat}</p>}
+      {signaler ? (
+        <form onSubmit={envoyer} className="diag-signalement">
+          <Boutons
+            legende="Problème"
+            options={TYPES_SIGNALEMENT}
+            valeur={type}
+            onChange={(v) => setType(v || type)}
+          />
+          <label htmlFor={idMessage} className="diag-etiquette">
+            Décrivez le problème (sans nom ni identité du patient)
+          </label>
+          <textarea
+            id={idMessage}
+            rows={3}
+            maxLength={1000}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <div className="diag-actions">
+            <button type="submit" className="btn btn-primary btn-small" disabled={message.trim().length < 5}>
+              Envoyer le signalement
+            </button>
+            <button type="button" className="btn btn-ghost btn-small" onClick={() => setSignaler(false)}>
+              Annuler
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button type="button" className="btn btn-ghost btn-small" onClick={() => setSignaler(true)}>
+          Signaler une erreur
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Traitement de l'hypothèse choisie ---------- */
+
+const RANG_LIGNE = { premiere: 0, deuxieme: 1, alternative: 2, adjuvant: 3 };
+const AWARE = {
+  acces: ['Accès', 'diag-aware-acces'],
+  surveillance: ['Surveillance', 'diag-aware-surveillance'],
+  reserve: ['Réserve', 'diag-aware-reserve'],
+};
+
+/** Patient transmis à l'ordonnance (sans identité) : âge, sexe, poids, taille, grossesse, reins, foie. */
+function patientPourOrdonnance(cas, donnees, elimination) {
+  const dci = (ids) =>
+    ids
+      .map((id) => donnees.molecules.find((m) => m.id === id)?.dci)
+      .filter(Boolean)
+      .join(', ');
+  return {
+    ...(cas.ageValeur ? { age: { valeur: cas.ageValeur, unite: cas.ageUnite } } : {}),
+    ...(cas.sexe ? { sexe: cas.sexe } : {}),
+    ...(cas.poids ? { poids: cas.poids } : {}),
+    ...(cas.constantes?.taille ? { taille: cas.constantes.taille } : {}),
+    grossesse: cas.grossesse === true && cas.periode !== 'post-partum',
+    insuffisance_renale: elimination.renale,
+    insuffisance_hepatique: elimination.hepatique,
+    ...(cas.allergies.length ? { allergies: dci(cas.allergies) } : {}),
+    ...(cas.traitements.length ? { traitements_en_cours: dci(cas.traitements) } : {}),
+  };
+}
+
+function Traitement({ fiche, cas, donnees, niveau, onReference }) {
+  const { api } = useServices();
+  const navigate = useNavigate();
+  const state = useAsync(() => api.pathologie(fiche.slug), [api, fiche.slug]);
+  const [retenues, setRetenues] = useState(null);
+  const elimination = fonctionsElimination(cas);
+  const infoMolecule = (m) => donnees.molecules.find((x) => x.slug === m.slug) || {};
+  return (
+    <section className="card diag-traitement" aria-labelledby="diag-trait-titre">
+      <h2 id="diag-trait-titre">{fiche.nom} : traitement</h2>
+      <AsyncView state={state}>
+        {(p) => {
+          const examens = (p.onglets?.diagnostic?.examens || []).filter((e) =>
+            ['confirmation', 'gravite', 'premiere_intention'].includes(e.categorie),
+          );
+          // Ligne de traitement d'abord, puis les molécules de la Liste nationale (LNME)
+          const molecules = [...(p.onglets?.therapeutique?.molecules || [])].sort(
+            (a, b) =>
+              (RANG_LIGNE[a.ligne] ?? 4) - (RANG_LIGNE[b.ligne] ?? 4) ||
+              Number(Boolean(infoMolecule(b).lnme)) - Number(Boolean(infoMolecule(a).lnme)),
+          );
+          // Cochées par défaut : 1re ligne sans allergie déclarée
+          const coches =
+            retenues ??
+            new Set(
+              molecules
+                .filter((m) => m.ligne === 'premiere' && !allergie(m, cas, donnees))
+                .map((m) => m.slug),
+            );
+          const basculer = (slug) => {
+            const suite = new Set(coches);
+            if (suite.has(slug)) suite.delete(slug);
+            else suite.add(slug);
+            setRetenues(suite);
+          };
+          const antibiotiques = molecules.filter((m) => infoMolecule(m).aware);
+          const preparer = () => {
+            const plan = {
+              diagnostic: p.nom,
+              molecules: molecules
+                .filter((m) => coches.has(m.slug))
+                .map((m) => ({ slug: m.slug, dci: m.dci, ligne: m.ligne, contexte: m.contexte })),
+              patient: patientPourOrdonnance(cas, donnees, elimination),
+            };
+            try {
+              sessionStorage.setItem(CLE_PLAN_DIAGNOSTIC, JSON.stringify(plan));
+            } catch {
+              // stockage indisponible : l'ordonnance reprend seulement le diagnostic
+            }
+            navigate(`/prescriptions?pathologie=${encodeURIComponent(p.slug)}`);
+          };
+          return (
+            <>
+              {p.urgences?.length > 0 && (
+                <p className="diag-urgence">
+                  Urgence liée :{' '}
+                  {p.urgences.map((u, i) => (
+                    <span key={u.id}>
+                      {i > 0 && ', '}
+                      <Link to={`/urgences/${u.slug}`}>{u.nom}</Link>
+                    </span>
+                  ))}
+                </p>
+              )}
+              {examens.length > 0 && (
+                <>
+                  <h3>Examens à demander</h3>
+                  <ul className="diag-liste">
+                    {examens.slice(0, 6).map((e) => (
+                      <li key={`${e.id}-${e.categorie}`}>
+                        <b>{e.nom}</b>{' '}
+                        <BadgeDispo slug={e.slug} niveau={niveau} niveauxExamens={donnees.niveauxExamens} />
+                        {e.interpretation ? ` ${e.interpretation}` : ''}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              <NiveauDeSoins
+                p={p}
+                niveau={niveau}
+                examens={examens}
+                donnees={donnees}
+                onReference={onReference}
+              />
+              <h3>Plan de traitement</h3>
+              {(elimination.renale || elimination.hepatique) && (
+                <p className="diag-securite">
+                  {elimination.renale &&
+                    `Insuffisance rénale${elimination.clairance ? ` (clairance ${elimination.clairance.valeur} mL/min, ${elimination.clairance.methode})` : ''} : adapter les doses et éviter les néphrotoxiques. `}
+                  {elimination.hepatique &&
+                    'Atteinte hépatique : prudence avec les médicaments à élimination hépatique.'}
+                </p>
+              )}
+              {antibiotiques.length > 0 && (
+                <div className="diag-bon-usage">
+                  <b>Bon usage des antibiotiques</b>
+                  <ul>
+                    <li>
+                      Prélèvements utiles avant la première dose quand c’est possible (hémocultures, ECBU,
+                      pus).
+                    </li>
+                    <li>
+                      Préférer le groupe Accès ; Surveillance si nécessaire ; Réserve sur avis spécialisé.
+                    </li>
+                    <li>
+                      Réévaluer à 48-72 h : désescalade selon les résultats, relais oral dès que possible.
+                    </li>
+                    <li>Durée la plus courte efficace, fixée dès la prescription.</li>
+                  </ul>
+                </div>
+              )}
+              <ul className="diag-molecules">
+                {molecules.map((m) => (
+                  <Molecule
+                    key={m.id}
+                    m={m}
+                    pathologie={p.nom}
+                    cas={cas}
+                    donnees={donnees}
+                    info={infoMolecule(m)}
+                    elimination={elimination}
+                    retenue={coches.has(m.slug)}
+                    onRetenir={() => basculer(m.slug)}
+                  />
+                ))}
+              </ul>
+              <div className="diag-actions">
+                <button type="button" className="btn btn-primary" onClick={preparer}>
+                  {coches.size
+                    ? `Préparer l’ordonnance (${coches.size} molécule${coches.size > 1 ? 's' : ''})`
+                    : 'Préparer l’ordonnance'}
+                </button>
+                <Link to={`/pathologies/${p.slug}?onglet=therapeutique`} className="btn btn-secondary">
+                  Fiche complète
+                </Link>
+              </div>
+              <p className="muted">Posologies de la fiche, à vérifier par le prescripteur.</p>
+              <ConseilsPatient fiche={fiche} cas={cas} />
+              {p.sources?.length > 0 && (
+                <div className="diag-sources">
+                  <h3>Sources de la fiche</h3>
+                  <ul className="diag-liste">
+                    {p.sources.map((so) => (
+                      <li key={so.id}>
+                        {so.url ? (
+                          <a href={so.url} target="_blank" rel="noreferrer">
+                            {so.titre}
+                          </a>
+                        ) : (
+                          so.titre
+                        )}
+                        {[so.organisation, so.annee].filter(Boolean).length > 0 &&
+                          ` (${[so.organisation, so.annee].filter(Boolean).join(', ')})`}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
+          );
+        }}
+      </AsyncView>
+    </section>
+  );
+}
+
+/**
+ * Conseils au patient, signes qui doivent le faire revenir sans attendre et date de
+ * réévaluation ; « Imprimer pour le patient » imprime cette feuille seule (pictogrammes).
+ */
+function ConseilsPatient({ fiche, cas }) {
+  const c = conseilsPatient(fiche, cas);
+  const imprimer = () => {
+    document.body.classList.add('impression-conseils');
+    const fin = () => {
+      document.body.classList.remove('impression-conseils');
+      window.removeEventListener('afterprint', fin);
+    };
+    window.addEventListener('afterprint', fin);
+    window.print();
+  };
+  const contenu = (
+    <>
+      {c.conseils.length > 0 && (
+        <>
+          <h4>À faire</h4>
+          <ul className="diag-pictos">
+            {c.conseils.map(([picto, texte]) => (
+              <li key={texte}>
+                <span aria-hidden="true">{picto}</span> {texte}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      <h4>Revenir tout de suite si</h4>
+      <ul className="diag-pictos diag-pictos-danger">
+        {c.revenir.map(([picto, texte]) => (
+          <li key={texte}>
+            <span aria-hidden="true">{picto}</span> {texte}
+          </li>
+        ))}
+      </ul>
+      <p>
+        <b>Prochain rendez-vous :</b> {c.reevaluation}
+      </p>
+    </>
+  );
+  return (
+    <div className="diag-conseils">
+      <div className="diag-hyp-tete">
+        <h3>Conseils au patient et consignes de retour</h3>
+        <button type="button" className="btn btn-secondary btn-small" onClick={imprimer}>
+          Imprimer pour le patient
+        </button>
+      </div>
+      {contenu}
+      {createPortal(
+        <section className="diag-conseils-impression" aria-hidden="true">
+          <h2>Vos consignes</h2>
+          {contenu}
+        </section>,
+        document.body,
+      )}
+    </div>
+  );
+}
+
+/**
+ * Prise en charge au lieu de soins choisi (onglet « Niveaux de soins » de la fiche) : ce qui
+ * peut être fait sur place, critères de transfert, examens à faire ailleurs.
+ */
+function NiveauDeSoins({ p, niveau, examens, donnees, onReference }) {
+  if (!niveau) {
+    return (
+      <p className="muted">
+        Indiquez où vous travaillez (en haut de l’observation) pour voir la prise en charge possible sur place
+        et les critères de transfert.
+      </p>
+    );
+  }
+  const ligne = (p.onglets?.niveaux || []).find((n) => n.niveau === niveau);
+  const ailleurs = examens.filter((e) => disponibilite(e.slug, niveau, donnees.niveauxExamens).ici === false);
+  const preTransfert = (p.onglets?.therapeutique?.molecules || []).filter((m) =>
+    /transfert/i.test(m.contexte || ''),
+  );
+  const libelle = NIVEAUX_LIEU.find(([id]) => id === niveau)?.[1];
+  return (
+    <div className="diag-niveau">
+      <h3>À votre niveau : {libelle}</h3>
+      {ligne?.prise_en_charge && <p className="diag-texte">{ligne.prise_en_charge}</p>}
+      {ligne?.criteres_transfert && (
+        <>
+          <h3>Transférer si</h3>
+          <p className="diag-texte">{ligne.criteres_transfert}</p>
+        </>
+      )}
+      {ailleurs.length > 0 && (
+        <p className="diag-detail">
+          <b>Examens non disponibles ici :</b> {ailleurs.map((e) => e.nom).join(', ')}
+        </p>
+      )}
+      {niveau !== 'hopital_tertiaire' && (
+        <button
+          type="button"
+          className="btn btn-secondary btn-small"
+          onClick={() =>
+            onReference({
+              slug: p.slug,
+              nom: p.nom,
+              depuis: libelle,
+              criteres: ligne?.criteres_transfert || '',
+              examens: ailleurs.map((e) => e.nom),
+              preTransfert: preTransfert.map((m) => `${m.dci}${m.contexte ? ` (${m.contexte})` : ''}`),
+            })
+          }
+        >
+          Préparer la fiche de référence
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** Fiche de référence (transfert) imprimée avec l'observation. */
+function FicheReference({ reference, onFermer }) {
+  const [vers, setVers] = useState('');
+  const [faits, setFaits] = useState('');
+  const date = new Date().toLocaleDateString('fr-FR');
+  return (
+    <section className="card diag-observation diag-reference" aria-labelledby="diag-ref-titre">
+      <div className="diag-hyp-tete">
+        <h2 id="diag-ref-titre">Fiche de référence</h2>
+        <button type="button" className="btn btn-secondary btn-small no-print" onClick={() => window.print()}>
+          Imprimer avec l’observation
+        </button>
+        <button type="button" className="btn btn-ghost btn-small no-print" onClick={onFermer}>
+          Fermer
+        </button>
+      </div>
+      <dl className="diag-obs">
+        <dt>Date</dt>
+        <dd>{date}</dd>
+        <dt>Référé depuis</dt>
+        <dd>{reference.depuis}</dd>
+        <dt>Référé vers</dt>
+        <dd>
+          <input
+            type="text"
+            aria-label="Structure de destination"
+            value={vers}
+            onChange={(e) => setVers(e.target.value)}
+            placeholder="Hôpital, service"
+          />
+        </dd>
+        <dt>Diagnostic évoqué</dt>
+        <dd>{reference.nom}</dd>
+        <dt>Motif du transfert</dt>
+        <dd className="diag-texte">{reference.criteres || '—'}</dd>
+        <dt>Examens à réaliser</dt>
+        <dd>{reference.examens.join(', ') || '—'}</dd>
+        <dt>Traitement pré-transfert prévu</dt>
+        <dd>{reference.preTransfert.join(' ; ') || '—'}</dd>
+        <dt>Soins déjà donnés</dt>
+        <dd>
+          <textarea
+            aria-label="Soins déjà donnés"
+            rows={2}
+            value={faits}
+            onChange={(e) => setFaits(e.target.value)}
+            placeholder="Médicaments, doses et heures"
+          />
+        </dd>
+      </dl>
+    </section>
+  );
+}
+
+/** Allergie déclarée à la molécule elle-même ou à une molécule de la même classe. */
+function allergie(m, cas, donnees) {
+  const declarees = cas.allergies.map((id) => donnees.molecules.find((x) => x.id === id)).filter(Boolean);
+  const fiche = donnees.molecules.find((x) => x.id === m.id);
+  return declarees.find((a) => a.id === m.id || (a.classe_id && fiche?.classe_id === a.classe_id));
+}
+
+function Molecule({ m, pathologie, cas, donnees, info = {}, elimination = {}, retenue, onRetenir }) {
+  // Chez l'enfant, les présentations pédiatriques d'abord ; puis les produits en photo
+  const enfant = ['nn', 'petit', 'grand'].includes(cas.age);
+  const rang = (pr) => (enfant && pr.pediatrique ? 2 : 0) + (pr.photo_url ? 1 : 0);
+  const produits = [...(m.produits || [])].sort((a, b) => rang(b) - rang(a)).slice(0, 4);
+  const principal = ['premiere', 'deuxieme'].includes(m.ligne);
+  const allergique = allergie(m, cas, donnees);
+  return (
+    <li className={`diag-molecule${principal ? ' diag-molecule-principale' : ''}`}>
+      <p>
+        {onRetenir && (
+          <label className="diag-retenir">
+            <input type="checkbox" checked={Boolean(retenue)} onChange={onRetenir} />
+            <span className="visually-hidden">Prescrire {m.dci}</span>
+          </label>
+        )}
+        <span className="tag">{LIGNES[m.ligne] || m.ligne}</span>{' '}
+        <Link to={`/molecules/${m.slug}`}>
+          <b>{m.dci}</b>
+        </Link>
+        {info.lnme && (
+          <span className="tag tag-ok" title="Liste nationale des médicaments essentiels (2020)">
+            LNME
+          </span>
+        )}
+        {info.aware && (
+          <span
+            className={`tag ${AWARE[info.aware.groupe][1]}`}
+            title={`Groupe AWaRe (${info.aware.source})`}
+          >
+            {AWARE[info.aware.groupe][0]}
+          </span>
+        )}
+        {m.contexte ? ` · ${m.contexte}` : ''}
+      </p>
+      {allergique && (
+        <p className="diag-securite">
+          Allergie déclarée : {allergique.dci}
+          {allergique.id !== m.id && allergique.classe ? ` (même classe : ${allergique.classe})` : ''}.
+          Choisir une alternative.
+        </p>
+      )}
+      {(principal ||
+        cas.grossesse ||
+        cas.traitements.length > 0 ||
+        elimination.renale ||
+        elimination.hepatique) && (
+        <DetailMolecule
+          slug={m.slug}
+          pathologie={pathologie}
+          contexte={m.contexte}
+          cas={cas}
+          donnees={donnees}
+          calcul={principal}
+          elimination={elimination}
+        />
+      )}
+      {produits.length > 0 && (
+        <ul className="vignettes">
+          {produits.map((pr) => (
+            <li key={pr.id}>
+              <LienProduit id={pr.id} className="vignette">
+                <PhotoProduit produit={pr} />
+                <span className="vignette-nom">{pr.nom_commercial}</span>
+                <span className="vignette-firme">{pr.operateur}</span>
+              </LienProduit>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+}
+
+/** Dose au poids, grossesse et interactions avec les traitements en cours (fiche molécule). */
+function DetailMolecule({ slug, pathologie, contexte, cas, donnees, calcul, elimination = {} }) {
+  const { api } = useServices();
+  const state = useAsync(() => api.molecule(slug), [api, slug]);
+  if (!state.data) return null;
+  const mol = state.data;
+  const poso = calcul ? posologiePour(mol.posologies, pathologie, cas.age, contexte) : null;
+  const dose = poso && cas.poids ? calculerDose(poso, cas.poids) : null;
+  const texteInteractions = sansAccents(mol.interactions);
+  // Adaptation à la fonction rénale ou hépatique : la fiche de la molécule en parle-t-elle ?
+  const risque = sansAccents(`${mol.contre_indications || ''} ${mol.precautions || ''}`);
+  const adapterRein = elimination.renale && /renal|renale|clairance|dfg|creatinin/.test(risque);
+  const adapterFoie = elimination.hepatique && /hepati/.test(risque);
+  const duree = poso?.duree || poso?.durees?.find((d) => d.defaut)?.contexte || null;
+  const interactions = cas.traitements
+    .map((id) => donnees.molecules.find((x) => x.id === id))
+    .filter((t) => t && t.slug !== slug && texteInteractions.includes(sansAccents(t.dci).split(' ')[0]));
+  return (
+    <>
+      {poso && (
+        <p className="diag-dose">
+          {dose ? (
+            <>
+              <b>
+                {dose.affichage}
+                {poso.dose_base === 'par_jour' ? ' par jour' : ' par prise'}
+              </b>{' '}
+              ({poso.dose_texte}
+              {dose.plafonnee ? ', plafonnée' : ''})
+            </>
+          ) : (
+            <b>{poso.dose_texte}</b>
+          )}
+          {poso.voie ? ` · ${poso.voie}` : ''}
+          {poso.frequence ? ` · ${poso.frequence}` : ''}
+          {duree ? ` · durée : ${duree}` : ''}
+          {poso.remarque ? <span className="muted"> · {poso.remarque}</span> : null}
+        </p>
+      )}
+      {adapterRein && (
+        <p className="diag-securite">
+          Insuffisance rénale : la fiche prévoit une adaptation ou une précaution.
+        </p>
+      )}
+      {adapterFoie && <p className="diag-securite">Atteinte hépatique : voir les précautions de la fiche.</p>}
+      {cas.grossesse && mol.grossesse_allaitement && (
+        <p className="diag-securite">Grossesse : {mol.grossesse_allaitement}</p>
+      )}
+      {interactions.length > 0 && (
+        <p className="diag-securite">
+          Interaction possible avec le traitement en cours : {interactions.map((t) => t.dci).join(', ')} (voir
+          la fiche).
+        </p>
+      )}
+    </>
+  );
+}
+
+/* ---------- Observation imprimable ---------- */
+
+/** Partage le résumé anonyme (feuille de partage du téléphone, sinon copie dans le presse-papiers). */
+function PartagerCas({ texte }) {
+  const [etat, setEtat] = useState(null);
+  const partager = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Avis demandé', text: texte });
+        setEtat('partage');
+      } else {
+        await navigator.clipboard.writeText(texte);
+        setEtat('copie');
+      }
+    } catch {
+      setEtat(null);
+    }
+  };
+  return (
+    <button
+      type="button"
+      className="btn btn-ghost btn-small"
+      title="Résumé sans nom, sans âge exact ni notes libres, pour demander l’avis d’un collègue"
+      onClick={partager}
+    >
+      {etat === 'copie' ? 'Résumé copié' : 'Partager (anonyme)'}
+    </button>
+  );
+}
+
+/** Télécharge l'observation au format FHIR R4 (fichier JSON, sans identité). */
+function telechargerFHIR(cas, index, resultat) {
+  const paquet = exporterFHIR(cas, index, resultat);
+  const lien = document.createElement('a');
+  lien.href = URL.createObjectURL(
+    new Blob([JSON.stringify(paquet, null, 2)], { type: 'application/fhir+json' }),
+  );
+  lien.download = `observation-${new Date().toISOString().slice(0, 10)}.fhir.json`;
+  lien.click();
+  setTimeout(() => URL.revokeObjectURL(lien.href), 1000);
+}
+
+function Observation({ cas, index, donnees, resultat }) {
+  const nom = (id) => index.symptomes.get(Number(id))?.nom;
+  const presents = Object.entries(cas.signes)
+    .filter(([, e]) => e === 'present')
+    .map(([id]) => nom(id));
+  const absents = Object.entries(cas.signes)
+    .filter(([, e]) => e === 'absent')
+    .map(([id]) => nom(id));
+  const deduits = resultat.deduits.map((d) => `${d.nom} ${d.etat === 'present' ? 'présent' : 'absent'}`);
+  const libelle = (liste, id) => liste.find((x) => x[0] === id)?.[1];
+  const constantes = CONSTANTES.filter(([id]) => cas.constantes[id]).map(
+    ([id, l, u]) => `${l} ${cas.constantes[id]} ${u}`,
+  );
+  const mols = (ids) => ids.map((id) => donnees.molecules.find((m) => m.id === id)?.dci).filter(Boolean);
+  const examens = Object.entries(cas.examens).map(
+    ([id, r]) => `${donnees.examens.find((e) => String(e.id) === id)?.nom} : ${r}`,
+  );
+  if (!cas.motif && !presents.length) return null;
+  return (
+    <section className="card diag-observation" aria-labelledby="diag-obs-titre">
+      <div className="diag-hyp-tete">
+        <h2 id="diag-obs-titre">Observation</h2>
+        <span className="diag-actions no-print">
+          <button type="button" className="btn btn-secondary btn-small" onClick={() => window.print()}>
+            Imprimer
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost btn-small"
+            title="Format FHIR R4 (dossier patient informatisé), sans identité du patient"
+            onClick={() => telechargerFHIR(cas, index, resultat)}
+          >
+            Exporter (FHIR)
+          </button>
+          <PartagerCas texte={resumeAnonyme(cas, index, resultat)} />
+        </span>
+      </div>
+      <dl className="diag-obs">
+        <dt>Patient</dt>
+        <dd>
+          {[
+            cas.ageValeur
+              ? `${cas.ageValeur} ${cas.ageUnite}`
+              : TRANCHES_AGE.find((t) => t.id === cas.age)?.libelle,
+            { M: 'masculin', F: 'féminin' }[cas.sexe],
+            cas.poids && `${cas.poids} kg`,
+            cas.grossesse &&
+              (cas.periode === 'post-partum'
+                ? 'accouchée récemment'
+                : `enceinte${cas.terme ? ` (${cas.terme} SA)` : ''}`),
+          ]
+            .filter(Boolean)
+            .join(', ') || '—'}
+        </dd>
+        {resultat.triage?.categorie && (
+          <>
+            <dt>Triage</dt>
+            <dd>
+              {
+                { urgence: 'Urgence', priorite: 'Prioritaire', 'non-urgent': 'Non urgent' }[
+                  resultat.triage.categorie
+                ]
+              }
+              {resultat.triage.criteres.length > 0 &&
+                ` : ${resultat.triage.criteres.map((c) => `${c.lettre} ${c.libelle}`).join(' ; ')}`}
+            </dd>
+          </>
+        )}
+        <dt>Motif</dt>
+        <dd>{cas.motif ? nom(cas.motif) : '—'}</dd>
+        <dt>Histoire</dt>
+        <dd>
+          {[
+            libelle(DEBUTS, cas.debut) && `début ${libelle(DEBUTS, cas.debut).toLowerCase()}`,
+            DUREES.find((d) => d.id === cas.duree)?.libelle.toLowerCase(),
+            libelle(EVOLUTIONS, cas.evolution)?.toLowerCase(),
+            cas.premierSigne && `premier signe : ${nom(cas.premierSigne)}`,
+            cas.reponse === 'echec' && 'sans amélioration sous traitement',
+            cas.reponse === 'amelioration' && 'amélioration sous traitement',
+          ]
+            .filter(Boolean)
+            .join(', ') || '—'}
+          {cas.histoire && <span className="diag-obs-notes">{cas.histoire}</span>}
+        </dd>
+        <dt>Terrain</dt>
+        <dd>
+          {[
+            ...cas.terrains.map((id) => donnees.terrains.find((t) => t.id === id)?.libelle),
+            ...cas.contextes.map((id) => donnees.contextes.find((t) => t.id === id)?.libelle),
+          ]
+            .filter(Boolean)
+            .join(' ; ') || '—'}
+        </dd>
+        <dt>Traitements en cours</dt>
+        <dd>{mols(cas.traitements).join(', ') || '—'}</dd>
+        <dt>Allergies</dt>
+        <dd>{mols(cas.allergies).join(', ') || 'aucune connue'}</dd>
+        <dt>Constantes</dt>
+        <dd>{constantes.join(' · ') || '—'}</dd>
+        <dt>Signes présents</dt>
+        <dd>{presents.join(', ') || '—'}</dd>
+        <dt>Signes absents</dt>
+        <dd>{[...absents, ...deduits.filter((d) => d.endsWith('absent'))].join(', ') || '—'}</dd>
+        <dt>Paraclinique</dt>
+        <dd>
+          {[
+            ...examens,
+            ...BIOLOGIE.filter(([id]) => cas.biologie?.[id]).map(([id, l, u]) => {
+              const lu = (resultat.biologie || []).find((x) => x.cle === id);
+              return `${l} ${cas.biologie[id]} ${u}${lu ? ` (${lu.texte})` : ''}`;
+            }),
+          ].join(' ; ') || '—'}
+        </dd>
+        <dt>Scores</dt>
+        <dd>
+          {(resultat.scores || []).map((sc) => `${sc.nom} ${sc.valeur} (${sc.interpretation})`).join(' ; ') ||
+            '—'}
+        </dd>
+        <dt>Synthèse</dt>
+        <dd>{resultat.syndromes.map((s) => s.nom).join(', ') || '—'}</dd>
+        <dt>Hypothèses</dt>
+        <dd>
+          {resultat.hypotheses
+            .slice(0, 4)
+            .map(
+              (h) =>
+                `${h.fiche.nom}${h.fiche.cim10 ? ` [${h.fiche.cim10}]` : ''} (${NIVEAUX[h.niveau].toLowerCase()})`,
+            )
+            .join(' ; ') || '—'}
+        </dd>
+      </dl>
+      <p className="muted">Établie avec l’aide au diagnostic MedRef RDC, à compléter par le soignant.</p>
+    </section>
+  );
+}
+
+/* ---------- Éléments communs ---------- */
+
+function Boutons({ legende, options, valeur, onChange }) {
+  return (
+    <fieldset className="diag-champ">
+      <legend>{legende}</legend>
+      <div className="chips">
+        {options.map(([id, libelle]) => (
+          <button
+            key={id}
+            type="button"
+            className="chip chip-bouton"
+            aria-pressed={valeur === id}
+            onClick={() => onChange(valeur === id ? '' : id)}
+          >
+            {libelle}
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
+/** Champ de recherche avec propositions (au moins deux lettres ; Entrée prend la première). */
+function RechercheListe({ libelle, elements, dejaPris, onChoix }) {
+  const [q, setQ] = useState('');
+  const id = useId();
+  const propositions = useMemo(() => {
+    const n = sansAccents(q.trim());
+    if (n.length < 2) return [];
+    return elements
+      .filter((e) => !dejaPris.includes(e.id) && sansAccents(e.nom).includes(n))
+      .sort((a, b) => sansAccents(a.nom).indexOf(n) - sansAccents(b.nom).indexOf(n))
+      .slice(0, 8);
+  }, [q, elements, dejaPris]);
+  const prendre = (e) => {
+    onChoix(e);
+    setQ('');
+  };
+  return (
+    <div className="diag-recherche">
+      <label htmlFor={id}>{libelle}</label>
+      <input
+        id={id}
+        type="search"
+        value={q}
+        placeholder="Tapez au moins deux lettres"
+        autoComplete="off"
+        onChange={(e) => setQ(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && propositions[0]) {
+            e.preventDefault();
+            prendre(propositions[0]);
+          }
+        }}
+      />
+      {propositions.length > 0 && (
+        <ul className="diag-propositions" aria-label={`Propositions : ${libelle}`}>
+          {propositions.map((e) => (
+            <li key={e.id}>
+              <button type="button" onClick={() => prendre(e)}>
+                {e.nom}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}

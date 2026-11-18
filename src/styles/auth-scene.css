@@ -1,0 +1,343 @@
+/* Écran de connexion et d'inscription, harmonisé avec l'interface lavande. */
+
+.auth-scene {
+  --ink: #191b36;
+  --ink-soft: #555b70;
+  --line: #e0e3f2;
+  --link: #4d60b9;
+  --link-bg: #e8ebff;
+  --urgence: #b61138;
+  --urgence-bg: #fff0f3;
+  --ok: #138263;
+  --ok-bg: #e6f6ef;
+  color-scheme: light;
+  color: var(--ink);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #f5f6ff;
+}
+
+.auth-fond {
+  display: none;
+}
+
+.auth-haut {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px max(20px, 4vw);
+}
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.15rem;
+  text-shadow: none;
+}
+.auth-retour {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 9px 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff;
+}
+.auth-retour:hover {
+  background: var(--link-bg);
+}
+
+.auth-centre {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px 40px;
+}
+
+.auth-carte {
+  position: relative;
+  width: min(430px, 100%);
+  padding: 34px 32px 28px;
+  border-radius: 26px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 32px rgba(35, 44, 91, 0.12);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.auth-carte:focus {
+  outline: none;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .auth-carte {
+    background: #ffffff;
+  }
+}
+
+.auth-fermer {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 0 26px 0 18px;
+  background: var(--link-bg);
+  color: var(--link);
+}
+.auth-fermer:hover {
+  background: #dfe3ff;
+}
+
+/* ---- Contenu du formulaire --------------------------------------- */
+
+.auth-carte.auth-carte,
+.auth-carte .narrow {
+  max-width: none;
+}
+.auth-carte h1 {
+  margin: 0 36px 6px 0;
+  font-family: var(--font);
+  font-size: 1.9rem;
+  text-align: left;
+  color: var(--ink);
+}
+.auth-carte .muted {
+  color: var(--ink-soft);
+  font-size: 0.93rem;
+  margin-bottom: 18px;
+}
+.auth-carte .field {
+  margin-bottom: 16px;
+}
+.auth-carte .field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.auth-carte .field input,
+.auth-carte .field select {
+  width: 100%;
+  background: #eef0ff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.65rem 2.4rem 0.65rem 0.8rem;
+  box-shadow: none;
+}
+.auth-carte .field select {
+  padding-right: 0.5rem;
+}
+.auth-carte .field input::placeholder {
+  color: #777d91;
+}
+.auth-carte .field input:focus,
+.auth-carte .field select:focus {
+  outline: none;
+  border-color: var(--link);
+  box-shadow: 0 0 0 3px rgba(77, 96, 185, 0.16);
+}
+.auth-carte .field input[type='email'] {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23191b36' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='m3 7 9 6 9-6'/%3E%3C/svg%3E")
+    no-repeat right 0.2rem center / 18px;
+}
+.auth-carte .field input[aria-invalid='true'] {
+  border-color: var(--urgence);
+}
+
+.field-mdp {
+  position: relative;
+}
+.field-mdp input {
+  padding-right: 2.6rem;
+}
+.field-mdp-voir {
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.field-mdp-voir:hover {
+  background: var(--link-bg);
+}
+
+.auth-carte .hint {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+.auth-carte .btn-primary {
+  background: #0d9875;
+  color: #fff;
+  border-radius: 12px;
+  min-height: 48px;
+  margin-top: 6px;
+}
+.auth-carte .btn-primary:hover:not(:disabled) {
+  background: #087a5e;
+}
+/* « Rester connecté » et « Mot de passe oublié ? » sur une ligne, au-dessus du bouton */
+.auth-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -2px 0 18px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+.auth-options a {
+  color: var(--link);
+  font-weight: 700;
+}
+.auth-rester {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.auth-rester input {
+  width: 16px;
+  height: 16px;
+  accent-color: #0d9875;
+}
+.auth-carte .auth-switch {
+  margin: 18px 0 0;
+  text-align: center;
+  font-size: 0.93rem;
+  color: var(--ink-soft);
+}
+.auth-carte .auth-switch a {
+  color: var(--link);
+  font-weight: 700;
+}
+.auth-carte .form-error,
+.auth-carte .form-success {
+  border-radius: 12px;
+}
+
+@media (max-width: 480px) {
+  .auth-scene {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    background: #f5f6ff;
+  }
+
+  .auth-fond {
+    display: none;
+  }
+
+  .auth-haut {
+    padding: 18px 20px 12px;
+  }
+
+  .auth-brand {
+    color: #191b36;
+    text-shadow: none;
+  }
+
+  .auth-retour {
+    display: none;
+  }
+
+  .auth-centre {
+    align-items: center;
+    padding: 12px 16px 24px;
+  }
+
+  .auth-carte {
+    padding: 30px 22px 24px;
+    color: #191b36;
+    background: #ffffff;
+    border: 1px solid #e0e3f2;
+    border-radius: 24px;
+    box-shadow: 0 12px 32px rgba(35, 44, 91, 0.12);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .auth-carte h1 {
+    color: #191b36;
+    font-family: var(--font);
+    font-size: 1.75rem;
+    letter-spacing: -0.03em;
+  }
+
+  .auth-carte .muted,
+  .auth-carte .field label,
+  .auth-options,
+  .auth-carte .auth-switch {
+    color: #555b70;
+  }
+
+  .auth-carte .field input,
+  .auth-carte .field select {
+    color: #191b36;
+    background-color: #eef0ff;
+    border: 1px solid #e0e3f2;
+    border-radius: 12px;
+    padding: 0.78rem 2.5rem 0.78rem 0.85rem;
+  }
+
+  .auth-carte .field input::placeholder {
+    color: #777d91;
+  }
+
+  .auth-carte .field input:focus,
+  .auth-carte .field select:focus {
+    border-color: #4d60b9;
+    box-shadow: 0 0 0 3px rgba(77, 96, 185, 0.16);
+  }
+
+  .field-mdp-voir {
+    color: #555b70;
+  }
+
+  .auth-options a,
+  .auth-carte .auth-switch a {
+    color: #4d60b9;
+  }
+
+  .auth-carte .btn-primary {
+    color: #ffffff;
+    background: #0d9875;
+  }
+
+  .auth-carte .btn-primary:hover:not(:disabled) {
+    background: #087a5e;
+  }
+
+  .auth-fermer {
+    color: #4d60b9;
+    background: #e8ebff;
+  }
+
+  .auth-fermer:hover {
+    background: #dfe3ff;
+  }
+}
